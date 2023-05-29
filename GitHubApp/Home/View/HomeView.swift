@@ -1,13 +1,19 @@
 //
-//  ContentView.swift
+//  HomeView.swift
 //  GitHubApp
 //
-//  Created by bruno on 28/05/23.
+//  Created by bruno on 29/05/23.
 //
 
 import SwiftUI
 
-struct ContentView: View {
+struct HomeView<R: NavigationRouter>: View where R.NavigationEventType == HomeNavigationEvent {
+    private var router: R
+    
+    init(router: R) {
+        self.router = router
+    }
+    
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -16,11 +22,5 @@ struct ContentView: View {
             Text("Hello, world!")
         }
         .padding()
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
     }
 }
