@@ -19,6 +19,9 @@
 		159BD8712A24DA8A00B6EEC1 /* HomeNavigationEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8702A24DA8A00B6EEC1 /* HomeNavigationEvent.swift */; };
 		159BD8742A24DB2500B6EEC1 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8732A24DB2500B6EEC1 /* HomeView.swift */; };
 		159BD8772A24E10300B6EEC1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 159BD8762A24E10200B6EEC1 /* Preview Assets.xcassets */; };
+		159BD87C2A25120000B6EEC1 /* HomeViewStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD87B2A25120000B6EEC1 /* HomeViewStates.swift */; };
+		159BD87F2A25123B00B6EEC1 /* HomeDataViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD87E2A25123B00B6EEC1 /* HomeDataViewState.swift */; };
+		159BD8812A25129600B6EEC1 /* HomeViewEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8802A25129600B6EEC1 /* HomeViewEvents.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +59,9 @@
 		159BD8702A24DA8A00B6EEC1 /* HomeNavigationEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNavigationEvent.swift; sourceTree = "<group>"; };
 		159BD8732A24DB2500B6EEC1 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		159BD8762A24E10200B6EEC1 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		159BD87B2A25120000B6EEC1 /* HomeViewStates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewStates.swift; sourceTree = "<group>"; };
+		159BD87E2A25123B00B6EEC1 /* HomeDataViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDataViewState.swift; sourceTree = "<group>"; };
+		159BD8802A25129600B6EEC1 /* HomeViewEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewEvents.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +160,10 @@
 		159BD86C2A24D9BC00B6EEC1 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				159BD87D2A25121E00B6EEC1 /* Models */,
+				159BD87A2A2511B600B6EEC1 /* ViewEvents */,
+				159BD8792A2511B000B6EEC1 /* ViewStates */,
+				159BD8782A25111700B6EEC1 /* ViewModel */,
 				159BD8722A24DB1B00B6EEC1 /* View */,
 				159BD86D2A24DA3300B6EEC1 /* Router */,
 				159BD8672A24D63600B6EEC1 /* HostingController */,
@@ -184,6 +194,37 @@
 				159BD8762A24E10200B6EEC1 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		159BD8782A25111700B6EEC1 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		159BD8792A2511B000B6EEC1 /* ViewStates */ = {
+			isa = PBXGroup;
+			children = (
+				159BD87B2A25120000B6EEC1 /* HomeViewStates.swift */,
+			);
+			path = ViewStates;
+			sourceTree = "<group>";
+		};
+		159BD87A2A2511B600B6EEC1 /* ViewEvents */ = {
+			isa = PBXGroup;
+			children = (
+				159BD8802A25129600B6EEC1 /* HomeViewEvents.swift */,
+			);
+			path = ViewEvents;
+			sourceTree = "<group>";
+		};
+		159BD87D2A25121E00B6EEC1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				159BD87E2A25123B00B6EEC1 /* HomeDataViewState.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -318,11 +359,14 @@
 			files = (
 				159BD8642A24D58700B6EEC1 /* GitHubAppDelegate.swift in Sources */,
 				159BD8692A24D64D00B6EEC1 /* HomeHostingViewController.swift in Sources */,
+				159BD87F2A25123B00B6EEC1 /* HomeDataViewState.swift in Sources */,
 				159BD86F2A24DA3F00B6EEC1 /* HomeNavigationRouter.swift in Sources */,
 				159BD86B2A24D98200B6EEC1 /* NavigationRouter.swift in Sources */,
 				159BD8742A24DB2500B6EEC1 /* HomeView.swift in Sources */,
 				159BD8662A24D5DB00B6EEC1 /* GitHubAppSceneDelegate.swift in Sources */,
 				159BD8712A24DA8A00B6EEC1 /* HomeNavigationEvent.swift in Sources */,
+				159BD8812A25129600B6EEC1 /* HomeViewEvents.swift in Sources */,
+				159BD87C2A25120000B6EEC1 /* HomeViewStates.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
