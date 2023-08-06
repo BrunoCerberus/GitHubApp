@@ -51,8 +51,11 @@ class APIRequest {
             .map(\.data, \.response)
             .tryMap { data, response in
                 self.debugResponse(request, data, response, nil)
-                let decoded = try JSONDecoder().decode(V.self, from: data)
-                return decoded
+                return data
+            }
+            .decode(type: V.self, decoder: JSONDecoder())
+            .mapError { _ in
+                return APIRequestError.parseError
             }
             .eraseToAnyPublisher()
     }
