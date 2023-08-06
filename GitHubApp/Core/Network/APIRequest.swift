@@ -49,12 +49,13 @@ class APIRequest {
         return session
             .dataTaskPublisher(for: request)
             .map(\.data, \.response)
-            .tryMap { data, response in
-                self.debugResponse(request, data, response, nil)
+            .tryMap { [weak self] data, response in
+                self?.debugResponse(request, data, response, nil)
                 return data
             }
             .decode(type: V.self, decoder: JSONDecoder())
-            .mapError { _ in
+            .mapError { [weak self] error in
+                self?.debugResponse(request, nil, nil, error)
                 return APIRequestError.parseError
             }
             .eraseToAnyPublisher()
