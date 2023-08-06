@@ -12,12 +12,10 @@ protocol HomeNavigationRouterDelegate: AnyObject {
 final class HomeNavigationRouter: NavigationRouter {
     weak var delegate: HomeNavigationRouterDelegate?
 
-    @discardableResult
-    func route(navigationEvent: HomeNavigationEvent) -> Bool {
+    func route(navigationEvent: HomeNavigationEvent) {
         switch navigationEvent {
         case .detail:
             delegate?.showDetailScreen()
-            return true
         }
     }
 }

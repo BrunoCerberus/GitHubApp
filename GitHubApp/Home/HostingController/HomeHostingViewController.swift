@@ -26,6 +26,5 @@ final class HomeHostingViewController<R: HomeNavigationRouter>: UIHostingControl
 
 extension HomeHostingViewController: HomeNavigationRouterDelegate {
     func showDetailScreen() {
-        
     }
 }
