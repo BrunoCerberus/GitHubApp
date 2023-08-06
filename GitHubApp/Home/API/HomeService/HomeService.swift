@@ -7,7 +7,11 @@
 
 import Combine
 
-final class HomeService: APIRequest {
+protocol HomeServiceProtocol {
+    func fetchMovies() -> AnyPublisher<MoviesResponse, Error>
+}
+
+final class HomeService: APIRequest, HomeServiceProtocol {
     func fetchMovies() -> AnyPublisher<MoviesResponse, Error> {
         self.fetchRequest(target: HomeAPI.fetchMovies, dataType: MoviesResponse.self)
             .eraseToAnyPublisher()

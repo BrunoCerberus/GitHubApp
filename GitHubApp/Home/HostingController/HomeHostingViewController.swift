@@ -10,7 +10,7 @@ import SwiftUI
 final class HomeHostingViewController<R: HomeNavigationRouter>: UIHostingController<HomeView<R>> {
     
     init(navigationRouter: R) {
-        let rootView = HomeView<R>(router: navigationRouter)
+        let rootView = HomeView<R>(router: navigationRouter, viewModel: HomeViewModel())
         super.init(rootView: rootView)
         navigationRouter.delegate = self
     }

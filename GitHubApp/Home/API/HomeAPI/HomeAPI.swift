@@ -11,7 +11,7 @@ enum HomeAPI: APIFetcher {
     case fetchMovies
     
     var path: String {
-        return ""
+        return BaseURLs.theMovie.rawValue + "/movie/upcoming?api_key=\(APIKeys.theMovieAPIKey)"
     }
     
     var method: HTTPMethod {

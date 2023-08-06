@@ -9,7 +9,8 @@ import Combine
 import Foundation
 
 // Custom error enum for API request errors
-private enum APIRequestError: Error {
+enum APIRequestError: Error {
+    case invalidURL
     case genericError
     case parseError
 }
@@ -29,7 +30,7 @@ class APIRequest {
         // Validate and create the URL request
         guard let urlRequest: URL = URL(string: url) else {
             // Return a publisher with a failure containing the custom error
-            return Fail(error: APIRequestError.genericError)
+            return Fail(error: APIRequestError.invalidURL)
                 .eraseToAnyPublisher()
         }
         
