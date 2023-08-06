@@ -10,10 +10,11 @@ import Foundation
 
 private enum APIRequestError: Error {
     case genericError
+    case parseError
 }
 
-class APIRequest<T: APIFetcher> {
-    func fetchRequest<V: Codable>(target: T, dataType: V.Type) -> AnyPublisher<V, Error> {
+class APIRequest {
+    func fetchRequest<T: APIFetcher, V: Codable>(target: T, dataType: V.Type) -> AnyPublisher<V, Error> {
         let url: String = target.path
         let parameters: [String: Any] = target.task?.dictionary() ?? [:]
         let method: HTTPMethod = target.method

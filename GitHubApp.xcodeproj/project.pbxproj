@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		1523C8752A7F52C900E500D0 /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523C8742A7F52C900E500D0 /* APIRequest.swift */; };
 		1523C8772A7F53F300E500D0 /* APIFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523C8762A7F53F300E500D0 /* APIFetcher.swift */; };
+		1523C87C2A7F594600E500D0 /* HomeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523C87B2A7F594600E500D0 /* HomeAPI.swift */; };
+		1523C87E2A7F599C00E500D0 /* HomeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523C87D2A7F599C00E500D0 /* HomeService.swift */; };
+		1523C8812A7F5C9700E500D0 /* MoviesResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523C8802A7F5C9700E500D0 /* MoviesResponse.swift */; };
 		1549C1952A23C4800043EAEA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1549C1942A23C4800043EAEA /* Assets.xcassets */; };
 		1549C1A32A23C4800043EAEA /* GitHubAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1549C1A22A23C4800043EAEA /* GitHubAppTests.swift */; };
 		1549C1AD2A23C4800043EAEA /* GitHubAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1549C1AC2A23C4800043EAEA /* GitHubAppUITests.swift */; };
@@ -49,6 +52,9 @@
 /* Begin PBXFileReference section */
 		1523C8742A7F52C900E500D0 /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
 		1523C8762A7F53F300E500D0 /* APIFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIFetcher.swift; sourceTree = "<group>"; };
+		1523C87B2A7F594600E500D0 /* HomeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAPI.swift; sourceTree = "<group>"; };
+		1523C87D2A7F599C00E500D0 /* HomeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeService.swift; sourceTree = "<group>"; };
+		1523C8802A7F5C9700E500D0 /* MoviesResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesResponse.swift; sourceTree = "<group>"; };
 		1549C18D2A23C47F0043EAEA /* GitHubApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitHubApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1549C1942A23C4800043EAEA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1549C1962A23C4800043EAEA /* GitHubApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GitHubApp.entitlements; sourceTree = "<group>"; };
@@ -106,6 +112,40 @@
 				1523C8762A7F53F300E500D0 /* APIFetcher.swift */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		1523C8782A7F593200E500D0 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				1523C87F2A7F5C0300E500D0 /* Model */,
+				1523C87A2A7F593E00E500D0 /* HomeService */,
+				1523C8792A7F593700E500D0 /* HomeAPI */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		1523C8792A7F593700E500D0 /* HomeAPI */ = {
+			isa = PBXGroup;
+			children = (
+				1523C87B2A7F594600E500D0 /* HomeAPI.swift */,
+			);
+			path = HomeAPI;
+			sourceTree = "<group>";
+		};
+		1523C87A2A7F593E00E500D0 /* HomeService */ = {
+			isa = PBXGroup;
+			children = (
+				1523C87D2A7F599C00E500D0 /* HomeService.swift */,
+			);
+			path = HomeService;
+			sourceTree = "<group>";
+		};
+		1523C87F2A7F5C0300E500D0 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				1523C8802A7F5C9700E500D0 /* MoviesResponse.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		1549C1842A23C47F0043EAEA = {
@@ -182,6 +222,7 @@
 		159BD86C2A24D9BC00B6EEC1 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				1523C8782A7F593200E500D0 /* API */,
 				159BD8862A2518EA00B6EEC1 /* Interactors */,
 				159BD87D2A25121E00B6EEC1 /* Models */,
 				159BD87A2A2511B600B6EEC1 /* ViewEvents */,
@@ -398,7 +439,10 @@
 				159BD86B2A24D98200B6EEC1 /* NavigationRouter.swift in Sources */,
 				159BD8742A24DB2500B6EEC1 /* HomeView.swift in Sources */,
 				1523C8752A7F52C900E500D0 /* APIRequest.swift in Sources */,
+				1523C87E2A7F599C00E500D0 /* HomeService.swift in Sources */,
+				1523C8812A7F5C9700E500D0 /* MoviesResponse.swift in Sources */,
 				159BD8662A24D5DB00B6EEC1 /* GitHubAppSceneDelegate.swift in Sources */,
+				1523C87C2A7F594600E500D0 /* HomeAPI.swift in Sources */,
 				159BD8712A24DA8A00B6EEC1 /* HomeNavigationEvent.swift in Sources */,
 				159BD8812A25129600B6EEC1 /* HomeViewEvent.swift in Sources */,
 				159BD8852A25143600B6EEC1 /* CombineViewModel.swift in Sources */,
