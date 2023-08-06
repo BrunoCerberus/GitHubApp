@@ -14,7 +14,11 @@ private enum APIRequestError: Error {
 }
 
 class APIRequest {
-    func fetchRequest<T: APIFetcher, V: Codable>(target: T, dataType: V.Type) -> AnyPublisher<V, Error> {
+    func fetchRequest<T: APIFetcher, V: Codable>(
+        debug: Bool = false,
+        target: T,
+        dataType: V.Type
+    ) -> AnyPublisher<V, Error> {
         let url: String = target.path
         let parameters: [String: Any] = target.task?.dictionary() ?? [:]
         let method: HTTPMethod = target.method
@@ -49,8 +53,10 @@ class APIRequest {
         return session
             .dataTaskPublisher(for: request)
             .map(\.data, \.response)
-            .tryMap { [weak self] data, response in
-                self?.debugResponse(request, data, response, nil)
+            .tryMap { [weak self, debug = debug] data, response in
+                if debug {
+                    self?.debugResponse(request, data, response, nil)
+                }
                 return data
             }
             .decode(type: V.self, decoder: JSONDecoder())
