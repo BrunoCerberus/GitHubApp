@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1523C8752A7F52C900E500D0 /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523C8742A7F52C900E500D0 /* APIRequest.swift */; };
+		1523C8772A7F53F300E500D0 /* APIFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523C8762A7F53F300E500D0 /* APIFetcher.swift */; };
 		1549C1952A23C4800043EAEA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1549C1942A23C4800043EAEA /* Assets.xcassets */; };
 		1549C1A32A23C4800043EAEA /* GitHubAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1549C1A22A23C4800043EAEA /* GitHubAppTests.swift */; };
 		1549C1AD2A23C4800043EAEA /* GitHubAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1549C1AC2A23C4800043EAEA /* GitHubAppUITests.swift */; };
@@ -45,6 +47,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1523C8742A7F52C900E500D0 /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
+		1523C8762A7F53F300E500D0 /* APIFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIFetcher.swift; sourceTree = "<group>"; };
 		1549C18D2A23C47F0043EAEA /* GitHubApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitHubApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1549C1942A23C4800043EAEA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1549C1962A23C4800043EAEA /* GitHubApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GitHubApp.entitlements; sourceTree = "<group>"; };
@@ -95,6 +99,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1523C8732A7F526900E500D0 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				1523C8742A7F52C900E500D0 /* APIRequest.swift */,
+				1523C8762A7F53F300E500D0 /* APIFetcher.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
 		1549C1842A23C47F0043EAEA = {
 			isa = PBXGroup;
 			children = (
@@ -150,6 +163,7 @@
 		1549C1BB2A23C6C00043EAEA /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				1523C8732A7F526900E500D0 /* Network */,
 				159BD86A2A24D98200B6EEC1 /* NavigationRouter.swift */,
 				159BD8842A25143600B6EEC1 /* CombineViewModel.swift */,
 				159BD8872A25191D00B6EEC1 /* CombineInteractor.swift */,
@@ -376,12 +390,14 @@
 			files = (
 				159BD8882A25191D00B6EEC1 /* CombineInteractor.swift in Sources */,
 				159BD8642A24D58700B6EEC1 /* GitHubAppDelegate.swift in Sources */,
+				1523C8772A7F53F300E500D0 /* APIFetcher.swift in Sources */,
 				159BD8832A2513E400B6EEC1 /* HomeViewModel.swift in Sources */,
 				159BD8692A24D64D00B6EEC1 /* HomeHostingViewController.swift in Sources */,
 				159BD87F2A25123B00B6EEC1 /* HomeDataViewState.swift in Sources */,
 				159BD86F2A24DA3F00B6EEC1 /* HomeNavigationRouter.swift in Sources */,
 				159BD86B2A24D98200B6EEC1 /* NavigationRouter.swift in Sources */,
 				159BD8742A24DB2500B6EEC1 /* HomeView.swift in Sources */,
+				1523C8752A7F52C900E500D0 /* APIRequest.swift in Sources */,
 				159BD8662A24D5DB00B6EEC1 /* GitHubAppSceneDelegate.swift in Sources */,
 				159BD8712A24DA8A00B6EEC1 /* HomeNavigationEvent.swift in Sources */,
 				159BD8812A25129600B6EEC1 /* HomeViewEvent.swift in Sources */,
