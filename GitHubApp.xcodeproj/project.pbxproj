@@ -36,6 +36,7 @@
 		159BD8832A2513E400B6EEC1 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8822A2513E400B6EEC1 /* HomeViewModel.swift */; };
 		159BD8852A25143600B6EEC1 /* CombineViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8842A25143600B6EEC1 /* CombineViewModel.swift */; };
 		159BD8882A25191D00B6EEC1 /* CombineInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8872A25191D00B6EEC1 /* CombineInteractor.swift */; };
+		15BE63212A807DE200878CF1 /* JSONDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15BE63202A807DE200878CF1 /* JSONDecoder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,6 +91,7 @@
 		159BD8822A2513E400B6EEC1 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		159BD8842A25143600B6EEC1 /* CombineViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineViewModel.swift; sourceTree = "<group>"; };
 		159BD8872A25191D00B6EEC1 /* CombineInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineInteractor.swift; sourceTree = "<group>"; };
+		15BE63202A807DE200878CF1 /* JSONDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONDecoder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 			children = (
 				1523C8742A7F52C900E500D0 /* APIRequest.swift */,
 				1523C8762A7F53F300E500D0 /* APIFetcher.swift */,
+				15BE63202A807DE200878CF1 /* JSONDecoder.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -476,6 +479,7 @@
 				1523C88F2A805A2000E500D0 /* MovieDetailsViewModel.swift in Sources */,
 				159BD8712A24DA8A00B6EEC1 /* HomeNavigationEvent.swift in Sources */,
 				159BD8812A25129600B6EEC1 /* HomeViewEvent.swift in Sources */,
+				15BE63212A807DE200878CF1 /* JSONDecoder.swift in Sources */,
 				1523C8832A80483200E500D0 /* BaseURLs.swift in Sources */,
 				159BD8852A25143600B6EEC1 /* CombineViewModel.swift in Sources */,
 				159BD87C2A25120000B6EEC1 /* HomeViewState.swift in Sources */,

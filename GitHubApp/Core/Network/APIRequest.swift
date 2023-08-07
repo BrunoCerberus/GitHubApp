@@ -70,7 +70,7 @@ class APIRequest {
                 }
                 return data
             }
-            .decode(type: V.self, decoder: JSONDecoder()) // Decode the response using the specified Codable type
+            .decode(type: V.self, decoder: jsonDecoder) // Decode the response using the specified Codable type
             .mapError { [weak self] error in
                 // Handle decoding errors and debug the response with error if debug flag is enabled
                 self?.debugResponse(request, nil, nil, error)
