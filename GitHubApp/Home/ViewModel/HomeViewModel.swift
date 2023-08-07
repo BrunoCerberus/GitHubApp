@@ -10,6 +10,7 @@ import Foundation
 
 final class HomeViewModel: ObservableObject {
     @Published var movies: [Movie] = []
+    @Published var searchQuery: String = ""
     
     var cancellables = Set<AnyCancellable>()
     let service: HomeServiceProtocol
