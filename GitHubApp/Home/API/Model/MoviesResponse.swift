@@ -25,14 +25,14 @@ struct Movie: Codable, Equatable, Identifiable {
 
 //MARK: - Credits
 
-struct MovieCastMember: Identifiable, Equatable, Decodable {
+struct MovieCreditsResponse: Codable {
+    let cast: [MovieCastMember]
+}
+
+struct MovieCastMember: Identifiable, Equatable, Codable {
     let id: Int
     let name: String
     let character: String
-}
-
-struct MovieCreditsResponse: Decodable {
-    let cast: [MovieCastMember]
 }
 
 //MARK: - Reviews

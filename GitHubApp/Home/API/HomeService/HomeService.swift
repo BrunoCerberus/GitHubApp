@@ -10,6 +10,7 @@ import Combine
 protocol HomeServiceProtocol {
     func fetchMovies() -> AnyPublisher<MoviesResponse, Error>
     func searchMovies(with query: String) -> AnyPublisher<MoviesResponse, Error>
+    func fetchCredits(with id: Int) -> AnyPublisher<MovieCreditsResponse, Error>
 }
 
 final class HomeService: APIRequest, HomeServiceProtocol {
@@ -20,6 +21,11 @@ final class HomeService: APIRequest, HomeServiceProtocol {
     
     func searchMovies(with query: String) -> AnyPublisher<MoviesResponse, Error> {
         self.fetchRequest(target: HomeAPI.searchMovies(query), dataType: MoviesResponse.self)
+            .eraseToAnyPublisher()
+    }
+    
+    func fetchCredits(with id: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
+        self.fetchRequest(target: HomeAPI.fetchCredits(id), dataType: MovieCreditsResponse.self)
             .eraseToAnyPublisher()
     }
 }
