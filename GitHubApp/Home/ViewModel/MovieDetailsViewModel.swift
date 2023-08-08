@@ -10,19 +10,21 @@ import Foundation
 
 class MovieDetailsViewModel: ObservableObject {
     
-    let movie: Movie
-    
     @Published var data: (credits: [MovieCastMember], reviews: [MovieReview]) = ([], [])
     
-//    private var cancellables = Set<AnyCancellable>()
+    let movie: Movie
+    let service: HomeServiceProtocol
     
-    init(movie: Movie) {
+    init(movie: Movie,
+         service: HomeServiceProtocol = HomeService()) {
         self.movie = movie
+        self.service = service
+        
     }
     
     func fetchData() {
-        let creditsPublisher = fetchCredits(for: movie).map(\.cast).replaceError(with: [])
-        let reviewsPublisher = fetchReviews(for: movie).map(\.results).replaceError(with: [])
+        let creditsPublisher = service.fetchCredits(with: movie.id).map(\.cast).replaceError(with: [])
+        let reviewsPublisher = service.fetchReviews(with: movie.id).map(\.results).replaceError(with: [])
         
         Publishers.Zip(creditsPublisher, reviewsPublisher)
             .receive(on: DispatchQueue.main)
@@ -33,28 +35,4 @@ class MovieDetailsViewModel: ObservableObject {
 //            }
 //            .store(in: &cancellables)
     }
-}
-
-func fetchCredits(for movie: Movie) -> some Publisher<MovieCreditsResponse, Error> {
-    guard let url = URL(string: "https://api.themoviedb.org/3/movie/\(movie.id)/credits?api_key=\(APIKeys.theMovieAPIKey)")
-    else { return Fail(error: APIRequestError.invalidURL).eraseToAnyPublisher() }
-    
-    return URLSession
-        .shared
-        .dataTaskPublisher(for: url)
-        .map(\.data)
-        .decode(type: MovieCreditsResponse.self, decoder: JSONDecoder())
-        .eraseToAnyPublisher()
-}
-
-func fetchReviews(for movie: Movie) -> some Publisher<MovieReviewsResponse, Error> {
-    guard let url = URL(string: "https://api.themoviedb.org/3/movie/\(movie.id)/reviews?api_key=\(APIKeys.theMovieAPIKey)")
-    else { return Fail(error: APIRequestError.invalidURL).eraseToAnyPublisher() }
-    
-    return URLSession
-        .shared
-        .dataTaskPublisher(for: url)
-        .map(\.data)
-        .decode(type: MovieReviewsResponse.self, decoder: JSONDecoder())
-        .eraseToAnyPublisher()
 }

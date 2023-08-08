@@ -11,7 +11,7 @@ enum HomeAPI: APIFetcher {
     case fetchMovies
     case searchMovies(String)
     case fetchCredits(Int)
-    case fetchRewards(Int)
+    case fetchReviews(Int)
     
     var path: String {
         switch self {
@@ -21,7 +21,7 @@ enum HomeAPI: APIFetcher {
             return BaseURLs.theMovie.rawValue + "/search/movie?api_key=\(APIKeys.theMovieAPIKey)&query=\(query)"
         case let .fetchCredits(id):
             return BaseURLs.theMovie.rawValue + "/movie/\(id)/credits?api_key=\(APIKeys.theMovieAPIKey)"
-        case let .fetchRewards(id):
+        case let .fetchReviews(id):
             return BaseURLs.theMovie.rawValue + "/movie/\(id)/reviews?api_key=\(APIKeys.theMovieAPIKey)"
         }
     }
