@@ -11,6 +11,7 @@ protocol HomeServiceProtocol {
     func fetchMovies() -> AnyPublisher<MoviesResponse, Error>
     func searchMovies(with query: String) -> AnyPublisher<MoviesResponse, Error>
     func fetchCredits(with id: Int) -> AnyPublisher<MovieCreditsResponse, Error>
+    func fetchRewards(with id: Int) -> AnyPublisher<MovieReviewsResponse, Error>
 }
 
 final class HomeService: APIRequest, HomeServiceProtocol {
@@ -26,6 +27,10 @@ final class HomeService: APIRequest, HomeServiceProtocol {
     
     func fetchCredits(with id: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
         self.fetchRequest(target: HomeAPI.fetchCredits(id), dataType: MovieCreditsResponse.self)
+            .eraseToAnyPublisher()
+    }
+    func fetchRewards(with id: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
+        self.fetchRequest(target: HomeAPI.fetchRewards(id), dataType: MovieReviewsResponse.self)
             .eraseToAnyPublisher()
     }
 }

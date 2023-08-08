@@ -37,12 +37,12 @@ struct MovieCastMember: Identifiable, Equatable, Codable {
 
 //MARK: - Reviews
 
-struct MovieReview: Identifiable, Equatable, Decodable {
+struct MovieReviewsResponse: Codable {
+    let results: [MovieReview]
+}
+
+struct MovieReview: Identifiable, Equatable, Codable {
     let id: String
     let author: String
     let content: String
-}
-
-struct MovieReviewsResponse: Decodable {
-    let results: [MovieReview]
 }
