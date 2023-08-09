@@ -13,18 +13,33 @@ enum HomeAPI: APIFetcher {
     case fetchCredits(Int)
     case fetchReviews(Int)
     
-    var path: String {
-        switch self {
-        case .fetchMovies:
-            return BaseURLs.theMovie.rawValue + "/movie/upcoming?api_key=\(APIKeys.theMovieAPIKey)"
-        case let .searchMovies(query):
-            return BaseURLs.theMovie.rawValue + "/search/movie?api_key=\(APIKeys.theMovieAPIKey)&query=\(query)"
-        case let .fetchCredits(id):
-            return BaseURLs.theMovie.rawValue + "/movie/\(id)/credits?api_key=\(APIKeys.theMovieAPIKey)"
-        case let .fetchReviews(id):
-            return BaseURLs.theMovie.rawValue + "/movie/\(id)/reviews?api_key=\(APIKeys.theMovieAPIKey)"
+    private var baseURL: String {
+            return BaseURLs.theMovie.rawValue
         }
-    }
+        
+        private var apiKey: String {
+            return APIKeys.theMovieAPIKey
+        }
+        
+        var path: String {
+            var components = URLComponents(string: baseURL)!
+            
+            switch self {
+            case .fetchMovies:
+                components.path += "/movie/upcoming"
+            case let .searchMovies(query):
+                components.path += "/search/movie"
+                components.queryItems = [URLQueryItem(name: "query", value: query)]
+            case let .fetchCredits(id):
+                components.path += "/movie/\(id)/credits"
+            case let .fetchReviews(id):
+                components.path += "/movie/\(id)/reviews"
+            }
+            
+            components.queryItems = (components.queryItems ?? []) + [URLQueryItem(name: "api_key", value: apiKey)]
+            
+            return components.string ?? ""
+        }
     
     var method: HTTPMethod {
         return .GET
