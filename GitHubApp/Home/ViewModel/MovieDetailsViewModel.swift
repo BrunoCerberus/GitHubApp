@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-class MovieDetailsViewModel: ObservableObject {
+final class MovieDetailsViewModel: ObservableObject {
     
     @Published var data: (credits: [MovieCastMember], reviews: [MovieReview]) = ([], [])
     

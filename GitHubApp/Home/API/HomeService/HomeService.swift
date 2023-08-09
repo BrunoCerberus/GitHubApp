@@ -29,6 +29,7 @@ final class HomeService: APIRequest, HomeServiceProtocol {
         self.fetchRequest(target: HomeAPI.fetchCredits(id), dataType: MovieCreditsResponse.self)
             .eraseToAnyPublisher()
     }
+    
     func fetchReviews(with id: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
         self.fetchRequest(target: HomeAPI.fetchReviews(id), dataType: MovieReviewsResponse.self)
             .eraseToAnyPublisher()

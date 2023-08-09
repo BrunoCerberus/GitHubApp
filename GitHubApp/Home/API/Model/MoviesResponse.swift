@@ -7,11 +7,11 @@
 
 import Foundation
 
+// MARK: - Movies
+
 struct MoviesResponse: Codable {
     let results: [Movie]
 }
-
-// MARK: - Movies
 
 struct Movie: Codable, Equatable, Identifiable {
     let id: Int
