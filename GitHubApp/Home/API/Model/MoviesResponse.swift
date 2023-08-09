@@ -19,7 +19,7 @@ struct Movie: Codable, Equatable, Identifiable {
     let overview: String
     let posterPath: String?
     var posterURL: URL? {
-        posterPath.map { URL(string: "https://image.tmdb.org/t/p/w400/\($0)")! }
+        posterPath.flatMap { URL(string: "https://image.tmdb.org/t/p/w400/\($0)") }
     }
 }
 
