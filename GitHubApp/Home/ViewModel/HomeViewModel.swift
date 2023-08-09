@@ -33,7 +33,7 @@ final class HomeViewModel: ObservableObject {
     
     }
     
-    func fetchData() {
+    func fetchData() async {
         service.fetchMovies()
             .map(\.results)
             .receive(on: DispatchQueue.main)

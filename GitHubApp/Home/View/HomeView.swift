@@ -46,11 +46,14 @@ struct HomeView<R: NavigationRouter>: View where R.NavigationEventType == HomeNa
                     }
                 )
             }
+            .refreshable {
+                await viewModel.fetchData()
+            }
             .scrollIndicators(.hidden)
             .navigationTitle("Upcoming Movies")
             .searchable(text: $viewModel.searchQuery)
-            .onAppear {
-                viewModel.fetchData()
+            .task {
+                await viewModel.fetchData()
             }
         }
     }
