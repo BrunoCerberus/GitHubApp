@@ -19,7 +19,6 @@ enum APIRequestError: Error {
 class APIRequest {
     // Main method for fetching API requests
     func fetchRequest<T: APIFetcher, V: Codable>(
-        debug: Bool = false, // Flag to enable/disable debugging
         target: T, // The APIFetcher object defining the request details
         dataType: V.Type // The Codable type for the expected response
     ) -> AnyPublisher<V, Error> {
@@ -63,7 +62,7 @@ class APIRequest {
         return session
             .dataTaskPublisher(for: request)
             .map(\.data, \.response)
-            .tryMap { [weak self, debug = debug] data, response in
+            .tryMap { [weak self, debug = target.debug] data, response in
                 if debug {
                     // Debug the response if debug flag is enabled
                     self?.debugResponse(request, data, response, nil)

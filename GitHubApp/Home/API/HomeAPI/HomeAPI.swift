@@ -38,4 +38,7 @@ enum HomeAPI: APIFetcher {
         return nil
     }
     
+    var debug: Bool {
+        return true
+    }
 }

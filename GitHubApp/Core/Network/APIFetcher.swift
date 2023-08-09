@@ -27,4 +27,7 @@ protocol APIFetcher {
     
     /// The request header key values
     var header: Codable? { get }
+    
+    /// For debug purposes
+    var debug: Bool { get }
 }
