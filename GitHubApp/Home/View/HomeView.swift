@@ -46,6 +46,7 @@ struct HomeView<R: NavigationRouter>: View where R.NavigationEventType == HomeNa
                     }
                 )
             }
+            .scrollIndicators(.hidden)
             .navigationTitle("Upcoming Movies")
             .searchable(text: $viewModel.searchQuery)
             .onAppear {

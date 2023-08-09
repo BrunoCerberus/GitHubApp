@@ -39,6 +39,7 @@ struct MovieDetailsView: View {
                 }
             }
         }
+        .scrollIndicators(.hidden)
         .navigationBarTitle(viewModel.movie.title)
         .onAppear {
             viewModel.fetchData()
