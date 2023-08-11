@@ -23,8 +23,18 @@ final class MovieDetailsViewModel: ObservableObject {
     }
     
     func fetchData() {
-        let creditsPublisher = service.fetchCredits(with: movie.id).map(\.cast).replaceError(with: [])
-        let reviewsPublisher = service.fetchReviews(with: movie.id).map(\.results).replaceError(with: [])
+        let creditsPublisher = service.fetchCredits(with: movie.id)
+            .map(\.cast)
+            .catch { [weak self] error -> AnyPublisher<[MovieCastMember], Never> in
+                guard let self else { return Just([]).eraseToAnyPublisher() }
+                return self.handleError(error)
+            }
+        let reviewsPublisher = service.fetchReviews(with: movie.id)
+            .map(\.results)
+            .catch { [weak self] error -> AnyPublisher<[MovieReview], Never> in
+                guard let self else { return Just([]).eraseToAnyPublisher() }
+                return self.handleError(error)
+            }
         
         Publishers.Zip(creditsPublisher, reviewsPublisher)
             .receive(on: DispatchQueue.main)
@@ -34,5 +44,12 @@ final class MovieDetailsViewModel: ObservableObject {
 //                self?.data = data
 //            }
 //            .store(in: &cancellables)
+    }
+    
+    private func handleError<T: Codable>(_ error: Error) -> AnyPublisher<[T], Never> {
+        // This is where you can add your error handling logic. For now, it just returns an empty array.
+        // Maybe you can update some UI to notify users about the error.
+        print(error)
+        return Just([]).eraseToAnyPublisher()
     }
 }
