@@ -22,7 +22,7 @@ struct HomeView<R: NavigationRouter>: View where R.NavigationEventType == HomeNa
         NavigationStack {
             List(viewModel.movies) { movie in
                 NavigationLink(
-                    destination: { MovieDetailsView(movie: movie) },
+                    destination: { MovieDetailsView(viewModel: MovieDetailsViewModel(movie: movie)) },
                     label: {
                         HStack {
                             AsyncImage(url: movie.posterURL) { poster in

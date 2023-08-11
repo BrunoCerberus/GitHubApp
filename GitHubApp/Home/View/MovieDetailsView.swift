@@ -9,11 +9,13 @@ import SwiftUI
 
 struct MovieDetailsView: View {
     
-    @StateObject var viewModel: MovieDetailsViewModel
+    @ObservedObject var viewModel: MovieDetailsViewModel
     
-    init(movie: Movie) {
-        _viewModel = StateObject(wrappedValue: MovieDetailsViewModel(movie: movie))
-    }
+//    @StateObject var viewModel: MovieDetailsViewModel
+//    
+//    init(movie: Movie) {
+//        _viewModel = StateObject(wrappedValue: MovieDetailsViewModel(movie: movie))
+//    }
     
     var body: some View {
         List {
