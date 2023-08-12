@@ -19,42 +19,37 @@ struct HomeView<R: NavigationRouter>: View where R.NavigationEventType == HomeNa
     }
     
     var body: some View {
-        NavigationStack {
-            List(viewModel.movies) { movie in
-                NavigationLink(
-                    destination: { MovieDetailsView(viewModel: MovieDetailsViewModel(movie: movie)) },
-                    label: {
-                        HStack {
-                            AsyncImage(url: movie.posterURL) { poster in
-                                poster
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 100)
-                            } placeholder: {
-                                ProgressView()
-                                    .frame(width: 100)
-                            }
-                            
-                            VStack(alignment: .leading) {
-                                Text(movie.title)
-                                    .font(.headline)
-                                Text(movie.overview)
-                                    .font(.caption)
-                                    .lineLimit(3)
-                            }
-                        }
-                    }
-                )
+        List(viewModel.movies) { movie in
+            HStack {
+                AsyncImage(url: movie.posterURL) { poster in
+                    poster
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 100)
+                } placeholder: {
+                    ProgressView()
+                        .frame(width: 100)
+                }
+                
+                VStack(alignment: .leading) {
+                    Text(movie.title)
+                        .font(.headline)
+                    Text(movie.overview)
+                        .font(.caption)
+                        .lineLimit(3)
+                }
             }
-            .refreshable {
-                await viewModel.fetchData()
+            .onTapGesture {
+                router.route(navigationEvent: .detail(movie))
             }
-            .scrollIndicators(.hidden)
-            .navigationTitle("Upcoming Movies")
-            .searchable(text: $viewModel.searchQuery)
-            .task {
-                await viewModel.fetchData()
-            }
+        }
+        .refreshable {
+            await viewModel.fetchData()
+        }
+        .scrollIndicators(.hidden)
+        .searchable(text: $viewModel.searchQuery)
+        .task {
+            await viewModel.fetchData()
         }
     }
 }

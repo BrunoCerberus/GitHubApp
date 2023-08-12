@@ -6,5 +6,5 @@
 //
 
 enum HomeNavigationEvent {
-    case detail
+    case detail(Movie)
 }

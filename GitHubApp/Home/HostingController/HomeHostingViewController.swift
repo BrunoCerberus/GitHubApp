@@ -9,10 +9,12 @@ import SwiftUI
 
 final class HomeHostingViewController<R: HomeNavigationRouter>: UIHostingController<HomeView<R>> {
     
+    let router: R
+    
     init(navigationRouter: R) {
+        self.router = navigationRouter
         let rootView = HomeView<R>(router: navigationRouter, viewModel: HomeViewModel())
         super.init(rootView: rootView)
-        navigationRouter.delegate = self
     }
     
     @MainActor @objc required dynamic init?(coder aDecoder: NSCoder) {
@@ -21,10 +23,7 @@ final class HomeHostingViewController<R: HomeNavigationRouter>: UIHostingControl
 
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
-}
-
-extension HomeHostingViewController: HomeNavigationRouterDelegate {
-    func showDetailScreen() {
+        self.title = "Upcoming Movies"
+        self.router.navigation = navigationController
     }
 }
