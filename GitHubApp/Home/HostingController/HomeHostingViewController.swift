@@ -24,6 +24,7 @@ final class HomeHostingViewController<R: HomeNavigationRouter>: UIHostingControl
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Upcoming Movies"
+        navigationController?.navigationBar.prefersLargeTitles = true
         self.router.navigation = navigationController
     }
 }
