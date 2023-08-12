@@ -9,7 +9,7 @@ import UIKit
 import SwiftUI
 
 final class HomeNavigationRouter: NavigationRouter {
-    var navigation: UINavigationController?
+    weak var navigation: UINavigationController?
 
     func route(navigationEvent: HomeNavigationEvent) {
         switch navigationEvent {
