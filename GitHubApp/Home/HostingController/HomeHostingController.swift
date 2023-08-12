@@ -1,5 +1,5 @@
 //
-//  HomeHostingViewController.swift
+//  HomeHostingController.swift
 //  GitHubApp
 //
 //  Created by bruno on 29/05/23.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-final class HomeHostingViewController<R: HomeNavigationRouter>: UIHostingController<HomeView<R>> {
+final class HomeHostingController<R: HomeNavigationRouter>: BaseHostingController<HomeView<R>> {
     
     let router: R
     

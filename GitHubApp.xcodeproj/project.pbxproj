@@ -22,10 +22,11 @@
 		1549C1A32A23C4800043EAEA /* GitHubAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1549C1A22A23C4800043EAEA /* GitHubAppTests.swift */; };
 		1549C1AD2A23C4800043EAEA /* GitHubAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1549C1AC2A23C4800043EAEA /* GitHubAppUITests.swift */; };
 		1549C1AF2A23C4800043EAEA /* GitHubAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1549C1AE2A23C4800043EAEA /* GitHubAppUITestsLaunchTests.swift */; };
-		1587EE0A2A882443005BCE4C /* MovieDetailsHostingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1587EE092A882443005BCE4C /* MovieDetailsHostingViewController.swift */; };
+		1587EE0A2A882443005BCE4C /* MovieDetailsHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1587EE092A882443005BCE4C /* MovieDetailsHostingController.swift */; };
+		1587EE0C2A8835E6005BCE4C /* BaseHostingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1587EE0B2A8835E6005BCE4C /* BaseHostingViewController.swift */; };
 		159BD8642A24D58700B6EEC1 /* GitHubAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8632A24D58700B6EEC1 /* GitHubAppDelegate.swift */; };
 		159BD8662A24D5DB00B6EEC1 /* GitHubAppSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8652A24D5DB00B6EEC1 /* GitHubAppSceneDelegate.swift */; };
-		159BD8692A24D64D00B6EEC1 /* HomeHostingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8682A24D64D00B6EEC1 /* HomeHostingViewController.swift */; };
+		159BD8692A24D64D00B6EEC1 /* HomeHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8682A24D64D00B6EEC1 /* HomeHostingController.swift */; };
 		159BD86B2A24D98200B6EEC1 /* NavigationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD86A2A24D98200B6EEC1 /* NavigationRouter.swift */; };
 		159BD86F2A24DA3F00B6EEC1 /* HomeNavigationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD86E2A24DA3F00B6EEC1 /* HomeNavigationRouter.swift */; };
 		159BD8712A24DA8A00B6EEC1 /* HomeNavigationEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8702A24DA8A00B6EEC1 /* HomeNavigationEvent.swift */; };
@@ -77,11 +78,12 @@
 		1549C1A82A23C4800043EAEA /* GitHubAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GitHubAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1549C1AC2A23C4800043EAEA /* GitHubAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAppUITests.swift; sourceTree = "<group>"; };
 		1549C1AE2A23C4800043EAEA /* GitHubAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		1587EE092A882443005BCE4C /* MovieDetailsHostingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailsHostingViewController.swift; sourceTree = "<group>"; };
+		1587EE092A882443005BCE4C /* MovieDetailsHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailsHostingController.swift; sourceTree = "<group>"; };
+		1587EE0B2A8835E6005BCE4C /* BaseHostingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseHostingViewController.swift; sourceTree = "<group>"; };
 		159BD8622A24D55C00B6EEC1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		159BD8632A24D58700B6EEC1 /* GitHubAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAppDelegate.swift; sourceTree = "<group>"; };
 		159BD8652A24D5DB00B6EEC1 /* GitHubAppSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAppSceneDelegate.swift; sourceTree = "<group>"; };
-		159BD8682A24D64D00B6EEC1 /* HomeHostingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHostingViewController.swift; sourceTree = "<group>"; };
+		159BD8682A24D64D00B6EEC1 /* HomeHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHostingController.swift; sourceTree = "<group>"; };
 		159BD86A2A24D98200B6EEC1 /* NavigationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationRouter.swift; sourceTree = "<group>"; };
 		159BD86E2A24DA3F00B6EEC1 /* HomeNavigationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNavigationRouter.swift; sourceTree = "<group>"; };
 		159BD8702A24DA8A00B6EEC1 /* HomeNavigationEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNavigationEvent.swift; sourceTree = "<group>"; };
@@ -236,6 +238,7 @@
 				159BD8842A25143600B6EEC1 /* CombineViewModel.swift */,
 				159BD8872A25191D00B6EEC1 /* CombineInteractor.swift */,
 				1523C8822A80483200E500D0 /* BaseURLs.swift */,
+				1587EE0B2A8835E6005BCE4C /* BaseHostingViewController.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -243,8 +246,8 @@
 		159BD8672A24D63600B6EEC1 /* HostingController */ = {
 			isa = PBXGroup;
 			children = (
-				159BD8682A24D64D00B6EEC1 /* HomeHostingViewController.swift */,
-				1587EE092A882443005BCE4C /* MovieDetailsHostingViewController.swift */,
+				159BD8682A24D64D00B6EEC1 /* HomeHostingController.swift */,
+				1587EE092A882443005BCE4C /* MovieDetailsHostingController.swift */,
 			);
 			path = HostingController;
 			sourceTree = "<group>";
@@ -464,10 +467,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				159BD8882A25191D00B6EEC1 /* CombineInteractor.swift in Sources */,
+				1587EE0C2A8835E6005BCE4C /* BaseHostingViewController.swift in Sources */,
 				159BD8642A24D58700B6EEC1 /* GitHubAppDelegate.swift in Sources */,
 				1523C8772A7F53F300E500D0 /* APIFetcher.swift in Sources */,
 				159BD8832A2513E400B6EEC1 /* HomeViewModel.swift in Sources */,
-				159BD8692A24D64D00B6EEC1 /* HomeHostingViewController.swift in Sources */,
+				159BD8692A24D64D00B6EEC1 /* HomeHostingController.swift in Sources */,
 				159BD87F2A25123B00B6EEC1 /* HomeDataViewState.swift in Sources */,
 				1523C8882A80517E00E500D0 /* APIKeys.swift in Sources */,
 				159BD86F2A24DA3F00B6EEC1 /* HomeNavigationRouter.swift in Sources */,
@@ -482,7 +486,7 @@
 				1523C88F2A805A2000E500D0 /* MovieDetailsViewModel.swift in Sources */,
 				159BD8712A24DA8A00B6EEC1 /* HomeNavigationEvent.swift in Sources */,
 				159BD8812A25129600B6EEC1 /* HomeViewEvent.swift in Sources */,
-				1587EE0A2A882443005BCE4C /* MovieDetailsHostingViewController.swift in Sources */,
+				1587EE0A2A882443005BCE4C /* MovieDetailsHostingController.swift in Sources */,
 				15BE63212A807DE200878CF1 /* JSONDecoder.swift in Sources */,
 				1523C8832A80483200E500D0 /* BaseURLs.swift in Sources */,
 				159BD8852A25143600B6EEC1 /* CombineViewModel.swift in Sources */,

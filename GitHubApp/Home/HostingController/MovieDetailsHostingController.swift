@@ -1,5 +1,5 @@
 //
-//  MovieDetailsHostingViewController.swift
+//  MovieDetailsHostingController.swift
 //  GitHubApp
 //
 //  Created by bruno on 12/08/23.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-final class MovieDetailsHostingViewController: UIHostingController<MovieDetailsView> {
+final class MovieDetailsHostingController: BaseHostingController<MovieDetailsView> {
     let movie: Movie
     
     init(movie: Movie) {
