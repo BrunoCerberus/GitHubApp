@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct HomeView<R: NavigationRouter>: View where R.NavigationEventType == HomeNavigationEvent {
+struct HomeView<R: HomeNavigationRouter>: View {
     private var router: R
     
     @ObservedObject private var viewModel: HomeViewModel
