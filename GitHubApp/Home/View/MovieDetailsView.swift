@@ -47,3 +47,19 @@ struct MovieDetailsView: View {
         }
     }
 }
+
+struct Previews_MovieDetailsView_Previews: PreviewProvider {
+    static var previews: some View {
+        let movie = Movie(
+            id: 615656,
+            title: "Meg 2: The Trench",
+            overview: "An exploratory dive into the deepest depths of the ocean of a daring research team spirals into chaos when a malevolent mining operation threatens their mission and forces them into a high-stakes battle for survival.",
+            posterPath: nil
+        )
+        NavigationStack {
+            MovieDetailsView(viewModel: MovieDetailsViewModel(movie: movie))
+                .navigationTitle(movie.title)
+        }
+        .preferredColorScheme(.dark)
+    }
+}
