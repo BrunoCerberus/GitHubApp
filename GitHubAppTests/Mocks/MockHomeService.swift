@@ -12,17 +12,17 @@ final class MockHomeService: HomeServiceProtocol {
         Movie(id: 346698,
               title: "Barbie",
               overview: "Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land. However, when they get a chance to go to the real world, they soon discover the joys and perils of living among humans.",
-              posterPath: "/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg"),
+              posterPath: ""),
         
         Movie(id: 615656,
               title: "Meg 2: The Trench",
               overview: "An exploratory dive into the deepest depths of the ocean of a daring research team spirals into chaos when a malevolent mining operation threatens their mission and forces them into a high-stakes battle for survival.",
-              posterPath: "/4m1Au3YkjqsxF8iwQy0fPYSxE0h.jpg"),
+              posterPath: ""),
         
         Movie(id: 496450,
               title: "Miraculous: Ladybug & Cat Noir, The Movie",
               overview: "A life of an ordinary Parisian teenager Marinette goes superhuman when she becomes Ladybug. Bestowed with magical powers of creation, Ladybug must unite with her opposite, Cat Noir, to save Paris as a new villain unleashes chaos unto the city.",
-              posterPath: "/bBON9XO9Ek0DjRwMBnJNCwC96Cd.jpg")
+              posterPath: "")
     ])
     
     private let mockMovieCreditsResponse = MovieCreditsResponse(cast: [

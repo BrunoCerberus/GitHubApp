@@ -226,6 +226,7 @@
 		1549C1A12A23C4800043EAEA /* GitHubAppTests */ = {
 			isa = PBXGroup;
 			children = (
+				152183202A893823007D42D9 /* Mocks */,
 				1549C1A22A23C4800043EAEA /* GitHubAppTests.swift */,
 			);
 			path = GitHubAppTests;
@@ -265,7 +266,6 @@
 		159BD86C2A24D9BC00B6EEC1 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				152183202A893823007D42D9 /* Mocks */,
 				1523C8782A7F593200E500D0 /* API */,
 				159BD8862A2518EA00B6EEC1 /* Interactors */,
 				159BD87D2A25121E00B6EEC1 /* Models */,
