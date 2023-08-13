@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		152183222A89382E007D42D9 /* MockHomeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152183212A89382E007D42D9 /* MockHomeService.swift */; };
 		1523C8752A7F52C900E500D0 /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523C8742A7F52C900E500D0 /* APIRequest.swift */; };
 		1523C8772A7F53F300E500D0 /* APIFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523C8762A7F53F300E500D0 /* APIFetcher.swift */; };
 		1523C87C2A7F594600E500D0 /* HomeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523C87B2A7F594600E500D0 /* HomeAPI.swift */; };
@@ -59,6 +60,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		152183212A89382E007D42D9 /* MockHomeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHomeService.swift; sourceTree = "<group>"; };
 		1523C8742A7F52C900E500D0 /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
 		1523C8762A7F53F300E500D0 /* APIFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIFetcher.swift; sourceTree = "<group>"; };
 		1523C87B2A7F594600E500D0 /* HomeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAPI.swift; sourceTree = "<group>"; };
@@ -123,6 +125,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		152183202A893823007D42D9 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				152183212A89382E007D42D9 /* MockHomeService.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		1523C8732A7F526900E500D0 /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -255,6 +265,7 @@
 		159BD86C2A24D9BC00B6EEC1 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				152183202A893823007D42D9 /* Mocks */,
 				1523C8782A7F593200E500D0 /* API */,
 				159BD8862A2518EA00B6EEC1 /* Interactors */,
 				159BD87D2A25121E00B6EEC1 /* Models */,
@@ -474,6 +485,7 @@
 				159BD8692A24D64D00B6EEC1 /* HomeHostingController.swift in Sources */,
 				159BD87F2A25123B00B6EEC1 /* HomeDataViewState.swift in Sources */,
 				1523C8882A80517E00E500D0 /* APIKeys.swift in Sources */,
+				152183222A89382E007D42D9 /* MockHomeService.swift in Sources */,
 				159BD86F2A24DA3F00B6EEC1 /* HomeNavigationRouter.swift in Sources */,
 				159BD86B2A24D98200B6EEC1 /* NavigationRouter.swift in Sources */,
 				159BD8742A24DB2500B6EEC1 /* HomeView.swift in Sources */,
