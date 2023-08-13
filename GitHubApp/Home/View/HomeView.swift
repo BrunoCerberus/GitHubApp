@@ -56,9 +56,11 @@ struct HomeView<R: NavigationRouter>: View where R.NavigationEventType == HomeNa
 
 struct Previews_HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        let mockService = MockHomeService()
-        let viewModel = HomeViewModel(service: mockService)
-        HomeView(router: HomeNavigationRouter(), viewModel: viewModel)
-            .preferredColorScheme(.dark)
+        NavigationStack {
+            let mockService = MockHomeService()
+            let viewModel = HomeViewModel(service: mockService)
+            HomeView(router: HomeNavigationRouter(), viewModel: viewModel)
+        }
+        .preferredColorScheme(.dark)
     }
 }
