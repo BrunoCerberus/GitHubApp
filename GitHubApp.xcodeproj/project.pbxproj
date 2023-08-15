@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		150C8AEB2A8B10E4000A7138 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150C8AEA2A8B10E4000A7138 /* Coordinator.swift */; };
+		150C8AEF2A8B227D000A7138 /* CoordinatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150C8AEE2A8B227D000A7138 /* CoordinatorView.swift */; };
 		152183222A89382E007D42D9 /* MockHomeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152183212A89382E007D42D9 /* MockHomeService.swift */; };
 		1523C8752A7F52C900E500D0 /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523C8742A7F52C900E500D0 /* APIRequest.swift */; };
 		1523C8772A7F53F300E500D0 /* APIFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1523C8762A7F53F300E500D0 /* APIFetcher.swift */; };
@@ -60,6 +62,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		150C8AEA2A8B10E4000A7138 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		150C8AEE2A8B227D000A7138 /* CoordinatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorView.swift; sourceTree = "<group>"; };
 		152183212A89382E007D42D9 /* MockHomeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHomeService.swift; sourceTree = "<group>"; };
 		1523C8742A7F52C900E500D0 /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
 		1523C8762A7F53F300E500D0 /* APIFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIFetcher.swift; sourceTree = "<group>"; };
@@ -125,6 +129,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		150C8AE92A8B10D9000A7138 /* Coordinator */ = {
+			isa = PBXGroup;
+			children = (
+				150C8AEA2A8B10E4000A7138 /* Coordinator.swift */,
+				150C8AEE2A8B227D000A7138 /* CoordinatorView.swift */,
+			);
+			path = Coordinator;
+			sourceTree = "<group>";
+		};
 		152183202A893823007D42D9 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
@@ -244,6 +257,7 @@
 		1549C1BB2A23C6C00043EAEA /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				150C8AE92A8B10D9000A7138 /* Coordinator */,
 				1523C8732A7F526900E500D0 /* Network */,
 				159BD86A2A24D98200B6EEC1 /* NavigationRouter.swift */,
 				159BD8842A25143600B6EEC1 /* CombineViewModel.swift */,
@@ -485,12 +499,14 @@
 				159BD8692A24D64D00B6EEC1 /* HomeHostingController.swift in Sources */,
 				159BD87F2A25123B00B6EEC1 /* HomeDataViewState.swift in Sources */,
 				1523C8882A80517E00E500D0 /* APIKeys.swift in Sources */,
+				150C8AEB2A8B10E4000A7138 /* Coordinator.swift in Sources */,
 				152183222A89382E007D42D9 /* MockHomeService.swift in Sources */,
 				159BD86F2A24DA3F00B6EEC1 /* HomeNavigationRouter.swift in Sources */,
 				159BD86B2A24D98200B6EEC1 /* NavigationRouter.swift in Sources */,
 				159BD8742A24DB2500B6EEC1 /* HomeView.swift in Sources */,
 				1523C8752A7F52C900E500D0 /* APIRequest.swift in Sources */,
 				1523C87E2A7F599C00E500D0 /* HomeService.swift in Sources */,
+				150C8AEF2A8B227D000A7138 /* CoordinatorView.swift in Sources */,
 				1523C8812A7F5C9700E500D0 /* MoviesResponse.swift in Sources */,
 				159BD8662A24D5DB00B6EEC1 /* GitHubAppSceneDelegate.swift in Sources */,
 				1523C87C2A7F594600E500D0 /* HomeAPI.swift in Sources */,
