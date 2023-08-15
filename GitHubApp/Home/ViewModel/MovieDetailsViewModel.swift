@@ -47,9 +47,7 @@ final class MovieDetailsViewModel: ObservableObject {
     }
     
     private func handleError<T: Codable>(_ error: Error) -> AnyPublisher<[T], Never> {
-        // This is where you can add your error handling logic. For now, it just returns an empty array.
-        // Maybe you can update some UI to notify users about the error.
-        print(error)
+        debugPrint(error)
         return Just([]).eraseToAnyPublisher()
     }
 }
