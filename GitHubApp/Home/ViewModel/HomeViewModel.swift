@@ -13,6 +13,7 @@ final class HomeViewModel: ObservableObject {
     @Published var searchQuery: String = ""
     @Published private var searchMovies: [Movie] = []
     
+    
     var movies: [Movie] {
         searchQuery.isEmpty ? upcomingMovies : searchMovies
     }
@@ -28,7 +29,7 @@ final class HomeViewModel: ObservableObject {
     
     private func setupBindings() {
         $searchQuery
-            .debounce(for: 0.3, scheduler: DispatchQueue.main)
+            .debounce(for: 1, scheduler: DispatchQueue.main)
             .sink(receiveValue: searchMovies(query:))
             .store(in: &cancellables)
     }
