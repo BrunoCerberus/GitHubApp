@@ -23,7 +23,6 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let rootView = UINavigationController(rootViewController: HomeHostingController(navigationRouter: HomeNavigationRouter()))
 //        let rootView = UIHostingController(rootView: CoordinatorView())
-//        rootView.setNavigationBarHidden(true, animated: false)
         rootView.overrideUserInterfaceStyle = .dark
         let window = UIWindow(windowScene: windowScene)
         window.rootViewController = rootView
