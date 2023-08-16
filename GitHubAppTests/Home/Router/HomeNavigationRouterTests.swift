@@ -22,6 +22,6 @@ final class HomeNavigationRouterTests: XCTestCase {
             expectation.fulfill()
         }
         
-        waitForExpectations(timeout: 0.3, handler: nil)
+        waitForExpectations(timeout: 0.1, handler: nil)
     }
 }
