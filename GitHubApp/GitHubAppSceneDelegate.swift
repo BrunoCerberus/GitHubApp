@@ -19,6 +19,10 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions
     ) {
+        
+        // This prevents the scene delegate being called when unit tests are running
+        if ProcessInfo.processInfo.environment["IS_RUNNING_UNIT_TESTS"] == "YES" { return }
+        
         guard let windowScene = scene as? UIWindowScene else { return }
         
         let rootView = UINavigationController(rootViewController: HomeHostingController(navigationRouter: HomeNavigationRouter()))

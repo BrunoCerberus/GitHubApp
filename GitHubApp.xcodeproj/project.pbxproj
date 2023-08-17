@@ -42,6 +42,7 @@
 		159BD8832A2513E400B6EEC1 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8822A2513E400B6EEC1 /* HomeViewModel.swift */; };
 		159BD8852A25143600B6EEC1 /* CombineViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8842A25143600B6EEC1 /* CombineViewModel.swift */; };
 		159BD8882A25191D00B6EEC1 /* CombineInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8872A25191D00B6EEC1 /* CombineInteractor.swift */; };
+		15ABA5B82A8DCB1900E243FF /* HomeViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ABA5B72A8DCB1900E243FF /* HomeViewTests.swift */; };
 		15BE63212A807DE200878CF1 /* JSONDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15BE63202A807DE200878CF1 /* JSONDecoder.swift */; };
 /* End PBXBuildFile section */
 
@@ -102,6 +103,7 @@
 		159BD8822A2513E400B6EEC1 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		159BD8842A25143600B6EEC1 /* CombineViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineViewModel.swift; sourceTree = "<group>"; };
 		159BD8872A25191D00B6EEC1 /* CombineInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineInteractor.swift; sourceTree = "<group>"; };
+		15ABA5B72A8DCB1900E243FF /* HomeViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewTests.swift; sourceTree = "<group>"; };
 		15BE63202A807DE200878CF1 /* JSONDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONDecoder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -143,6 +145,7 @@
 		1520F43B2A8CB73E0074229C /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				15ABA5B62A8DCB0900E243FF /* View */,
 				1520F43C2A8CB74F0074229C /* Router */,
 			);
 			path = Home;
@@ -377,6 +380,14 @@
 			path = Interactors;
 			sourceTree = "<group>";
 		};
+		15ABA5B62A8DCB0900E243FF /* View */ = {
+			isa = PBXGroup;
+			children = (
+				15ABA5B72A8DCB1900E243FF /* HomeViewTests.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -553,6 +564,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1520F43E2A8CB7710074229C /* HomeNavigationRouterTests.swift in Sources */,
+				15ABA5B82A8DCB1900E243FF /* HomeViewTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

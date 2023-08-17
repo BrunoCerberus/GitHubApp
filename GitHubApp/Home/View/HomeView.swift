@@ -44,22 +44,12 @@ struct HomeView<R: HomeNavigationRouter>: View {
             }
         }
         .refreshable {
-            await viewModel.fetchData()
+            viewModel.fetchData()
         }
         .scrollIndicators(.hidden)
         .searchable(text: $viewModel.searchQuery)
-        .task {
-            await viewModel.fetchData()
+        .onAppear {
+            viewModel.fetchData()
         }
-    }
-}
-
-struct Previews_HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationStack {
-            HomeView(router: HomeNavigationRouter(), viewModel: HomeViewModel())
-                .navigationTitle("Home")
-        }
-        .preferredColorScheme(.dark)
     }
 }

@@ -29,12 +29,13 @@ final class HomeViewModel: ObservableObject {
     
     private func setupBindings() {
         $searchQuery
+            .dropFirst()
             .debounce(for: 1, scheduler: DispatchQueue.main)
             .sink(receiveValue: searchMovies(query:))
             .store(in: &cancellables)
     }
     
-    func fetchData() async {
+    func fetchData() {
         service.fetchMovies()
             .map(\.results)
             .receive(on: DispatchQueue.main)
