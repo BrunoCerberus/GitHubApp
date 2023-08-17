@@ -25,6 +25,7 @@
 		1549C1952A23C4800043EAEA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1549C1942A23C4800043EAEA /* Assets.xcassets */; };
 		1549C1AD2A23C4800043EAEA /* GitHubAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1549C1AC2A23C4800043EAEA /* GitHubAppUITests.swift */; };
 		1549C1AF2A23C4800043EAEA /* GitHubAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1549C1AE2A23C4800043EAEA /* GitHubAppUITestsLaunchTests.swift */; };
+		158522B62A8DA3B700D881D2 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 158522B52A8DA3B700D881D2 /* SnapshotTesting */; };
 		1587EE0A2A882443005BCE4C /* MovieDetailsHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1587EE092A882443005BCE4C /* MovieDetailsHostingController.swift */; };
 		1587EE0C2A8835E6005BCE4C /* BaseHostingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1587EE0B2A8835E6005BCE4C /* BaseHostingViewController.swift */; };
 		159BD8642A24D58700B6EEC1 /* GitHubAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8632A24D58700B6EEC1 /* GitHubAppDelegate.swift */; };
@@ -116,6 +117,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				158522B62A8DA3B700D881D2 /* SnapshotTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,6 +393,8 @@
 			dependencies = (
 			);
 			name = GitHubApp;
+			packageProductDependencies = (
+			);
 			productName = GitHubApp;
 			productReference = 1549C18D2A23C47F0043EAEA /* GitHubApp.app */;
 			productType = "com.apple.product-type.application";
@@ -409,6 +413,9 @@
 				1549C1A02A23C4800043EAEA /* PBXTargetDependency */,
 			);
 			name = GitHubAppTests;
+			packageProductDependencies = (
+				158522B52A8DA3B700D881D2 /* SnapshotTesting */,
+			);
 			productName = GitHubAppTests;
 			productReference = 1549C19E2A23C4800043EAEA /* GitHubAppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -463,6 +470,9 @@
 				Base,
 			);
 			mainGroup = 1549C1842A23C47F0043EAEA;
+			packageReferences = (
+				158522B42A8DA3B700D881D2 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+			);
 			productRefGroup = 1549C18E2A23C47F0043EAEA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -779,10 +789,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.blopes.GitHubAppTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GitHubApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GitHubApp";
 			};
 			name = Debug;
@@ -802,10 +814,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.blopes.GitHubAppTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GitHubApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GitHubApp";
 			};
 			name = Release;
@@ -824,10 +838,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.blopes.GitHubAppUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_TARGET_NAME = GitHubApp;
 			};
 			name = Debug;
@@ -846,10 +862,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.blopes.GitHubAppUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_TARGET_NAME = GitHubApp;
 			};
 			name = Release;
@@ -894,6 +912,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		158522B42A8DA3B700D881D2 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		158522B52A8DA3B700D881D2 /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 158522B42A8DA3B700D881D2 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1549C1852A23C47F0043EAEA /* Project object */;
 }
