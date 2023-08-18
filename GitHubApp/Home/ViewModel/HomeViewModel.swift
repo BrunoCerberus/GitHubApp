@@ -9,14 +9,8 @@ import Combine
 import Foundation
 
 final class HomeViewModel: ObservableObject {
-    @Published private var upcomingMovies: [Movie] = []
+    @Published var movies: [Movie] = []
     @Published var searchQuery: String = ""
-    @Published private var searchMovies: [Movie] = []
-    
-    
-    var movies: [Movie] {
-        searchQuery.isEmpty ? upcomingMovies : searchMovies
-    }
     
     var cancellables = Set<AnyCancellable>()
     let service: HomeServiceProtocol
@@ -31,7 +25,13 @@ final class HomeViewModel: ObservableObject {
         $searchQuery
             .dropFirst()
             .debounce(for: 1, scheduler: DispatchQueue.main)
-            .sink(receiveValue: searchMovies(query:))
+            .sink(receiveValue: { [weak self] value in
+                if !value.isEmpty {
+                    self?.searchMovies(query: value)
+                } else {
+                    self?.fetchData()
+                }
+            })
             .store(in: &cancellables)
     }
     
@@ -43,7 +43,7 @@ final class HomeViewModel: ObservableObject {
                 guard let self else { return Just([]).eraseToAnyPublisher() }
                 return self.handleError(error)
             }
-            .assign(to: \.upcomingMovies, on: self)
+            .assign(to: \.movies, on: self)
             .store(in: &cancellables)
     }
     
@@ -55,7 +55,7 @@ final class HomeViewModel: ObservableObject {
                 guard let self else { return Just([]).eraseToAnyPublisher() }
                 return self.handleError(error)
             }
-            .assign(to: &$searchMovies)
+            .assign(to: &$movies)
     }
     
     private func handleError<T: Codable>(_ error: Error) -> AnyPublisher<[T], Never> {

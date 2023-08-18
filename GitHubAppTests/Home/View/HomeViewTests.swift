@@ -18,9 +18,8 @@ final class HomeViewTests: XCTestCase {
     var view: HomeView<HomeNavigationRouter>!
     
     override func setUp() {
-        super.setUp()  // Always call super.setUp()
+        super.setUp()
         
-        // Initialize the properties
         router = HomeNavigationRouter()
         mockService = MockHomeService()
         viewModel = HomeViewModel(service: mockService)
@@ -32,13 +31,5 @@ final class HomeViewTests: XCTestCase {
         let nav = UINavigationController(rootViewController: vc)
         
         assertSnapshot(matching: nav, as: .image(on: .iPhoneSe))
-    }
-}
-
-extension View {
-    var wrappedInViewController: UIViewController {
-        let viewController: UIHostingController = UIHostingController(rootView: self)
-        viewController.view.frame = UIScreen.main.bounds
-        return viewController
     }
 }
