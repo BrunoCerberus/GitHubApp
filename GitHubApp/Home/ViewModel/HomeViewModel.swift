@@ -24,6 +24,7 @@ final class HomeViewModel: ObservableObject {
     private func setupBindings() {
         $searchQuery
             .dropFirst()
+            .removeDuplicates()
             .debounce(for: 1, scheduler: DispatchQueue.main)
             .sink(receiveValue: { [weak self] value in
                 if !value.isEmpty {
