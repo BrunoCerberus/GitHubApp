@@ -21,7 +21,7 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         
         // This prevents the scene delegate being called when unit tests are running
-        if ProcessInfo.processInfo.environment["IS_RUNNING_UNIT_TESTS"] == "YES" { return }
+        guard ProcessInfo.processInfo.environment["IS_RUNNING_UNIT_TESTS"] != "YES" else { return }
         
         guard let windowScene = scene as? UIWindowScene else { return }
         
