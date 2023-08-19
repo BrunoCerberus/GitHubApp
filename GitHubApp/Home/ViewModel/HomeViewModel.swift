@@ -39,7 +39,6 @@ final class HomeViewModel: ObservableObject {
     func fetchData() {
         service.fetchMovies()
             .map(\.results)
-            .receive(on: DispatchQueue.main)
             .catch { [weak self] error -> AnyPublisher<[Movie], Never> in
                 guard let self else { return Just([]).eraseToAnyPublisher() }
                 return self.handleError(error)
@@ -51,7 +50,6 @@ final class HomeViewModel: ObservableObject {
     func searchMovies(query: String) {
         service.searchMovies(with: query)
             .map(\.results)
-            .receive(on: DispatchQueue.main)
             .catch { [weak self] error -> AnyPublisher<[Movie], Never> in
                 guard let self else { return Just([]).eraseToAnyPublisher() }
                 return self.handleError(error)
