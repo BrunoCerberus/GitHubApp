@@ -73,28 +73,28 @@ final class MockHomeService: HomeServiceProtocol {
     func fetchMovies() -> AnyPublisher<MoviesResponse, Error> {
         Just(mockMoviesResponse)
             .setFailureType(to: Error.self)
-            .receive(on: DispatchQueue.main)
+            .receive(on: RunLoop.current)
             .eraseToAnyPublisher()
     }
     
     func searchMovies(with query: String) -> AnyPublisher<MoviesResponse, Error> {
         Just(mockMoviesResponse)
             .setFailureType(to: Error.self)
-            .receive(on: DispatchQueue.main)
+            .receive(on: RunLoop.current)
             .eraseToAnyPublisher()
     }
     
     func fetchCredits(with id: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
         Just(mockMovieCreditsResponse)
             .setFailureType(to: Error.self)
-            .receive(on: DispatchQueue.main)
+            .receive(on: RunLoop.current)
             .eraseToAnyPublisher()
     }
     
     func fetchReviews(with id: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
         Just(mockMovieReviewsResponse)
             .setFailureType(to: Error.self)
-            .receive(on: DispatchQueue.main)
+            .receive(on: RunLoop.current)
             .eraseToAnyPublisher()
     }
 }
