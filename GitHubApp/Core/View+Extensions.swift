@@ -10,6 +10,7 @@ import SwiftUI
 extension View {
     var wrappedViewController: UIViewController {
         let vc = UIHostingController(rootView: self.testing(true))
+        vc.overrideUserInterfaceStyle = .dark
         return vc
     }
 }

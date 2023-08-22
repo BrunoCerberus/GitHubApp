@@ -36,6 +36,8 @@ struct AsyncImageViewer<Placeholder: View>: View {
         } else {
             Image("Schrodie")
                 .resizable()
+                .scaledToFit()
+                .frame(width: 100)
         }
     }
 }

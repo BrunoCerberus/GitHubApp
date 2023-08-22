@@ -5,6 +5,7 @@
 //  Created by bruno on 17/08/23.
 //
 
+import Combine
 import SnapshotTesting
 import SwiftUI
 import XCTest
@@ -29,7 +30,9 @@ final class HomeViewTests: XCTestCase {
     func testView() {
         let vc = view.wrappedViewController
         let nav = UINavigationController(rootViewController: vc)
+
+        viewModel.fetchData()
         
-        assertSnapshot(matching: nav, as: .image(on: .iPhoneSe))
+        assertSnapshot(matching: nav, as: .wait(for: 0.3, on: .image(on: .iPhoneSe)))
     }
 }
