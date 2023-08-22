@@ -7,11 +7,22 @@
 
 import SwiftUI
 
-struct AsyncImageViewer: View {
+struct AsyncImageViewer<Placeholder: View>: View {
     
     @Environment(\.isTesting) var isTesting: Bool
     
-    let url: URL
+    let url: URL?
+    let placeholder: Placeholder
+    
+    init(url: URL?) where Placeholder == EmptyView {
+        self.url = url
+        self.placeholder = EmptyView()
+    }
+    
+    init(url: URL?, placeholder: @escaping () -> Placeholder) {
+        self.url = url
+        self.placeholder = placeholder()
+    }
     
     var body: some View {
         if !isTesting {
@@ -19,10 +30,8 @@ struct AsyncImageViewer: View {
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 100)
             } placeholder: {
                 ProgressView()
-                    .frame(width: 100)
             }
         } else {
             Image("Schrodie")

@@ -21,15 +21,14 @@ struct HomeView<R: HomeNavigationRouter>: View {
     var body: some View {
         List(viewModel.movies) { movie in
             HStack {
-                AsyncImage(url: movie.posterURL) { poster in
-                    poster
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 100)
-                } placeholder: {
-                    ProgressView()
-                        .frame(width: 100)
-                }
+                AsyncImageViewer(
+                    url: movie.posterURL,
+                    placeholder: {
+                        ProgressView()
+                            .frame(width: 100)
+                    }
+                )
+                .frame(width: 100)
                 
                 VStack(alignment: .leading) {
                     Text(movie.title)
