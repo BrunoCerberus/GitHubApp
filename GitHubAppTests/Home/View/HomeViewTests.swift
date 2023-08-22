@@ -27,7 +27,7 @@ final class HomeViewTests: XCTestCase {
     }
     
     func testView() {
-        let vc = UIHostingController(rootView: view)
+        let vc = view.wrappedViewController
         let nav = UINavigationController(rootViewController: vc)
         
         assertSnapshot(matching: nav, as: .image(on: .iPhoneSe))

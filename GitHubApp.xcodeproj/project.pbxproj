@@ -28,6 +28,9 @@
 		158522B62A8DA3B700D881D2 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 158522B52A8DA3B700D881D2 /* SnapshotTesting */; };
 		1587EE0A2A882443005BCE4C /* MovieDetailsHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1587EE092A882443005BCE4C /* MovieDetailsHostingController.swift */; };
 		1587EE0C2A8835E6005BCE4C /* BaseHostingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1587EE0B2A8835E6005BCE4C /* BaseHostingViewController.swift */; };
+		159281362A9447F800A63589 /* AsyncImageViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159281352A9447F800A63589 /* AsyncImageViewer.swift */; };
+		1592813A2A9448BB00A63589 /* TestingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159281392A9448BB00A63589 /* TestingKey.swift */; };
+		1592813C2A944CEE00A63589 /* View+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1592813B2A944CEE00A63589 /* View+Extensions.swift */; };
 		159BD8642A24D58700B6EEC1 /* GitHubAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8632A24D58700B6EEC1 /* GitHubAppDelegate.swift */; };
 		159BD8662A24D5DB00B6EEC1 /* GitHubAppSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8652A24D5DB00B6EEC1 /* GitHubAppSceneDelegate.swift */; };
 		159BD8692A24D64D00B6EEC1 /* HomeHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8682A24D64D00B6EEC1 /* HomeHostingController.swift */; };
@@ -88,6 +91,9 @@
 		1549C1AE2A23C4800043EAEA /* GitHubAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		1587EE092A882443005BCE4C /* MovieDetailsHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailsHostingController.swift; sourceTree = "<group>"; };
 		1587EE0B2A8835E6005BCE4C /* BaseHostingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseHostingViewController.swift; sourceTree = "<group>"; };
+		159281352A9447F800A63589 /* AsyncImageViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncImageViewer.swift; sourceTree = "<group>"; };
+		159281392A9448BB00A63589 /* TestingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingKey.swift; sourceTree = "<group>"; };
+		1592813B2A944CEE00A63589 /* View+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extensions.swift"; sourceTree = "<group>"; };
 		159BD8622A24D55C00B6EEC1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		159BD8632A24D58700B6EEC1 /* GitHubAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAppDelegate.swift; sourceTree = "<group>"; };
 		159BD8652A24D5DB00B6EEC1 /* GitHubAppSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAppSceneDelegate.swift; sourceTree = "<group>"; };
@@ -285,6 +291,9 @@
 				159BD8872A25191D00B6EEC1 /* CombineInteractor.swift */,
 				1523C8822A80483200E500D0 /* BaseURLs.swift */,
 				1587EE0B2A8835E6005BCE4C /* BaseHostingViewController.swift */,
+				159281352A9447F800A63589 /* AsyncImageViewer.swift */,
+				159281392A9448BB00A63589 /* TestingKey.swift */,
+				1592813B2A944CEE00A63589 /* View+Extensions.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -529,9 +538,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				159BD8882A25191D00B6EEC1 /* CombineInteractor.swift in Sources */,
+				1592813C2A944CEE00A63589 /* View+Extensions.swift in Sources */,
 				1587EE0C2A8835E6005BCE4C /* BaseHostingViewController.swift in Sources */,
 				159BD8642A24D58700B6EEC1 /* GitHubAppDelegate.swift in Sources */,
 				1523C8772A7F53F300E500D0 /* APIFetcher.swift in Sources */,
+				1592813A2A9448BB00A63589 /* TestingKey.swift in Sources */,
 				159BD8832A2513E400B6EEC1 /* HomeViewModel.swift in Sources */,
 				159BD8692A24D64D00B6EEC1 /* HomeHostingController.swift in Sources */,
 				159BD87F2A25123B00B6EEC1 /* HomeDataViewState.swift in Sources */,
@@ -541,6 +552,7 @@
 				159BD86F2A24DA3F00B6EEC1 /* HomeNavigationRouter.swift in Sources */,
 				159BD86B2A24D98200B6EEC1 /* NavigationRouter.swift in Sources */,
 				159BD8742A24DB2500B6EEC1 /* HomeView.swift in Sources */,
+				159281362A9447F800A63589 /* AsyncImageViewer.swift in Sources */,
 				1523C8752A7F52C900E500D0 /* APIRequest.swift in Sources */,
 				1523C87E2A7F599C00E500D0 /* HomeService.swift in Sources */,
 				150C8AEF2A8B227D000A7138 /* CoordinatorView.swift in Sources */,
