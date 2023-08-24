@@ -25,7 +25,6 @@ struct HomeView<R: HomeNavigationRouter>: View {
                     url: movie.posterURL,
                     placeholder: {
                         ProgressView()
-                            .frame(width: 100)
                     }
                 )
                 .frame(width: 100)
