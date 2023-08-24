@@ -28,7 +28,6 @@ struct HomeView<R: HomeNavigationRouter>: View {
                     }
                 )
                 .frame(width: 100)
-                
                 VStack(alignment: .leading) {
                     Text(movie.title)
                         .font(.headline)
