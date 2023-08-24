@@ -23,7 +23,7 @@ struct Movie: Codable, Hashable, Identifiable {
     }
 }
 
-//MARK: - Credits
+// MARK: - Credits
 
 struct MovieCreditsResponse: Codable {
     let cast: [MovieCastMember]
@@ -35,7 +35,7 @@ struct MovieCastMember: Identifiable, Equatable, Codable {
     let character: String
 }
 
-//MARK: - Reviews
+// MARK: - Reviews
 
 struct MovieReviewsResponse: Codable {
     let results: [MovieReview]

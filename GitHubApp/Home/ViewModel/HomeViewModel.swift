@@ -11,16 +11,15 @@ import Foundation
 final class HomeViewModel: ObservableObject {
     @Published var movies: [Movie] = []
     @Published var searchQuery: String = ""
-    
+
     var cancellables = Set<AnyCancellable>()
     let service: HomeServiceProtocol
-    
+
     init(service: HomeServiceProtocol = HomeService()) {
         self.service = service
         setupBindings()
-    
     }
-    
+
     private func setupBindings() {
         $searchQuery
             .dropFirst()
@@ -35,7 +34,7 @@ final class HomeViewModel: ObservableObject {
             })
             .store(in: &cancellables)
     }
-    
+
     func fetchData() {
         service.fetchMovies()
             .map(\.results)
@@ -46,7 +45,7 @@ final class HomeViewModel: ObservableObject {
             .assign(to: \.movies, on: self)
             .store(in: &cancellables)
     }
-    
+
     func searchMovies(query: String) {
         service.searchMovies(with: query)
             .map(\.results)
@@ -56,7 +55,7 @@ final class HomeViewModel: ObservableObject {
             }
             .assign(to: &$movies)
     }
-    
+
     private func handleError<T: Codable>(_ error: Error) -> AnyPublisher<[T], Never> {
         debugPrint(error)
         return Just([]).eraseToAnyPublisher()

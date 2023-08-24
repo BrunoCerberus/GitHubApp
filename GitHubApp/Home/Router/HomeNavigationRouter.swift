@@ -14,8 +14,8 @@ final class HomeNavigationRouter: NavigationRouter {
     func route(navigationEvent: HomeNavigationEvent) {
         switch navigationEvent {
         case let .detail(movie):
-            let vc = MovieDetailsHostingController(movie: movie)
-            navigation?.pushViewController(vc, animated: true)
+            let controller = MovieDetailsHostingController(movie: movie)
+            navigation?.pushViewController(controller, animated: true)
         }
     }
 }

@@ -9,15 +9,15 @@ import SwiftUI
 
 struct HomeView<R: HomeNavigationRouter>: View {
     private var router: R
-    
+
     @ObservedObject private var viewModel: HomeViewModel
-    
+
     init(router: R,
          viewModel: HomeViewModel) {
         self.router = router
         self.viewModel = viewModel
     }
-    
+
     var body: some View {
         List(viewModel.movies) { movie in
             HStack {

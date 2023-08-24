@@ -12,9 +12,9 @@ import Combine
 public protocol CombineViewModel: ObservableObject {
     associatedtype ViewStateType
     associatedtype ViewEventType
-    
+
     var viewState: ViewStateType { get }
-    
+
     /// Sends a `ViewEventType` to the `ViewModel` asynchronously.
     /// Use this when sending a `ViewEventType` from an asynchronous context.
     ///  - parameters:
@@ -29,7 +29,7 @@ final class AnyCombineViewModel<ViewStateType, ViewEventType>: CombineViewModel 
     private let viewEventSender: (ViewEventType) -> Void
     private let viewStateGetter: () -> ViewStateType
     private var subscriptions: Set<AnyCancellable> = []
-    
+
     init<VM: CombineViewModel>(viewModel: VM) where VM.ViewStateType == ViewStateType,
     VM.ViewEventType == ViewEventType {
         viewEventSender = viewModel.sendViewEvent(_:)
@@ -41,7 +41,7 @@ final class AnyCombineViewModel<ViewStateType, ViewEventType>: CombineViewModel 
                 self?.objectWillChange.send()
             }.store(in: &subscriptions)
     }
-    
+
     public func sendViewEvent(_ event: ViewEventType) {
         viewEventSender(event)
     }

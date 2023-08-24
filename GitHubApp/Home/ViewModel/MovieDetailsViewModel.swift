@@ -9,19 +9,17 @@ import Combine
 import Foundation
 
 final class MovieDetailsViewModel: ObservableObject {
-    
     @Published var data: (credits: [MovieCastMember], reviews: [MovieReview]) = ([], [])
-    
+
     let movie: Movie
     let service: HomeServiceProtocol
-    
+
     init(movie: Movie,
          service: HomeServiceProtocol = HomeService()) {
         self.movie = movie
         self.service = service
-        
     }
-    
+
     func fetchData() {
         let creditsPublisher = service.fetchCredits(with: movie.id)
             .map(\.cast)
@@ -35,7 +33,7 @@ final class MovieDetailsViewModel: ObservableObject {
                 guard let self else { return Just([]).eraseToAnyPublisher() }
                 return self.handleError(error)
             }
-        
+
         Publishers.Zip(creditsPublisher, reviewsPublisher)
             .receive(on: DispatchQueue.main)
             .map { (credits: $0.0, reviews: $0.1) }
@@ -45,7 +43,7 @@ final class MovieDetailsViewModel: ObservableObject {
 //            }
 //            .store(in: &cancellables)
     }
-    
+
     private func handleError<T: Codable>(_ error: Error) -> AnyPublisher<[T], Never> {
         debugPrint(error)
         return Just([]).eraseToAnyPublisher()

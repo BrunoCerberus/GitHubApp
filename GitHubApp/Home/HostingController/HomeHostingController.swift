@@ -8,15 +8,14 @@
 import SwiftUI
 
 final class HomeHostingController<R: HomeNavigationRouter>: BaseHostingController<HomeView<R>> {
-    
     let router: R
-    
+
     init(navigationRouter: R) {
         self.router = navigationRouter
         let rootView = HomeView<R>(router: navigationRouter, viewModel: HomeViewModel())
         super.init(rootView: rootView)
     }
-    
+
     @MainActor @objc required dynamic init?(coder aDecoder: NSCoder) {
         return nil
     }
