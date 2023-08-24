@@ -32,8 +32,8 @@ final class MovieDetailsViewTests: XCTestCase {
     }
 
     func testView() {
-        let viewController = view.wrappedViewController
-        let nav = UINavigationController(rootViewController: viewController)
+        let controller = view.wrappedViewController
+        let nav = UINavigationController(rootViewController: controller)
 
         viewModel.fetchData()
 
