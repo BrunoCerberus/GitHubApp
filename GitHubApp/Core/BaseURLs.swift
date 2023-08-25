@@ -7,4 +7,5 @@
 
 enum BaseURLs: String {
     case theMovie = "https://api.themoviedb.org/3"
+    case image = "https://image.tmdb.org/t/p/w400/"
 }
