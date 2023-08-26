@@ -36,14 +36,16 @@ final class HomeViewModel: ObservableObject {
     }
 
     func fetchData() {
-        service.fetchMovies()
-            .map(\.results)
-            .catch { [weak self] error -> AnyPublisher<[Movie], Never> in
-                guard let self else { return Just([]).eraseToAnyPublisher() }
-                return self.handleError(error)
-            }
-            .assign(to: \.movies, on: self)
-            .store(in: &cancellables)
+        if searchQuery.isEmpty {
+            service.fetchMovies()
+                .map(\.results)
+                .catch { [weak self] error -> AnyPublisher<[Movie], Never> in
+                    guard let self else { return Just([]).eraseToAnyPublisher() }
+                    return self.handleError(error)
+                }
+                .assign(to: \.movies, on: self)
+                .store(in: &cancellables)
+        }
     }
 
     func searchMovies(query: String) {
