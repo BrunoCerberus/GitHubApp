@@ -10,4 +10,5 @@ import Foundation
 enum HomeViewState: Equatable {
     case loading
     case success(HomeDataViewState)
+    case error(String)
 }

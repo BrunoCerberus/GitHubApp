@@ -9,5 +9,4 @@ import Foundation
 
 enum HomeViewEvent: Equatable {
     case fetchData
-    case pullToRefresh
 }
