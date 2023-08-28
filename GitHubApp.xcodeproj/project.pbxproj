@@ -314,7 +314,6 @@
 			children = (
 				1523C8782A7F593200E500D0 /* API */,
 				159BD8862A2518EA00B6EEC1 /* Interactors */,
-				159BD87D2A25121E00B6EEC1 /* Models */,
 				159BD87A2A2511B600B6EEC1 /* ViewEvents */,
 				159BD8792A2511B000B6EEC1 /* ViewStates */,
 				159BD8782A25111700B6EEC1 /* ViewModel */,
@@ -363,6 +362,7 @@
 		159BD8792A2511B000B6EEC1 /* ViewStates */ = {
 			isa = PBXGroup;
 			children = (
+				159BD87E2A25123B00B6EEC1 /* HomeDataViewState.swift */,
 				159BD87B2A25120000B6EEC1 /* HomeViewState.swift */,
 			);
 			path = ViewStates;
@@ -374,14 +374,6 @@
 				159BD8802A25129600B6EEC1 /* HomeViewEvent.swift */,
 			);
 			path = ViewEvents;
-			sourceTree = "<group>";
-		};
-		159BD87D2A25121E00B6EEC1 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				159BD87E2A25123B00B6EEC1 /* HomeDataViewState.swift */,
-			);
-			path = Models;
 			sourceTree = "<group>";
 		};
 		159BD8862A2518EA00B6EEC1 /* Interactors */ = {
