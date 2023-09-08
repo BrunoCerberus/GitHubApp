@@ -18,7 +18,7 @@ enum HomeAPI: APIFetcher {
     }
 
     private var apiKey: String {
-        return APIKeys.theMovieAPIKey
+        return APIKeysProvider.theMovieAPIKey
     }
 
     var path: String {
