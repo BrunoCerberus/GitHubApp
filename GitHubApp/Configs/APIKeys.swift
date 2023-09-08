@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct APIKeys {
+struct APIKeysProvider {
     static let theMovieAPIKey: String = {
         guard let path = Bundle.main.path(
             forResource: ProcessInfo.processInfo.environment["API_ENVIRONMENT"],
