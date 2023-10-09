@@ -29,10 +29,9 @@ final class HomeViewTests: XCTestCase {
 
     func testView() {
         let controller = view.wrappedViewController
-        let nav = UINavigationController(rootViewController: controller)
 
         viewModel.fetchData()
 
-        assertSnapshot(matching: nav, as: .wait(for: 0.3, on: .image(on: .iPhoneSe)))
+        assertSnapshot(matching: controller, as: .wait(for: 0.3, on: .image(on: .iPhoneSe)))
     }
 }

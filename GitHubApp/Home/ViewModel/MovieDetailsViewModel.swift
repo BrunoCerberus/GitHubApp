@@ -54,7 +54,7 @@ extension MovieDetailsViewModel {
     public var showCredits: Bool {
         return !data.credits.isEmpty
     }
-    
+
     public var showReviews: Bool {
         return !data.reviews.isEmpty
     }
