@@ -19,24 +19,28 @@ struct MovieDetailsView: View {
 
     var body: some View {
         List {
-            Section(header: Text("Credits")) {
-                ForEach(viewModel.data.credits) { credit in
-                    VStack(alignment: .leading) {
-                        Text(credit.name)
-                            .font(.headline)
-                        Text(credit.character)
-                            .font(.caption)
+            if viewModel.showCredits {
+                Section(header: Text("Credits")) {
+                    ForEach(viewModel.data.credits) { credit in
+                        VStack(alignment: .leading) {
+                            Text(credit.name)
+                                .font(.headline)
+                            Text(credit.character)
+                                .font(.caption)
+                        }
                     }
                 }
             }
 
-            Section(header: Text("Reviews")) {
-                ForEach(viewModel.data.reviews) { review in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(review.author)
-                            .font(.headline)
-                        Text(review.content)
-                            .font(.body)
+            if viewModel.showReviews {
+                Section(header: Text("Reviews")) {
+                    ForEach(viewModel.data.reviews) { review in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(review.author)
+                                .font(.headline)
+                            Text(review.content)
+                                .font(.body)
+                        }
                     }
                 }
             }

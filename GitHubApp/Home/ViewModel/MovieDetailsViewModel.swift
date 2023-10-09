@@ -49,3 +49,13 @@ final class MovieDetailsViewModel: ObservableObject {
         return Just([]).eraseToAnyPublisher()
     }
 }
+
+extension MovieDetailsViewModel {
+    public var showCredits: Bool {
+        return !data.credits.isEmpty
+    }
+    
+    public var showReviews: Bool {
+        return !data.reviews.isEmpty
+    }
+}
