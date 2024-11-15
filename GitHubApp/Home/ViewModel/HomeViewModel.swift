@@ -11,9 +11,10 @@ import Foundation
 final class HomeViewModel: ObservableObject {
     @Published var movies: [Movie] = []
     @Published var searchQuery: String = ""
+    @Published var error: String?
 
-    var cancellables = Set<AnyCancellable>()
-    let service: HomeServiceProtocol
+    private var cancellables = Set<AnyCancellable>()
+    private let service: HomeServiceProtocol
 
     init(service: HomeServiceProtocol = HomeService()) {
         self.service = service
@@ -25,41 +26,36 @@ final class HomeViewModel: ObservableObject {
             .dropFirst()
             .removeDuplicates()
             .debounce(for: 1, scheduler: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] value in
-                if !value.isEmpty {
-                    self?.searchMovies(query: value)
-                } else {
-                    self?.fetchData()
-                }
-            })
+            .sink { [weak self] query in
+                guard let self else { return }
+                self.searchQuery.isEmpty ? self.fetchData() : self.searchMovies(query: query)
+            }
             .store(in: &cancellables)
     }
 
     func fetchData() {
-        if searchQuery.isEmpty {
-            service.fetchMovies()
-                .map(\.results)
-                .catch { [weak self] error -> AnyPublisher<[Movie], Never> in
-                    guard let self else { return Just([]).eraseToAnyPublisher() }
-                    return self.handleError(error)
-                }
-                .assign(to: \.movies, on: self)
-                .store(in: &cancellables)
-        }
+        service.fetchMovies()
+            .map(\.results)
+            .catch { [weak self] error -> AnyPublisher<[Movie], Never> in
+                self?.handleError(error)
+                return Just([]).eraseToAnyPublisher()
+            }
+            .assign(to: \.movies, on: self)
+            .store(in: &cancellables)
     }
 
     func searchMovies(query: String) {
         service.searchMovies(with: query)
             .map(\.results)
             .catch { [weak self] error -> AnyPublisher<[Movie], Never> in
-                guard let self else { return Just([]).eraseToAnyPublisher() }
-                return self.handleError(error)
+                self?.handleError(error)
+                return Just([]).eraseToAnyPublisher()
             }
             .assign(to: &$movies)
     }
 
-    private func handleError<T: Codable>(_ error: Error) -> AnyPublisher<[T], Never> {
+    private func handleError(_ error: Error) {
         debugPrint(error)
-        return Just([]).eraseToAnyPublisher()
+        self.error = "An error occurred. Please try again."
     }
 }

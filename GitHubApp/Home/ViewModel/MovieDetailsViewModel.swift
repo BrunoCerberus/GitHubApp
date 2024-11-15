@@ -10,6 +10,7 @@ import Foundation
 
 final class MovieDetailsViewModel: ObservableObject {
     @Published var data: (credits: [MovieCastMember], reviews: [MovieReview]) = ([], [])
+    @Published var error: String?
 
     let movie: Movie
     let service: HomeServiceProtocol
@@ -21,33 +22,37 @@ final class MovieDetailsViewModel: ObservableObject {
     }
 
     func fetchData() {
-        let creditsPublisher = service.fetchCredits(with: movie.id)
-            .map(\.cast)
-            .catch { [weak self] error -> AnyPublisher<[MovieCastMember], Never> in
-                guard let self else { return Just([]).eraseToAnyPublisher() }
-                return self.handleError(error)
-            }
-        let reviewsPublisher = service.fetchReviews(with: movie.id)
-            .map(\.results)
-            .catch { [weak self] error -> AnyPublisher<[MovieReview], Never> in
-                guard let self else { return Just([]).eraseToAnyPublisher() }
-                return self.handleError(error)
-            }
-
-        Publishers.Zip(creditsPublisher, reviewsPublisher)
+        fetchCredits()
+            .zip(fetchReviews())
             .receive(on: DispatchQueue.main)
-            .map { (credits: $0.0, reviews: $0.1) }
-            .assign(to: &$data)
-//            .sink { [weak self] data in
-//                self?.data = data
-//            }
-//            .store(in: &cancellables)
+            .sink(receiveCompletion: { [weak self] completion in
+                if case .failure(let error) = completion {
+                    self?.handleError(error)
+                }
+            }, receiveValue: { [weak self] credits, reviews in
+                self?.data = (credits, reviews)
+            })
+            .store(in: &cancellables)
     }
 
-    private func handleError<T: Codable>(_ error: Error) -> AnyPublisher<[T], Never> {
-        debugPrint(error)
-        return Just([]).eraseToAnyPublisher()
+    private func fetchCredits() -> AnyPublisher<[MovieCastMember], Error> {
+        service.fetchCredits(with: movie.id)
+            .map(\.cast)
+            .eraseToAnyPublisher()
     }
+
+    private func fetchReviews() -> AnyPublisher<[MovieReview], Error> {
+        service.fetchReviews(with: movie.id)
+            .map(\.results)
+            .eraseToAnyPublisher()
+    }
+
+    private func handleError(_ error: Error) {
+        self.error = "Failed to load data: \(error.localizedDescription)"
+        debugPrint(error)
+    }
+
+    private var cancellables = Set<AnyCancellable>()
 }
 
 extension MovieDetailsViewModel {
