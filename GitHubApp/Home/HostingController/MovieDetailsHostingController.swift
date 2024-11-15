@@ -12,7 +12,8 @@ final class MovieDetailsHostingController: BaseHostingController<MovieDetailsVie
 
     init(movie: Movie) {
         self.movie = movie
-        let rootView = MovieDetailsView(viewModel: MovieDetailsViewModel(movie: movie))
+        let viewModel = MovieDetailsViewModel(movie: movie)
+        let rootView = MovieDetailsView(viewModel: viewModel)
         super.init(rootView: rootView)
     }
 

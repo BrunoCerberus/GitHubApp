@@ -9,24 +9,25 @@ import SwiftUI
 
 struct MovieDetailsView: View {
 
-    @ObservedObject var viewModel: MovieDetailsViewModel
-
-//    @StateObject var viewModel: MovieDetailsViewModel
-//    
-//    init(movie: Movie) {
-//        _viewModel = StateObject(wrappedValue: MovieDetailsViewModel(movie: movie))
-//    }
+    @StateObject var viewModel: MovieDetailsViewModel
 
     var body: some View {
         List {
             if viewModel.showCredits {
                 Section(header: Text("Credits")) {
-                    ForEach(viewModel.data.credits) { credit in
-                        VStack(alignment: .leading) {
-                            Text(credit.name)
-                                .font(.headline)
-                            Text(credit.character)
-                                .font(.caption)
+                    if viewModel.data.credits.isEmpty {
+                        Text("No credits available")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    } else {
+                        ForEach(viewModel.data.credits) { credit in
+                            VStack(alignment: .leading) {
+                                Text(credit.name)
+                                    .font(.headline)
+                                Text(credit.character)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
                 }
@@ -34,12 +35,20 @@ struct MovieDetailsView: View {
 
             if viewModel.showReviews {
                 Section(header: Text("Reviews")) {
-                    ForEach(viewModel.data.reviews) { review in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(review.author)
-                                .font(.headline)
-                            Text(review.content)
-                                .font(.body)
+                    if viewModel.data.reviews.isEmpty {
+                        Text("No reviews available")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    } else {
+                        ForEach(viewModel.data.reviews) { review in
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(review.author)
+                                    .font(.headline)
+                                Text(review.content)
+                                    .font(.body)
+                                    .lineLimit(3)
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
                 }
@@ -52,20 +61,18 @@ struct MovieDetailsView: View {
     }
 }
 
-struct MovieDetailsView_Previews: PreviewProvider {
-    static var previews: some View {
-        let movie = Movie(
-            id: 615656,
-            title: "Meg 2: The Trench",
-            overview: "An exploratory dive into the deepest depths of the ocean of " +
-            "a daring research team spirals into chaos when a malevolent mining operation " +
-            "threatens their mission and forces them into a high-stakes battle for survival.",
-            posterPath: nil
-        )
-        NavigationStack {
-            MovieDetailsView(viewModel: MovieDetailsViewModel(movie: movie))
-                .navigationTitle(movie.title)
-        }
-        .preferredColorScheme(.dark)
+#Preview {
+    let movie = Movie(
+        id: 615656,
+        title: "Meg 2: The Trench",
+        overview: "An exploratory dive into the deepest depths of the ocean of " +
+        "a daring research team spirals into chaos when a malevolent mining operation " +
+        "threatens their mission and forces them into a high-stakes battle for survival.",
+        posterPath: "poster_image_path_here"
+    )
+    NavigationStack {
+        MovieDetailsView(viewModel: MovieDetailsViewModel(movie: movie))
+            .navigationTitle(movie.title)
     }
+    .preferredColorScheme(.dark)
 }

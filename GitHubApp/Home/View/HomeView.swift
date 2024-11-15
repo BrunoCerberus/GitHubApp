@@ -10,12 +10,12 @@ import SwiftUI
 struct HomeView<R: HomeNavigationRouter>: View {
     private var router: R
 
-    @ObservedObject private var viewModel: HomeViewModel
+    @StateObject private var viewModel: HomeViewModel
 
     init(router: R,
-         viewModel: HomeViewModel) {
+         viewModel: HomeViewModel? = nil) {
         self.router = router
-        self.viewModel = viewModel
+        _viewModel = StateObject(wrappedValue: viewModel ?? HomeViewModel(service: HomeService()))
     }
 
     var body: some View {
@@ -49,4 +49,12 @@ struct HomeView<R: HomeNavigationRouter>: View {
             viewModel.fetchData()
         }
     }
+}
+
+#Preview {
+    let viewModel = HomeViewModel(service: HomeService())
+    HomeView(
+        router: HomeNavigationRouter(),
+        viewModel: viewModel
+    )
 }
