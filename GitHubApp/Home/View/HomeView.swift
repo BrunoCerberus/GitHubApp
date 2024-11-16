@@ -11,6 +11,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
     private var router: R
 
     @StateObject private var viewModel: HomeViewModel
+//    @EnvironmentObject var coordinator: Coordinator
 
     init(router: R,
          viewModel: HomeViewModel? = nil) {
@@ -38,6 +39,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
             }
             .onTapGesture {
                 router.route(navigationEvent: .detail(movie))
+//                coordinator.push(page: .detail(movie))
             }
         }
         .refreshable {
@@ -47,6 +49,11 @@ struct HomeView<R: HomeNavigationRouter>: View {
         .searchable(text: $viewModel.searchQuery)
         .onAppear {
             viewModel.fetchData()
+        }
+        .overlay {
+            if let error =  viewModel.error {
+                Text(error)
+            }
         }
     }
 }

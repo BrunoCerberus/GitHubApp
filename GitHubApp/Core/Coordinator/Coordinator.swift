@@ -12,7 +12,7 @@ enum Page: Hashable {
     case detail(Movie)
 }
 
-class Coordinator: ObservableObject {
+final class Coordinator: ObservableObject {
     @Published var path = NavigationPath()
 
     lazy var homeViewModel = HomeViewModel()
