@@ -28,7 +28,7 @@ final class MovieDetailsViewTests: XCTestCase {
 
         mockService = MockHomeService()
         viewModel = MovieDetailsViewModel(movie: movie, service: mockService)
-        view = MovieDetailsView(viewModel: viewModel)
+        view = MovieDetailsView(viewModel: self.viewModel)
     }
 
     func testView() {
