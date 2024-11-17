@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import EntropyCore
 
 struct HomeView<R: HomeNavigationRouter>: View {
     private var router: R

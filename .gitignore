@@ -5,3 +5,5 @@
 *.xcbkptlist
 GitHubApp.xcodeproj/project.xcworkspace/xcuserdata/bruno.xcuserdatad/UserInterfaceState.xcuserstate
 /GitHubApp.xcodeproj/xcuserdata
+*.xcbkptlist
+*.xcuserstate

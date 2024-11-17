@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import EntropyCore
 
 final class MovieDetailsHostingController: BaseHostingController<MovieDetailsView> {
     let movie: Movie

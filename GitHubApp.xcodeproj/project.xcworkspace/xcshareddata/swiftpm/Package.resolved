@@ -1,5 +1,15 @@
 {
+  "originHash" : "fe77519b53063715026b3a1c8fec6a79377362f30b11dcfe0733e123fbe5209c",
   "pins" : [
+    {
+      "identity" : "entropycore",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BrunoCerberus/EntropyCore.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "743ba559e0b7298d0fccf902f6218e4a6b631f2e"
+      }
+    },
     {
       "identity" : "swift-snapshot-testing",
       "kind" : "remoteSourceControl",
@@ -19,5 +29,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

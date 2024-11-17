@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import EntropyCore
 
 protocol HomeServiceProtocol {
     func fetchMovies() -> AnyPublisher<MoviesResponse, Error>

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import EntropyCore
 
 final class HomeHostingController<R: HomeNavigationRouter>: BaseHostingController<HomeView<R>> {
     let router: R

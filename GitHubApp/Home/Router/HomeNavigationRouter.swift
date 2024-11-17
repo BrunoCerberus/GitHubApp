@@ -7,6 +7,7 @@
 
 import UIKit
 import SwiftUI
+import EntropyCore
 
 final class HomeNavigationRouter: NavigationRouter {
     weak var navigation: UINavigationController?

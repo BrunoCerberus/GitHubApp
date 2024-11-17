@@ -41,6 +41,8 @@ final class HomeViewModel: ObservableObject {
                 return Just([]).eraseToAnyPublisher()
             }
             .assign(to: \.movies, on: self)
+            // retain the subscription in the cancellables set, meaning that
+            // the subscription stays active until the HomeViewModel is deallocated
             .store(in: &cancellables)
     }
 

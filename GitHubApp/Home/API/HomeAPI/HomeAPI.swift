@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import EntropyCore
 
 enum HomeAPI: APIFetcher {
     case fetchMovies
