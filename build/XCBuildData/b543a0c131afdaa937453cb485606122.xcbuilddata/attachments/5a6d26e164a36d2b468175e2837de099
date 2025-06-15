@@ -1,0 +1,4 @@
+module EntropyCore {
+header "EntropyCore-Swift.h"
+export *
+}

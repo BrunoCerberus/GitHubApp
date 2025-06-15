@@ -1,0 +1,65 @@
+{
+  "" : {
+    "const-values" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/EntropyCore-master.swiftconstvalues",
+    "dependencies" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/EntropyCore-master.d",
+    "diagnostics" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/EntropyCore-master.dia",
+    "emit-module-dependencies" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/EntropyCore-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/EntropyCore-master-emit-module.dia",
+    "swift-dependencies" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/EntropyCore-master.swiftdeps"
+  },
+  "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/Sources/EntropyCore/AsyncImageViewer.swift" : {
+    "index-unit-output-path" : "/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/AsyncImageViewer.o",
+    "llvm-bc" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/AsyncImageViewer.bc",
+    "object" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/AsyncImageViewer.o"
+  },
+  "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/Sources/EntropyCore/BaseHostingViewController.swift" : {
+    "index-unit-output-path" : "/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/BaseHostingViewController.o",
+    "llvm-bc" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/BaseHostingViewController.bc",
+    "object" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/BaseHostingViewController.o"
+  },
+  "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/Sources/EntropyCore/BaseURLs.swift" : {
+    "index-unit-output-path" : "/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/BaseURLs.o",
+    "llvm-bc" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/BaseURLs.bc",
+    "object" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/BaseURLs.o"
+  },
+  "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/Sources/EntropyCore/CombineInteractor.swift" : {
+    "index-unit-output-path" : "/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/CombineInteractor.o",
+    "llvm-bc" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/CombineInteractor.bc",
+    "object" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/CombineInteractor.o"
+  },
+  "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/Sources/EntropyCore/CombineViewModel.swift" : {
+    "index-unit-output-path" : "/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/CombineViewModel.o",
+    "llvm-bc" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/CombineViewModel.bc",
+    "object" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/CombineViewModel.o"
+  },
+  "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/Sources/EntropyCore/NavigationRouter.swift" : {
+    "index-unit-output-path" : "/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/NavigationRouter.o",
+    "llvm-bc" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/NavigationRouter.bc",
+    "object" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/NavigationRouter.o"
+  },
+  "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/Sources/EntropyCore/Network/APIFetcher.swift" : {
+    "index-unit-output-path" : "/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/APIFetcher.o",
+    "llvm-bc" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/APIFetcher.bc",
+    "object" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/APIFetcher.o"
+  },
+  "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/Sources/EntropyCore/Network/APIRequest.swift" : {
+    "index-unit-output-path" : "/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/APIRequest.o",
+    "llvm-bc" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/APIRequest.bc",
+    "object" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/APIRequest.o"
+  },
+  "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/Sources/EntropyCore/Network/JSONDecoder.swift" : {
+    "index-unit-output-path" : "/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/JSONDecoder.o",
+    "llvm-bc" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/JSONDecoder.bc",
+    "object" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/JSONDecoder.o"
+  },
+  "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/Sources/EntropyCore/TestingKey.swift" : {
+    "index-unit-output-path" : "/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/TestingKey.o",
+    "llvm-bc" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/TestingKey.bc",
+    "object" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/TestingKey.o"
+  },
+  "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/Sources/EntropyCore/View+Extensions.swift" : {
+    "index-unit-output-path" : "/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/View+Extensions.o",
+    "llvm-bc" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/View+Extensions.bc",
+    "object" : "/Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/build/EntropyCore.build/Release-iphoneos/EntropyCore.build/Objects-normal/arm64/View+Extensions.o"
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "" : {
+    "const-values" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GitHubApp-master.swiftconstvalues",
+    "dependencies" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GitHubApp-master.d",
+    "diagnostics" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GitHubApp-master.dia",
+    "emit-module-dependencies" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GitHubApp-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GitHubApp-master-emit-module.dia",
+    "swift-dependencies" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GitHubApp-master.swiftdeps"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Configs/APIKeys.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/APIKeys.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/APIKeys.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/APIKeys.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/GitHubAppDelegate.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GitHubAppDelegate.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GitHubAppDelegate.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GitHubAppDelegate.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/GitHubAppSceneDelegate.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GitHubAppSceneDelegate.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GitHubAppSceneDelegate.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GitHubAppSceneDelegate.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/API/HomeAPI/HomeAPI.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeAPI.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeAPI.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeAPI.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/API/HomeService/HomeService.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeService.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeService.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeService.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/API/Model/MoviesResponse.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MoviesResponse.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MoviesResponse.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MoviesResponse.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/Coordinator/Coordinator.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/Coordinator.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/Coordinator.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/Coordinator.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/Coordinator/CoordinatorView.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/CoordinatorView.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/CoordinatorView.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/CoordinatorView.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/HostingController/HomeHostingController.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeHostingController.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeHostingController.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeHostingController.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/HostingController/MovieDetailsHostingController.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MovieDetailsHostingController.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MovieDetailsHostingController.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MovieDetailsHostingController.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/Router/HomeNavigationEvent.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeNavigationEvent.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeNavigationEvent.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeNavigationEvent.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/Router/HomeNavigationRouter.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeNavigationRouter.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeNavigationRouter.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeNavigationRouter.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/View/HomeView.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeView.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeView.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeView.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/View/MovieDetailsView.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MovieDetailsView.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MovieDetailsView.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MovieDetailsView.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/ViewEvents/HomeViewEvent.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeViewEvent.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeViewEvent.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeViewEvent.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/ViewModel/HomeViewModel.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeViewModel.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeViewModel.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeViewModel.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/ViewModel/MovieDetailsViewModel.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MovieDetailsViewModel.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MovieDetailsViewModel.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MovieDetailsViewModel.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/ViewStates/HomeDataViewState.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeDataViewState.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeDataViewState.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeDataViewState.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubApp/Home/ViewStates/HomeViewState.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeViewState.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeViewState.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/HomeViewState.o"
+  },
+  "/Users/bruno/GitHubApp/GitHubAppTests/Mocks/MockHomeService.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MockHomeService.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MockHomeService.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/MockHomeService.o"
+  },
+  "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/bruno/GitHubApp/build/GitHubApp.build/Release-iphoneos/GitHubApp.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  }
+}

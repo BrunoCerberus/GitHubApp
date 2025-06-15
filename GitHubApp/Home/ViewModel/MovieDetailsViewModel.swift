@@ -8,8 +8,13 @@
 import Combine
 import Foundation
 
+struct MovieDetailsData {
+    var credits: [MovieCastMember]
+    var reviews: [MovieReview]
+}
+
 final class MovieDetailsViewModel: ObservableObject {
-    @Published var data: (credits: [MovieCastMember], reviews: [MovieReview]) = ([], [])
+    @Published var data = MovieDetailsData(credits: [], reviews: [])
     @Published var error: String?
 
     let movie: Movie
@@ -30,7 +35,7 @@ final class MovieDetailsViewModel: ObservableObject {
                     self?.handleError(error)
                 }
             }, receiveValue: { [weak self] credits, reviews in
-                self?.data = (credits, reviews)
+                self?.data = MovieDetailsData(credits: credits, reviews: reviews)
             })
             .store(in: &cancellables)
     }
