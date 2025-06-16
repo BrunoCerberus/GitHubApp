@@ -28,7 +28,11 @@ final class HomeViewModel: ObservableObject {
             .debounce(for: 1, scheduler: DispatchQueue.main)
             .sink { [weak self] query in
                 guard let self else { return }
-                self.searchQuery.isEmpty ? self.fetchData() : self.searchMovies(query: query)
+                if self.searchQuery.isEmpty {
+                    self.fetchData()
+                } else {
+                    self.searchMovies(query: query)
+                }
             }
             .store(in: &cancellables)
     }
