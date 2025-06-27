@@ -48,9 +48,6 @@ struct HomeView<R: HomeNavigationRouter>: View {
         }
         .scrollIndicators(.hidden)
         .searchable(text: $viewModel.searchQuery)
-        .onAppear {
-            viewModel.fetchData()
-        }
         .overlay {
             if let error =  viewModel.error {
                 Text(error)

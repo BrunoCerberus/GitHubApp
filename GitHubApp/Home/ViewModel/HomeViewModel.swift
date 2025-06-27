@@ -19,6 +19,7 @@ final class HomeViewModel: ObservableObject {
     init(service: HomeServiceProtocol = HomeService()) {
         self.service = service
         setupBindings()
+        fetchData()
     }
 
     private func setupBindings() {
