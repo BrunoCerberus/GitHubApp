@@ -12,6 +12,7 @@ import XCTest
 
 @testable import GitHubApp
 
+@MainActor
 final class HomeViewTests: XCTestCase {
     var router: HomeNavigationRouter!
     var mockService: MockHomeService!
@@ -27,10 +28,10 @@ final class HomeViewTests: XCTestCase {
         view = HomeView(router: router, viewModel: viewModel)
     }
 
-    func testView() {
+    func testView() async {
         let controller = view.wrappedViewController
 
-        viewModel.fetchData()
+        await viewModel.fetchData()
 
         assertSnapshot(matching: controller, as: .wait(for: 0.3, on: .image(on: .iPhoneSe)))
     }
