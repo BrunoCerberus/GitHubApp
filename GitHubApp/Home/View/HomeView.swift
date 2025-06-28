@@ -37,6 +37,14 @@ struct HomeView<R: HomeNavigationRouter>: View {
                         .font(.caption)
                         .lineLimit(3)
                 }
+                Spacer()
+                Button(action: {
+                    viewModel.toggleLike(for: movie)
+                }) {
+                    Image(systemName: viewModel.isLiked(movie: movie) ? "heart.fill" : "heart")
+                        .foregroundColor(.red)
+                }
+                .buttonStyle(PlainButtonStyle())
             }
             .onTapGesture {
                 router.route(navigationEvent: .detail(movie))

@@ -37,6 +37,7 @@
 		159BD8812A25129600B6EEC1 /* HomeViewEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8802A25129600B6EEC1 /* HomeViewEvent.swift */; };
 		159BD8832A2513E400B6EEC1 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159BD8822A2513E400B6EEC1 /* HomeViewModel.swift */; };
 		15ABA5B82A8DCB1900E243FF /* HomeViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ABA5B72A8DCB1900E243FF /* HomeViewTests.swift */; };
+		15B8B0D02E0F469F0031C474 /* LikedMoviesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B8B0CF2E0F469F0031C474 /* LikedMoviesView.swift */; };
 		15D668DD2A958B910000E906 /* MovieDetailsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D668DC2A958B910000E906 /* MovieDetailsViewTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -91,6 +92,7 @@
 		159BD8802A25129600B6EEC1 /* HomeViewEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewEvent.swift; sourceTree = "<group>"; };
 		159BD8822A2513E400B6EEC1 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		15ABA5B72A8DCB1900E243FF /* HomeViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewTests.swift; sourceTree = "<group>"; };
+		15B8B0CF2E0F469F0031C474 /* LikedMoviesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedMoviesView.swift; sourceTree = "<group>"; };
 		15D668DC2A958B910000E906 /* MovieDetailsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailsViewTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -297,6 +299,7 @@
 		159BD8722A24DB1B00B6EEC1 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				15B8B0CF2E0F469F0031C474 /* LikedMoviesView.swift */,
 				159BD8732A24DB2500B6EEC1 /* HomeView.swift */,
 				1523C88C2A805A0900E500D0 /* MovieDetailsView.swift */,
 			);
@@ -522,6 +525,7 @@
 				159BD8832A2513E400B6EEC1 /* HomeViewModel.swift in Sources */,
 				159BD8692A24D64D00B6EEC1 /* HomeHostingController.swift in Sources */,
 				159BD87F2A25123B00B6EEC1 /* HomeDataViewState.swift in Sources */,
+				15B8B0D02E0F469F0031C474 /* LikedMoviesView.swift in Sources */,
 				1523C8882A80517E00E500D0 /* APIKeys.swift in Sources */,
 				150C8AEB2A8B10E4000A7138 /* Coordinator.swift in Sources */,
 				152183222A89382E007D42D9 /* MockHomeService.swift in Sources */,

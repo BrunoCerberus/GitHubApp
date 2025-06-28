@@ -25,7 +25,7 @@ final class Coordinator: ObservableObject {
     func build(page: Page) -> some View {
         switch page {
         case .home:
-            HomeView(router: HomeNavigationRouter(), viewModel: homeViewModel)
+            HomeView(router: HomeNavigationRouter(coordinator: self), viewModel: homeViewModel)
         case let .detail(movie):
             let viewModel = MovieDetailsViewModel(movie: movie)
             MovieDetailsView(viewModel: viewModel)

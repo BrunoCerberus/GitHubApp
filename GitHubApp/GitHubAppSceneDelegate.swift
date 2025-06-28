@@ -25,9 +25,7 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         guard let windowScene = scene as? UIWindowScene else { return }
 
-        let rootView = UINavigationController(rootViewController:
-                                                HomeHostingController(navigationRouter: HomeNavigationRouter()))
-//        let rootView = UIHostingController(rootView: CoordinatorView())
+        let rootView = UIHostingController(rootView: CoordinatorView())
         rootView.overrideUserInterfaceStyle = .dark
         let window = UIWindow(windowScene: windowScene)
         window.rootViewController = rootView
