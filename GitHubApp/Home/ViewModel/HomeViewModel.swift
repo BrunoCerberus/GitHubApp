@@ -17,12 +17,25 @@ final class HomeViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let service: HomeServiceProtocol
     private let likedMoviesKey = "likedMoviesKey"
+    private var likedMoviesViewModel: LikedMoviesViewModel?
 
     init(service: HomeServiceProtocol = HomeService()) {
         self.service = service
         setupBindings()
         fetchData()
         loadLikedMovies()
+    }
+
+    func setLikedMoviesViewModel(_ viewModel: LikedMoviesViewModel) {
+        self.likedMoviesViewModel = viewModel
+        // Update the LikedMoviesViewModel with current movies
+        if !movies.isEmpty {
+            viewModel.updateLikedMovies(from: movies)
+        }
+        // Set up callback to sync changes back
+        viewModel.setOnLikedMoviesChanged { [weak self] in
+            self?.refreshLikedMovies()
+        }
     }
 
     private func setupBindings() {
@@ -54,6 +67,8 @@ final class HomeViewModel: ObservableObject {
                 if let ids = UserDefaults.standard.array(forKey: self.likedMoviesKey) as? [Int] {
                     self.likedMovies = movies.filter { ids.contains($0.id) }
                 }
+                // Update LikedMoviesViewModel if available
+                self.likedMoviesViewModel?.updateLikedMovies(from: movies)
             })
             .assign(to: \.movies, on: self)
             .store(in: &cancellables)
@@ -82,6 +97,8 @@ final class HomeViewModel: ObservableObject {
             likedMovies.append(movie)
         }
         saveLikedMovies()
+        // Update LikedMoviesViewModel
+        likedMoviesViewModel?.updateLikedMovies(from: movies)
     }
 
     func isLiked(movie: Movie) -> Bool {
@@ -97,5 +114,9 @@ final class HomeViewModel: ObservableObject {
         guard let ids = UserDefaults.standard.array(forKey: likedMoviesKey) as? [Int] else { return }
         // If movies are already loaded, filter them; otherwise, will be updated after fetch
         likedMovies = movies.filter { ids.contains($0.id) }
+    }
+
+    private func refreshLikedMovies() {
+        loadLikedMovies()
     }
 }

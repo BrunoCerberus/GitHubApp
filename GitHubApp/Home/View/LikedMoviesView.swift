@@ -9,7 +9,7 @@ import SwiftUI
 import EntropyCore
 
 struct LikedMoviesView: View {
-    @ObservedObject var viewModel: HomeViewModel
+    @ObservedObject var viewModel: LikedMoviesViewModel
     @State private var selectedMovie: Movie?
 
     var body: some View {
@@ -23,9 +23,11 @@ struct LikedMoviesView: View {
                         .foregroundColor(.secondary)
                 } else {
                     List(viewModel.likedMovies) { movie in
-                        Button(action: {
+                        Button(
+                            action: {
                             selectedMovie = movie
-                        }) {
+                        },
+                        label: {
                             HStack {
                                 AsyncImageViewer(
                                     url: movie.posterURL,
@@ -44,13 +46,14 @@ struct LikedMoviesView: View {
                                 Spacer()
                                 Button(action: {
                                     viewModel.toggleLike(for: movie)
-                                }) {
+                                },
+                                label: {
                                     Image(systemName: viewModel.isLiked(movie: movie) ? "heart.fill" : "heart")
                                         .foregroundColor(.red)
-                                }
+                                })
                                 .buttonStyle(PlainButtonStyle())
                             }
-                        }
+                        })
                         .buttonStyle(PlainButtonStyle())
                     }
                     .scrollIndicators(.hidden)
@@ -64,6 +67,5 @@ struct LikedMoviesView: View {
 }
 
 #Preview {
-    let viewModel = HomeViewModel(service: HomeService())
-    LikedMoviesView(viewModel: viewModel)
-} 
+    LikedMoviesView(viewModel: LikedMoviesViewModel())
+}

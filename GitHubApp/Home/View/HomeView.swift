@@ -40,10 +40,11 @@ struct HomeView<R: HomeNavigationRouter>: View {
                 Spacer()
                 Button(action: {
                     viewModel.toggleLike(for: movie)
-                }) {
+                },
+                label: {
                     Image(systemName: viewModel.isLiked(movie: movie) ? "heart.fill" : "heart")
                         .foregroundColor(.red)
-                }
+                })
                 .buttonStyle(PlainButtonStyle())
             }
             .onTapGesture {

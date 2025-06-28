@@ -24,7 +24,7 @@ struct CoordinatorView: View {
             }
             .environmentObject(coordinator)
 
-            LikedMoviesView(viewModel: coordinator.homeViewModel)
+            LikedMoviesView(viewModel: coordinator.likedMoviesViewModel)
                 .tabItem {
                     Label("Liked", systemImage: "heart")
                 }

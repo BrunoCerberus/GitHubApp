@@ -16,6 +16,12 @@ final class Coordinator: ObservableObject {
     @Published var path = NavigationPath()
 
     lazy var homeViewModel = HomeViewModel()
+    lazy var likedMoviesViewModel = LikedMoviesViewModel()
+
+    init() {
+        // Connect the ViewModels to sync liked movies
+        homeViewModel.setLikedMoviesViewModel(likedMoviesViewModel)
+    }
 
     func push(page: Page) {
         path.append(page)
