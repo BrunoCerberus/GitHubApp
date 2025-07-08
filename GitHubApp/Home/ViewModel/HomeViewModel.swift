@@ -17,7 +17,6 @@ final class HomeViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let service: HomeServiceProtocol
     private let likedMoviesKey = "likedMoviesKey"
-    private var likedMoviesViewModel: LikedMoviesViewModel?
 
     init(service: HomeServiceProtocol = HomeService()) {
         self.service = service
@@ -26,23 +25,10 @@ final class HomeViewModel: ObservableObject {
         loadLikedMovies()
     }
 
-    func setLikedMoviesViewModel(_ viewModel: LikedMoviesViewModel) {
-        self.likedMoviesViewModel = viewModel
-        // Update the LikedMoviesViewModel with current movies
-        if !movies.isEmpty {
-            viewModel.updateLikedMovies(from: movies)
-        }
-        // Set up callback to sync changes back
-        viewModel.setOnLikedMoviesChanged { [weak self] in
-            self?.refreshLikedMovies()
-        }
-    }
-
     private func setupBindings() {
         $searchQuery
-            .dropFirst()
+            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
             .removeDuplicates()
-            .debounce(for: 1, scheduler: DispatchQueue.main)
             .sink { [weak self] query in
                 guard let self else { return }
                 if self.searchQuery.isEmpty {
@@ -63,12 +49,9 @@ final class HomeViewModel: ObservableObject {
             }
             .handleEvents(receiveOutput: { [weak self] movies in
                 guard let self = self else { return }
-                // Update likedMovies with any new movies
                 if let ids = UserDefaults.standard.array(forKey: self.likedMoviesKey) as? [Int] {
                     self.likedMovies = movies.filter { ids.contains($0.id) }
                 }
-                // Update LikedMoviesViewModel if available
-                self.likedMoviesViewModel?.updateLikedMovies(from: movies)
             })
             .assign(to: \.movies, on: self)
             .store(in: &cancellables)
@@ -84,39 +67,44 @@ final class HomeViewModel: ObservableObject {
             .assign(to: &$movies)
     }
 
-    private func handleError(_ error: Error) {
-        debugPrint(error)
-        self.error = "An error occurred. Please try again."
-    }
-
-    // MARK: - Liked Movies Logic
     func toggleLike(for movie: Movie) {
-        if let index = likedMovies.firstIndex(of: movie) {
+        var likedMovies = loadPersistedLikedMovies()
+        if let index = likedMovies.firstIndex(where: { $0.id == movie.id }) {
             likedMovies.remove(at: index)
         } else {
             likedMovies.append(movie)
         }
-        saveLikedMovies()
-        // Update LikedMoviesViewModel
-        likedMoviesViewModel?.updateLikedMovies(from: movies)
+        savePersistedLikedMovies(likedMovies)
+        updateLikedMovies()
+    }
+
+    func loadLikedMovies() {
+        updateLikedMovies()
+    }
+
+    private func updateLikedMovies() {
+        likedMovies = loadPersistedLikedMovies()
     }
 
     func isLiked(movie: Movie) -> Bool {
-        likedMovies.contains(movie)
+        loadPersistedLikedMovies().contains(where: { $0.id == movie.id })
     }
 
-    private func saveLikedMovies() {
-        let ids = likedMovies.map { $0.id }
-        UserDefaults.standard.set(ids, forKey: likedMoviesKey)
+    private func handleError(_ error: Error) {
+        self.error = error.localizedDescription
     }
 
-    private func loadLikedMovies() {
-        guard let ids = UserDefaults.standard.array(forKey: likedMoviesKey) as? [Int] else { return }
-        // If movies are already loaded, filter them; otherwise, will be updated after fetch
-        likedMovies = movies.filter { ids.contains($0.id) }
+    private func savePersistedLikedMovies(_ movies: [Movie]) {
+        if let data = try? JSONEncoder().encode(movies) {
+            UserDefaults.standard.set(data, forKey: likedMoviesKey)
+        }
     }
 
-    private func refreshLikedMovies() {
-        loadLikedMovies()
+    private func loadPersistedLikedMovies() -> [Movie] {
+        guard let data = UserDefaults.standard.data(forKey: likedMoviesKey),
+              let movies = try? JSONDecoder().decode([Movie].self, from: data) else {
+            return []
+        }
+        return movies
     }
 }

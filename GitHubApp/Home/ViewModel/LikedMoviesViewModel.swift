@@ -12,44 +12,42 @@ final class LikedMoviesViewModel: ObservableObject {
     @Published var likedMovies: [Movie] = []
 
     private let likedMoviesKey = "likedMoviesKey"
-    private var onLikedMoviesChanged: (() -> Void)?
 
     init() {
         loadLikedMovies()
     }
 
-    func setOnLikedMoviesChanged(_ callback: @escaping () -> Void) {
-        self.onLikedMoviesChanged = callback
+    func loadLikedMovies() {
+        likedMovies = loadPersistedLikedMovies()
     }
 
     // MARK: - Liked Movies Logic
     func toggleLike(for movie: Movie) {
-        if let index = likedMovies.firstIndex(of: movie) {
-            likedMovies.remove(at: index)
+        var movies = loadPersistedLikedMovies()
+        if let index = movies.firstIndex(where: { $0.id == movie.id }) {
+            movies.remove(at: index)
         } else {
-            likedMovies.append(movie)
+            movies.append(movie)
         }
-        saveLikedMovies()
-        onLikedMoviesChanged?()
+        savePersistedLikedMovies(movies)
+        loadLikedMovies()
     }
 
     func isLiked(movie: Movie) -> Bool {
-        likedMovies.contains(movie)
+        likedMovies.contains(where: { $0.id == movie.id })
     }
 
-    func updateLikedMovies(from allMovies: [Movie]) {
-        guard let ids = UserDefaults.standard.array(forKey: likedMoviesKey) as? [Int] else { return }
-        likedMovies = allMovies.filter { ids.contains($0.id) }
+    private func savePersistedLikedMovies(_ movies: [Movie]) {
+        if let data = try? JSONEncoder().encode(movies) {
+            UserDefaults.standard.set(data, forKey: likedMoviesKey)
+        }
     }
 
-    private func saveLikedMovies() {
-        let ids = likedMovies.map { $0.id }
-        UserDefaults.standard.set(ids, forKey: likedMoviesKey)
-    }
-
-    private func loadLikedMovies() {
-        guard UserDefaults.standard.array(forKey: likedMoviesKey) is [Int] else { return }
-        // This will be populated when movies are loaded from the main view
-        // For now, we just load the IDs and will update when movies are available
+    private func loadPersistedLikedMovies() -> [Movie] {
+        guard let data = UserDefaults.standard.data(forKey: likedMoviesKey),
+              let movies = try? JSONDecoder().decode([Movie].self, from: data) else {
+            return []
+        }
+        return movies
     }
 }

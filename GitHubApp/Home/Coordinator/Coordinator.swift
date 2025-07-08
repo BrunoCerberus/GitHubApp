@@ -19,8 +19,7 @@ final class Coordinator: ObservableObject {
     lazy var likedMoviesViewModel = LikedMoviesViewModel()
 
     init() {
-        // Connect the ViewModels to sync liked movies
-        homeViewModel.setLikedMoviesViewModel(likedMoviesViewModel)
+        // No longer need to connect the ViewModels
     }
 
     func push(page: Page) {

@@ -20,7 +20,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
     }
 
     var body: some View {
-        List(viewModel.movies) { movie in
+        List(viewModel.movies, id: \.id) { movie in
             HStack {
                 AsyncImageViewer(
                     url: movie.posterURL,
