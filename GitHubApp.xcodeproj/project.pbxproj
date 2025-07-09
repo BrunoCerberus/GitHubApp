@@ -40,6 +40,7 @@
 		15B8B0D02E0F469F0031C474 /* LikedMoviesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B8B0CF2E0F469F0031C474 /* LikedMoviesView.swift */; };
 		15BC03F82E0F9A0B0030F829 /* LikedMoviesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15BC03F72E0F9A0B0030F829 /* LikedMoviesViewModel.swift */; };
 		15D668DD2A958B910000E906 /* MovieDetailsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D668DC2A958B910000E906 /* MovieDetailsViewTests.swift */; };
+		15E445092E1E4F4B0027439E /* Equatable in Frameworks */ = {isa = PBXBuildFile; productRef = 15E445082E1E4F4B0027439E /* Equatable */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +105,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				158C72E92CEA43B700F07D27 /* EntropyCore in Frameworks */,
+				15E445092E1E4F4B0027439E /* Equatable in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,6 +380,7 @@
 			name = GitHubApp;
 			packageProductDependencies = (
 				158C72E82CEA43B700F07D27 /* EntropyCore */,
+				15E445082E1E4F4B0027439E /* Equatable */,
 			);
 			productName = GitHubApp;
 			productReference = 1549C18D2A23C47F0043EAEA /* GitHubApp.app */;
@@ -457,6 +460,7 @@
 			packageReferences = (
 				158522B42A8DA3B700D881D2 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 				158C72E62CEA437A00F07D27 /* XCRemoteSwiftPackageReference "EntropyCore" */,
+				15E445072E1E4F4B0027439E /* XCRemoteSwiftPackageReference "equatable" */,
 			);
 			productRefGroup = 1549C18E2A23C47F0043EAEA /* Products */;
 			projectDirPath = "";
@@ -935,6 +939,14 @@
 				kind = branch;
 			};
 		};
+		15E445072E1E4F4B0027439E /* XCRemoteSwiftPackageReference "equatable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ordo-one/equatable.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -947,6 +959,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 158C72E62CEA437A00F07D27 /* XCRemoteSwiftPackageReference "EntropyCore" */;
 			productName = EntropyCore;
+		};
+		15E445082E1E4F4B0027439E /* Equatable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 15E445072E1E4F4B0027439E /* XCRemoteSwiftPackageReference "equatable" */;
+			productName = Equatable;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

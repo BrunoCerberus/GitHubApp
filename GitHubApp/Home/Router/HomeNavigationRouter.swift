@@ -9,7 +9,7 @@ import UIKit
 import SwiftUI
 import EntropyCore
 
-final class HomeNavigationRouter: NavigationRouter {
+final class HomeNavigationRouter: NavigationRouter, Equatable {
     weak var navigation: UINavigationController?
     private weak var coordinator: Coordinator?
 
@@ -29,5 +29,11 @@ final class HomeNavigationRouter: NavigationRouter {
                 navigation.pushViewController(controller, animated: true)
             }
         }
+    }
+}
+
+extension HomeNavigationRouter {
+    static func == (lhs: HomeNavigationRouter, rhs: HomeNavigationRouter) -> Bool {
+        return lhs.navigation === rhs.navigation && lhs.coordinator === rhs.coordinator
     }
 }

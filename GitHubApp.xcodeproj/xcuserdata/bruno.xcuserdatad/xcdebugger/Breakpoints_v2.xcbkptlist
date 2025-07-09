@@ -30,8 +30,8 @@
             filePath = "GitHubApp/Home/View/HomeView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "19"
-            endingLineNumber = "19"
+            startingLineNumber = "21"
+            endingLineNumber = "21"
             landmarkName = "init(router:viewModel:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -39,32 +39,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "8019EC16-644C-4C33-A3FF-67D85C168868"
+            uuid = "F4B07DE5-19D6-4997-BFEA-9A7894DA5013"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "GitHubApp/Home/ViewModel/HomeViewModel.swift"
+            filePath = "../Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/SourcePackages/checkouts/EntropyCore/Sources/EntropyCore/Network/APIRequest.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "21"
-            endingLineNumber = "21"
-            landmarkName = "HomeViewModel"
-            landmarkType = "3">
+            startingLineNumber = "39"
+            endingLineNumber = "39"
+            landmarkName = "fetchRequest(target:dataType:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6A2B1ACC-CA7E-4DCE-8033-61AF23EDD537"
+            uuid = "35FEC340-9948-4636-A69D-13B74AA8D8F8"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "GitHubApp/Home/ViewModel/HomeViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "32"
-            endingLineNumber = "32"
-            landmarkName = "setLikedMoviesViewModel(_:)"
+            startingLineNumber = "68"
+            endingLineNumber = "68"
+            landmarkName = "searchMovies(query:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
