@@ -46,7 +46,6 @@ struct MovieDetailsView: View {
                                     .font(.headline)
                                 Text(review.content)
                                     .font(.body)
-                                    .lineLimit(3)
                                     .foregroundColor(.secondary)
                             }
                         }
