@@ -1,5 +1,5 @@
 {
-  "originHash" : "fcd1a5b9060539a984c597382d92d8e5b13c1e91b19324f82c1663204f577a0d",
+  "originHash" : "7bb883b9b8ee838361d3e292590a3127cd8fc309b192451b08394d33930289bc",
   "pins" : [
     {
       "identity" : "entropycore",
@@ -7,7 +7,7 @@
       "location" : "https://github.com/BrunoCerberus/EntropyCore.git",
       "state" : {
         "branch" : "master",
-        "revision" : "743ba559e0b7298d0fccf902f6218e4a6b631f2e"
+        "revision" : "94cd7bbef5944ae7563f82c314d99c044c649827"
       }
     },
     {
