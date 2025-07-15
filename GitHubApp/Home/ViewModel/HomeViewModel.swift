@@ -53,7 +53,9 @@ final class HomeViewModel: ObservableObject {
                     self.likedMovies = movies.filter { ids.contains($0.id) }
                 }
             })
-            .assign(to: \.movies, on: self)
+            .sink { [weak self] movies in
+                self?.movies = movies
+            }
             .store(in: &cancellables)
     }
 
@@ -64,7 +66,10 @@ final class HomeViewModel: ObservableObject {
                 self?.handleError(error)
                 return Just([]).eraseToAnyPublisher()
             }
-            .assign(to: &$movies)
+            .sink { [weak self] movies in
+                self?.movies = movies
+            }
+            .store(in: &cancellables)
     }
 
     func toggleLike(for movie: Movie) {
@@ -106,5 +111,9 @@ final class HomeViewModel: ObservableObject {
             return []
         }
         return movies
+    }
+    
+    deinit {
+        print("HomeViewModel deallocated")
     }
 }

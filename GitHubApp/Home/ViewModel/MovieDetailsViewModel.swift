@@ -58,6 +58,10 @@ final class MovieDetailsViewModel: ObservableObject {
     }
 
     private var cancellables = Set<AnyCancellable>()
+
+    deinit {
+        print("MovieDetailsViewModel deallocated")
+    }
 }
 
 extension MovieDetailsViewModel {

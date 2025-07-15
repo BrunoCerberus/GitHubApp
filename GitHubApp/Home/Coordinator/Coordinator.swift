@@ -21,6 +21,11 @@ final class Coordinator: ObservableObject {
     init() {
         // No longer need to connect the ViewModels
     }
+    
+    deinit {
+        // Ensure proper cleanup
+        print("Coordinator deallocated")
+    }
 
     func push(page: Page) {
         path.append(page)
