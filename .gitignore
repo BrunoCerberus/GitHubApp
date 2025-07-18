@@ -8,3 +8,6 @@ GitHubApp.xcodeproj/project.xcworkspace/xcuserdata/bruno.xcuserdatad/UserInterfa
 *.xcbkptlist
 *.xcuserstate
 GitHubApp.xcodeproj/project.xcworkspace/xcuserdata/*.*
+# Xcode user-specific data (safe to ignore)
+GitHubApp.xcodeproj/project.xcworkspace/xcuserdata/
+GitHubApp.xcodeproj/xcuserdata/
