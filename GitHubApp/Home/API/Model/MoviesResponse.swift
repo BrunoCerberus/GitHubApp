@@ -19,8 +19,18 @@ struct Movie: Codable, Hashable, Identifiable {
     let title: String
     let overview: String
     let posterPath: String?
+    
     var posterURL: URL? {
-        posterPath.flatMap { URL(string: BaseURLs.image.rawValue + "\($0)") }
+        guard let posterPath = posterPath, !posterPath.isEmpty else { return nil }
+        return URL(string: BaseURLs.image.rawValue + posterPath)
+    }
+    
+    var displayTitle: String {
+        return title.isEmpty ? "Untitled" : title
+    }
+    
+    var displayOverview: String {
+        return overview.isEmpty ? "No overview available" : overview
     }
 }
 
@@ -34,6 +44,14 @@ struct MovieCastMember: Identifiable, Equatable, Codable {
     let id: Int
     let name: String
     let character: String
+    
+    var displayName: String {
+        return name.isEmpty ? "Unknown" : name
+    }
+    
+    var displayCharacter: String {
+        return character.isEmpty ? "Unknown Character" : character
+    }
 }
 
 // MARK: - Reviews
@@ -46,4 +64,12 @@ struct MovieReview: Identifiable, Equatable, Codable {
     let id: String
     let author: String
     let content: String
+    
+    var displayAuthor: String {
+        return author.isEmpty ? "Anonymous" : author
+    }
+    
+    var displayContent: String {
+        return content.isEmpty ? "No review content available" : content
+    }
 }

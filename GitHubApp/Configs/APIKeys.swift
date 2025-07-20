@@ -9,14 +9,23 @@ import Foundation
 
 struct APIKeysProvider {
     static let theMovieAPIKey: String = {
+        let environment = ProcessInfo.processInfo.environment["API_ENVIRONMENT"] ?? "Dev"
+        
         guard let path = Bundle.main.path(
-            forResource: ProcessInfo.processInfo.environment["API_ENVIRONMENT"],
+            forResource: environment,
             ofType: "xcconfig"
-        ),
-              let config = NSDictionary(contentsOfFile: path),
-              let apiKey = config["API_KEY"] as? String else {
-            fatalError("Unable to read production API key from configuration file.")
+        ) else {
+            fatalError("Unable to find configuration file for environment: \(environment)")
         }
+        
+        guard let config = NSDictionary(contentsOfFile: path) else {
+            fatalError("Unable to read configuration file at path: \(path)")
+        }
+        
+        guard let apiKey = config["API_KEY"] as? String, !apiKey.isEmpty else {
+            fatalError("API_KEY not found or empty in configuration file for environment: \(environment)")
+        }
+        
         return apiKey
     }()
 }

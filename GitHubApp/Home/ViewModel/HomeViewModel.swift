@@ -31,7 +31,7 @@ final class HomeViewModel: ObservableObject {
             .removeDuplicates()
             .sink { [weak self] query in
                 guard let self else { return }
-                if self.searchQuery.isEmpty {
+                if query.isEmpty {
                     self.fetchData()
                 } else {
                     self.searchMovies(query: query)
