@@ -63,6 +63,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
                 Text(error)
             }
         }
+        
     }
     
 }
