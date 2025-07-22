@@ -5,9 +5,9 @@
 //  Created by bruno on 29/05/23.
 //
 
-import UIKit
-import SwiftUI
 import EntropyCore
+import SwiftUI
+import UIKit
 
 final class HomeNavigationRouter: NavigationRouter, Equatable {
     weak var navigation: UINavigationController?

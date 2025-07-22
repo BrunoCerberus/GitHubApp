@@ -5,26 +5,26 @@
 //  Created by bruno on 29/05/23.
 //
 
-import SwiftUI
 import EntropyCore
+import SwiftUI
 
 final class HomeHostingController<R: HomeNavigationRouter>: BaseHostingController<HomeView<R>> {
     let router: R
 
     init(navigationRouter: R) {
-        self.router = navigationRouter
+        router = navigationRouter
         let rootView = HomeView<R>(router: navigationRouter, viewModel: HomeViewModel())
         super.init(rootView: rootView)
     }
 
-    @MainActor @objc required dynamic init?(coder aDecoder: NSCoder) {
+    @MainActor @objc dynamic required init?(coder _: NSCoder) {
         return nil
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Upcoming Movies"
+        title = "Upcoming Movies"
         navigationController?.navigationBar.prefersLargeTitles = true
-        self.router.navigation = navigationController
+        router.navigation = navigationController
     }
 }

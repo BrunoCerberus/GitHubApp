@@ -5,8 +5,8 @@
 //  Created by bruno on 12/08/23.
 //
 
-import SwiftUI
 import EntropyCore
+import SwiftUI
 
 final class MovieDetailsHostingController: BaseHostingController<MovieDetailsView> {
     let movie: Movie
@@ -18,12 +18,12 @@ final class MovieDetailsHostingController: BaseHostingController<MovieDetailsVie
         super.init(rootView: rootView)
     }
 
-    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+    @MainActor dynamic required init?(coder _: NSCoder) {
         return nil
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = movie.title
+        title = movie.title
     }
 }

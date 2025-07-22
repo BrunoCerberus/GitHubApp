@@ -21,7 +21,8 @@ final class MovieDetailsViewModel: ObservableObject {
     let service: HomeServiceProtocol
 
     init(movie: Movie,
-         service: HomeServiceProtocol = HomeService()) {
+         service: HomeServiceProtocol = HomeService())
+    {
         self.movie = movie
         self.service = service
     }
@@ -31,7 +32,7 @@ final class MovieDetailsViewModel: ObservableObject {
             .zip(fetchReviews())
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
-                if case .failure(let error) = completion {
+                if case let .failure(error) = completion {
                     self?.handleError(error)
                 }
             }, receiveValue: { [weak self] credits, reviews in
@@ -65,11 +66,11 @@ final class MovieDetailsViewModel: ObservableObject {
 }
 
 extension MovieDetailsViewModel {
-    public var showCredits: Bool {
+    var showCredits: Bool {
         return !data.credits.isEmpty
     }
 
-    public var showReviews: Bool {
+    var showReviews: Bool {
         return !data.reviews.isEmpty
     }
 }

@@ -5,8 +5,8 @@
 //  Created by bruno on 16/08/23.
 //
 
-import XCTest
 @testable import GitHubApp
+import XCTest
 
 final class HomeNavigationRouterTests: XCTestCase {
     func testRouter() {

@@ -22,6 +22,7 @@ final class LikedMoviesViewModel: ObservableObject {
     }
 
     // MARK: - Liked Movies Logic
+
     func toggleLike(for movie: Movie) {
         var movies = loadPersistedLikedMovies()
         if let index = movies.firstIndex(where: { $0.id == movie.id }) {
@@ -45,7 +46,8 @@ final class LikedMoviesViewModel: ObservableObject {
 
     private func loadPersistedLikedMovies() -> [Movie] {
         guard let data = UserDefaults.standard.data(forKey: likedMoviesKey),
-              let movies = try? JSONDecoder().decode([Movie].self, from: data) else {
+              let movies = try? JSONDecoder().decode([Movie].self, from: data)
+        else {
             return []
         }
         return movies

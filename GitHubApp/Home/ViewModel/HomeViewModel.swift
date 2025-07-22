@@ -107,12 +107,13 @@ final class HomeViewModel: ObservableObject {
 
     private func loadPersistedLikedMovies() -> [Movie] {
         guard let data = UserDefaults.standard.data(forKey: likedMoviesKey),
-              let movies = try? JSONDecoder().decode([Movie].self, from: data) else {
+              let movies = try? JSONDecoder().decode([Movie].self, from: data)
+        else {
             return []
         }
         return movies
     }
-    
+
     deinit {
         print("HomeViewModel deallocated")
     }

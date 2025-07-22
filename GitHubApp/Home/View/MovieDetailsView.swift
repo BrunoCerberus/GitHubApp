@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MovieDetailsView: View {
-
     @StateObject var viewModel: MovieDetailsViewModel
 
     var body: some View {
@@ -62,11 +61,11 @@ struct MovieDetailsView: View {
 
 #Preview {
     let movie = Movie(
-        id: 615656,
+        id: 615_656,
         title: "Meg 2: The Trench",
         overview: "An exploratory dive into the deepest depths of the ocean of " +
-        "a daring research team spirals into chaos when a malevolent mining operation " +
-        "threatens their mission and forces them into a high-stakes battle for survival.",
+            "a daring research team spirals into chaos when a malevolent mining operation " +
+            "threatens their mission and forces them into a high-stakes battle for survival.",
         posterPath: "poster_image_path_here"
     )
     NavigationStack {

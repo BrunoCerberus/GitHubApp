@@ -5,9 +5,9 @@
 //  Created by bruno on 29/05/23.
 //
 
-import SwiftUI
 import EntropyCore
 import Equatable
+import SwiftUI
 
 @Equatable
 struct HomeView<R: HomeNavigationRouter>: View {
@@ -16,7 +16,8 @@ struct HomeView<R: HomeNavigationRouter>: View {
     @StateObject private var viewModel: HomeViewModel
 
     init(router: R,
-         viewModel: HomeViewModel? = nil) {
+         viewModel: HomeViewModel? = nil)
+    {
         self.router = router
         _viewModel = StateObject(wrappedValue: viewModel ?? HomeViewModel(service: HomeService()))
     }
@@ -40,13 +41,13 @@ struct HomeView<R: HomeNavigationRouter>: View {
                 }
                 Spacer()
                 Button(action: {
-                    viewModel.toggleLike(for: movie)
-                },
-                label: {
-                    Image(systemName: viewModel.isLiked(movie: movie) ? "heart.fill" : "heart")
-                        .foregroundColor(.red)
-                })
-                .buttonStyle(PlainButtonStyle())
+                           viewModel.toggleLike(for: movie)
+                       },
+                       label: {
+                           Image(systemName: viewModel.isLiked(movie: movie) ? "heart.fill" : "heart")
+                               .foregroundColor(.red)
+                       })
+                       .buttonStyle(PlainButtonStyle())
             }
             .onTapGesture {
                 router.route(navigationEvent: .detail(movie))
@@ -58,7 +59,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
         .scrollIndicators(.hidden)
         .searchable(text: $viewModel.searchQuery)
         .overlay {
-            if let error =  viewModel.error {
+            if let error = viewModel.error {
                 Text(error)
             }
         }

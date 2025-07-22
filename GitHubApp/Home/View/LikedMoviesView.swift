@@ -5,8 +5,8 @@
 //  Created by bruno on 29/05/23.
 //
 
-import SwiftUI
 import EntropyCore
+import SwiftUI
 
 struct LikedMoviesView: View {
     @ObservedObject var viewModel: LikedMoviesViewModel
@@ -45,15 +45,16 @@ struct LikedMoviesView: View {
                                     }
                                     Spacer()
                                     Button(action: {
-                                        viewModel.toggleLike(for: movie)
-                                    },
-                                    label: {
-                                        Image(systemName: viewModel.isLiked(movie: movie) ? "heart.fill" : "heart")
-                                            .foregroundColor(.red)
-                                    })
-                                    .buttonStyle(PlainButtonStyle())
+                                               viewModel.toggleLike(for: movie)
+                                           },
+                                           label: {
+                                               Image(systemName: viewModel.isLiked(movie: movie) ? "heart.fill" : "heart")
+                                                   .foregroundColor(.red)
+                                           })
+                                           .buttonStyle(PlainButtonStyle())
                                 }
-                            })
+                            }
+                        )
                         .buttonStyle(PlainButtonStyle())
                     }
                     .scrollIndicators(.hidden)
