@@ -64,7 +64,6 @@ struct HomeView<R: HomeNavigationRouter>: View {
             }
         }
     }
-    
 }
 
 #Preview {
