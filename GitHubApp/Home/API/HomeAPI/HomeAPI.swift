@@ -5,8 +5,8 @@
 //  Created by bruno on 06/08/23.
 //
 
-import Foundation
 import EntropyCore
+import Foundation
 
 enum HomeAPI: APIFetcher {
     case fetchMovies
@@ -26,20 +26,20 @@ enum HomeAPI: APIFetcher {
         guard var components = URLComponents(string: baseURL) else {
             fatalError("Invalid base URL: \(baseURL)")
         }
-        
+
         var queryItems: [URLQueryItem] = []
-        
+
         switch self {
         case .fetchMovies:
             components.path += "/movie/upcoming"
-            
+
         case let .searchMovies(query):
             components.path += "/search/movie"
             queryItems.append(URLQueryItem(name: "query", value: query))
-            
+
         case let .fetchCredits(id):
             components.path += "/movie/\(id)/credits"
-            
+
         case let .fetchReviews(id):
             components.path += "/movie/\(id)/reviews"
         }
@@ -47,11 +47,11 @@ enum HomeAPI: APIFetcher {
         // Add API key to all requests
         queryItems.append(URLQueryItem(name: "api_key", value: apiKey))
         components.queryItems = queryItems
-        
+
         guard let urlString = components.string else {
             fatalError("Failed to construct URL from components")
         }
-        
+
         return urlString
     }
 
@@ -69,9 +69,9 @@ enum HomeAPI: APIFetcher {
 
     var debug: Bool {
         #if DEBUG
-        return true
+            return true
         #else
-        return false
+            return false
         #endif
     }
 }
