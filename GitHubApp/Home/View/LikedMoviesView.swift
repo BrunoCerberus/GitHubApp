@@ -9,7 +9,7 @@ import EntropyCore
 import SwiftUI
 
 struct LikedMoviesView: View {
-    @ObservedObject var viewModel: LikedMoviesViewModel
+    @State var viewModel: LikedMoviesViewModel
     @State private var selectedMovie: Movie?
 
     var body: some View {

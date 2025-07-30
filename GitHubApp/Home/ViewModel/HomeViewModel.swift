@@ -7,12 +7,14 @@
 
 import Combine
 import Foundation
+import Observation
 
-final class HomeViewModel: ObservableObject {
-    @Published var movies: [Movie] = []
-    @Published var searchQuery: String = ""
-    @Published var error: String?
-    @Published var likedMovies: [Movie] = []
+@Observable
+final class HomeViewModel {
+    var movies: [Movie] = []
+    var searchQuery: String = ""
+    var error: String?
+    var likedMovies: [Movie] = []
 
     private var cancellables = Set<AnyCancellable>()
     private let service: HomeServiceProtocol
@@ -26,18 +28,28 @@ final class HomeViewModel: ObservableObject {
     }
 
     private func setupBindings() {
-        $searchQuery
-            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
-            .removeDuplicates()
-            .sink { [weak self] query in
-                guard let self else { return }
-                if query.isEmpty {
-                    self.fetchData()
-                } else {
-                    self.searchMovies(query: query)
-                }
+        // Since we're using @Observable, we need to manually observe searchQuery changes
+        // We'll use a Timer to periodically check for changes
+        Timer.publish(every: 0.1, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                guard let self = self else { return }
+                self.handleSearchQueryChange()
             }
             .store(in: &cancellables)
+    }
+
+    private var lastSearchQuery = ""
+
+    private func handleSearchQueryChange() {
+        guard searchQuery != lastSearchQuery else { return }
+        lastSearchQuery = searchQuery
+
+        if searchQuery.isEmpty {
+            fetchData()
+        } else {
+            searchMovies(query: searchQuery)
+        }
     }
 
     func fetchData() {

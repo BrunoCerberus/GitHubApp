@@ -13,13 +13,12 @@ import SwiftUI
 struct HomeView<R: HomeNavigationRouter>: View {
     private var router: R
 
-    @StateObject private var viewModel: HomeViewModel
+    @State private var viewModel: HomeViewModel
 
     init(router: R,
-         viewModel: HomeViewModel? = nil)
-    {
+         viewModel: HomeViewModel? = nil) {
         self.router = router
-        _viewModel = StateObject(wrappedValue: viewModel ?? HomeViewModel(service: HomeService()))
+        self.viewModel = viewModel ?? HomeViewModel(service: HomeService())
     }
 
     var body: some View {

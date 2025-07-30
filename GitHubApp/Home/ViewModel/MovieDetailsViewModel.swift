@@ -7,22 +7,24 @@
 
 import Combine
 import Foundation
+import Observation
 
 struct MovieDetailsData {
     var credits: [MovieCastMember]
     var reviews: [MovieReview]
 }
 
-final class MovieDetailsViewModel: ObservableObject {
-    @Published var data = MovieDetailsData(credits: [], reviews: [])
-    @Published var error: String?
+@Observable
+final class MovieDetailsViewModel {
+    var data = MovieDetailsData(credits: [], reviews: [])
+    var error: String?
 
     let movie: Movie
     let service: HomeServiceProtocol
+    private var cancellables = Set<AnyCancellable>()
 
     init(movie: Movie,
-         service: HomeServiceProtocol = HomeService())
-    {
+         service: HomeServiceProtocol = HomeService()) {
         self.movie = movie
         self.service = service
     }
@@ -57,8 +59,6 @@ final class MovieDetailsViewModel: ObservableObject {
         self.error = "Failed to load data: \(error.localizedDescription)"
         debugPrint(error)
     }
-
-    private var cancellables = Set<AnyCancellable>()
 
     deinit {
         print("MovieDetailsViewModel deallocated")

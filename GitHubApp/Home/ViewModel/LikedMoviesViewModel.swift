@@ -7,9 +7,11 @@
 
 import Combine
 import Foundation
+import Observation
 
-final class LikedMoviesViewModel: ObservableObject {
-    @Published var likedMovies: [Movie] = []
+@Observable
+final class LikedMoviesViewModel {
+    var likedMovies: [Movie] = []
 
     private let likedMoviesKey = "likedMoviesKey"
 
