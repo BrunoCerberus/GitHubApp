@@ -16,7 +16,8 @@ struct HomeView<R: HomeNavigationRouter>: View {
     @State private var viewModel: HomeViewModel
 
     init(router: R,
-         viewModel: HomeViewModel? = nil) {
+         viewModel: HomeViewModel? = nil)
+    {
         self.router = router
         self.viewModel = viewModel ?? HomeViewModel(service: HomeService())
     }

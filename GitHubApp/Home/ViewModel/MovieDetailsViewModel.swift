@@ -24,7 +24,8 @@ final class MovieDetailsViewModel {
     private var cancellables = Set<AnyCancellable>()
 
     init(movie: Movie,
-         service: HomeServiceProtocol = HomeService()) {
+         service: HomeServiceProtocol = HomeService())
+    {
         self.movie = movie
         self.service = service
     }
