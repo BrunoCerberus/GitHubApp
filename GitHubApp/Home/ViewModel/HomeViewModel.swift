@@ -59,14 +59,9 @@ final class HomeViewModel {
                 self?.handleError(error)
                 return Just([]).eraseToAnyPublisher()
             }
-            .handleEvents(receiveOutput: { [weak self] movies in
-                guard let self = self else { return }
-                if let ids = UserDefaults.standard.array(forKey: self.likedMoviesKey) as? [Int] {
-                    self.likedMovies = movies.filter { ids.contains($0.id) }
-                }
-            })
             .sink { [weak self] movies in
                 self?.movies = movies
+                self?.updateLikedMovies()
             }
             .store(in: &cancellables)
     }
@@ -80,6 +75,7 @@ final class HomeViewModel {
             }
             .sink { [weak self] movies in
                 self?.movies = movies
+                self?.updateLikedMovies()
             }
             .store(in: &cancellables)
     }
@@ -100,11 +96,15 @@ final class HomeViewModel {
     }
 
     private func updateLikedMovies() {
-        likedMovies = loadPersistedLikedMovies()
+        let persistedLikedMovies = loadPersistedLikedMovies()
+        // Filter liked movies to only include those that are currently in the movies list
+        likedMovies = movies.filter { movie in
+            persistedLikedMovies.contains(where: { $0.id == movie.id })
+        }
     }
 
     func isLiked(movie: Movie) -> Bool {
-        loadPersistedLikedMovies().contains(where: { $0.id == movie.id })
+        likedMovies.contains(where: { $0.id == movie.id })
     }
 
     private func handleError(_ error: Error) {
