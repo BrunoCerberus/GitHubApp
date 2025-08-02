@@ -28,7 +28,7 @@ final class HomeViewTests: XCTestCase {
         view = HomeView(router: router, viewModel: viewModel)
     }
 
-    func testView() async {
+    func testHomeView() async {
         let controller = view.wrappedViewController
 
         await viewModel.fetchData()

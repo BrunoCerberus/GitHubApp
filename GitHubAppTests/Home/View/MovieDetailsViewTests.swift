@@ -31,11 +31,11 @@ final class MovieDetailsViewTests: XCTestCase {
         view = MovieDetailsView(viewModel: viewModel)
     }
 
-    func testView() {
+    func testMovieDetailsView() {
         let controller = view.wrappedViewController
 
         viewModel.fetchData()
 
-        assertSnapshot(matching: controller, as: .wait(for: 0.3, on: .image(on: .iPhoneSe)), named: "movieDetailsView")
+        assertSnapshot(matching: controller, as: .wait(for: 0.3, on: .image(on: .iPhoneSe)))
     }
 }
