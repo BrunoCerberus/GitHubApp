@@ -58,10 +58,6 @@ targets:
       - path: GitHubApp
         excludes:
           - "**/*.plist"
-      - path: GitHubApp/Configs/Dev.xcconfig
-        target: GitHubApp
-      - path: GitHubApp/Configs/Prod.xcconfig
-        target: GitHubApp
     configFiles:
       Debug: GitHubApp/Configs/Dev.xcconfig
       Release: GitHubApp/Configs/Prod.xcconfig
