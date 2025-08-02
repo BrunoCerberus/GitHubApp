@@ -25,4 +25,4 @@ struct MovieCastMember: Identifiable, Equatable, Codable {
     var displayCharacter: String {
         return character.isEmpty ? "Unknown Character" : character
     }
-} 
+}

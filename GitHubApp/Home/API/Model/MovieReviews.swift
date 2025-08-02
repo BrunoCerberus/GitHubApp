@@ -25,4 +25,4 @@ struct MovieReview: Identifiable, Equatable, Codable {
     var displayContent: String {
         return content.isEmpty ? "No review content available" : content
     }
-} 
+}

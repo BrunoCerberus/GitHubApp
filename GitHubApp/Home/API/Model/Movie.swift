@@ -32,4 +32,4 @@ struct Movie: Codable, Hashable, Identifiable {
     var displayOverview: String {
         return overview.isEmpty ? "No overview available" : overview
     }
-} 
+}
