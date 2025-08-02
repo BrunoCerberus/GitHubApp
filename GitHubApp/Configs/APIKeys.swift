@@ -13,7 +13,6 @@ enum APIKeysProvider {
         guard let apiKey = ProcessInfo.processInfo.environment["API_KEY"], !apiKey.isEmpty else {
             fatalError("API_KEY not found in environment variables. Make sure to run with the correct scheme (GitHubAppDev or GitHubAppProd)")
         }
-        
         return apiKey
     }()
 }
