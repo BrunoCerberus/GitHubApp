@@ -61,6 +61,9 @@ targets:
       - path: GitHubApp
         excludes:
           - "**/*.plist"
+          - "**/__Snapshots__/**"
+          - "**/testView.*.png"
+          - "**/movieDetailsView.*.png"
     settings:
       base:
         INFOPLIST_FILE: GitHubApp/Info.plist
