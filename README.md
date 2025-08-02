@@ -46,6 +46,7 @@ The project configuration is defined in `project.yml`:
 - **Targets**: GitHubApp (main app), GitHubAppTests (unit tests), GitHubAppUITests (UI tests)
 - **Schemes**: GitHubApp, GitHubAppDev, GitHubAppProd
 - **Settings**: iOS 18.0+ deployment target, Swift 5.0
+- **Configuration Files**: Dev.xcconfig and Prod.xcconfig for environment-specific settings
 
 ### Modifying the Project
 

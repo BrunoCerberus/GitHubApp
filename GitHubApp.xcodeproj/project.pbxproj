@@ -14,6 +14,8 @@
 		09C63099A32B0C2656A3336A /* testView.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3D720A994186F0D981E69128 /* testView.1.png */; };
 		10628380594F25BE675DDB1A /* XCTest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 48AAA2AA801A58CA02F663DA /* XCTest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		13CF917B3191A1DA922CA54A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48AAA2AA801A58CA02F663DA /* XCTest.framework */; };
+		15B7B6E42E3DCAC2006C431E /* Prod.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4E9E7D9CB69C33A7AFE17592 /* Prod.xcconfig */; };
+		15B7B6E52E3DCAC8006C431E /* Dev.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 9263EBC4053FD001C250BBF8 /* Dev.xcconfig */; };
 		283312246F73D486308FCBEF /* testView.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 0678E0B8DDF9734A7AC1FBAE /* testView.1.png */; };
 		2FF46CF8B792475A4C5FE6B8 /* HomeViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1AECDB3B54A5C16F44B975 /* HomeViewState.swift */; };
 		35A3E45ADEEDBAE9936B299A /* LikedMoviesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4207CF74D4DCD32CB4568BC7 /* LikedMoviesView.swift */; };
@@ -127,7 +129,7 @@
 		9FEC59DF6588F4395BE51CA9 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A9AA2FAFA3D17AFCE6928DD2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B0343510FC2EB9FD2F219C09 /* APIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
-		BB23072E8A40CEEDABF2C8D5 /* GitHubApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = GitHubApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB23072E8A40CEEDABF2C8D5 /* GitHubApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitHubApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6A39F39BC2BA81819D99646 /* GitHubAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAppUITests.swift; sourceTree = "<group>"; };
 		C840192E8BA318CE6989A89A /* GitHubApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GitHubApp.entitlements; sourceTree = "<group>"; };
 		D79D07C044C73FACA02EA242 /* GitHubAppUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = GitHubAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -545,6 +547,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AEDB02D4F0C2AE94BF26DB4D /* .swiftlint.yml in Resources */,
+				15B7B6E42E3DCAC2006C431E /* Prod.xcconfig in Resources */,
+				15B7B6E52E3DCAC8006C431E /* Dev.xcconfig in Resources */,
 				9944A9DA6DCA58E4BBA1876A /* Assets.xcassets in Resources */,
 				7F2825CBA0E8F8D765D324B1 /* Preview Assets.xcassets in Resources */,
 			);
@@ -786,6 +790,7 @@
 		};
 		2A314133DAB463F70378B56B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9263EBC4053FD001C250BBF8 /* Dev.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -833,6 +838,7 @@
 		};
 		5B00E7AE6EABEF74860698EE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4E9E7D9CB69C33A7AFE17592 /* Prod.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
