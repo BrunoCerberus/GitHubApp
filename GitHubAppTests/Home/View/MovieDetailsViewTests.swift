@@ -36,6 +36,6 @@ final class MovieDetailsViewTests: XCTestCase {
 
         viewModel.fetchData()
 
-        assertSnapshot(matching: controller, as: .wait(for: 0.3, on: .image(on: .iPhoneSe)))
+        assertSnapshot(matching: controller, as: .wait(for: 0.3, on: .image(on: .iPhoneSe)), named: "movieDetailsView")
     }
 }
