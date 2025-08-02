@@ -1,10 +1,11 @@
-.PHONY: install-xcodegen generate clean help
+.PHONY: install-xcodegen generate clean test help
 
 # Default target
 help:
 	@echo "Available commands:"
 	@echo "  install-xcodegen  - Install XcodeGen using Homebrew"
 	@echo "  generate          - Generate Xcode project from project.yml"
+	@echo "  test              - Run all unit tests"
 	@echo "  clean             - Remove generated Xcode project"
 	@echo "  help              - Show this help message"
 
@@ -18,6 +19,12 @@ generate:
 	@echo "Generating Xcode project..."
 	@xcodegen generate
 	@echo "✅ Project generated successfully!"
+
+# Run all unit tests
+test:
+	@echo "Running unit tests..."
+	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -destination 'platform=iOS Simulator,name=iPhone 16 Pro'
+	@echo "✅ Tests completed!"
 
 # Clean generated files
 clean:

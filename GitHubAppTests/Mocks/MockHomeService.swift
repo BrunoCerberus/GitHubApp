@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+@testable import GitHubApp
 
 final class MockHomeService: HomeServiceProtocol {
     private let mockMoviesResponse = MoviesResponse(results: [
