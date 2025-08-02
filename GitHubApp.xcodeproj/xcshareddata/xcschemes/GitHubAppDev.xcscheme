@@ -67,7 +67,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "API_KEY"
-            value = "dev_api_key_here"
+            value = "da9bc8815fb0fc31d5ef6b3da097a009"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
@@ -97,7 +97,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "API_KEY"
-            value = "dev_api_key_here"
+            value = "da9bc8815fb0fc31d5ef6b3da097a009"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
@@ -123,7 +123,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "API_KEY"
-            value = "dev_api_key_here"
+            value = "da9bc8815fb0fc31d5ef6b3da097a009"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

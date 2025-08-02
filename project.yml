@@ -194,26 +194,26 @@ schemes:
     run:
       config: Debug
       environmentVariables:
-        API_KEY: dev_api_key_here
+        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
     test:
       config: Debug
       targets:
         - GitHubAppTests
         - GitHubAppUITests
       environmentVariables:
-        API_KEY: dev_api_key_here
+        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
     profile:
       config: Release
       environmentVariables:
-        API_KEY: dev_api_key_here
+        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
     analyze:
       config: Debug
       environmentVariables:
-        API_KEY: dev_api_key_here
+        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
     archive:
       config: Release
       environmentVariables:
-        API_KEY: dev_api_key_here
+        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
 
   GitHubAppProd:
     build:
@@ -222,23 +222,23 @@ schemes:
     run:
       config: Release
       environmentVariables:
-        API_KEY: prod_api_key_here
+        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
     test:
       config: Release
       targets:
         - GitHubAppTests
         - GitHubAppUITests
       environmentVariables:
-        API_KEY: prod_api_key_here
+        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
     profile:
       config: Release
       environmentVariables:
-        API_KEY: prod_api_key_here
+        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
     analyze:
       config: Release
       environmentVariables:
-        API_KEY: prod_api_key_here
+        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
     archive:
       config: Release
       environmentVariables:
-        API_KEY: prod_api_key_here 
+        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009 
