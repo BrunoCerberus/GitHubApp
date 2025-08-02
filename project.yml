@@ -58,9 +58,6 @@ targets:
       - path: GitHubApp
         excludes:
           - "**/*.plist"
-    configFiles:
-      Debug: GitHubApp/Configs/Dev.xcconfig
-      Release: GitHubApp/Configs/Prod.xcconfig
     settings:
       base:
         INFOPLIST_FILE: GitHubApp/Info.plist
@@ -73,6 +70,11 @@ targets:
         SUPPORTED_PLATFORMS: iphoneos iphonesimulator
         SUPPORTS_MACCATALYST: false
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: false
+      configs:
+        Debug:
+          API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
+        Release:
+          API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
     info:
       path: GitHubApp/Info.plist
       properties:
@@ -191,17 +193,27 @@ schemes:
         GitHubApp: all
     run:
       config: Debug
+      environmentVariables:
+        API_KEY: dev_api_key_here
     test:
       config: Debug
       targets:
         - GitHubAppTests
         - GitHubAppUITests
+      environmentVariables:
+        API_KEY: dev_api_key_here
     profile:
       config: Release
+      environmentVariables:
+        API_KEY: dev_api_key_here
     analyze:
       config: Debug
+      environmentVariables:
+        API_KEY: dev_api_key_here
     archive:
       config: Release
+      environmentVariables:
+        API_KEY: dev_api_key_here
 
   GitHubAppProd:
     build:
@@ -209,14 +221,24 @@ schemes:
         GitHubApp: all
     run:
       config: Release
+      environmentVariables:
+        API_KEY: prod_api_key_here
     test:
       config: Release
       targets:
         - GitHubAppTests
         - GitHubAppUITests
+      environmentVariables:
+        API_KEY: prod_api_key_here
     profile:
       config: Release
+      environmentVariables:
+        API_KEY: prod_api_key_here
     analyze:
       config: Release
+      environmentVariables:
+        API_KEY: prod_api_key_here
     archive:
-      config: Release 
+      config: Release
+      environmentVariables:
+        API_KEY: prod_api_key_here 
