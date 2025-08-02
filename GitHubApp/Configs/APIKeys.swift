@@ -9,10 +9,13 @@ import Foundation
 
 enum APIKeysProvider {
     static let theMovieAPIKey: String = {
-        // Read API_KEY directly from environment variables set in schemes
-        guard let apiKey = ProcessInfo.processInfo.environment["API_KEY"], !apiKey.isEmpty else {
-            fatalError("API_KEY not found in environment variables. Make sure to run with the correct scheme (GitHubAppDev or GitHubAppProd)")
+        // First try to read API_KEY from environment variables (for XcodeGen schemes)
+        if let apiKey = ProcessInfo.processInfo.environment["API_KEY"], !apiKey.isEmpty {
+            return apiKey
         }
-        return apiKey
+        
+        // Fallback for SweetPad or other build systems that don't set environment variables
+        // This is the same API key used in the schemes
+        return "da9bc8815fb0fc31d5ef6b3da097a009"
     }()
 }
