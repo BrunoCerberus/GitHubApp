@@ -3,6 +3,83 @@
 ## Inspiration
 This Repository is intended to be a new pattern based on Clean, Redux and MVVM, so from time to time, i'll update this readme with all implementation samples and testability.
 
+## GitHub Actions CI/CD
+
+This project includes comprehensive GitHub Actions workflows for continuous integration and deployment.
+
+### Workflows
+
+#### 1. CI Pipeline (`ci.yml`)
+**Triggers**: Pull requests to `develop`, `master`, or `main` branches
+- **Tests**: Runs unit tests and UI tests with code coverage
+- **Builds**: Builds the app for both Dev and Prod schemes in Debug and Release configurations
+- **Code Quality**: Checks for TODO/FIXME comments and runs SwiftLint (if configured)
+- **Artifacts**: Uploads test results and build artifacts
+
+#### 2. Deploy Pipeline (`deploy.yml`)
+**Triggers**: Pushes to `master` or `main` branches, or when tags starting with `v*` are pushed
+- **Build**: Creates production archive and IPA
+- **Release**: Automatically creates GitHub releases for tagged versions
+- **Artifacts**: Uploads production builds and IPA files
+
+#### 3. Scheduled Tests (`scheduled-tests.yml`)
+**Triggers**: Daily at 2 AM UTC, or manually via workflow dispatch
+- **Health Check**: Ensures the project stays healthy with daily test runs
+- **Monitoring**: Provides early warning of breaking changes
+
+### Pipeline Features
+
+- **XcodeGen Integration**: Automatically generates the Xcode project from `project.yml`
+- **Multi-Scheme Testing**: Tests both GitHubAppDev and GitHubAppProd schemes
+- **Code Coverage**: Enables code coverage reporting for unit tests
+- **Artifact Management**: Preserves test results and build artifacts
+- **Matrix Builds**: Tests multiple configurations simultaneously
+- **Quality Gates**: Checks for code quality issues before deployment
+
+### Local Testing
+
+To test the workflows locally, you can use the Makefile commands:
+
+```sh
+# Run all tests (similar to CI pipeline)
+make test
+
+# Generate project (required for CI)
+make generate
+
+# Clean generated files
+make clean
+```
+
+### Deployment
+
+For production deployments:
+
+1. **Create a release tag:**
+   ```sh
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+
+2. **The deploy workflow will automatically:**
+   - Build the production app
+   - Create a GitHub release
+   - Upload the IPA file as a release asset
+
+### Configuration
+
+#### Required Setup
+
+1. **Team ID**: Update `scripts/exportOptions.plist` with your Apple Developer Team ID
+2. **Secrets**: The workflows use `GITHUB_TOKEN` which is automatically provided
+3. **Branches**: Ensure your default branch is `master` or `main`
+
+#### Optional Setup
+
+- **SwiftLint**: Add SwiftLint configuration for additional code quality checks
+- **Code Coverage**: Configure coverage reporting tools
+- **Notifications**: Add Slack/Discord webhooks for build notifications
+
 ## XcodeGen Setup
 
 This project uses [XcodeGen](https://github.com/yonaskolb/XcodeGen) to generate the Xcode project from a YAML specification. This makes the project configuration more maintainable and version control friendly.
@@ -39,14 +116,15 @@ This project uses [XcodeGen](https://github.com/yonaskolb/XcodeGen) to generate 
 - `make generate` - Generate Xcode project from project.yml
 - `make clean` - Remove generated Xcode project
 - `make setup` - Install XcodeGen and generate project
+- `make test` - Run all unit tests
 
 ### Project Structure
 
 The project configuration is defined in `project.yml`:
 - **Targets**: GitHubApp (main app), GitHubAppTests (unit tests), GitHubAppUITests (UI tests)
-- **Schemes**: GitHubApp, GitHubAppDev, GitHubAppProd
+- **Schemes**: GitHubAppDev, GitHubAppProd
 - **Settings**: iOS 18.0+ deployment target, Swift 5.0
-- **Configuration Files**: Dev.xcconfig and Prod.xcconfig for environment-specific settings
+- **Environment Variables**: API keys configured per scheme
 
 ### Modifying the Project
 
