@@ -169,24 +169,6 @@ targets:
         CFBundleVersion: "1"
 
 schemes:
-  GitHubApp:
-    build:
-      targets:
-        GitHubApp: all
-    run:
-      config: Debug
-    test:
-      config: Debug
-      targets:
-        - GitHubAppTests
-        - GitHubAppUITests
-    profile:
-      config: Release
-    analyze:
-      config: Debug
-    archive:
-      config: Release
-
   GitHubAppDev:
     build:
       targets:
