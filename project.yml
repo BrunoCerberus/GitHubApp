@@ -1,0 +1,219 @@
+name: GitHubApp
+options:
+  bundleIdPrefix: com.bruno
+  deploymentTarget:
+    iOS: "18.0"
+  xcodeVersion: "15.0"
+  groupSortPosition: top
+  generateEmptyDirectories: true
+  fileTypes:
+    xcassets:
+      buildPhase: resources
+  createIntermediateGroups: true
+
+packages:
+  EntropyCore:
+    url: https://github.com/BrunoCerberus/EntropyCore.git
+    branch: master
+
+settings:
+  base:
+    PRODUCT_BUNDLE_IDENTIFIER: com.bruno.GitHubApp
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    IPHONEOS_DEPLOYMENT_TARGET: 18.0
+    SWIFT_VERSION: 5.0
+    TARGETED_DEVICE_FAMILY: 1,2
+    SUPPORTED_PLATFORMS: iphoneos iphonesimulator
+    SUPPORTS_MACCATALYST: false
+    SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: false
+  configs:
+    Debug:
+      type: debug
+    Release:
+      type: release
+  groups:
+    Debug:
+      SWIFT_OPTIMIZATION_LEVEL: -Onone
+      GCC_OPTIMIZATION_LEVEL: 0
+      DEBUG_INFORMATION_FORMAT: dwarf
+      ENABLE_STRICT_OBJC_MSGSEND: YES
+      CLANG_ENABLE_MODULE_DEBUGGING: YES
+      ONLY_ACTIVE_ARCH: YES
+      GCC_PREPROCESSOR_DEFINITIONS: DEBUG=1
+    Release:
+      SWIFT_OPTIMIZATION_LEVEL: -O
+      GCC_OPTIMIZATION_LEVEL: s
+      DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+      ENABLE_STRICT_OBJC_MSGSEND: YES
+      CLANG_ENABLE_MODULE_DEBUGGING: NO
+      ONLY_ACTIVE_ARCH: NO
+
+targets:
+  GitHubApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: GitHubApp
+        excludes:
+          - "**/*.plist"
+    settings:
+      base:
+        INFOPLIST_FILE: GitHubApp/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.bruno.GitHubApp
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""
+        TARGETED_DEVICE_FAMILY: 1,2
+        SUPPORTED_PLATFORMS: iphoneos iphonesimulator
+        SUPPORTS_MACCATALYST: false
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: false
+    info:
+      path: GitHubApp/Info.plist
+      properties:
+        CFBundleDisplayName: GitHubApp
+        CFBundleIdentifier: com.bruno.GitHubApp
+        CFBundleName: GitHubApp
+        CFBundlePackageType: APPL
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        LSRequiresIPhoneOS: true
+        UILaunchStoryboardName: LaunchScreen
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+          UISceneConfigurations:
+            UIWindowSceneSessionRoleApplication:
+              - UISceneConfigurationName: Default Configuration
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).GitHubAppSceneDelegate
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    dependencies:
+      - sdk: Foundation.framework
+      - sdk: UIKit.framework
+      - sdk: Combine.framework
+      - package: EntropyCore
+    preBuildScripts:
+      - name: Generate Project
+        script: |
+          if command -v xcodegen &> /dev/null; then
+            xcodegen generate
+          else
+            echo "XcodeGen not found. Please install it first: brew install xcodegen"
+          fi
+        inputFiles:
+          - project.yml
+        outputFiles:
+          - GitHubApp.xcodeproj
+
+  GitHubAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: GitHubAppTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bruno.GitHubAppTests
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/GitHubApp.app/GitHubApp"
+        BUNDLE_LOADER: $(TEST_HOST)
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""
+    dependencies:
+      - target: GitHubApp
+      - framework: XCTest.framework
+    info:
+      path: GitHubAppTests/Info.plist
+      properties:
+        CFBundleName: GitHubAppTests
+        CFBundleIdentifier: com.bruno.GitHubAppTests
+        CFBundlePackageType: BNDL
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+
+  GitHubAppUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: GitHubAppUITests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bruno.GitHubAppUITests
+        TEST_TARGET_NAME: GitHubApp
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""
+    dependencies:
+      - target: GitHubApp
+      - framework: XCTest.framework
+    info:
+      path: GitHubAppUITests/Info.plist
+      properties:
+        CFBundleName: GitHubAppUITests
+        CFBundleIdentifier: com.bruno.GitHubAppUITests
+        CFBundlePackageType: BNDL
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+
+schemes:
+  GitHubApp:
+    build:
+      targets:
+        GitHubApp: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - GitHubAppTests
+        - GitHubAppUITests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+
+  GitHubAppDev:
+    build:
+      targets:
+        GitHubApp: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - GitHubAppTests
+        - GitHubAppUITests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+
+  GitHubAppProd:
+    build:
+      targets:
+        GitHubApp: all
+    run:
+      config: Release
+    test:
+      config: Release
+      targets:
+        - GitHubAppTests
+        - GitHubAppUITests
+    profile:
+      config: Release
+    analyze:
+      config: Release
+    archive:
+      config: Release 

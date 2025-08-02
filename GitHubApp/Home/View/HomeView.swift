@@ -6,10 +6,8 @@
 //
 
 import EntropyCore
-import Equatable
 import SwiftUI
 
-@Equatable
 struct HomeView<R: HomeNavigationRouter>: View {
     private var router: R
 

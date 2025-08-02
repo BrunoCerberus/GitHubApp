@@ -1,13 +1,34 @@
-
-*.xcuserstate
-*.xcuserstate
+# Xcode user-specific data
 *.xcuserstate
 *.xcbkptlist
 GitHubApp.xcodeproj/project.xcworkspace/xcuserdata/bruno.xcuserdatad/UserInterfaceState.xcuserstate
 /GitHubApp.xcodeproj/xcuserdata
-*.xcbkptlist
-*.xcuserstate
 GitHubApp.xcodeproj/project.xcworkspace/xcuserdata/*.*
 # Xcode user-specific data (safe to ignore)
 GitHubApp.xcodeproj/project.xcworkspace/xcuserdata/
 GitHubApp.xcodeproj/xcuserdata/
+
+# XcodeGen generated project (optional - you can commit this if you want)
+# GitHubApp.xcodeproj/
+
+# Build artifacts
+build/
+DerivedData/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
