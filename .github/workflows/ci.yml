@@ -106,36 +106,4 @@ jobs:
         name: test-results
         path: |
           ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult.zip
-
-  build:
-    name: Build App
-    runs-on: macos-latest
-    needs: test
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Xcode
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '16.2'
-        
-    - name: Install XcodeGen
-      run: |
-        brew install xcodegen
-        
-    - name: Generate Xcode project
-      run: |
-        make generate
-        
-    - name: Build App
-      run: |
-        make build
-        
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: GitHubAppDev-Release
-        path: ./build/ 
+          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult.zip 
