@@ -66,7 +66,7 @@ struct MovieDetailsView: View {
         overview: "An exploratory dive into the deepest depths of the ocean of " +
             "a malevolent mining operation " +
             "threatens their mission and forces them into a high-stakes battle for survival.",
-        posterPath: "poster_image_path_here"
+        posterPath: "poster_image_path_here",
     )
     NavigationStack {
         MovieDetailsView(viewModel: MovieDetailsViewModel(movie: movie))
