@@ -36,6 +36,13 @@ final class MovieDetailsViewTests: XCTestCase {
 
         viewModel.fetchData()
 
-        assertSnapshot(matching: controller, as: .wait(for: 0.3, on: .image(on: .iPhoneSe)))
+        // Using iPhone 16 Pro dimensions
+        let iPhone16ProConfig = ViewImageConfig(
+            safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
+            size: CGSize(width: 393, height: 852),
+            traits: UITraitCollection()
+        )
+
+        assertSnapshot(matching: controller, as: .wait(for: 0.3, on: .image(on: iPhone16ProConfig)))
     }
 }
