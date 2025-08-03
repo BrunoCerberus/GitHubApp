@@ -7,9 +7,76 @@ on:
     branches: [ develop, master, main ]
 
 jobs:
+  code-quality:
+    name: Code Quality
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.0'
+        
+    - name: Install XcodeGen
+      run: |
+        brew install xcodegen
+        
+    - name: Generate Xcode project
+      run: |
+        xcodegen generate
+        
+    - name: Install Mint
+      run: |
+        brew install mint
+        
+    - name: Install SwiftFormat via Mint
+      run: |
+        mint install nicklockwood/SwiftFormat
+        
+    - name: Validate SwiftFormat
+      run: |
+        echo "🔍 Running SwiftFormat validation..."
+        if mint run swiftformat . --lint; then
+          echo "✅ SwiftFormat validation passed"
+        else
+          echo "❌ SwiftFormat validation failed!"
+          echo "Please run 'mint run swiftformat .' locally to fix formatting issues."
+          exit 1
+        fi
+        
+    - name: Run SwiftLint (if configured)
+      run: |
+        if command -v swiftlint &> /dev/null; then
+          swiftlint lint --reporter github-actions-logging
+        else
+          echo "SwiftLint not installed, skipping..."
+        fi
+        
+    - name: Check for TODO comments
+      run: |
+        echo "Checking for TODO comments..."
+        if grep -r "TODO" --include="*.swift" .; then
+          echo "⚠️  TODO comments found in code"
+        else
+          echo "✅ No TODO comments found"
+        fi
+        
+    - name: Check for FIXME comments
+      run: |
+        echo "Checking for FIXME comments..."
+        if grep -r "FIXME" --include="*.swift" .; then
+          echo "⚠️  FIXME comments found in code"
+        else
+          echo "✅ No FIXME comments found"
+        fi
+
   test:
     name: Run Tests
     runs-on: macos-latest
+    needs: code-quality
     
     steps:
     - name: Checkout code
@@ -107,70 +174,4 @@ jobs:
       if: matrix.configuration == 'Release'
       with:
         name: ${{ matrix.scheme }}-${{ matrix.configuration }}
-        path: ./build/
-
-  code-quality:
-    name: Code Quality
-    runs-on: macos-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Xcode
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '15.0'
-        
-    - name: Install XcodeGen
-      run: |
-        brew install xcodegen
-        
-    - name: Generate Xcode project
-      run: |
-        xcodegen generate
-        
-    - name: Install Mint
-      run: |
-        brew install mint
-        
-    - name: Install SwiftFormat via Mint
-      run: |
-        mint install nicklockwood/SwiftFormat
-        
-    - name: Validate SwiftFormat
-      run: |
-        echo "🔍 Running SwiftFormat validation..."
-        if mint run swiftformat . --lint; then
-          echo "✅ SwiftFormat validation passed"
-        else
-          echo "❌ SwiftFormat validation failed!"
-          echo "Please run 'mint run swiftformat .' locally to fix formatting issues."
-          exit 1
-        fi
-        
-    - name: Run SwiftLint (if configured)
-      run: |
-        if command -v swiftlint &> /dev/null; then
-          swiftlint lint --reporter github-actions-logging
-        else
-          echo "SwiftLint not installed, skipping..."
-        fi
-        
-    - name: Check for TODO comments
-      run: |
-        echo "Checking for TODO comments..."
-        if grep -r "TODO" --include="*.swift" .; then
-          echo "⚠️  TODO comments found in code"
-        else
-          echo "✅ No TODO comments found"
-        fi
-        
-    - name: Check for FIXME comments
-      run: |
-        echo "Checking for FIXME comments..."
-        if grep -r "FIXME" --include="*.swift" .; then
-          echo "⚠️  FIXME comments found in code"
-        else
-          echo "✅ No FIXME comments found"
-        fi 
+        path: ./build/ 
