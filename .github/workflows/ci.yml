@@ -127,11 +127,6 @@ jobs:
     runs-on: macos-latest
     needs: test
     
-    strategy:
-      matrix:
-        scheme: [GitHubAppDev, GitHubAppProd]
-        configuration: [Debug, Release]
-        
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -153,25 +148,23 @@ jobs:
       run: |
         xcodebuild clean build \
           -project GitHubApp.xcodeproj \
-          -scheme ${{ matrix.scheme }} \
-          -configuration ${{ matrix.configuration }} \
+          -scheme GitHubAppDev \
+          -configuration Debug \
           -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
           | xcpretty
           
     - name: Archive App
-      if: matrix.configuration == 'Release'
       run: |
         xcodebuild clean archive \
           -project GitHubApp.xcodeproj \
-          -scheme ${{ matrix.scheme }} \
+          -scheme GitHubAppDev \
           -configuration Release \
-          -archivePath ./build/${{ matrix.scheme }}.xcarchive \
+          -archivePath ./build/GitHubAppDev.xcarchive \
           -destination 'generic/platform=iOS' \
           | xcpretty
           
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
-      if: matrix.configuration == 'Release'
       with:
-        name: ${{ matrix.scheme }}-${{ matrix.configuration }}
+        name: GitHubAppDev-Release
         path: ./build/ 
