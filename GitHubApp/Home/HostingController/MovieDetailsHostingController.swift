@@ -19,7 +19,7 @@ final class MovieDetailsHostingController: BaseHostingController<MovieDetailsVie
     }
 
     @MainActor dynamic required init?(coder _: NSCoder) {
-        return nil
+        nil
     }
 
     override func viewDidLoad() {

@@ -68,10 +68,10 @@ final class MovieDetailsViewModel {
 
 extension MovieDetailsViewModel {
     var showCredits: Bool {
-        return !data.credits.isEmpty
+        !data.credits.isEmpty
     }
 
     var showReviews: Bool {
-        return !data.reviews.isEmpty
+        !data.reviews.isEmpty
     }
 }

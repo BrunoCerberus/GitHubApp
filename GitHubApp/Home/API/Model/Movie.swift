@@ -21,15 +21,15 @@ struct Movie: Codable, Hashable, Identifiable {
     let posterPath: String?
 
     var posterURL: URL? {
-        guard let posterPath = posterPath, !posterPath.isEmpty else { return nil }
+        guard let posterPath, !posterPath.isEmpty else { return nil }
         return URL(string: BaseURLs.image.rawValue + posterPath)
     }
 
     var displayTitle: String {
-        return title.isEmpty ? "Untitled" : title
+        title.isEmpty ? "Untitled" : title
     }
 
     var displayOverview: String {
-        return overview.isEmpty ? "No overview available" : overview
+        overview.isEmpty ? "No overview available" : overview
     }
 }

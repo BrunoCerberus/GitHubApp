@@ -1,9 +1,20 @@
 #!/bin/sh
 
-# Run SwiftFormat in lint mode (does not modify files)
-if mint run swiftformat . --lint | grep -q 'would be formatted'; then
-  echo "\033[0;31mERROR: SwiftFormat found files to reformat. Please run 'mint run swiftformat .' and stage the results before committing.\033[0m"
-  exit 1
-fi
+# Pre-commit hook to check SwiftFormat
+echo "🔍 Running SwiftFormat lint check..."
 
-exit 0 
+# Run SwiftFormat in lint mode
+if mint run swiftformat . --lint; then
+  echo "✅ SwiftFormat check passed"
+  exit 0
+else
+  echo ""
+  echo "❌ SwiftFormat found formatting issues!"
+  echo ""
+  echo "To fix these issues, run:"
+  echo "  mint run swiftformat ."
+  echo ""
+  echo "Then stage the changes and commit again."
+  echo ""
+  exit 1
+fi 

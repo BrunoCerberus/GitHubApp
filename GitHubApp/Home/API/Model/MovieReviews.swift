@@ -19,10 +19,10 @@ struct MovieReview: Identifiable, Equatable, Codable {
     let content: String
 
     var displayAuthor: String {
-        return author.isEmpty ? "Anonymous" : author
+        author.isEmpty ? "Anonymous" : author
     }
 
     var displayContent: String {
-        return content.isEmpty ? "No review content available" : content
+        content.isEmpty ? "No review content available" : content
     }
 }

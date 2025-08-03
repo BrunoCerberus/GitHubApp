@@ -33,8 +33,8 @@ final class HomeViewModel {
         Timer.publish(every: 0.3, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
-                guard let self = self else { return }
-                self.handleSearchQueryChange()
+                guard let self else { return }
+                handleSearchQueryChange()
             }
             .store(in: &cancellables)
     }

@@ -20,10 +20,10 @@ final class HomeNavigationRouter: NavigationRouter, Equatable {
     func route(navigationEvent: HomeNavigationEvent) {
         switch navigationEvent {
         case let .detail(movie):
-            if let coordinator = coordinator {
+            if let coordinator {
                 // Use SwiftUI navigation
                 coordinator.push(page: .detail(movie))
-            } else if let navigation = navigation {
+            } else if let navigation {
                 // Fallback to UIKit navigation
                 let controller = MovieDetailsHostingController(movie: movie)
                 navigation.pushViewController(controller, animated: true)
@@ -34,6 +34,6 @@ final class HomeNavigationRouter: NavigationRouter, Equatable {
 
 extension HomeNavigationRouter {
     static func == (lhs: HomeNavigationRouter, rhs: HomeNavigationRouter) -> Bool {
-        return lhs.navigation === rhs.navigation && lhs.coordinator === rhs.coordinator
+        lhs.navigation === rhs.navigation && lhs.coordinator === rhs.coordinator
     }
 }

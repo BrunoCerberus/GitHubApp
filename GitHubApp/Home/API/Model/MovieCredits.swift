@@ -19,10 +19,10 @@ struct MovieCastMember: Identifiable, Equatable, Codable {
     let character: String
 
     var displayName: String {
-        return name.isEmpty ? "Unknown" : name
+        name.isEmpty ? "Unknown" : name
     }
 
     var displayCharacter: String {
-        return character.isEmpty ? "Unknown Character" : character
+        character.isEmpty ? "Unknown Character" : character
     }
 }

@@ -15,11 +15,11 @@ enum HomeAPI: APIFetcher {
     case fetchReviews(Int)
 
     private var baseURL: String {
-        return BaseURLs.theMovie.rawValue
+        BaseURLs.theMovie.rawValue
     }
 
     private var apiKey: String {
-        return APIKeysProvider.theMovieAPIKey
+        APIKeysProvider.theMovieAPIKey
     }
 
     var path: String {
@@ -56,15 +56,15 @@ enum HomeAPI: APIFetcher {
     }
 
     var method: HTTPMethod {
-        return .GET
+        .GET
     }
 
     var task: Codable? {
-        return nil
+        nil
     }
 
     var header: Codable? {
-        return nil
+        nil
     }
 
     var debug: Bool {

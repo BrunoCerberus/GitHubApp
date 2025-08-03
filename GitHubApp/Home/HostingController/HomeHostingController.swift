@@ -18,7 +18,7 @@ final class HomeHostingController<R: HomeNavigationRouter>: BaseHostingControlle
     }
 
     @MainActor @objc dynamic required init?(coder _: NSCoder) {
-        return nil
+        nil
     }
 
     override func viewDidLoad() {
