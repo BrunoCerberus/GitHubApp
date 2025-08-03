@@ -30,7 +30,7 @@ final class HomeViewModel {
     private func setupBindings() {
         // Since we're using @Observable, we need to manually observe searchQuery changes
         // We'll use a Timer to periodically check for changes
-        Timer.publish(every: 0.1, on: .main, in: .common)
+        Timer.publish(every: 0.3, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 guard let self = self else { return }
