@@ -95,6 +95,26 @@ jobs:
       run: |
         make generate
         
+    - name: Debug Package Dependencies
+      run: |
+        echo "🔍 Checking package dependencies..."
+        ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+        echo "📦 Package.resolved content:"
+        cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
+        
+    - name: Clean Package Dependencies
+      run: |
+        echo "🧹 Cleaning package dependencies..."
+        rm -rf GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+        rm -rf GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/configuration
+        rm -rf GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/artifacts
+        echo "✅ Package dependencies cleaned!"
+        
+    - name: Regenerate Project
+      run: |
+        echo "🔄 Regenerating project after cleaning..."
+        make generate
+        
     - name: Run Tests
       run: |
         make test
