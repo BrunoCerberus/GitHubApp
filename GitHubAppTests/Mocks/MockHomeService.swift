@@ -37,17 +37,17 @@ final class MockHomeService: HomeServiceProtocol {
         MovieCastMember(
             id: 234_352,
             name: "Margot Robbie",
-            character: "Barbie",
+            character: "Barbie"
         ),
         MovieCastMember(
             id: 30614,
             name: "Ryan Gosling",
-            character: "Ken",
+            character: "Ken"
         ),
         MovieCastMember(
             id: 59174,
             name: "America Ferrera",
-            character: "Gloria",
+            character: "Gloria"
         ),
     ])
 
@@ -63,7 +63,7 @@ final class MockHomeService: HomeServiceProtocol {
                 "both men and women. The Kens gaining respect little by little mirrors how women " +
                 "eventually earned their rights to be respected individuals — after being considered " +
                 "as only being useful in the kitchen or for making babies — except with the gender roles " +
-                "reversed and nude blobs instead of genitalia.\r\n\r\n**Full review:** https://bit.ly/beachoff",
+                "reversed and nude blobs instead of genitalia.\r\n\r\n**Full review:** https://bit.ly/beachoff"
         ),
         MovieReview(
             id: "64be2c5ce9da6900eceae0cc",
@@ -73,7 +73,7 @@ final class MockHomeService: HomeServiceProtocol {
                 "monstrosity is mean spirited, misandry. The message is simply not one I want my child " +
                 "taking on board.\r\n\r\nMy daughter wanted to leave before I'd even suggested it, so we " +
                 "did and had a better time doing something else together.\r\n\r\nIn summary, in my opinion, " +
-                "nasty and spiteful. Hollywood deserves its declining viewership, if this is all it has left to offer.",
+                "nasty and spiteful. Hollywood deserves its declining viewership, if this is all it has left to offer."
         ),
         MovieReview(
             id: "64bea9e3c51acd00af638e02",
@@ -87,7 +87,7 @@ final class MockHomeService: HomeServiceProtocol {
                 "self-love, and, of course, the roles of women and men in today's society.\r\n\r\nMargot Robbie " +
                 "was destined to play Barbie just as Ryan Gosling was born with Kenergy in his veins. Absolutely " +
                 "fantastic, as are the rest of the Barbies and Kens.\r\n\r\nA must-see in a packed " +
-                "theater!\"\r\n\r\nRating: A-",
+                "theater!\"\r\n\r\nRating: A-"
         ),
     ])
 
