@@ -27,7 +27,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
                     url: movie.posterURL,
                     placeholder: {
                         ProgressView()
-                    },
+                    }
                 )
                 .frame(width: 100)
                 VStack(alignment: .leading) {
@@ -68,6 +68,6 @@ struct HomeView<R: HomeNavigationRouter>: View {
     let viewModel = HomeViewModel(service: HomeService())
     HomeView(
         router: HomeNavigationRouter(),
-        viewModel: viewModel,
+        viewModel: viewModel
     )
 }

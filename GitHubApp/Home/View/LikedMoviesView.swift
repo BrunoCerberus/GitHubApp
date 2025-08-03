@@ -33,7 +33,7 @@ struct LikedMoviesView: View {
                                         url: movie.posterURL,
                                         placeholder: {
                                             ProgressView()
-                                        },
+                                        }
                                     )
                                     .frame(width: 100)
                                     VStack(alignment: .leading) {
@@ -53,7 +53,7 @@ struct LikedMoviesView: View {
                                            })
                                            .buttonStyle(PlainButtonStyle())
                                 }
-                            },
+                            }
                         )
                         .buttonStyle(PlainButtonStyle())
                     }
