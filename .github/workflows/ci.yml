@@ -130,6 +130,25 @@ jobs:
       run: |
         xcodegen generate
         
+    - name: Install Mint
+      run: |
+        brew install mint
+        
+    - name: Install SwiftFormat via Mint
+      run: |
+        mint install SwiftFormat
+        
+    - name: Validate SwiftFormat
+      run: |
+        echo "🔍 Running SwiftFormat validation..."
+        if mint run swiftformat . --lint; then
+          echo "✅ SwiftFormat validation passed"
+        else
+          echo "❌ SwiftFormat validation failed!"
+          echo "Please run 'mint run swiftformat .' locally to fix formatting issues."
+          exit 1
+        fi
+        
     - name: Run SwiftLint (if configured)
       run: |
         if command -v swiftlint &> /dev/null; then
