@@ -26,22 +26,33 @@ jobs:
         
     - name: Generate Xcode project
       run: |
-        xcodegen generate
+        make generate
+        
+    - name: Debug Package Dependencies
+      run: |
+        echo "🔍 Checking package dependencies..."
+        ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+        echo "📦 Package.resolved content:"
+        cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
+        
+    - name: Clean Package Dependencies
+      run: |
+        make clean-packages
+        
+    - name: Generate Xcode project (after cleaning)
+      run: |
+        make generate
         
     - name: Run All Tests
       run: |
-        xcodebuild clean test \
-          -project GitHubApp.xcodeproj \
-          -scheme GitHubAppDev \
-          -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
-          -enableCodeCoverage YES \
-          | xcpretty
-          
+        make test
+        
     - name: Upload test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: scheduled-test-results
         path: |
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult.zip 
+          /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+          /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Build/*.xcactivitylog
+        retention-days: 5 
