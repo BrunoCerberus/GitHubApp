@@ -956,8 +956,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/BrunoCerberus/EntropyCore.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = a741510ee5b339764ffcbab7adfbcfbb858094a6;
 			};
 		};
 		99658432FF459DF4CD447AAB /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
