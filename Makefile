@@ -5,7 +5,7 @@ help:
 	@echo "Available commands:"
 	@echo "  install-xcodegen  - Install XcodeGen using Homebrew"
 	@echo "  generate          - Generate Xcode project from project.yml"
-	@echo "  test              - Run all unit tests"
+	@echo "  test              - Run all unit tests on iOS 18.2 iPhone 16 Pro"
 	@echo "  clean             - Remove generated Xcode project"
 	@echo "  clean-packages    - Clean Swift Package Manager dependencies"
 	@echo "  help              - Show this help message"
@@ -31,9 +31,9 @@ clean-packages:
 
 # Run all unit tests
 test:
-	@echo "Running unit tests..."
+	@echo "Running unit tests on iOS 18.2 iPhone 16 Pro..."
 	@make clean-packages
-	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -destination 'platform=iOS Simulator,name=iPhone 16 Pro'
+	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2'
 	@echo "✅ Tests completed!"
 
 # Clean generated files
