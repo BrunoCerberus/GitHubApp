@@ -136,7 +136,7 @@ jobs:
         
     - name: Install SwiftFormat via Mint
       run: |
-        mint install SwiftFormat
+        mint install nicklockwood/SwiftFormat
         
     - name: Validate SwiftFormat
       run: |
