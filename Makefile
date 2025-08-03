@@ -1,4 +1,4 @@
-.PHONY: install-xcodegen generate clean test build help
+.PHONY: install-xcodegen generate clean test build clean-packages help
 
 # Default target
 help:
@@ -8,6 +8,7 @@ help:
 	@echo "  test              - Run all unit tests"
 	@echo "  build             - Build and archive the app"
 	@echo "  clean             - Remove generated Xcode project"
+	@echo "  clean-packages    - Clean Swift Package Manager dependencies"
 	@echo "  help              - Show this help message"
 
 # Install XcodeGen
@@ -21,15 +22,25 @@ generate:
 	@xcodegen generate
 	@echo "✅ Project generated successfully!"
 
+# Clean Swift Package Manager dependencies
+clean-packages:
+	@echo "Cleaning Swift Package Manager dependencies..."
+	@rm -rf GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+	@rm -rf GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/configuration
+	@rm -rf GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/artifacts
+	@echo "✅ Package dependencies cleaned!"
+
 # Run all unit tests
 test:
 	@echo "Running unit tests..."
+	@make clean-packages
 	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -destination 'platform=iOS Simulator,name=iPhone 16 Pro'
 	@echo "✅ Tests completed!"
 
 # Build and archive the app
 build:
 	@echo "Building and archiving the app..."
+	@make clean-packages
 	@xcodebuild clean build -project GitHubApp.xcodeproj -scheme GitHubAppDev -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 16 Pro'
 	@xcodebuild clean archive -project GitHubApp.xcodeproj -scheme GitHubAppDev -configuration Release -archivePath ./build/GitHubAppDev.xcarchive -destination 'generic/platform=iOS'
 	@echo "✅ Build completed!"
