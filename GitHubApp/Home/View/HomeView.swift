@@ -11,7 +11,7 @@ import SwiftUI
 struct HomeView<R: HomeNavigationRouter>: View {
     private var router: R
 
-    @State private var viewModel: HomeViewModel
+    @Bindable private var viewModel: HomeViewModel
 
     init(router: R,
          viewModel: HomeViewModel? = nil)
