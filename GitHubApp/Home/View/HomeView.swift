@@ -12,6 +12,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
     private var router: R
 
     @State private var viewModel: HomeViewModel
+    @State private var searchText = ""
 
     init(router: R,
          viewModel: HomeViewModel? = nil)
@@ -55,11 +56,22 @@ struct HomeView<R: HomeNavigationRouter>: View {
             viewModel.fetchData()
         }
         .scrollIndicators(.hidden)
-        .searchable(text: $viewModel.searchQuery)
+        .searchable(text: $searchText)
+        .onChange(of: searchText) { _, newValue in
+            handleSearchQueryChange(newValue)
+        }
         .overlay {
             if let error = viewModel.error {
                 Text(error)
             }
+        }
+    }
+
+    private func handleSearchQueryChange(_ query: String) {
+        if query.isEmpty {
+            viewModel.fetchData()
+        } else {
+            viewModel.searchMovies(query: query)
         }
     }
 }
