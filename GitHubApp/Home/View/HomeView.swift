@@ -11,7 +11,7 @@ import SwiftUI
 struct HomeView<R: HomeNavigationRouter>: View {
     private var router: R
 
-    @Bindable private var viewModel: HomeViewModel
+    @State private var viewModel: HomeViewModel
     @State private var searchText = ""
 
     init(router: R,
