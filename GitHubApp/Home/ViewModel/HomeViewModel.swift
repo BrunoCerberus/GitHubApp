@@ -50,48 +50,8 @@ final class HomeViewModel {
      */
     init(service: HomeServiceProtocol = HomeService()) {
         self.service = service
-        setupBindings()
         fetchData()
         loadLikedMovies()
-    }
-
-    /**
-     * Set up reactive bindings for search functionality.
-     *
-     * Uses a timer to debounce search queries and avoid excessive API calls.
-     */
-    private func setupBindings() {
-        // Since we're using @Observable, we need to manually observe searchQuery changes
-        // We'll use a Timer to periodically check for changes
-        Timer.publish(every: 0.3, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                guard let self else { return }
-                handleSearchQueryChange()
-            }
-            .store(in: &cancellables)
-    }
-
-    /// Track the last processed search query to avoid duplicate requests
-    private var lastSearchQuery = ""
-
-    /**
-     * Handle changes in the search query with debouncing.
-     *
-     * Compares current query with last processed query to avoid
-     * unnecessary API calls and provides appropriate response.
-     */
-    private func handleSearchQueryChange() {
-        guard searchQuery != lastSearchQuery else { return }
-        lastSearchQuery = searchQuery
-
-        if searchQuery.isEmpty {
-            // Show upcoming movies when search is cleared
-            fetchData()
-        } else {
-            // Search for movies when query is entered
-            searchMovies(query: searchQuery)
-        }
     }
 
     /**
