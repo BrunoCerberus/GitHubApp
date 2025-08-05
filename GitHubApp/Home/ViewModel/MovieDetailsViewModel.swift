@@ -37,7 +37,7 @@ struct MovieDetailsData {
 @Observable
 final class MovieDetailsViewModel {
     /// Combined data for movie credits and reviews
-    var data = MovieDetailsData(credits: [], reviews: [])
+    var data: MovieDetailsData = .init(credits: [], reviews: [])
 
     /// Error message to display to the user
     var error: String?
@@ -49,7 +49,7 @@ final class MovieDetailsViewModel {
     let service: HomeServiceProtocol
 
     /// Combine cancellables for memory management
-    private var cancellables = Set<AnyCancellable>()
+    private var cancellables: Set<AnyCancellable> = .init()
 
     /**
      * Initialize the ViewModel with a movie and optional service dependency.

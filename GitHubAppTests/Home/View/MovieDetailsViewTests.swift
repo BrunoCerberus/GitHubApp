@@ -13,12 +13,12 @@ import XCTest
 @testable import GitHubApp
 
 final class MovieDetailsViewTests: XCTestCase {
-    let movie = Movie(id: 346_698,
-                      title: "Barbie",
-                      overview: "Barbie and Ken are having the time of their lives in the colorful " +
-                          "and seemingly perfect world of Barbie Land. However, when they get a chance to " +
-                          "go to the real world, they soon discover the joys and perils of living among humans.",
-                      posterPath: "")
+    let movie: Movie = .init(id: 346_698,
+                             title: "Barbie",
+                             overview: "Barbie and Ken are having the time of their lives in the colorful " +
+                                 "and seemingly perfect world of Barbie Land. However, when they get a chance to " +
+                                 "go to the real world, they soon discover the joys and perils of living among humans.",
+                             posterPath: "")
     var mockService: MockHomeService!
     var viewModel: MovieDetailsViewModel!
     var view: MovieDetailsView!
@@ -32,7 +32,7 @@ final class MovieDetailsViewTests: XCTestCase {
     }
 
     func testMovieDetailsView() {
-        let controller = view.wrappedViewController
+        let controller: UIViewController = view.wrappedViewController
 
         viewModel.fetchData()
 

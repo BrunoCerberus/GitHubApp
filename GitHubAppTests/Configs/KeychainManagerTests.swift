@@ -12,9 +12,9 @@ final class KeychainManagerTests: XCTestCase {
     // MARK: - Properties
 
     private var keychainManager: KeychainManager!
-    private let testService = "com.bruno.GitHubApp.TestKeychain"
-    private let testKey = "testKey"
-    private let testValue = "testValue"
+    private let testService: String = "com.bruno.GitHubApp.TestKeychain"
+    private let testKey: String = "testKey"
+    private let testValue: String = "testValue"
 
     // MARK: - Setup and Teardown
 
@@ -41,7 +41,7 @@ final class KeychainManagerTests: XCTestCase {
 
         // Then
         XCTAssertTrue(keychainManager.exists(for: testKey))
-        let retrievedValue = try keychainManager.retrieve(for: testKey)
+        let retrievedValue: String = try keychainManager.retrieve(for: testKey)
         XCTAssertEqual(retrievedValue, testValue)
     }
 
@@ -51,7 +51,7 @@ final class KeychainManagerTests: XCTestCase {
 
         // Then
         XCTAssertTrue(keychainManager.exists(for: testKey))
-        let retrievedValue = try keychainManager.retrieve(for: testKey)
+        let retrievedValue: String = try keychainManager.retrieve(for: testKey)
         XCTAssertEqual(retrievedValue, "")
     }
 
@@ -63,7 +63,7 @@ final class KeychainManagerTests: XCTestCase {
         try keychainManager.save(specialValue, for: testKey)
 
         // Then
-        let retrievedValue = try keychainManager.retrieve(for: testKey)
+        let retrievedValue: String = try keychainManager.retrieve(for: testKey)
         XCTAssertEqual(retrievedValue, specialValue)
     }
 
@@ -75,7 +75,7 @@ final class KeychainManagerTests: XCTestCase {
         try keychainManager.save(unicodeValue, for: testKey)
 
         // Then
-        let retrievedValue = try keychainManager.retrieve(for: testKey)
+        let retrievedValue: String = try keychainManager.retrieve(for: testKey)
         XCTAssertEqual(retrievedValue, unicodeValue)
     }
 
@@ -112,7 +112,7 @@ final class KeychainManagerTests: XCTestCase {
         try keychainManager.save(newValue, for: testKey)
 
         // Then
-        let retrievedValue = try keychainManager.retrieve(for: testKey)
+        let retrievedValue: String = try keychainManager.retrieve(for: testKey)
         XCTAssertEqual(retrievedValue, newValue)
     }
 
@@ -167,8 +167,8 @@ final class KeychainManagerTests: XCTestCase {
         XCTAssertTrue(keychainManager.exists(for: key1))
         XCTAssertTrue(keychainManager.exists(for: key2))
 
-        let retrievedValue1 = try keychainManager.retrieve(for: key1)
-        let retrievedValue2 = try keychainManager.retrieve(for: key2)
+        let retrievedValue1: String = try keychainManager.retrieve(for: key1)
+        let retrievedValue2: String = try keychainManager.retrieve(for: key2)
 
         XCTAssertEqual(retrievedValue1, value1)
         XCTAssertEqual(retrievedValue2, value2)
@@ -193,8 +193,8 @@ final class KeychainManagerTests: XCTestCase {
         try manager2.save(value2, for: testKey)
 
         // Then
-        let retrievedValue1 = try manager1.retrieve(for: testKey)
-        let retrievedValue2 = try manager2.retrieve(for: testKey)
+        let retrievedValue1: String = try manager1.retrieve(for: testKey)
+        let retrievedValue2: String = try manager2.retrieve(for: testKey)
 
         XCTAssertEqual(retrievedValue1, value1)
         XCTAssertEqual(retrievedValue2, value2)

@@ -35,13 +35,13 @@ final class HomeViewModel {
     var likedMovies: [Movie] = []
 
     /// Combine cancellables for memory management
-    private var cancellables = Set<AnyCancellable>()
+    private var cancellables: Set<AnyCancellable> = .init()
 
     /// Network service for API calls
     private let service: HomeServiceProtocol
 
     /// UserDefaults key for persisting liked movies
-    private let likedMoviesKey = "likedMoviesKey"
+    private let likedMoviesKey: String = "likedMoviesKey"
 
     /**
      * Initialize the ViewModel with optional service dependency.
@@ -107,7 +107,7 @@ final class HomeViewModel {
      * - Parameter movie: The movie to toggle like status for
      */
     func toggleLike(for movie: Movie) {
-        var likedMovies = loadPersistedLikedMovies()
+        var likedMovies: [Movie] = loadPersistedLikedMovies()
         if let index = likedMovies.firstIndex(where: { $0.id == movie.id }) {
             // Remove from liked movies if already liked
             likedMovies.remove(at: index)
@@ -135,7 +135,7 @@ final class HomeViewModel {
      * are currently in the movies array (either upcoming or search results).
      */
     private func updateLikedMovies() {
-        let persistedLikedMovies = loadPersistedLikedMovies()
+        let persistedLikedMovies: [Movie] = loadPersistedLikedMovies()
         // Filter liked movies to only include those that are currently in the movies list
         likedMovies = movies.filter { movie in
             persistedLikedMovies.contains(where: { $0.id == movie.id })
@@ -178,8 +178,8 @@ final class HomeViewModel {
      * - Returns: Array of persisted liked movies, or empty array if none found
      */
     private func loadPersistedLikedMovies() -> [Movie] {
-        guard let data = UserDefaults.standard.data(forKey: likedMoviesKey),
-              let movies = try? JSONDecoder().decode([Movie].self, from: data)
+        guard let data: Data = UserDefaults.standard.data(forKey: likedMoviesKey),
+              let movies: [Movie] = try? JSONDecoder().decode([Movie].self, from: data)
         else {
             return []
         }
