@@ -1,4 +1,4 @@
-.PHONY: install-xcodegen generate clean test clean-packages help
+.PHONY: install-xcodegen generate clean test test-unit test-ui clean-packages help
 
 # Default target
 help:
@@ -6,6 +6,8 @@ help:
 	@echo "  install-xcodegen  - Install XcodeGen using Homebrew"
 	@echo "  generate          - Generate Xcode project from project.yml"
 	@echo "  test              - Run all unit tests on iOS 18.2 iPhone 16 Pro"
+	@echo "  test-unit         - Run only unit tests"
+	@echo "  test-ui           - Run only UI tests"
 	@echo "  clean             - Remove generated Xcode project"
 	@echo "  clean-packages    - Clean Swift Package Manager dependencies"
 	@echo "  help              - Show this help message"
@@ -35,6 +37,20 @@ test:
 	@make clean-packages
 	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2'
 	@echo "✅ Tests completed!"
+
+# Run only unit tests
+test-unit:
+	@echo "Running unit tests on iOS 18.2 iPhone 16 Pro..."
+	@make clean-packages
+	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -only-testing:GitHubAppTests -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2'
+	@echo "✅ Unit tests completed!"
+
+# Run only UI tests
+test-ui:
+	@echo "Running UI tests on iOS 18.2 iPhone 16 Pro..."
+	@make clean-packages
+	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -only-testing:GitHubAppUITests -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2'
+	@echo "✅ UI tests completed!"
 
 # Clean generated files
 clean:
