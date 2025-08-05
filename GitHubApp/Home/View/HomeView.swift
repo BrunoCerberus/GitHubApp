@@ -12,7 +12,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
     private var router: R
 
     @State private var viewModel: HomeViewModel
-    @State private var searchText = ""
+    @State private var searchText: String = ""
 
     init(router: R,
          viewModel: HomeViewModel? = nil)
