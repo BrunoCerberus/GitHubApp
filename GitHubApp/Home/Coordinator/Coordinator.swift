@@ -13,10 +13,10 @@ enum Page: Hashable {
 }
 
 final class Coordinator: ObservableObject {
-    @Published var path = NavigationPath()
+    @Published var path: NavigationPath = .init()
 
-    lazy var homeViewModel = HomeViewModel()
-    lazy var likedMoviesViewModel = LikedMoviesViewModel()
+    lazy var homeViewModel: HomeViewModel = .init()
+    lazy var likedMoviesViewModel: LikedMoviesViewModel = .init()
 
     init() {
         // No longer need to connect the ViewModels

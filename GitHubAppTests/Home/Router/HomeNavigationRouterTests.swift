@@ -15,7 +15,7 @@ final class HomeNavigationRouterTests: XCTestCase {
         let router = HomeNavigationRouter()
         router.navigation = nav
         router.route(navigationEvent: .detail(mockMovie))
-        let expectation = expectation(description: "Wait for UI")
+        let expectation: XCTestExpectation = expectation(description: "Wait for UI")
 
         Task { @MainActor in
             XCTAssertTrue(router.navigation?.topViewController is MovieDetailsHostingController)

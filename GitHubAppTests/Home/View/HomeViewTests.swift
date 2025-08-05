@@ -29,7 +29,7 @@ final class HomeViewTests: XCTestCase {
     }
 
     func testHomeView() async {
-        let controller = view.wrappedViewController
+        let controller: UIViewController = view.wrappedViewController
 
         await viewModel.fetchData()
 
