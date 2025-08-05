@@ -25,7 +25,7 @@ final class LikedMoviesViewModel: ObservableObject {
     @Published var likedMovies: [Movie] = []
 
     /// UserDefaults key for persisting liked movies
-    private let likedMoviesKey = "likedMoviesKey"
+    private let likedMoviesKey: String = "likedMoviesKey"
 
     /**
      * Initialize the ViewModel and load liked movies.
@@ -54,7 +54,7 @@ final class LikedMoviesViewModel: ObservableObject {
      * - Parameter movie: The movie to toggle like status for
      */
     func toggleLike(for movie: Movie) {
-        var movies = loadPersistedLikedMovies()
+        var movies: [Movie] = loadPersistedLikedMovies()
         if let index = movies.firstIndex(where: { $0.id == movie.id }) {
             // Remove from liked movies if already liked
             movies.remove(at: index)
@@ -82,7 +82,7 @@ final class LikedMoviesViewModel: ObservableObject {
      * - Parameter movies: Array of movies to persist
      */
     private func savePersistedLikedMovies(_ movies: [Movie]) {
-        if let data = try? JSONEncoder().encode(movies) {
+        if let data: Data = try? JSONEncoder().encode(movies) {
             UserDefaults.standard.set(data, forKey: likedMoviesKey)
         }
     }
@@ -93,8 +93,8 @@ final class LikedMoviesViewModel: ObservableObject {
      * - Returns: Array of persisted liked movies, or empty array if none found
      */
     private func loadPersistedLikedMovies() -> [Movie] {
-        guard let data = UserDefaults.standard.data(forKey: likedMoviesKey),
-              let movies = try? JSONDecoder().decode([Movie].self, from: data)
+        guard let data: Data = UserDefaults.standard.data(forKey: likedMoviesKey),
+              let movies: [Movie] = try? JSONDecoder().decode([Movie].self, from: data)
         else {
             return []
         }

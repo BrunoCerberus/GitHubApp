@@ -28,15 +28,15 @@ enum APIKeysProvider {
     // MARK: - Constants
 
     /// Keychain service identifier for API keys
-    private static let keychainService = "com.bruno.GitHubApp.APIKeys"
+    private static let keychainService: String = "com.bruno.GitHubApp.APIKeys"
 
     /// Key identifier for The Movie Database API key
-    private static let movieAPIKeyKey = "TheMovieAPIKey"
+    private static let movieAPIKeyKey: String = "TheMovieAPIKey"
 
     // MARK: - Keychain Manager
 
     /// Shared keychain manager instance for API key storage
-    private static let keychainManager = KeychainManager(service: keychainService)
+    private static let keychainManager: KeychainManager = .init(service: keychainService)
 
     // MARK: - API Keys
 
