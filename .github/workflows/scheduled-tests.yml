@@ -7,8 +7,8 @@ on:
   workflow_dispatch: # Allow manual triggering
 
 jobs:
-  scheduled-test:
-    name: Daily Test Run
+  unit-tests:
+    name: Unit Tests
     runs-on: macos-latest
     
     steps:
@@ -43,16 +43,103 @@ jobs:
       run: |
         make generate
         
-    - name: Run All Tests
+    - name: Run Unit Tests
       run: |
-        make test
+        make test-unit
         
-    - name: Upload test results
+    - name: Upload unit test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: scheduled-test-results
+        name: scheduled-unit-test-results
         path: |
-          /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
-          /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Build/*.xcactivitylog
-        retention-days: 5 
+          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult.zip
+        retention-days: 5
+
+  ui-tests:
+    name: UI Tests
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '16.2'
+        
+    - name: Install XcodeGen
+      run: |
+        brew install xcodegen
+        
+    - name: Generate Xcode project
+      run: |
+        make generate
+        
+    - name: Debug Package Dependencies
+      run: |
+        echo "🔍 Checking package dependencies..."
+        ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+        echo "📦 Package.resolved content:"
+        cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
+        
+    - name: Clean Package Dependencies
+      run: |
+        make clean-packages
+        
+    - name: Generate Xcode project (after cleaning)
+      run: |
+        make generate
+        
+    - name: Run UI Tests
+      run: |
+        make test-ui
+        
+    - name: Upload UI test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: scheduled-ui-test-results
+        path: |
+          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult.zip
+        retention-days: 5
+
+  test-results:
+    name: Test Results Summary
+    runs-on: macos-latest
+    needs: [unit-tests, ui-tests]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download unit test results
+      uses: actions/download-artifact@v4
+      with:
+        name: scheduled-unit-test-results
+        path: unit-test-results
+        
+    - name: Download UI test results
+      uses: actions/download-artifact@v4
+      with:
+        name: scheduled-ui-test-results
+        path: ui-test-results
+        
+    - name: Display Test Results Summary
+      run: |
+        echo "📊 Scheduled Test Results Summary"
+        echo "================================="
+        echo ""
+        echo "✅ Unit Tests: Completed"
+        echo "✅ UI Tests: Completed"
+        echo ""
+        echo "📁 Test artifacts downloaded:"
+        ls -la unit-test-results/ 2>/dev/null || echo "No unit test artifacts found"
+        ls -la ui-test-results/ 2>/dev/null || echo "No UI test artifacts found"
+        echo ""
+        echo "🎉 All scheduled tests completed successfully!"
+        echo ""
+        echo "📅 Daily test run completed at $(date)" 
