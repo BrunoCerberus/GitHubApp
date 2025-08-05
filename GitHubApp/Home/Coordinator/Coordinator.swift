@@ -15,7 +15,16 @@ enum Page: Hashable {
 final class Coordinator: ObservableObject {
     @Published var path: NavigationPath = .init()
 
-    lazy var homeViewModel: HomeViewModel = .init()
+    lazy var homeViewModel: HomeViewModel = {
+        // Use mock service when running tests to avoid real network requests
+        #if DEBUG
+            if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+                return HomeViewModel(service: MockService())
+            }
+        #endif
+        return HomeViewModel()
+    }()
+
     lazy var likedMoviesViewModel: LikedMoviesViewModel = .init()
 
     init() {
@@ -37,7 +46,15 @@ final class Coordinator: ObservableObject {
         case .home:
             HomeView(router: HomeNavigationRouter(coordinator: self), viewModel: homeViewModel)
         case let .detail(movie):
-            let viewModel = MovieDetailsViewModel(movie: movie)
+            let viewModel: MovieDetailsViewModel = {
+                // Use mock service when running tests to avoid real network requests
+                #if DEBUG
+                    if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+                        return MovieDetailsViewModel(movie: movie, service: MockService())
+                    }
+                #endif
+                return MovieDetailsViewModel(movie: movie)
+            }()
             MovieDetailsView(viewModel: viewModel)
         }
     }
