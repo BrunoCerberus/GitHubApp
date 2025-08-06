@@ -26,7 +26,7 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
     /// Service locator for dependency injection
-    private let serviceLocator = ServiceLocator()
+    private let serviceLocator: ServiceLocator = .init()
 
     /**
      * Called when a scene is being created and connected to the app.
@@ -52,8 +52,10 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Ensure we have a valid window scene
         guard let windowScene: UIWindowScene = scene as? UIWindowScene else { return }
 
-        // Create the root view controller with SwiftUI integration
-        let rootView: UIHostingController<CoordinatorView> = UIHostingController(rootView: CoordinatorView())
+        // Create the root view controller with SwiftUI integration and pass the configured ServiceLocator
+        let rootView: UIHostingController<CoordinatorView> = UIHostingController(
+            rootView: CoordinatorView(serviceLocator: serviceLocator)
+        )
 
         // Force dark mode for consistent UI appearance
         rootView.overrideUserInterfaceStyle = .dark

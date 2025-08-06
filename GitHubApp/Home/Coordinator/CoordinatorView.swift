@@ -10,9 +10,8 @@ import SwiftUI
 struct CoordinatorView: View {
     @StateObject private var coordinator: Coordinator
 
-    init() {
-        // Create a ServiceLocator instance for this coordinator
-        let serviceLocator = ServiceLocator()
+    init(serviceLocator: ServiceLocator) {
+        // Use the provided ServiceLocator instance instead of creating a new one
         _coordinator = StateObject(wrappedValue: Coordinator(serviceLocator: serviceLocator))
     }
 
