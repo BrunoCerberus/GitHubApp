@@ -46,10 +46,20 @@ final class HomeViewModel {
     /**
      * Initialize the ViewModel with optional service dependency.
      *
-     * - Parameter service: Network service for API calls (defaults to HomeService)
+     * - Parameter service: Network service for API calls (retrieved from ServiceLocator)
      */
-    init(service: HomeServiceProtocol = HomeService()) {
-        self.service = service
+    init(service: HomeServiceProtocol? = nil) {
+        // Try to get service from ServiceLocator, fallback to HomeService if not registered
+        if let service {
+            self.service = service
+        } else {
+            do {
+                self.service = try ServiceLocator.shared.retrieve(HomeServiceProtocol.self)
+            } catch {
+                // Fallback to HomeService if not registered in ServiceLocator
+                self.service = HomeService()
+            }
+        }
         fetchData()
         loadLikedMovies()
     }

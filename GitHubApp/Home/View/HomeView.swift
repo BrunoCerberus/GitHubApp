@@ -18,7 +18,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
          viewModel: HomeViewModel? = nil)
     {
         self.router = router
-        self.viewModel = viewModel ?? HomeViewModel(service: HomeService())
+        self.viewModel = viewModel ?? HomeViewModel()
     }
 
     var body: some View {
@@ -77,7 +77,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
 }
 
 #Preview {
-    let viewModel = HomeViewModel(service: HomeService())
+    let viewModel = HomeViewModel()
     HomeView(
         router: HomeNavigationRouter(),
         viewModel: viewModel
