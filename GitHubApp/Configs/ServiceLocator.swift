@@ -25,7 +25,7 @@ final class ServiceLocator {
     private var services: [String: Any] = [:]
 
     /// Thread-safe queue for service registration and retrieval
-    private let queue = DispatchQueue(label: "com.bruno.GitHubApp.ServiceLocator", attributes: .concurrent)
+    private let queue: DispatchQueue = .init(label: "com.bruno.GitHubApp.ServiceLocator", attributes: .concurrent)
 
     /**
      * Initialize a new ServiceLocator instance.
@@ -46,7 +46,7 @@ final class ServiceLocator {
     }
 
     /**
-     * Register a singleton service instance for a specific protocol type.
+     * Register a service instance for a specific protocol type.
      *
      * - Parameter serviceType: The protocol type to register
      * - Parameter instance: The singleton service instance
@@ -71,7 +71,7 @@ final class ServiceLocator {
         let key = String(describing: serviceType)
 
         return try queue.sync {
-            guard let factory = services[key] as? () -> T else {
+            guard let factory: () -> T = services[key] as? () -> T else {
                 throw ServiceLocatorError.serviceNotFound(serviceType: String(describing: serviceType))
             }
             return factory()
