@@ -15,12 +15,15 @@ enum Page: Hashable {
 final class Coordinator: ObservableObject {
     @Published var path: NavigationPath = .init()
 
-    lazy var homeViewModel: HomeViewModel = .init()
+    /// Service locator for dependency injection
+    private let serviceLocator: ServiceLocator
+
+    lazy var homeViewModel: HomeViewModel = .init(serviceLocator: serviceLocator)
 
     lazy var likedMoviesViewModel: LikedMoviesViewModel = .init()
 
-    init() {
-        // No longer need to connect the ViewModels
+    init(serviceLocator: ServiceLocator) {
+        self.serviceLocator = serviceLocator
     }
 
     deinit {
@@ -38,7 +41,7 @@ final class Coordinator: ObservableObject {
         case .home:
             HomeView(router: HomeNavigationRouter(coordinator: self), viewModel: homeViewModel)
         case let .detail(movie):
-            let viewModel = MovieDetailsViewModel(movie: movie)
+            let viewModel = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
             MovieDetailsView(viewModel: viewModel)
         }
     }

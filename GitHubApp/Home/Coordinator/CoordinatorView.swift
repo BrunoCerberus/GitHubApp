@@ -8,7 +8,13 @@
 import SwiftUI
 
 struct CoordinatorView: View {
-    @StateObject private var coordinator: Coordinator = .init()
+    @StateObject private var coordinator: Coordinator
+
+    init() {
+        // Create a ServiceLocator instance for this coordinator
+        let serviceLocator = ServiceLocator()
+        _coordinator = StateObject(wrappedValue: Coordinator(serviceLocator: serviceLocator))
+    }
 
     var body: some View {
         TabView {

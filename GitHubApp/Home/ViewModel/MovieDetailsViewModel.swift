@@ -56,22 +56,27 @@ final class MovieDetailsViewModel {
      *
      * - Parameter movie: The movie to display details for
      * - Parameter service: Network service for API calls (retrieved from ServiceLocator)
+     * - Parameter serviceLocator: Service locator for dependency injection
      */
     init(movie: Movie,
-         service: HomeServiceProtocol? = nil)
+         service: HomeServiceProtocol? = nil,
+         serviceLocator: ServiceLocator? = nil)
     {
         self.movie = movie
 
         // Try to get service from ServiceLocator, fallback to HomeService if not registered
         if let service {
             self.service = service
-        } else {
+        } else if let serviceLocator {
             do {
-                self.service = try ServiceLocator.shared.retrieve(HomeServiceProtocol.self)
+                self.service = try serviceLocator.retrieve(HomeServiceProtocol.self)
             } catch {
                 // Fallback to HomeService if not registered in ServiceLocator
                 self.service = HomeService()
             }
+        } else {
+            // Fallback to HomeService if no ServiceLocator provided
+            self.service = HomeService()
         }
     }
 

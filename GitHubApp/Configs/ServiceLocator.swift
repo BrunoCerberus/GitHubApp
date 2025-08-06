@@ -21,17 +21,16 @@ import Foundation
  * - Thread-safe service registration and retrieval
  */
 final class ServiceLocator {
-    /// Shared instance for singleton access
-    static let shared = ServiceLocator()
-
-    /// Private initializer to enforce singleton pattern
-    private init() {}
-
     /// Dictionary to store service factories by protocol type
     private var services: [String: Any] = [:]
 
     /// Thread-safe queue for service registration and retrieval
     private let queue = DispatchQueue(label: "com.bruno.GitHubApp.ServiceLocator", attributes: .concurrent)
+
+    /**
+     * Initialize a new ServiceLocator instance.
+     */
+    init() {}
 
     /**
      * Register a service factory for a specific protocol type.
@@ -62,8 +61,7 @@ final class ServiceLocator {
     /**
      * Retrieve a service instance for a specific protocol type.
      *
-     * This method automatically detects test environment and returns
-     * mock services when appropriate.
+     * This method returns the service if registered, or throws an error if not found.
      *
      * - Parameter serviceType: The protocol type to retrieve
      * - Returns: The service instance

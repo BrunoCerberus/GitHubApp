@@ -10,18 +10,24 @@ The ServiceLocator pattern provides a centralized way to manage and retrieve ser
 - **Automatic test environment detection** for mock services
 - **Thread-safe** service registration and retrieval
 - **Fallback support** when services aren't registered
-- **Singleton pattern** for global access
+- **Instance-based** pattern (not singleton)
 
 ## Usage
 
 ### Basic Usage
 
 ```swift
+// Create a ServiceLocator instance
+let serviceLocator = ServiceLocator()
+
+// Register a service
+serviceLocator.register(HomeServiceProtocol.self, instance: HomeService())
+
 // Retrieve a service
-let homeService = try ServiceLocator.shared.retrieve(HomeServiceProtocol.self)
+let homeService = try serviceLocator.retrieve(HomeServiceProtocol.self)
 
 // Safe retrieval (returns nil if not registered)
-let homeService = ServiceLocator.shared.safeRetrieve(HomeServiceProtocol.self)
+let homeService = serviceLocator.safeRetrieve(HomeServiceProtocol.self)
 ```
 
 ### Service Registration
@@ -50,10 +56,10 @@ ViewModels now automatically use ServiceLocator:
 
 ```swift
 // HomeViewModel automatically retrieves service from ServiceLocator
-let viewModel = HomeViewModel() // No need to pass service explicitly
+let viewModel = HomeViewModel(serviceLocator: serviceLocator) // Pass ServiceLocator instance
 
 // MovieDetailsViewModel also uses ServiceLocator
-let viewModel = MovieDetailsViewModel(movie: movie) // Service retrieved automatically
+let viewModel = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator) // Pass ServiceLocator instance
 ```
 
 ## Benefits
@@ -63,6 +69,7 @@ let viewModel = MovieDetailsViewModel(movie: movie) // Service retrieved automat
 3. **Clean Architecture**: ViewModels don't need to know about service creation
 4. **Type Safety**: Compile-time checking for service protocols
 5. **Thread Safety**: Concurrent access to service registry
+6. **Instance-based**: Multiple ServiceLocator instances can exist independently
 
 ## Migration from Previous Approach
 
@@ -80,12 +87,16 @@ lazy var homeViewModel: HomeViewModel = {
 
 ### After (ServiceLocator in SceneDelegate):
 ```swift
-// In GitHubAppSceneDelegate.setupServices()
-serviceLocator.register(HomeServiceProtocol.self, instance: MockService())
+// In GitHubAppSceneDelegate
+private let serviceLocator = ServiceLocator()
 
 // In Coordinator
+init(serviceLocator: ServiceLocator) {
+    self.serviceLocator = serviceLocator
+}
+
 lazy var homeViewModel: HomeViewModel = {
-    return HomeViewModel() // Service automatically retrieved from ServiceLocator
+    return HomeViewModel(serviceLocator: serviceLocator) // Service automatically retrieved from ServiceLocator
 }()
 ```
 
@@ -95,14 +106,28 @@ The ServiceLocator provides graceful error handling:
 
 ```swift
 do {
-    let service = try ServiceLocator.shared.retrieve(HomeServiceProtocol.self)
+    let service = try serviceLocator.retrieve(HomeServiceProtocol.self)
     // Use service
 } catch ServiceLocatorError.serviceNotFound(let serviceType) {
     // Handle missing service
-    print("Service \(serviceType) not registered")
+    print("Service \(serviceType) not registered in ServiceLocator")
 }
 ```
 
 ## Testing
 
-For unit tests, the ServiceLocator automatically provides mock services when the test environment is detected. No additional configuration is needed in test files. 
+For unit tests, the ServiceLocator automatically provides mock services when the test environment is detected. No additional configuration is needed in test files.
+
+## Instance Management
+
+Since ServiceLocator is no longer a singleton, you can create multiple instances:
+
+```swift
+// Create separate ServiceLocator instances for different contexts
+let mainServiceLocator = ServiceLocator()
+let testServiceLocator = ServiceLocator()
+
+// Each instance maintains its own service registry
+mainServiceLocator.register(HomeServiceProtocol.self, instance: HomeService())
+testServiceLocator.register(HomeServiceProtocol.self, instance: MockService())
+``` 

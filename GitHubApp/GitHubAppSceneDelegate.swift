@@ -25,6 +25,9 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
     /// The main window of the application
     var window: UIWindow?
 
+    /// Service locator for dependency injection
+    private let serviceLocator = ServiceLocator()
+
     /**
      * Called when a scene is being created and connected to the app.
      *
@@ -71,8 +74,6 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
      * the current build configuration and test environment detection.
      */
     private func setupServices() {
-        let serviceLocator = ServiceLocator.shared
-
         // Register HomeService based on environment
         #if DEBUG
             // Check if running in test environment
