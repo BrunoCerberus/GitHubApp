@@ -41,10 +41,10 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard ProcessInfo.processInfo.environment["IS_RUNNING_UNIT_TESTS"] != "YES" else { return }
 
         // Ensure we have a valid window scene
-        guard let windowScene = scene as? UIWindowScene else { return }
+        guard let windowScene: UIWindowScene = scene as? UIWindowScene else { return }
 
         // Create the root view controller with SwiftUI integration
-        let rootView = UIHostingController(rootView: CoordinatorView())
+        let rootView: UIHostingController<CoordinatorView> = UIHostingController(rootView: CoordinatorView())
 
         // Force dark mode for consistent UI appearance
         rootView.overrideUserInterfaceStyle = .dark
