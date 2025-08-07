@@ -1,8 +1,9 @@
-.PHONY: install-xcodegen generate clean test test-unit test-ui clean-packages help
+.PHONY: install-xcodegen generate clean test test-unit test-ui clean-packages help init
 
 # Default target
 help:
 	@echo "Available commands:"
+	@echo "  init              - Setup Mint and SwiftFormat"
 	@echo "  install-xcodegen  - Install XcodeGen using Homebrew"
 	@echo "  generate          - Generate Xcode project from project.yml"
 	@echo "  test              - Run all unit tests on iOS 18.2 iPhone 16 Pro"
@@ -11,6 +12,24 @@ help:
 	@echo "  clean             - Remove generated Xcode project"
 	@echo "  clean-packages    - Clean Swift Package Manager dependencies"
 	@echo "  help              - Show this help message"
+
+# Setup Mint and SwiftFormat
+init:
+	@echo "Setting up development environment..."
+	@echo "Checking for Homebrew..."
+	@if ! command -v brew &> /dev/null; then
+		@echo "Installing Homebrew..."
+		@/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	@else
+		@echo "✅ Homebrew already installed"
+	@fi
+	@echo "Installing XcodeGen..."
+	@brew install xcodegen
+	@echo "Installing Mint..."
+	@brew install mint
+	@echo "Installing SwiftFormat via Mint..."
+	@mint install nicklockwood/SwiftFormat
+	@echo "✅ Development environment setup complete!"
 
 # Install XcodeGen
 install-xcodegen:
