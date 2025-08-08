@@ -28,7 +28,9 @@ final class Coordinator: ObservableObject {
 
     deinit {
         // Ensure proper cleanup
-        print("Coordinator deallocated")
+        #if DEBUG
+            print("Coordinator deallocated")
+        #endif
     }
 
     func push(page: Page) {

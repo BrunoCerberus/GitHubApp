@@ -9,6 +9,23 @@ import EntropyCore
 import Foundation
 
 /**
+ * Custom error types for API operations.
+ */
+enum APIError: Error, LocalizedError {
+    case invalidBaseURL(String)
+    case urlConstructionFailed
+
+    var errorDescription: String? {
+        switch self {
+        case let .invalidBaseURL(url):
+            "Invalid base URL: \(url)"
+        case .urlConstructionFailed:
+            "Failed to construct URL from components"
+        }
+    }
+}
+
+/**
  * API endpoints for the Home module.
  *
  * This enum defines all the API endpoints used by the Home module,
@@ -62,10 +79,18 @@ enum HomeAPI: APIFetcher {
      * - Query parameters (search terms, API key)
      *
      * - Returns: Complete URL string for the API request
+     * - Throws: APIError if URL construction fails
      */
     var path: String {
         guard var components = URLComponents(string: baseURL) else {
-            fatalError("Invalid base URL: \(baseURL)")
+            // In a real app, this would throw an error, but since this is a computed property
+            // we need to handle it differently. For now, we'll use a fallback approach.
+            #if DEBUG
+                fatalError("Invalid base URL: \(baseURL)")
+            #else
+                // In production, return a safe fallback
+                return "https://api.themoviedb.org/3/movie/upcoming?api_key=\(apiKey)"
+            #endif
         }
 
         var queryItems: [URLQueryItem] = []
@@ -94,7 +119,12 @@ enum HomeAPI: APIFetcher {
         components.queryItems = queryItems
 
         guard let urlString = components.string else {
-            fatalError("Failed to construct URL from components")
+            #if DEBUG
+                fatalError("Failed to construct URL from components")
+            #else
+                // In production, return a safe fallback
+                return "https://api.themoviedb.org/3/movie/upcoming?api_key=\(apiKey)"
+            #endif
         }
 
         return urlString

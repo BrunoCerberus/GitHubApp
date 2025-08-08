@@ -131,7 +131,10 @@ final class MovieDetailsViewModel {
      */
     private func handleError(_ error: Error) {
         self.error = "Failed to load data: \(error.localizedDescription)"
-        debugPrint(error)
+        #if DEBUG
+            // Only log in debug builds to avoid exposing internal details in production
+            debugPrint("MovieDetailsViewModel error: \(error)")
+        #endif
     }
 
     /**
@@ -140,7 +143,9 @@ final class MovieDetailsViewModel {
      * Logs deallocation for debugging purposes.
      */
     deinit {
-        print("MovieDetailsViewModel deallocated")
+        #if DEBUG
+            print("MovieDetailsViewModel deallocated")
+        #endif
     }
 }
 
