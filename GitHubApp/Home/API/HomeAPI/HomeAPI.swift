@@ -83,14 +83,7 @@ enum HomeAPI: APIFetcher {
      */
     var path: String {
         guard var components = URLComponents(string: baseURL) else {
-            // In a real app, this would throw an error, but since this is a computed property
-            // we need to handle it differently. For now, we'll use a fallback approach.
-            #if DEBUG
-                fatalError("Invalid base URL: \(baseURL)")
-            #else
-                // In production, return a safe fallback
-                return "https://api.themoviedb.org/3/movie/upcoming?api_key=\(apiKey)"
-            #endif
+            fatalError("Invalid base URL: \(baseURL)")
         }
 
         var queryItems: [URLQueryItem] = []
@@ -119,12 +112,7 @@ enum HomeAPI: APIFetcher {
         components.queryItems = queryItems
 
         guard let urlString = components.string else {
-            #if DEBUG
-                fatalError("Failed to construct URL from components")
-            #else
-                // In production, return a safe fallback
-                return "https://api.themoviedb.org/3/movie/upcoming?api_key=\(apiKey)"
-            #endif
+            fatalError("Failed to construct URL from components")
         }
 
         return urlString
