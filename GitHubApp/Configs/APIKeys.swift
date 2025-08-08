@@ -16,7 +16,7 @@ import Foundation
  * Security Features:
  * - Primary storage in iOS Keychain for maximum security
  * - Environment variable fallback for CI/CD compatibility
- * - Default key fallback for development
+ * - No hardcoded keys in source code
  * - Automatic key persistence for future use
  *
  * Usage:
@@ -46,7 +46,7 @@ enum APIKeysProvider {
      * Retrieval priority:
      * 1. iOS Keychain (most secure)
      * 2. Environment variable (for CI/CD)
-     * 3. Default key (development fallback)
+     * 3. Runtime error if no key available
      *
      * The key is automatically stored in keychain for future use
      * regardless of the source.
@@ -64,13 +64,12 @@ enum APIKeysProvider {
             return apiKey
         }
 
-        // Fallback to default key (development environment)
-        let defaultKey = "da9bc8815fb0fc31d5ef6b3da097a009"
-
-        // Store the default key in keychain for consistency
-        try? keychainManager.save(defaultKey, for: movieAPIKeyKey)
-
-        return defaultKey
+        // No key available - this should not happen in production
+        #if DEBUG
+            fatalError("API_KEY environment variable not set. Please set API_KEY environment variable for development.")
+        #else
+            fatalError("API key not available. Please ensure API_KEY is properly configured.")
+        #endif
     }()
 
     // MARK: - Public Methods

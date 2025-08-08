@@ -206,6 +206,8 @@ final class HomeViewModel {
      * Logs deallocation for debugging purposes.
      */
     deinit {
-        print("HomeViewModel deallocated")
+        #if DEBUG
+            print("HomeViewModel deallocated")
+        #endif
     }
 }
