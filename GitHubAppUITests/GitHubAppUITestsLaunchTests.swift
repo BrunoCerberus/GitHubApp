@@ -21,6 +21,8 @@ final class GitHubAppUITestsLaunchTests: XCTestCase {
 
     func testLaunch() throws {
         let app = XCUIApplication()
+        app.launchEnvironment["API_KEY"] = "ui-tests-key"
+        app.launchEnvironment["XCTestConfigurationFilePath"] = "UI"
         app.launch()
 
         // Insert steps here to perform after app launch but before taking a screenshot,

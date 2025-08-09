@@ -1,0 +1,35 @@
+//
+//  HomeHostingControllerTests.swift
+//  GitHubAppTests
+//
+
+@testable import GitHubApp
+import UIKit
+import XCTest
+
+final class HomeHostingControllerTests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        // Ensure API key is available to avoid fatalError in HomeAPI
+        try? APIKeysProvider.setMovieAPIKey("test-key")
+    }
+
+    override func tearDown() {
+        try? APIKeysProvider.removeMovieAPIKey()
+        super.tearDown()
+    }
+
+    func testViewDidLoadSetsTitleAndLargeTitlesAndRouterNav() {
+        let router = HomeNavigationRouter()
+        let sut = HomeHostingController<HomeNavigationRouter>(navigationRouter: router)
+        let nav = UINavigationController(rootViewController: sut)
+
+        // Trigger lifecycle
+        _ = sut.view
+        sut.viewDidLoad()
+
+        XCTAssertEqual(sut.title, "Upcoming Movies")
+        XCTAssertTrue(nav.navigationBar.prefersLargeTitles)
+        XCTAssertTrue(router.navigation === nav)
+    }
+}
