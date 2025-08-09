@@ -1,5 +1,7 @@
 # GitHubApp
 
+![Coverage](badges/coverage.svg)
+
 ## Inspiration
 This Repository is intended to be a new pattern based on Clean, Redux and MVVM, so from time to time, i'll update this readme with all implementation samples and testability.
 
@@ -43,6 +45,12 @@ To test the workflows locally, you can use the Makefile commands:
 ```sh
 # Run all tests (similar to CI pipeline)
 make test
+
+# Run tests with coverage and print app coverage
+make coverage
+
+# Generate/update local coverage badge (badges/coverage.svg)
+make coverage-badge
 
 # Generate project (required for CI)
 make generate
