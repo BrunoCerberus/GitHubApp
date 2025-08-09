@@ -8,10 +8,16 @@
 import EntropyCore
 import SwiftUI
 
+/**
+ * View showing the user's liked movies.
+ */
 struct LikedMoviesView: View {
+    /// ViewModel providing liked movies and actions
     @StateObject var viewModel: LikedMoviesViewModel
+    /// Selected movie to navigate to details
     @State private var selectedMovie: Movie?
 
+    /// View content: placeholder when empty, list otherwise
     var body: some View {
         NavigationStack {
             VStack {

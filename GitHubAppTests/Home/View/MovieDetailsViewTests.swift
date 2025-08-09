@@ -12,6 +12,9 @@ import XCTest
 
 @testable import GitHubApp
 
+/**
+ * Snapshot tests for MovieDetailsView covering credits and reviews sections.
+ */
 final class MovieDetailsViewTests: XCTestCase {
     let movie: Movie = .init(id: 346_698,
                              title: "Barbie",
@@ -31,6 +34,7 @@ final class MovieDetailsViewTests: XCTestCase {
         view = MovieDetailsView(viewModel: viewModel)
     }
 
+    /// Snapshot of details view matches stored reference
     func testMovieDetailsView() {
         let controller: UIViewController = view.wrappedViewController
 

@@ -12,6 +12,9 @@ import XCTest
 
 @testable import GitHubApp
 
+/**
+ * Snapshot tests for HomeView to ensure visual regressions are detected.
+ */
 @MainActor
 final class HomeViewTests: XCTestCase {
     var router: HomeNavigationRouter!
@@ -28,6 +31,7 @@ final class HomeViewTests: XCTestCase {
         view = HomeView(router: router, viewModel: viewModel)
     }
 
+    /// Snapshot of populated HomeView matches stored reference
     func testHomeView() async {
         let controller: UIViewController = view.wrappedViewController
 

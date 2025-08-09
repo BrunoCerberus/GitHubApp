@@ -8,6 +8,10 @@
 @testable import GitHubApp
 import XCTest
 
+/**
+ * Unit tests for `ServiceLocator` covering registration, retrieval,
+ * safe retrieval, clearing, and thread-safety behaviors.
+ */
 final class ServiceLocatorTests: XCTestCase {
     // MARK: - Test Protocols and Classes
 
@@ -57,6 +61,7 @@ final class ServiceLocatorTests: XCTestCase {
 
     // MARK: - Initialization Tests
 
+    /// ServiceLocator initializes empty with no registrations
     func testInit() {
         // Given & When
         let locator = ServiceLocator()
@@ -68,6 +73,7 @@ final class ServiceLocatorTests: XCTestCase {
 
     // MARK: - Registration Tests
 
+    /// Registering with a factory creates instances lazily
     func testRegisterWithFactory() {
         // Given
         let expectedId = "factory-service"
@@ -88,6 +94,7 @@ final class ServiceLocatorTests: XCTestCase {
         }
     }
 
+    /// Registering with an instance returns the same instance
     func testRegisterWithInstance() {
         // Given
         let expectedId = "instance-service"
@@ -107,6 +114,7 @@ final class ServiceLocatorTests: XCTestCase {
         }
     }
 
+    /// Multiple distinct protocol registrations are supported
     func testRegisterMultipleServices() {
         // Given
         let testService = TestService(id: "test")
@@ -131,6 +139,7 @@ final class ServiceLocatorTests: XCTestCase {
         }
     }
 
+    /// Re-registering overwrites previous registrations for the same type
     func testRegisterOverwritesExistingService() {
         // Given
         let firstService = TestService(id: "first")
@@ -151,6 +160,7 @@ final class ServiceLocatorTests: XCTestCase {
 
     // MARK: - Retrieval Tests
 
+    /// Retrieval succeeds for registered services
     func testRetrieveRegisteredService() {
         // Given
         let expectedId = "retrieved-service"
@@ -167,6 +177,7 @@ final class ServiceLocatorTests: XCTestCase {
         }
     }
 
+    /// Retrieval of an unregistered service throws a typed error
     func testRetrieveUnregisteredService() {
         // When & Then
         do {
@@ -179,6 +190,7 @@ final class ServiceLocatorTests: XCTestCase {
         }
     }
 
+    /// Factory registration returns a new instance each retrieval
     func testRetrieveWithFactoryCreatesNewInstance() {
         // Given
         var callCount = 0
@@ -200,6 +212,7 @@ final class ServiceLocatorTests: XCTestCase {
         }
     }
 
+    /// Instance registration returns the same instance across retrievals
     func testRetrieveWithInstanceReturnsSameInstance() {
         // Given
         let instance = TestService(id: "singleton")
@@ -221,6 +234,7 @@ final class ServiceLocatorTests: XCTestCase {
 
     // MARK: - Safe Retrieval Tests
 
+    /// Safe retrieval returns a non-nil instance when registered
     func testSafeRetrieveRegisteredService() {
         // Given
         let expectedId = "safe-service"
@@ -236,6 +250,7 @@ final class ServiceLocatorTests: XCTestCase {
         XCTAssertEqual(service?.id, expectedId)
     }
 
+    /// Safe retrieval returns nil when not registered
     func testSafeRetrieveUnregisteredService() {
         // When
         let service = serviceLocator.safeRetrieve(TestServiceProtocol.self)
@@ -246,6 +261,7 @@ final class ServiceLocatorTests: XCTestCase {
 
     // MARK: - Registration Check Tests
 
+    /// isRegistered reports true for registered types
     func testIsRegisteredForRegisteredService() {
         // Given
         serviceLocator.register(TestServiceProtocol.self) {
@@ -256,11 +272,13 @@ final class ServiceLocatorTests: XCTestCase {
         XCTAssertTrue(serviceLocator.isRegistered(TestServiceProtocol.self))
     }
 
+    /// isRegistered reports false for unregistered types
     func testIsRegisteredForUnregisteredService() {
         // When & Then
         XCTAssertFalse(serviceLocator.isRegistered(TestServiceProtocol.self))
     }
 
+    /// Clearing removes all registrations
     func testIsRegisteredAfterClear() {
         // Given
         serviceLocator.register(TestServiceProtocol.self) {
@@ -276,6 +294,7 @@ final class ServiceLocatorTests: XCTestCase {
 
     // MARK: - Clear Tests
 
+    /// After clear, retrieval fails and types are unregistered
     func testClearRemovesAllServices() {
         // Given
         serviceLocator.register(TestServiceProtocol.self) {
@@ -300,6 +319,7 @@ final class ServiceLocatorTests: XCTestCase {
         }
     }
 
+    /// Clearing an empty locator is a no-op
     func testClearOnEmptyServiceLocator() {
         // When & Then
         XCTAssertNoThrow(serviceLocator.clear())
@@ -308,6 +328,7 @@ final class ServiceLocatorTests: XCTestCase {
 
     // MARK: - Thread Safety Tests
 
+    /// Concurrent registrations are safe
     func testThreadSafetyForRegistration() {
         // Given
         let expectation = XCTestExpectation(description: "Thread safety test")
@@ -337,6 +358,7 @@ final class ServiceLocatorTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
+    /// Concurrent retrievals are safe
     func testThreadSafetyForRetrieval() {
         // Given
         let expectation = XCTestExpectation(description: "Thread safety retrieval test")
@@ -384,6 +406,7 @@ final class ServiceLocatorTests: XCTestCase {
 
     // MARK: - Error Tests
 
+    /// Error exposes a friendly localized description
     func testServiceLocatorErrorDescription() {
         // Given
         let error = ServiceLocatorError.serviceNotFound(serviceType: "TestProtocol")
@@ -395,6 +418,7 @@ final class ServiceLocatorTests: XCTestCase {
         XCTAssertEqual(description, "Service of type 'TestProtocol' is not registered in ServiceLocator")
     }
 
+    /// Error conforms to LocalizedError with description
     func testServiceLocatorErrorLocalizedError() {
         // Given
         let error = ServiceLocatorError.serviceNotFound(serviceType: "AnotherProtocol")
@@ -406,6 +430,7 @@ final class ServiceLocatorTests: XCTestCase {
 
     // MARK: - Edge Cases
 
+    /// Demonstrates optional factory registration pattern
     func testRegisterWithNilFactory() {
         // Given
         let factory: (() -> TestService)? = nil
@@ -419,6 +444,7 @@ final class ServiceLocatorTests: XCTestCase {
         }
     }
 
+    /// Repeated retrievals keep behavior stable
     func testMultipleRetrievalsOfSameService() {
         // Given
         serviceLocator.register(TestServiceProtocol.self) {
@@ -436,6 +462,7 @@ final class ServiceLocatorTests: XCTestCase {
         }
     }
 
+    /// Different protocol types can be registered and retrieved independently
     func testRegisterAndRetrieveDifferentTypes() {
         // Given
         let testService = TestService(id: "test")

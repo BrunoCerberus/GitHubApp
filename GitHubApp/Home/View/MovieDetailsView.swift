@@ -7,9 +7,14 @@
 
 import SwiftUI
 
+/**
+ * View displaying credits and reviews for a movie.
+ */
 struct MovieDetailsView: View {
+    /// Backing ViewModel handling data and state
     @State var viewModel: MovieDetailsViewModel
 
+    /// View content: credits and reviews sections
     var body: some View {
         List {
             if viewModel.showCredits {

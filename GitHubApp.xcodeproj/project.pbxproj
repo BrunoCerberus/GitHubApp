@@ -40,6 +40,7 @@
 		92BF668B6C46AB54BAF2E5D6 /* MovieDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EA1B786658C10B6A1DDA81 /* MovieDetailsViewModel.swift */; };
 		9944A9DA6DCA58E4BBA1876A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9AA2FAFA3D17AFCE6928DD2 /* Assets.xcassets */; };
 		A787045F9608F5025BF9DD46 /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0343510FC2EB9FD2F219C09 /* APIKeys.swift */; };
+		A8632D66C81B8D24BF520EE5 /* Documentation.docc in Sources */ = {isa = PBXBuildFile; fileRef = C24B537659EE5A09E502CBBD /* Documentation.docc */; };
 		A8B6EF7201F394ACE4152C44 /* testMovieDetailsView.1.png in Resources */ = {isa = PBXBuildFile; fileRef = F5CA0BDDCE7E011312A86555 /* testMovieDetailsView.1.png */; };
 		AEDB02D4F0C2AE94BF26DB4D /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 93EED303D215260E0B5B8DEA /* .swiftlint.yml */; };
 		B7CDD6E745B1A6DFC7FCFB9A /* GitHubAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452A33B2856F041B862D734F /* GitHubAppUITestsLaunchTests.swift */; };
@@ -114,6 +115,7 @@
 		B0343510FC2EB9FD2F219C09 /* APIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
 		BB23072E8A40CEEDABF2C8D5 /* GitHubApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = GitHubApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBD5B37AF64A0C0A09BEB4A1 /* testHomeView.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testHomeView.1.png; sourceTree = "<group>"; };
+		C24B537659EE5A09E502CBBD /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
 		C6A39F39BC2BA81819D99646 /* GitHubAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAppUITests.swift; sourceTree = "<group>"; };
 		C840192E8BA318CE6989A89A /* GitHubApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GitHubApp.entitlements; sourceTree = "<group>"; };
 		C901B85F6B1F8FBE0D43643C /* ServiceLocator.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ServiceLocator.md; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				0B9213CF54DBC41262F41EFA /* Preview Content */,
 				93EED303D215260E0B5B8DEA /* .swiftlint.yml */,
 				A9AA2FAFA3D17AFCE6928DD2 /* Assets.xcassets */,
+				C24B537659EE5A09E502CBBD /* Documentation.docc */,
 				C840192E8BA318CE6989A89A /* GitHubApp.entitlements */,
 				432F2765B106DB94ED84E10F /* GitHubAppDelegate.swift */,
 				EA91AD85F1369ECD0568C0BF /* GitHubAppSceneDelegate.swift */,
@@ -613,6 +616,7 @@
 				A787045F9608F5025BF9DD46 /* APIKeys.swift in Sources */,
 				4D0EC02CCD160710282A5E9E /* Coordinator.swift in Sources */,
 				8F35B6BA4A9417BC2D968228 /* CoordinatorView.swift in Sources */,
+				A8632D66C81B8D24BF520EE5 /* Documentation.docc in Sources */,
 				8F2ED0BF36CABC1AC28ED54A /* GitHubAppDelegate.swift in Sources */,
 				07B8683AA28848D076B1241E /* GitHubAppSceneDelegate.swift in Sources */,
 				5CAD536007B3768C9BD5B8DA /* HomeAPI.swift in Sources */,

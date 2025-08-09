@@ -8,6 +8,10 @@
 @testable import GitHubApp
 import XCTest
 
+/**
+ * Unit tests for `KeychainManager` covering CRUD, existence checks,
+ * service isolation, and edge cases.
+ */
 final class KeychainManagerTests: XCTestCase {
     // MARK: - Properties
 
@@ -35,6 +39,7 @@ final class KeychainManagerTests: XCTestCase {
 
     // MARK: - Save Tests
 
+    /// Saving a normal value stores and retrieves successfully
     func testSaveValue() throws {
         // When
         try keychainManager.save(testValue, for: testKey)
@@ -45,6 +50,7 @@ final class KeychainManagerTests: XCTestCase {
         XCTAssertEqual(retrievedValue, testValue)
     }
 
+    /// Saving an empty string is allowed and retrievable
     func testSaveEmptyValue() throws {
         // When
         try keychainManager.save("", for: testKey)
@@ -55,6 +61,7 @@ final class KeychainManagerTests: XCTestCase {
         XCTAssertEqual(retrievedValue, "")
     }
 
+    /// Values with special characters round-trip correctly
     func testSaveSpecialCharacters() throws {
         // Given
         let specialValue = "!@#$%^&*()_+-=[]{}|;':\",./<>?"
@@ -67,6 +74,7 @@ final class KeychainManagerTests: XCTestCase {
         XCTAssertEqual(retrievedValue, specialValue)
     }
 
+    /// Values with unicode characters round-trip correctly
     func testSaveUnicodeCharacters() throws {
         // Given
         let unicodeValue = "Hello 世界 🌍 🚀"
@@ -81,6 +89,7 @@ final class KeychainManagerTests: XCTestCase {
 
     // MARK: - Retrieve Tests
 
+    /// Retrieving a missing key throws a keychain error
     func testRetrieveNonExistentKey() {
         // When & Then
         XCTAssertThrowsError(try keychainManager.retrieve(for: "nonExistentKey")) { error in
@@ -88,6 +97,7 @@ final class KeychainManagerTests: XCTestCase {
         }
     }
 
+    /// After deletion, item no longer exists and retrieval fails
     func testRetrieveAfterDelete() throws {
         // Given
         try keychainManager.save(testValue, for: testKey)
@@ -103,6 +113,7 @@ final class KeychainManagerTests: XCTestCase {
 
     // MARK: - Update Tests
 
+    /// Saving again with the same key updates the stored value
     func testUpdateExistingValue() throws {
         // Given
         try keychainManager.save(testValue, for: testKey)
@@ -118,11 +129,13 @@ final class KeychainManagerTests: XCTestCase {
 
     // MARK: - Delete Tests
 
+    /// Deleting a non-existent key should not throw
     func testDeleteNonExistentKey() throws {
         // When & Then - Should not throw error
         try keychainManager.delete(for: "nonExistentKey")
     }
 
+    /// Deleting an existing key removes it from keychain
     func testDeleteExistingKey() throws {
         // Given
         try keychainManager.save(testValue, for: testKey)
@@ -137,11 +150,13 @@ final class KeychainManagerTests: XCTestCase {
 
     // MARK: - Exists Tests
 
+    /// Existence check returns false for missing items
     func testExistsForNonExistentKey() {
         // When & Then
         XCTAssertFalse(keychainManager.exists(for: "nonExistentKey"))
     }
 
+    /// Existence check returns true for stored items
     func testExistsForExistingKey() throws {
         // Given
         try keychainManager.save(testValue, for: testKey)
@@ -152,6 +167,7 @@ final class KeychainManagerTests: XCTestCase {
 
     // MARK: - Multiple Keys Tests
 
+    /// Different services and keys do not collide
     func testMultipleKeys() throws {
         // Given
         let key1 = "key1"
@@ -180,6 +196,7 @@ final class KeychainManagerTests: XCTestCase {
 
     // MARK: - Service Isolation Tests
 
+    /// Items are isolated by service attribute
     func testServiceIsolation() throws {
         // Given
         let manager1 = KeychainManager(service: "service1")

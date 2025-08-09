@@ -7,7 +7,12 @@
 
 import Foundation
 
-// This will be improved, receiving more parameters
+/**
+ * Data payload used by HomeView in the success state.
+ *
+ * Extend with additional fields as needed.
+ */
 struct HomeDataViewState: Equatable {
+    /// Title to display in the Home view
     var title: String
 }

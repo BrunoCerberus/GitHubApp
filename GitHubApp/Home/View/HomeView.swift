@@ -8,12 +8,27 @@
 import EntropyCore
 import SwiftUI
 
+/**
+ * Home screen listing upcoming or searched movies.
+ *
+ * Displays posters, titles, overviews and supports liking and search.
+ */
 struct HomeView<R: HomeNavigationRouter>: View {
+    /// Router responsible for navigation actions
     private var router: R
 
+    /// Backing ViewModel managing data and actions
     @State private var viewModel: HomeViewModel
+    /// Bound text for the search field
     @State private var searchText: String = ""
 
+    /**
+     * Create the view with a router and optional ViewModel.
+     *
+     * - Parameters:
+     *   - router: Navigation router for routing actions
+     *   - viewModel: Optional ViewModel (created if not provided)
+     */
     init(router: R,
          viewModel: HomeViewModel? = nil)
     {
@@ -21,6 +36,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
         self.viewModel = viewModel ?? HomeViewModel()
     }
 
+    /// View content: list of movies with search and pull-to-refresh
     var body: some View {
         List(viewModel.movies) { movie in
             HStack {
@@ -67,6 +83,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
         }
     }
 
+    /// Handle changes to the search text by fetching or searching
     private func handleSearchQueryChange(_ query: String) {
         if query.isEmpty {
             viewModel.fetchData()

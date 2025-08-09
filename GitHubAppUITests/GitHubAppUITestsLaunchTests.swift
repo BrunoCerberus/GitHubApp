@@ -7,6 +7,9 @@
 
 import XCTest
 
+/**
+ * UI test capturing a launch screenshot and keeping it as an artifact.
+ */
 final class GitHubAppUITestsLaunchTests: XCTestCase {
     override static var runsForEachTargetApplicationUIConfiguration: Bool {
         true

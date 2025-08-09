@@ -8,7 +8,11 @@
 @testable import GitHubApp
 import XCTest
 
+/**
+ * UI routing tests for HomeNavigationRouter using a UINavigationController fallback path.
+ */
 final class HomeNavigationRouterTests: XCTestCase {
+    /// Pushing a detail event presents MovieDetailsHostingController
     func testRouter() {
         let mockMovie = Movie(id: 0, title: "The Movie", overview: "", posterPath: nil)
         let nav = UINavigationController(rootViewController: UIViewController())

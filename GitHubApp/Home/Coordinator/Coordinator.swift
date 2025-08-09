@@ -7,21 +7,33 @@
 
 import SwiftUI
 
+/**
+ * Represents navigable destinations in the app.
+ */
 enum Page: Hashable {
     case home
     case detail(Movie)
 }
 
+/**
+ * Navigation coordinator that builds views and manages navigation path.
+ *
+ * Holds shared ViewModels and routes between SwiftUI pages.
+ */
 final class Coordinator: ObservableObject {
+    /// Current navigation path for the primary stack
     @Published var path: NavigationPath = .init()
 
     /// Service locator for dependency injection
     private let serviceLocator: ServiceLocator
 
+    /// Shared HomeViewModel instance
     lazy var homeViewModel: HomeViewModel = .init(serviceLocator: serviceLocator)
 
+    /// Shared LikedMoviesViewModel instance
     lazy var likedMoviesViewModel: LikedMoviesViewModel = .init()
 
+    /// Create a coordinator with a configured ServiceLocator
     init(serviceLocator: ServiceLocator) {
         self.serviceLocator = serviceLocator
     }
@@ -33,10 +45,21 @@ final class Coordinator: ObservableObject {
         #endif
     }
 
+    /**
+     * Push a destination onto the navigation stack.
+     *
+     * - Parameter page: The destination to navigate to
+     */
     func push(page: Page) {
         path.append(page)
     }
 
+    /**
+     * Build the SwiftUI view for a destination.
+     *
+     * - Parameter page: The destination to render
+     * - Returns: A type-erased view for the destination
+     */
     @ViewBuilder
     func build(page: Page) -> some View {
         switch page {

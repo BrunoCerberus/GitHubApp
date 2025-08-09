@@ -8,9 +8,14 @@
 import EntropyCore
 import SwiftUI
 
+/**
+ * UIKit hosting controller for the Movie Details SwiftUI view.
+ */
 final class MovieDetailsHostingController: BaseHostingController<MovieDetailsView> {
+    /// Movie presented by this details controller
     let movie: Movie
 
+    /// Create a hosting controller configured with a given movie
     init(movie: Movie) {
         self.movie = movie
         let viewModel = MovieDetailsViewModel(movie: movie)
@@ -22,6 +27,7 @@ final class MovieDetailsHostingController: BaseHostingController<MovieDetailsVie
         nil
     }
 
+    /// Configure the screen title using the movie name
     override func viewDidLoad() {
         super.viewDidLoad()
         title = movie.title

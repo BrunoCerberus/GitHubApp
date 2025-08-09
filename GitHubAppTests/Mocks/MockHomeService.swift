@@ -9,6 +9,9 @@ import Combine
 import Foundation
 @testable import GitHubApp
 
+/**
+ * Mock implementation of `HomeServiceProtocol` returning fixed data for tests.
+ */
 final class MockHomeService: HomeServiceProtocol {
     private let mockMoviesResponse = MoviesResponse(results: [
         Movie(id: 346_698,
@@ -91,6 +94,7 @@ final class MockHomeService: HomeServiceProtocol {
         ),
     ])
 
+    /// Returns a pre-baked list of movies
     func fetchMovies() -> AnyPublisher<MoviesResponse, Error> {
         Just(mockMoviesResponse)
             .setFailureType(to: Error.self)
@@ -98,6 +102,7 @@ final class MockHomeService: HomeServiceProtocol {
             .eraseToAnyPublisher()
     }
 
+    /// Ignores the query and returns the same mock list
     func searchMovies(with _: String) -> AnyPublisher<MoviesResponse, Error> {
         Just(mockMoviesResponse)
             .setFailureType(to: Error.self)
@@ -105,6 +110,7 @@ final class MockHomeService: HomeServiceProtocol {
             .eraseToAnyPublisher()
     }
 
+    /// Returns a static mock credits payload
     func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
         Just(mockMovieCreditsResponse)
             .setFailureType(to: Error.self)
@@ -112,6 +118,7 @@ final class MockHomeService: HomeServiceProtocol {
             .eraseToAnyPublisher()
     }
 
+    /// Returns a static mock reviews payload
     func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
         Just(mockMovieReviewsResponse)
             .setFailureType(to: Error.self)

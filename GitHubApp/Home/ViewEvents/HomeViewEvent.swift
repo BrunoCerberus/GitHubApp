@@ -7,6 +7,9 @@
 
 import Foundation
 
+/**
+ * User/intention events originating from the Home view.
+ */
 enum HomeViewEvent: Equatable {
     case fetchData
 }
