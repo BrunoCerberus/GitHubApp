@@ -53,6 +53,7 @@
 		A8B6EF7201F394ACE4152C44 /* testMovieDetailsView.1.png in Resources */ = {isa = PBXBuildFile; fileRef = F5CA0BDDCE7E011312A86555 /* testMovieDetailsView.1.png */; };
 		AD9B0BFEED53603D87475FDE /* MovieDetailsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCD4BD5F5DCBD585641415D /* MovieDetailsViewModelTests.swift */; };
 		AEDB02D4F0C2AE94BF26DB4D /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 93EED303D215260E0B5B8DEA /* .swiftlint.yml */; };
+		AEF58A94CBA1B5E9E40415F9 /* HomeServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7C6699A1613305CEB3F9F0 /* HomeServiceTests.swift */; };
 		B6A2E26CA6B4DA9688019DD7 /* HomeAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E564A900D383DE26F7A09AA /* HomeAPITests.swift */; };
 		B7CDD6E745B1A6DFC7FCFB9A /* GitHubAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452A33B2856F041B862D734F /* GitHubAppUITestsLaunchTests.swift */; };
 		B93013353B03BD73D1133289 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F205178CAC64F3F467AABF89 /* Foundation.framework */; };
@@ -98,6 +99,7 @@
 		1C28BF241F71F4512450EC43 /* HomeNavigationRouterAdditionalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNavigationRouterAdditionalTests.swift; sourceTree = "<group>"; };
 		1DAA8007057028D6735383D5 /* HomeNavigationEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNavigationEvent.swift; sourceTree = "<group>"; };
 		1E797B2292F98EE5C7B2F4CD /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		1E7C6699A1613305CEB3F9F0 /* HomeServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeServiceTests.swift; sourceTree = "<group>"; };
 		218161E3AA9BE1CDEA804610 /* HomeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAPI.swift; sourceTree = "<group>"; };
 		2458833DC13DDFD9F7DD10E2 /* HomeDataViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDataViewState.swift; sourceTree = "<group>"; };
 		28E1D9470B0FCE1A0B49FFA9 /* ServiceLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceLocator.swift; sourceTree = "<group>"; };
@@ -221,6 +223,7 @@
 		16D0334DCEEE1DD952E19C01 /* API */ = {
 			isa = PBXGroup;
 			children = (
+				B1E4AF8C0A2F0E3015A4B450 /* HomeService */,
 				4CDE4A44C6BC86DBC4F4B890 /* Model */,
 				9E564A900D383DE26F7A09AA /* HomeAPITests.swift */,
 			);
@@ -425,6 +428,14 @@
 				45B21E8DFA78BA5D8035A815 /* MovieDetailsViewTests */,
 			);
 			path = __Snapshots__;
+			sourceTree = "<group>";
+		};
+		B1E4AF8C0A2F0E3015A4B450 /* HomeService */ = {
+			isa = PBXGroup;
+			children = (
+				1E7C6699A1613305CEB3F9F0 /* HomeServiceTests.swift */,
+			);
+			path = HomeService;
 			sourceTree = "<group>";
 		};
 		BE8AC8E3DC9D3415B8A1B998 /* Products */ = {
@@ -691,6 +702,7 @@
 				0E2B4B5147800C7420C5F936 /* HomeHostingControllerTests.swift in Sources */,
 				F0AD67A04920DD3ECAD114C5 /* HomeNavigationRouterAdditionalTests.swift in Sources */,
 				01EEA149D533F34ED4F0E0E1 /* HomeNavigationRouterTests.swift in Sources */,
+				AEF58A94CBA1B5E9E40415F9 /* HomeServiceTests.swift in Sources */,
 				FE28CF6CC5A7DE5249E2F404 /* HomeViewModelTests.swift in Sources */,
 				E3A1C16A2E594F1FE5F77CC3 /* HomeViewTests.swift in Sources */,
 				6F4E114BE32BE6A60A7DF529 /* KeychainManagerTests.swift in Sources */,
