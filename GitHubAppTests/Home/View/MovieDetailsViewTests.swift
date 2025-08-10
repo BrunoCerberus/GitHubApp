@@ -47,6 +47,6 @@ final class MovieDetailsViewTests: XCTestCase {
             traits: UITraitCollection()
         )
 
-        assertSnapshot(matching: controller, as: .wait(for: 0.3, on: .image(on: iPhone16ProConfig)))
+        assertSnapshot(of: controller, as: .wait(for: 0.3, on: .image(on: iPhone16ProConfig)))
     }
 }
