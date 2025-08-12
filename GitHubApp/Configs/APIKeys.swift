@@ -41,35 +41,16 @@ enum APIKeysProvider {
     // MARK: - API Keys
 
     /**
-     * The Movie Database API key with secure fallback mechanisms.
+     * The Movie Database API key.
      *
-     * Retrieval priority:
-     * 1. iOS Keychain (most secure)
-     * 2. Environment variable (for CI/CD)
-     * 3. Runtime error if no key available
-     *
-     * The key is automatically stored in keychain for future use
-     * regardless of the source.
+     * The key is read from environment variables set in the XcodeGen project configuration.
+     * This provides a clean separation between development and production environments.
      */
     static let theMovieAPIKey: String = {
-        // First try to retrieve from keychain (most secure)
-        if let apiKey = try? keychainManager.retrieve(for: movieAPIKeyKey), !apiKey.isEmpty {
-            return apiKey
+        guard let apiKey = ProcessInfo.processInfo.environment["API_KEY"], !apiKey.isEmpty else {
+            fatalError("API_KEY environment variable not set. Please ensure the project is configured correctly.")
         }
-
-        // If not in keychain, try environment variable (for CI/CD compatibility)
-        if let apiKey = ProcessInfo.processInfo.environment["API_KEY"], !apiKey.isEmpty {
-            // Store in keychain for future use
-            try? keychainManager.save(apiKey, for: movieAPIKeyKey)
-            return apiKey
-        }
-
-        // No key available - this should not happen in production
-        #if DEBUG
-            fatalError("API_KEY environment variable not set. Please set API_KEY environment variable for development.")
-        #else
-            fatalError("API key not available. Please ensure API_KEY is properly configured.")
-        #endif
+        return apiKey
     }()
 
     // MARK: - Public Methods

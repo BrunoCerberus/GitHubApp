@@ -1,4 +1,4 @@
-.PHONY: install-xcodegen generate clean test test-unit test-ui clean-packages help init coverage coverage-report coverage-badge
+.PHONY: install-xcodegen generate clean test test-unit test-ui clean-packages help init coverage coverage-report coverage-badge deeplink-test
 
 # Default target
 help:
@@ -14,6 +14,7 @@ help:
 	@echo "  coverage          - Run tests with coverage and show app %"
 	@echo "  coverage-report   - Show detailed per-file coverage report"
 	@echo "  coverage-badge    - Generate SVG badge at badges/coverage.svg"
+	@echo "  deeplink-test     - Test deeplink functionality specifically"
 	@echo "  help              - Show this help message"
 
 # Setup Mint and SwiftFormat
@@ -98,6 +99,13 @@ clean:
 	@echo "Cleaning generated files..."
 	@rm -rf GitHubApp.xcodeproj
 	@echo "✅ Cleaned!"
+
+# Test deeplink functionality specifically
+deeplink-test:
+	@echo "Testing deeplink functionality..."
+	@make clean-packages
+	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -only-testing:GitHubAppTests/DeeplinkManagerTests -only-testing:GitHubAppTests/DeeplinkRouterTests -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2'
+	@echo "✅ Deeplink tests completed!"
 
 # Install and generate in one command
 setup: install-xcodegen generate

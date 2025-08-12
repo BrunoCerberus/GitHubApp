@@ -112,7 +112,27 @@ This project uses [XcodeGen](https://github.com/yonaskolb/XcodeGen) to generate 
    ./scripts/generate-project.sh
    ```
 
-2. **Open the generated project:**
+2. **Set up API Key (Required):**
+   
+   The app requires an API key from [The Movie Database](https://www.themoviedb.org/settings/api) to function.
+   
+   **Option A: Use the provided script:**
+   ```sh
+   ./scripts/run-dev.sh your_api_key_here
+   ```
+   
+   **Option B: Use Makefile command:**
+   ```sh
+   API_KEY='your_api_key_here' make run-dev
+   ```
+   
+   **Option C: Set environment variable manually:**
+   ```sh
+   export API_KEY='your_api_key_here'
+   open GitHubApp.xcodeproj
+   ```
+
+3. **Open the generated project:**
    ```sh
    open GitHubApp.xcodeproj
    ```
@@ -147,6 +167,51 @@ To modify the project structure:
 - **Consistent Structure**: Enforces consistent project organization
 - **Easy Maintenance**: No more merge conflicts in .pbxproj files
 - **Team Collaboration**: Everyone generates the same project structure
+
+## Deeplinks
+
+This app supports deeplinks for navigating directly to specific content. Deeplinks use a custom URL scheme (`githubapp://`) to provide seamless navigation within the app.
+
+### Supported Deeplinks
+
+#### Movie Details
+Navigate directly to a movie's details page:
+```
+githubapp://movie/{movieId}
+```
+
+**Examples:**
+- `githubapp://movie/123` - Navigate to movie with ID 123
+- `githubapp://movie/456` - Navigate to movie with ID 456
+
+### Implementation Details
+
+The deeplink system consists of several components:
+
+- **DeeplinkManager**: Parses URLs and validates deeplink formats
+- **DeeplinkRouter**: Routes parsed deeplinks to appropriate navigation actions
+- **URL Scheme**: Custom `githubapp://` scheme registered in Info.plist
+
+### Testing Deeplinks
+
+Test deeplink functionality using the Makefile:
+
+```sh
+# Test only deeplink-related functionality
+make deeplink-test
+
+# Run all tests including deeplinks
+make test
+```
+
+### Adding New Deeplinks
+
+To add support for new deeplink types:
+
+1. **Update DeeplinkManager.URLScheme** with new cases
+2. **Add parsing logic** in `parse(url:)` method
+3. **Update DeeplinkRouter** to handle new deeplink types
+4. **Add unit tests** for the new functionality
 
 ## Git Hooks Setup
 

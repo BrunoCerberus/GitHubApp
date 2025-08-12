@@ -15,6 +15,9 @@ import UIKit
  */
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
+    /// Deeplink manager for handling URL schemes
+    private let deeplinkManager = DeeplinkManager()
+
     /**
      * Called when the application has finished launching.
      *
@@ -32,6 +35,27 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Perform any additional setup here if needed
         // For now, we return true to indicate successful launch
         true
+    }
+
+    /**
+     * Handle URL scheme opening for iOS versions prior to iOS 13.
+     *
+     * This method is called when the app is opened via a custom URL scheme.
+     * For iOS 13+, this is handled by the scene delegate.
+     *
+     * - Parameter application: The singleton app object
+     * - Parameter url: The URL that was opened
+     * - Parameter options: Additional options for the URL opening
+     * - Returns: True if the URL was handled successfully
+     */
+    func application(
+        _: UIApplication,
+        open url: URL,
+        options _: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
+        // For iOS 13+, this is handled by the scene delegate
+        // This method is kept for backward compatibility
+        deeplinkManager.isValidDeeplink(url: url)
     }
 
     /**
