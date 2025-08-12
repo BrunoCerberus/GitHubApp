@@ -43,13 +43,17 @@ final class DeeplinkManager {
             return .unknown
         }
 
-        let pathComponents = components.path.split(separator: "/").map(String.init).filter { !$0.isEmpty }
+        // For URLs like githubapp://movie/123, the host is "movie" and path is "/123"
+        guard let host = components.host else {
+            return .unknown
+        }
 
-        switch pathComponents.first {
+        switch host {
         case "movie":
             // Handle movie details deeplink: githubapp://movie/{id}
-            if pathComponents.count >= 2,
-               let movieId = Int(pathComponents[1])
+            let pathComponents = components.path.split(separator: "/").map(String.init).filter { !$0.isEmpty }
+            if pathComponents.count >= 1,
+               let movieId = Int(pathComponents[0])
             {
                 return .movieDetails(movieId: movieId)
             }
