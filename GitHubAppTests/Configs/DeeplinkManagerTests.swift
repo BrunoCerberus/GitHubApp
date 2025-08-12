@@ -112,7 +112,7 @@ final class DeeplinkManagerTests: XCTestCase {
         }
     }
 
-    func testParseNilURL() {
+    func testParseInvalidURL() {
         let url = URL(string: "invalid://url")!
         let result = deeplinkManager.parse(url: url)
 

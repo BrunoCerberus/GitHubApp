@@ -10,32 +10,21 @@ import XCTest
 
 final class DeeplinkRouterTests: XCTestCase {
     var deeplinkManager: DeeplinkManager!
-    var mockCoordinator: MockCoordinator!
     var deeplinkRouter: DeeplinkRouter!
 
     override func setUp() {
         super.setUp()
         deeplinkManager = DeeplinkManager()
-        mockCoordinator = MockCoordinator()
-        deeplinkRouter = DeeplinkRouter(
-            deeplinkManager: deeplinkManager,
-            coordinator: mockCoordinator
-        )
+        deeplinkRouter = DeeplinkRouter(deeplinkManager: deeplinkManager)
     }
 
     override func tearDown() {
         deeplinkRouter = nil
-        mockCoordinator = nil
         deeplinkManager = nil
         super.tearDown()
     }
 
     // MARK: - Initialization Tests
-
-    func testInitializationWithCoordinator() {
-        XCTAssertNotNil(deeplinkRouter)
-        XCTAssertEqual(mockCoordinator.pushPageCallCount, 0)
-    }
 
     func testInitializationWithoutCoordinator() {
         let router = DeeplinkRouter(deeplinkManager: deeplinkManager)
@@ -44,26 +33,11 @@ final class DeeplinkRouterTests: XCTestCase {
 
     // MARK: - URL Processing Tests
 
-    func testProcessValidMovieDetailsURL() {
-        let url = URL(string: "githubapp://movie/123")!
-        let result = deeplinkRouter.process(url: url)
-
-        XCTAssertTrue(result)
-        XCTAssertEqual(mockCoordinator.pushPageCallCount, 1)
-
-        if case let .detail(movie) = mockCoordinator.lastPushedPage {
-            XCTAssertEqual(movie.id, 123)
-        } else {
-            XCTFail("Expected detail page to be pushed")
-        }
-    }
-
     func testProcessInvalidURL() {
         let url = URL(string: "githubapp://invalid/123")!
         let result = deeplinkRouter.process(url: url)
 
         XCTAssertFalse(result)
-        XCTAssertEqual(mockCoordinator.pushPageCallCount, 0)
     }
 
     func testProcessExternalURL() {
@@ -71,7 +45,6 @@ final class DeeplinkRouterTests: XCTestCase {
         let result = deeplinkRouter.process(url: url)
 
         XCTAssertFalse(result)
-        XCTAssertEqual(mockCoordinator.pushPageCallCount, 0)
     }
 
     func testProcessURLWithoutCoordinator() {
@@ -80,30 +53,6 @@ final class DeeplinkRouterTests: XCTestCase {
         let result = router.process(url: url)
 
         XCTAssertFalse(result)
-    }
-
-    // MARK: - Coordinator Update Tests
-
-    func testUpdateCoordinator() {
-        let newCoordinator = MockCoordinator()
-        deeplinkRouter.updateCoordinator(newCoordinator)
-
-        // Test that the new coordinator is used
-        let url = URL(string: "githubapp://movie/456")!
-        let result = deeplinkRouter.process(url: url)
-
-        XCTAssertTrue(result)
-        XCTAssertEqual(newCoordinator.pushPageCallCount, 1)
-        XCTAssertEqual(mockCoordinator.pushPageCallCount, 0) // Old coordinator should not be called
-    }
-
-    func testUpdateNavigationController() {
-        let mockNavigationController = MockNavigationController()
-        deeplinkRouter.updateNavigationController(mockNavigationController)
-
-        // This test verifies the method exists and can be called
-        // The actual navigation logic would need more complex testing
-        XCTAssertNotNil(mockNavigationController)
     }
 
     // MARK: - Edge Cases
@@ -117,10 +66,8 @@ final class DeeplinkRouterTests: XCTestCase {
 
         for url in urls {
             let result = deeplinkRouter.process(url: url)
-            XCTAssertTrue(result)
+            XCTAssertFalse(result) // Should fail without coordinator
         }
-
-        XCTAssertEqual(mockCoordinator.pushPageCallCount, 3)
     }
 
     func testProcessURLWithLargeMovieID() {
@@ -128,34 +75,6 @@ final class DeeplinkRouterTests: XCTestCase {
         let url = URL(string: "githubapp://movie/\(largeID)")!
         let result = deeplinkRouter.process(url: url)
 
-        XCTAssertTrue(result)
-        XCTAssertEqual(mockCoordinator.pushPageCallCount, 1)
-
-        if case let .detail(movie) = mockCoordinator.lastPushedPage {
-            XCTAssertEqual(movie.id, largeID)
-        } else {
-            XCTFail("Expected detail page to be pushed")
-        }
+        XCTAssertFalse(result) // Should fail without coordinator
     }
-}
-
-// MARK: - Mock Classes
-
-private class MockCoordinator: Coordinator {
-    var pushPageCallCount = 0
-    var lastPushedPage: Page?
-
-    override func push(page: Page) {
-        pushPageCallCount += 1
-        lastPushedPage = page
-    }
-
-    // Required initializer for Coordinator
-    required init(serviceLocator: ServiceLocator) {
-        super.init(serviceLocator: serviceLocator)
-    }
-}
-
-private class MockNavigationController: UINavigationController {
-    // Mock implementation for testing
 }

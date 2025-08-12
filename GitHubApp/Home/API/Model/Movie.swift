@@ -32,18 +32,18 @@ struct MoviesResponse: Codable {
  * - Hashable: For use in collections and sets
  * - Identifiable: For SwiftUI list identification
  */
-struct Movie: Codable, Hashable, Identifiable {
+public struct Movie: Codable, Hashable, Identifiable {
     /// Unique movie identifier from The Movie Database
-    let id: Int
+    public let id: Int
 
     /// Movie title
-    let title: String
+    public let title: String
 
     /// Movie plot summary/description
-    let overview: String
+    public let overview: String
 
     /// Poster image path (relative to base image URL)
-    let posterPath: String?
+    public let posterPath: String?
 
     /**
      * Computed property that generates the full poster image URL.

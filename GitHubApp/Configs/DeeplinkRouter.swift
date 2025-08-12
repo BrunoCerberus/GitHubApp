@@ -9,6 +9,13 @@ import Foundation
 import UIKit
 
 /**
+ * Protocol for coordinator-like objects that can handle navigation.
+ */
+protocol CoordinatorProtocol: AnyObject {
+    func push(page: Page)
+}
+
+/**
  * Routes deeplinks to appropriate navigation actions.
  *
  * This class takes parsed deeplinks and converts them to navigation
@@ -19,7 +26,7 @@ final class DeeplinkRouter {
     private let deeplinkManager: DeeplinkManager
 
     /// The coordinator for SwiftUI navigation
-    private weak var coordinator: Coordinator?
+    private weak var coordinator: CoordinatorProtocol?
 
     /// The UIKit navigation controller for fallback navigation
     private weak var navigationController: UINavigationController?
@@ -31,7 +38,7 @@ final class DeeplinkRouter {
     ///   - navigationController: The UIKit navigation controller (optional)
     init(
         deeplinkManager: DeeplinkManager,
-        coordinator: Coordinator? = nil,
+        coordinator: CoordinatorProtocol? = nil,
         navigationController: UINavigationController? = nil
     ) {
         self.deeplinkManager = deeplinkManager
@@ -94,7 +101,7 @@ final class DeeplinkRouter {
 
     /// Update the coordinator reference
     /// - Parameter coordinator: The new coordinator instance
-    func updateCoordinator(_ coordinator: Coordinator) {
+    func updateCoordinator(_ coordinator: CoordinatorProtocol) {
         self.coordinator = coordinator
     }
 

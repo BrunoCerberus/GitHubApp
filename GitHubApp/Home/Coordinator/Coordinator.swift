@@ -10,7 +10,7 @@ import SwiftUI
 /**
  * Represents navigable destinations in the app.
  */
-enum Page: Hashable {
+public enum Page: Hashable {
     case home
     case detail(Movie)
 }
@@ -20,7 +20,7 @@ enum Page: Hashable {
  *
  * Holds shared ViewModels and routes between SwiftUI pages.
  */
-final class Coordinator: ObservableObject {
+final class Coordinator: ObservableObject, CoordinatorProtocol {
     /// Current navigation path for the primary stack
     @Published var path: NavigationPath = .init()
 

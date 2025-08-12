@@ -25,7 +25,7 @@ final class DeeplinkManager {
     }
 
     /// Deeplink types that can be processed
-    enum DeeplinkType {
+    enum DeeplinkType: Equatable {
         case movieDetails(movieId: Int)
         case unknown
     }
@@ -43,14 +43,13 @@ final class DeeplinkManager {
             return .unknown
         }
 
-        let pathComponents = components.pathComponents.filter { $0 != "/" }
+        let pathComponents = components.path.split(separator: "/").map(String.init).filter { !$0.isEmpty }
 
         switch pathComponents.first {
         case "movie":
             // Handle movie details deeplink: githubapp://movie/{id}
             if pathComponents.count >= 2,
-               let movieIdString = pathComponents[1],
-               let movieId = Int(movieIdString)
+               let movieId = Int(pathComponents[1])
             {
                 return .movieDetails(movieId: movieId)
             }
