@@ -15,7 +15,6 @@ help:
 	@echo "  coverage-report   - Show detailed per-file coverage report"
 	@echo "  coverage-badge    - Generate SVG badge at badges/coverage.svg"
 	@echo "  deeplink-test     - Test deeplink functionality specifically"
-	@echo "  run-dev           - Run app with API key (requires API_KEY env var)"
 	@echo "  help              - Show this help message"
 
 # Setup Mint and SwiftFormat
@@ -107,25 +106,6 @@ deeplink-test:
 	@make clean-packages
 	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -only-testing:GitHubAppTests/DeeplinkManagerTests -only-testing:GitHubAppTests/DeeplinkRouterTests -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2'
 	@echo "✅ Deeplink tests completed!"
-
-# Run app with API key (requires API_KEY environment variable)
-run-dev:
-	@if [ -z "$$API_KEY" ]; then \
-		echo "❌ Error: API_KEY environment variable not set!"; \
-		echo "Usage: API_KEY='your_api_key' make run-dev"; \
-		echo "Or use: ./scripts/run-dev.sh your_api_key"; \
-		echo ""; \
-		echo "To get an API key:"; \
-		echo "1. Go to https://www.themoviedb.org/settings/api"; \
-		echo "2. Create an account and request an API key"; \
-		echo "3. Use that key with this command"; \
-		exit 1; \
-	fi
-	@echo "🚀 Starting GitHubApp with API_KEY set..."
-	@echo "Opening Xcode project..."
-	@open GitHubApp.xcodeproj
-	@echo "✅ Project opened! You can now run the app in Xcode."
-	@echo "Note: The API_KEY environment variable is set for this session."
 
 # Install and generate in one command
 setup: install-xcodegen generate
