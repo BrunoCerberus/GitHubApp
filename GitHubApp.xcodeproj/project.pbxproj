@@ -939,6 +939,7 @@
 		2A314133DAB463F70378B56B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				API_KEY = da9bc8815fb0fc31d5ef6b3da097a009;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -982,6 +983,7 @@
 		5B00E7AE6EABEF74860698EE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				API_KEY = da9bc8815fb0fc31d5ef6b3da097a009;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
