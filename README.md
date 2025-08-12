@@ -112,7 +112,27 @@ This project uses [XcodeGen](https://github.com/yonaskolb/XcodeGen) to generate 
    ./scripts/generate-project.sh
    ```
 
-2. **Open the generated project:**
+2. **Set up API Key (Required):**
+   
+   The app requires an API key from [The Movie Database](https://www.themoviedb.org/settings/api) to function.
+   
+   **Option A: Use the provided script:**
+   ```sh
+   ./scripts/run-dev.sh your_api_key_here
+   ```
+   
+   **Option B: Use Makefile command:**
+   ```sh
+   API_KEY='your_api_key_here' make run-dev
+   ```
+   
+   **Option C: Set environment variable manually:**
+   ```sh
+   export API_KEY='your_api_key_here'
+   open GitHubApp.xcodeproj
+   ```
+
+3. **Open the generated project:**
    ```sh
    open GitHubApp.xcodeproj
    ```
