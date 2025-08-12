@@ -148,6 +148,51 @@ To modify the project structure:
 - **Easy Maintenance**: No more merge conflicts in .pbxproj files
 - **Team Collaboration**: Everyone generates the same project structure
 
+## Deeplinks
+
+This app supports deeplinks for navigating directly to specific content. Deeplinks use a custom URL scheme (`githubapp://`) to provide seamless navigation within the app.
+
+### Supported Deeplinks
+
+#### Movie Details
+Navigate directly to a movie's details page:
+```
+githubapp://movie/{movieId}
+```
+
+**Examples:**
+- `githubapp://movie/123` - Navigate to movie with ID 123
+- `githubapp://movie/456` - Navigate to movie with ID 456
+
+### Implementation Details
+
+The deeplink system consists of several components:
+
+- **DeeplinkManager**: Parses URLs and validates deeplink formats
+- **DeeplinkRouter**: Routes parsed deeplinks to appropriate navigation actions
+- **URL Scheme**: Custom `githubapp://` scheme registered in Info.plist
+
+### Testing Deeplinks
+
+Test deeplink functionality using the Makefile:
+
+```sh
+# Test only deeplink-related functionality
+make deeplink-test
+
+# Run all tests including deeplinks
+make test
+```
+
+### Adding New Deeplinks
+
+To add support for new deeplink types:
+
+1. **Update DeeplinkManager.URLScheme** with new cases
+2. **Add parsing logic** in `parse(url:)` method
+3. **Update DeeplinkRouter** to handle new deeplink types
+4. **Add unit tests** for the new functionality
+
 ## Git Hooks Setup
 
 This project uses a versioned pre-commit hook to enforce SwiftFormat linting before every commit.

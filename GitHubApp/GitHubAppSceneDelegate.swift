@@ -28,6 +28,12 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
     /// Service locator for dependency injection
     private let serviceLocator: ServiceLocator = .init()
 
+    /// Deeplink manager for handling URL schemes
+    private let deeplinkManager = DeeplinkManager()
+
+    /// Deeplink router for handling navigation
+    private var deeplinkRouter: DeeplinkRouter?
+
     /**
      * Called when a scene is being created and connected to the app.
      *
@@ -65,6 +71,12 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = rootView
         self.window = window
 
+        // Initialize deeplink router with the coordinator
+        setupDeeplinkRouter(with: rootView)
+
+        // Setup notification observer for coordinator availability
+        setupCoordinatorObserver()
+
         // Make the window visible and set it as the key window
         window.makeKeyAndVisible()
     }
@@ -90,5 +102,71 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
             // Use real service for release builds
             serviceLocator.register(HomeServiceProtocol.self, instance: HomeService())
         #endif
+    }
+
+    /**
+     * Setup deeplink router with the coordinator from the root view.
+     *
+     * This method extracts the coordinator from the SwiftUI view hierarchy
+     * and configures the deeplink router for navigation.
+     *
+     * - Parameter rootView: The root hosting controller containing the coordinator
+     */
+    private func setupDeeplinkRouter(with rootView: UIHostingController<CoordinatorView>) {
+        // We need to wait for the coordinator to be available
+        // This will be called after the view appears
+        DispatchQueue.main.async { [weak self] in
+            self?.setupDeeplinkRouterAfterViewAppears(rootView: rootView)
+        }
+    }
+
+    /**
+     * Setup deeplink router after the view has appeared and coordinator is available.
+     *
+     * - Parameter rootView: The root hosting controller
+     */
+    private func setupDeeplinkRouterAfterViewAppears(rootView: UIHostingController<CoordinatorView>) {
+        // Extract the coordinator from the view hierarchy
+        if let coordinatorView = rootView.rootView as? CoordinatorView {
+            // The coordinator will be available after the view appears
+            // We'll set it up in the coordinator view
+        }
+    }
+
+    /**
+     * Setup notification observer for coordinator availability.
+     */
+    private func setupCoordinatorObserver() {
+        NotificationCenter.default.addObserver(
+            forName: .coordinatorDidBecomeAvailable,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            if let coordinator = notification.object as? Coordinator {
+                self?.deeplinkRouter = DeeplinkRouter(
+                    deeplinkManager: self?.deeplinkManager ?? DeeplinkManager(),
+                    coordinator: coordinator
+                )
+            }
+        }
+    }
+
+    /**
+     * Handle URL opening for the scene.
+     *
+     * This method is called when the app is opened via a custom URL scheme
+     * while the app is running in the foreground.
+     *
+     * - Parameter scene: The scene that received the URL
+     * - Parameter urlContexts: The URL contexts that were opened
+     */
+    func scene(_: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        for urlContext in URLContexts {
+            let url = urlContext.url
+            if deeplinkManager.isValidDeeplink(url: url) {
+                // Process the deeplink if the router is available
+                _ = deeplinkRouter?.process(url: url)
+            }
+        }
     }
 }
