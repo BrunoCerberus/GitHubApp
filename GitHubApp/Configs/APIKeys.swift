@@ -47,10 +47,26 @@ enum APIKeysProvider {
      * This provides a clean separation between development and production environments.
      */
     static let theMovieAPIKey: String = {
-        guard let apiKey = ProcessInfo.processInfo.environment["API_KEY"], !apiKey.isEmpty else {
-            fatalError("API_KEY environment variable not set. Please ensure the project is configured correctly.")
+        // First try to get from environment variable (for CI/CD and debugging)
+        if let apiKey = ProcessInfo.processInfo.environment["API_KEY"], !apiKey.isEmpty {
+            return apiKey
         }
-        return apiKey
+
+        // Fallback to keychain if environment variable is not set
+        do {
+            return try getMovieAPIKey()
+        } catch {
+            // If keychain also fails, provide a helpful error message
+            fatalError("""
+            API_KEY not found in environment variables or keychain.
+
+            To fix this:
+            1. Set the API_KEY environment variable in your build configuration, OR
+            2. Call APIKeysProvider.setMovieAPIKey("your_api_key") before accessing theMovieAPIKey
+
+            Current environment: \(ProcessInfo.processInfo.environment.keys.filter { $0.contains("API") })
+            """)
+        }
     }()
 
     // MARK: - Public Methods
