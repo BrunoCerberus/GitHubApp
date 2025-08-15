@@ -21,6 +21,20 @@
                ReferencedContainer = "container:GitHubApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "979363D5E9689C23BA2B2C20"
+               BuildableName = "GitHubAppWidgetExtension.appex"
+               BlueprintName = "GitHubAppWidgetExtension"
+               ReferencedContainer = "container:GitHubApp.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

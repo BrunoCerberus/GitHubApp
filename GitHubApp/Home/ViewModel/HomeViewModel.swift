@@ -85,6 +85,15 @@ final class HomeViewModel {
             .sink { [weak self] movies in
                 self?.movies = movies
                 self?.updateLikedMovies()
+
+                // Save movies to widget shared storage
+                WidgetDataManager.shared.saveUpcomingMovies(movies)
+
+                // Post notification for widget data manager
+                NotificationCenter.default.post(
+                    name: .moviesDidUpdate,
+                    object: movies
+                )
             }
             .store(in: &cancellables)
     }
