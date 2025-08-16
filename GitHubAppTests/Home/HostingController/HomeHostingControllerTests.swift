@@ -32,4 +32,19 @@ final class HomeHostingControllerTests: XCTestCase {
         XCTAssertTrue(nav.navigationBar.prefersLargeTitles)
         XCTAssertTrue(router.navigation === nav)
     }
+
+    func testInitialization() {
+        let router = HomeNavigationRouter()
+        let sut = HomeHostingController<HomeNavigationRouter>(navigationRouter: router)
+
+        XCTAssertTrue(sut.router === router)
+        XCTAssertNotNil(sut.view)
+    }
+
+    @MainActor
+    func testInitWithCoderReturnsNil() {
+        let sut = HomeHostingController<HomeNavigationRouter>(coder: NSCoder())
+
+        XCTAssertNil(sut)
+    }
 }

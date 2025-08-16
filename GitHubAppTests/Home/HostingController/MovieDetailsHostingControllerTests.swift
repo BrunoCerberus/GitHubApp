@@ -30,4 +30,20 @@ final class MovieDetailsHostingControllerTests: XCTestCase {
 
         XCTAssertEqual(sut.title, movie.title)
     }
+
+    func testInitialization() {
+        let movie = Movie(id: 123, title: "Test Movie", overview: "Test overview", posterPath: "/test.jpg")
+        let sut = MovieDetailsHostingController(movie: movie)
+
+        XCTAssertEqual(sut.movie.id, movie.id)
+        XCTAssertEqual(sut.movie.title, movie.title)
+        XCTAssertNotNil(sut.view)
+    }
+
+    @MainActor
+    func testInitWithCoderReturnsNil() {
+        let sut = MovieDetailsHostingController(coder: NSCoder())
+
+        XCTAssertNil(sut)
+    }
 }
