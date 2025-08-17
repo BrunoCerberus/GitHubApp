@@ -1,0 +1,20 @@
+/* 
+  Localizable.strings
+  GitHubApp - Spanish
+
+  Created by bruno on localization.
+*/
+
+// MARK: - Movie Details View
+"movie_details.credits.title" = "Reparto";
+"movie_details.credits.empty" = "No hay créditos disponibles";
+"movie_details.reviews.title" = "Reseñas";
+"movie_details.reviews.empty" = "No hay reseñas disponibles";
+
+// MARK: - Liked Movies View
+"liked_movies.title" = "Películas Favoritas";
+"liked_movies.empty_state" = "Tus películas favoritas aparecerán aquí.";
+
+// MARK: - API Errors
+"api_error.invalid_base_url" = "URL base inválida: %@";
+"api_error.url_construction_failed" = "Error al construir URL desde componentes";

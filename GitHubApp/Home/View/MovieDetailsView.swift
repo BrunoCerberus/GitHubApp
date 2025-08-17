@@ -18,9 +18,9 @@ struct MovieDetailsView: View {
     var body: some View {
         List {
             if viewModel.showCredits {
-                Section(header: Text("Credits")) {
+                Section(header: Text(Localizable.movieDetails.creditsTitle)) {
                     if viewModel.data.credits.isEmpty {
-                        Text("No credits available")
+                        Text(Localizable.movieDetails.creditsEmpty)
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     } else {
@@ -38,9 +38,9 @@ struct MovieDetailsView: View {
             }
 
             if viewModel.showReviews {
-                Section(header: Text("Reviews")) {
+                Section(header: Text(Localizable.movieDetails.reviewsTitle)) {
                     if viewModel.data.reviews.isEmpty {
-                        Text("No reviews available")
+                        Text(Localizable.movieDetails.reviewsEmpty)
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     } else {

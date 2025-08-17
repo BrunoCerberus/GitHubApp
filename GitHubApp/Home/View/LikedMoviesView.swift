@@ -22,10 +22,10 @@ struct LikedMoviesView: View {
         NavigationStack {
             VStack {
                 if viewModel.likedMovies.isEmpty {
-                    Text("Liked Movies")
+                    Text(Localizable.likedMovies.title)
                         .font(.largeTitle)
                         .padding()
-                    Text("Your liked movies will appear here.")
+                    Text(Localizable.likedMovies.emptyState)
                         .foregroundColor(.secondary)
                 } else {
                     List(viewModel.likedMovies, id: \.id) { movie in

@@ -18,9 +18,9 @@ enum APIError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case let .invalidBaseURL(url):
-            "Invalid base URL: \(url)"
+            Localizable.apiErrors.invalidBaseURL(url)
         case .urlConstructionFailed:
-            "Failed to construct URL from components"
+            Localizable.apiErrors.urlConstructionFailed
         }
     }
 }
