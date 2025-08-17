@@ -1,20 +1,37 @@
 /* 
   Localizable.strings
-  GitHubApp - Portuguese (Brazil)
+  GitHubApp - Portuguese
 
   Created by bruno on localization.
 */
 
 // MARK: - Movie Details View
-"movie_details.credits.title" = "Elenco";
+"movie_details.credits.title" = "Créditos";
 "movie_details.credits.empty" = "Nenhum crédito disponível";
 "movie_details.reviews.title" = "Avaliações";
 "movie_details.reviews.empty" = "Nenhuma avaliação disponível";
 
 // MARK: - Liked Movies View
-"liked_movies.title" = "Filmes Curtidos";
-"liked_movies.empty_state" = "Seus filmes curtidos aparecerão aqui.";
+"liked_movies.title" = "Filmes Favoritos";
+"liked_movies.empty_state" = "Seus filmes favoritos aparecerão aqui.";
+
+// MARK: - Settings View
+"settings.title" = "Configurações";
+"settings.profile_image" = "Imagem do Perfil";
+"settings.profile_image_tap_to_change" = "Toque para alterar a imagem do perfil";
+
+"settings.app_version" = "Versão do App";
+"settings.clear_liked_movies" = "Limpar Filmes Favoritos";
+"settings.clear_liked_movies_confirmation" = "Tem certeza de que deseja limpar todos os filmes favoritos? Esta ação não pode ser desfeita.";
+"settings.clear_liked_movies_alert_title" = "Limpar Filmes Favoritos";
+"settings.clear_liked_movies_alert_message" = "Todos os filmes favoritos serão removidos.";
+"settings.clear_liked_movies_alert_clear" = "Limpar Todos";
+"settings.clear_liked_movies_alert_cancel" = "Cancelar";
+"settings.rate_app" = "Avaliar App";
+"settings.rate_app_message" = "Gostando do app? Por favor, avalie-o!";
+"settings.rate_app_button" = "Avaliar na App Store";
+"settings.rate_app_thanks" = "Obrigado por avaliar!";
 
 // MARK: - API Errors
 "api_error.invalid_base_url" = "URL base inválida: %@";
-"api_error.url_construction_failed" = "Falha ao construir URL dos componentes";
+"api_error.url_construction_failed" = "Falha ao construir URL a partir dos componentes";

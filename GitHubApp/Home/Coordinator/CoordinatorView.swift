@@ -46,7 +46,13 @@ struct CoordinatorView: View {
                 .tabItem {
                     Label("Liked", systemImage: "heart")
                 }
+
+            SettingsView(viewModel: coordinator.settingsViewModel)
+                .tabItem {
+                    Label("Settings", systemImage: "gear")
+                }
         }
+
         .onAppear {
             setupDeeplinkRouter()
         }

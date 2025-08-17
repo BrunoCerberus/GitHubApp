@@ -100,4 +100,15 @@ final class LikedMoviesViewModel: ObservableObject {
         }
         return movies
     }
+
+    /**
+     * Clear all liked movies.
+     *
+     * This method removes all liked movies from the list and
+     * persists the change to UserDefaults.
+     */
+    func clearAllLikedMovies() {
+        likedMovies.removeAll()
+        savePersistedLikedMovies([])
+    }
 }

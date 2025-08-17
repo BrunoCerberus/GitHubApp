@@ -33,6 +33,9 @@ final class Coordinator: ObservableObject, CoordinatorProtocol {
     /// Shared LikedMoviesViewModel instance
     lazy var likedMoviesViewModel: LikedMoviesViewModel = .init()
 
+    /// Shared SettingsViewModel instance
+    lazy var settingsViewModel: SettingsViewModel = .init(likedMoviesViewModel: likedMoviesViewModel)
+
     /// Create a coordinator with a configured ServiceLocator
     init(serviceLocator: ServiceLocator) {
         self.serviceLocator = serviceLocator

@@ -58,6 +58,56 @@ struct Localizable {
         static let emptyState = NSLocalizedString("liked_movies.empty_state", comment: "Empty state message for liked movies")
     }
 
+    // MARK: - Settings
+
+    /// Settings related localized strings
+    struct Settings {
+        /// Private initializer to prevent instantiation
+        private init() {}
+
+        /// "Settings" title
+        static let title = NSLocalizedString("settings.title", comment: "Settings title")
+
+        /// "Profile Image" label
+        static let profileImage = NSLocalizedString("settings.profile_image", comment: "Profile Image label")
+
+        /// "Tap to change profile image" hint
+        static let profileImageTapToChange = NSLocalizedString("settings.profile_image_tap_to_change", comment: "Tap to change profile image hint")
+
+        /// "App Version" label
+        static let appVersion = NSLocalizedString("settings.app_version", comment: "App Version label")
+
+        /// "Clear Liked Movies" button
+        static let clearLikedMovies = NSLocalizedString("settings.clear_liked_movies", comment: "Clear Liked Movies button")
+
+        /// "Clear Liked Movies" confirmation message
+        static let clearLikedMoviesConfirmation = NSLocalizedString("settings.clear_liked_movies_confirmation", comment: "Clear Liked Movies confirmation message")
+
+        /// "Clear Liked Movies" alert title
+        static let clearLikedMoviesAlertTitle = NSLocalizedString("settings.clear_liked_movies_alert_title", comment: "Clear Liked Movies alert title")
+
+        /// "Clear Liked Movies" alert message
+        static let clearLikedMoviesAlertMessage = NSLocalizedString("settings.clear_liked_movies_alert_message", comment: "Clear Liked Movies alert message")
+
+        /// "Clear All" button
+        static let clearLikedMoviesAlertClear = NSLocalizedString("settings.clear_liked_movies_alert_clear", comment: "Clear All button")
+
+        /// "Cancel" button
+        static let clearLikedMoviesAlertCancel = NSLocalizedString("settings.clear_liked_movies_alert_cancel", comment: "Cancel button")
+
+        /// "Rate App" section title
+        static let rateApp = NSLocalizedString("settings.rate_app", comment: "Rate App section title")
+
+        /// "Rate App" message
+        static let rateAppMessage = NSLocalizedString("settings.rate_app_message", comment: "Rate App message")
+
+        /// "Rate on App Store" button
+        static let rateAppButton = NSLocalizedString("settings.rate_app_button", comment: "Rate on App Store button")
+
+        /// "Thanks for rating!" message
+        static let rateAppThanks = NSLocalizedString("settings.rate_app_thanks", comment: "Thanks for rating message")
+    }
+
     // MARK: - API Errors
 
     /// API error related localized strings
@@ -83,6 +133,9 @@ struct Localizable {
 
     /// Convenience access to liked movies strings
     static let likedMovies = LikedMovies.self
+
+    /// Convenience access to settings strings
+    static let settings = Settings.self
 
     /// Convenience access to API error strings
     static let apiErrors = APIErrors.self

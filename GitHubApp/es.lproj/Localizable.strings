@@ -6,7 +6,7 @@
 */
 
 // MARK: - Movie Details View
-"movie_details.credits.title" = "Reparto";
+"movie_details.credits.title" = "Créditos";
 "movie_details.credits.empty" = "No hay créditos disponibles";
 "movie_details.reviews.title" = "Reseñas";
 "movie_details.reviews.empty" = "No hay reseñas disponibles";
@@ -14,6 +14,23 @@
 // MARK: - Liked Movies View
 "liked_movies.title" = "Películas Favoritas";
 "liked_movies.empty_state" = "Tus películas favoritas aparecerán aquí.";
+
+// MARK: - Settings View
+"settings.title" = "Configuración";
+"settings.profile_image" = "Imagen de Perfil";
+"settings.profile_image_tap_to_change" = "Toca para cambiar la imagen de perfil";
+
+"settings.app_version" = "Versión de la App";
+"settings.clear_liked_movies" = "Borrar Películas Favoritas";
+"settings.clear_liked_movies_confirmation" = "¿Estás seguro de que quieres borrar todas las películas favoritas? Esta acción no se puede deshacer.";
+"settings.clear_liked_movies_alert_title" = "Borrar Películas Favoritas";
+"settings.clear_liked_movies_alert_message" = "Todas las películas favoritas serán eliminadas.";
+"settings.clear_liked_movies_alert_clear" = "Borrar Todo";
+"settings.clear_liked_movies_alert_cancel" = "Cancelar";
+"settings.rate_app" = "Calificar App";
+"settings.rate_app_message" = "¿Te gusta la app? ¡Por favor califícala!";
+"settings.rate_app_button" = "Calificar en App Store";
+"settings.rate_app_thanks" = "¡Gracias por calificar!";
 
 // MARK: - API Errors
 "api_error.invalid_base_url" = "URL base inválida: %@";
