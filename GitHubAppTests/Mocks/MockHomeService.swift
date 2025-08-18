@@ -13,6 +13,8 @@ import Foundation
  * Mock implementation of `HomeServiceProtocol` returning fixed data for tests.
  */
 final class MockHomeService: HomeServiceProtocol {
+    /// Flag to control whether service calls should fail
+    var shouldFail: Bool = false
     private let mockMoviesResponse = MoviesResponse(results: [
         Movie(id: 346_698,
               title: "Barbie",
@@ -96,7 +98,13 @@ final class MockHomeService: HomeServiceProtocol {
 
     /// Returns a pre-baked list of movies
     func fetchMovies() -> AnyPublisher<MoviesResponse, Error> {
-        Just(mockMoviesResponse)
+        if shouldFail {
+            return Fail(error: NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock fetch error"]))
+                .receive(on: RunLoop.current)
+                .eraseToAnyPublisher()
+        }
+
+        return Just(mockMoviesResponse)
             .setFailureType(to: Error.self)
             .receive(on: RunLoop.current)
             .eraseToAnyPublisher()
@@ -104,7 +112,13 @@ final class MockHomeService: HomeServiceProtocol {
 
     /// Ignores the query and returns the same mock list
     func searchMovies(with _: String) -> AnyPublisher<MoviesResponse, Error> {
-        Just(mockMoviesResponse)
+        if shouldFail {
+            return Fail(error: NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock search error"]))
+                .receive(on: RunLoop.current)
+                .eraseToAnyPublisher()
+        }
+
+        return Just(mockMoviesResponse)
             .setFailureType(to: Error.self)
             .receive(on: RunLoop.current)
             .eraseToAnyPublisher()
@@ -112,7 +126,13 @@ final class MockHomeService: HomeServiceProtocol {
 
     /// Returns a static mock credits payload
     func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
-        Just(mockMovieCreditsResponse)
+        if shouldFail {
+            return Fail(error: NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock credits error"]))
+                .receive(on: RunLoop.current)
+                .eraseToAnyPublisher()
+        }
+
+        return Just(mockMovieCreditsResponse)
             .setFailureType(to: Error.self)
             .receive(on: RunLoop.current)
             .eraseToAnyPublisher()
@@ -120,7 +140,13 @@ final class MockHomeService: HomeServiceProtocol {
 
     /// Returns a static mock reviews payload
     func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
-        Just(mockMovieReviewsResponse)
+        if shouldFail {
+            return Fail(error: NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock reviews error"]))
+                .receive(on: RunLoop.current)
+                .eraseToAnyPublisher()
+        }
+
+        return Just(mockMovieReviewsResponse)
             .setFailureType(to: Error.self)
             .receive(on: RunLoop.current)
             .eraseToAnyPublisher()
