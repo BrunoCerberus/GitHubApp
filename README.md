@@ -213,6 +213,178 @@ To add support for new deeplink types:
 3. **Update DeeplinkRouter** to handle new deeplink types
 4. **Add unit tests** for the new functionality
 
+## Clean Architecture Implementation
+
+This app implements Clean Architecture principles to ensure separation of concerns, testability, and maintainability. The Home feature serves as a reference implementation of this architectural pattern.
+
+### Architecture Overview
+
+The Clean Architecture implementation follows these key principles:
+- **Separation of Concerns**: Each layer has a specific responsibility
+- **Dependency Inversion**: Higher-level modules don't depend on lower-level modules
+- **Reactive Programming**: Uses Combine for reactive data flow
+- **Single Source of Truth**: ViewModels maintain a single published state
+- **Testability**: Each component can be tested in isolation
+
+### Component Communication Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                   VIEW LAYER                                     │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│    ┌─────────────────┐                                                          │
+│    │   HomeView      │                                                          │
+│    │                 │                                                          │
+│    │ • @StateObject  │                                                          │
+│    │ • .searchable() │                                                          │
+│    │ • UI Rendering  │                                                          │
+│    └─────────────────┘                                                          │
+│            │                                                                    │
+│            │ HomeViewEvent                                                      │
+│            │ (.fetchData, .searchMovies,                                        │
+│            │  .toggleLike, .loadLikedMovies)                                    │
+│            ▼                                                                    │
+└─────────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                VIEWMODEL LAYER                                   │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│    ┌─────────────────┐                        ┌─────────────────┐               │
+│    │  HomeViewModel  │◄──────────────────────►│HomeViewState    │               │
+│    │                 │                        │Reducing         │               │
+│    │ • CombineViewModel                       │                 │               │
+│    │ • @Published    │                        │ • Protocol      │               │
+│    │   viewState     │                        │ • Converts      │               │
+│    │ • Single Source │                        │   Domain→View   │               │
+│    │   of Truth      │                        │                 │               │
+│    └─────────────────┘                        └─────────────────┘               │
+│            │                                           ▲                        │
+│            │ HomeDomainAction                          │                        │
+│            │                                           │                        │
+│            ▼                                           │ HomeDomainState        │
+│    ┌─────────────────┐                                 │                        │
+│    │HomeDomainEvent  │                                 │                        │
+│    │ActionMap        │─────────────────────────────────┘                        │
+│    │                 │                                                          │
+│    │ • Maps Events   │                                                          │
+│    │   to Actions    │                                                          │
+│    └─────────────────┘                                                          │
+└─────────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                 DOMAIN LAYER                                     │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│    ┌─────────────────┐                        ┌─────────────────┐               │
+│    │HomeDomainAction │                        │HomeDomainState  │               │
+│    │                 │                        │                 │               │
+│    │ • .fetchUpcoming│                        │ • movies: []    │               │
+│    │   Movies        │                        │ • likedMovies   │               │
+│    │ • .searchMovies │                        │ • isLoading     │               │
+│    │ • .toggleMovie  │                        │ • error         │               │
+│    │   Like          │                        │ • searchQuery   │               │
+│    │ • .loadPersisted│                        │                 │               │
+│    │   LikedMovies   │                        │ • Equatable     │               │
+│    └─────────────────┘                        │ • .initial      │               │
+│            │                                  └─────────────────┘               │
+│            │                                           ▲                        │
+│            ▼                                           │                        │
+│    ┌─────────────────┐                                 │                        │
+│    │HomeDomainInterac│                                 │                        │
+│    │tor              │─────────────────────────────────┘                        │
+│    │                 │          @Published                                      │
+│    │ • CombineInterac│          currentState                                    │
+│    │   tor           │                                                          │
+│    │ • Business Logic│                                                          │
+│    │ • State Manage  │                                                          │
+│    │ • Persistence   │                                                          │
+│    └─────────────────┘                                                          │
+│            │                                                                    │
+│            │ API Calls                                                          │
+│            ▼                                                                    │
+└─────────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                SERVICE LAYER                                     │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│    ┌─────────────────┐                                                          │
+│    │  HomeService    │                                                          │
+│    │                 │                                                          │
+│    │ • HomeServiceProtocol                                                      │
+│    │ • fetchMovies()                                                            │
+│    │ • searchMovies(query)                                                      │
+│    │ • AnyPublisher<MoviesResponse, Error>                                      │
+│    │                                                                            │
+│    │ ┌─────────────────────────────────────────────────────────────────────┐    │
+│    │ │                    External APIs                                    │    │
+│    │ │  • The Movie Database (TMDB) API                                   │    │
+│    │ │  • /movie/upcoming                                                 │    │
+│    │ │  • /search/movie                                                   │    │
+│    │ └─────────────────────────────────────────────────────────────────────┘    │
+│    └─────────────────┘                                                          │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+DATA FLOW LEGEND:
+═══════════════
+│ Synchronous Call/Response    ▲ State Observation (Combine)
+▼ Asynchronous Flow           ◄► Bidirectional Communication
+```
+
+### Key Components
+
+#### View Layer
+- **HomeView**: SwiftUI view that renders the UI and handles user interactions
+- Uses `@StateObject` for proper reactive updates
+- Implements search bar with debouncing to prevent API spam
+- Observes `viewState` for reactive UI updates
+
+#### ViewModel Layer  
+- **HomeViewModel**: Coordinates between view and domain layer
+- Implements single source of truth with `@Published viewState`
+- Uses `HomeDomainEventActionMap` to translate UI events to domain actions
+- Uses `HomeViewStateReducing` to convert domain state to view state
+
+#### Domain Layer
+- **HomeDomainInteractor**: Contains all business logic and state management
+- **HomeDomainAction**: Defines all possible business operations
+- **HomeDomainState**: Represents the complete domain state
+- Handles data persistence, API orchestration, and business rules
+
+#### Service Layer
+- **HomeService**: Handles external API communications
+- Returns reactive publishers (`AnyPublisher<MoviesResponse, Error>`)
+- Manages network requests to TMDB API
+
+### Benefits
+
+✅ **Separation of Concerns**: Each layer has a single responsibility  
+✅ **Testability**: All components can be unit tested in isolation  
+✅ **Maintainability**: Changes in one layer don't affect others  
+✅ **Scalability**: Easy to add new features following the same pattern  
+✅ **Reactive**: Uses Combine for efficient state management  
+✅ **Single Source of Truth**: Eliminates state synchronization issues  
+
+### Testing Strategy
+
+The architecture enables comprehensive testing at every layer:
+
+- **View Tests**: Test UI rendering and user interactions
+- **ViewModel Tests**: Test state transformations and event handling  
+- **Domain Tests**: Test business logic and state management
+- **Service Tests**: Test API integrations and data mapping
+- **Integration Tests**: Test complete data flow end-to-end
+
+### Implementation Reference
+
+The Home feature serves as the reference implementation for this Clean Architecture pattern. Other features should follow the same structure:
+
+1. Create domain actions and state models
+2. Implement domain interactor with business logic
+3. Create event-to-action mapper
+4. Implement view state reducer
+5. Update ViewModel to use Clean Architecture
+6. Add comprehensive unit tests
+
 ## Git Hooks Setup
 
 This project uses a versioned pre-commit hook to enforce SwiftFormat linting before every commit.
