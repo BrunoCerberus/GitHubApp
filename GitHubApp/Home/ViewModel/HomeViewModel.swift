@@ -89,8 +89,7 @@ final class HomeViewModel: ObservableObject, CombineViewModel {
         setupStateObservation()
 
         // Load initial data
-        handle(.fetchData)
-        handle(.loadLikedMovies)
+        loadInitialData()
     }
 
     // MARK: - CombineViewModel Implementation
@@ -225,6 +224,17 @@ final class HomeViewModel: ObservableObject, CombineViewModel {
             }
             .receive(on: DispatchQueue.main)
             .assign(to: &$viewState)
+    }
+
+    /**
+     * Load initial data with appropriate timing to ensure state observation is established.
+     */
+    private func loadInitialData() {
+        // Use a small delay to ensure the state observation pipeline is fully set up
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.001) { [weak self] in
+            self?.handle(.fetchData)
+            self?.handle(.loadLikedMovies)
+        }
     }
 
     /**

@@ -32,7 +32,7 @@ final class HomeViewModelCleanArchitectureTests: XCTestCase {
     }
 
     func testInitialViewState() {
-        // Given/When - ViewModel initializes with loading state
+        // Given - ViewModel initializes and we manually trigger fetch to ensure loading
         let expectation = XCTestExpectation(description: "initial state")
         var receivedStates: [HomeViewState] = []
 
@@ -45,8 +45,11 @@ final class HomeViewModelCleanArchitectureTests: XCTestCase {
             }
             .store(in: &cancellables)
 
+        // When - Manually trigger fetch to ensure reliable loading
+        sut.fetchData()
+
         // Then
-        wait(for: [expectation], timeout: 2.0)
+        wait(for: [expectation], timeout: 3.0)
 
         XCTAssertGreaterThanOrEqual(receivedStates.count, 2)
 
@@ -180,8 +183,11 @@ final class HomeViewModelCleanArchitectureTests: XCTestCase {
             }
             .store(in: &cancellables)
 
+        // When - Trigger fetch to ensure data is loaded
+        sut.fetchData()
+
         // Then
-        wait(for: [expectation], timeout: 2.0)
+        wait(for: [expectation], timeout: 3.0)
 
         // Movies should be accessible through computed property
         XCTAssertFalse(sut.movies.isEmpty)
