@@ -21,6 +21,8 @@ struct HomeView<R: HomeNavigationRouter>: View {
     @StateObject private var viewModel: HomeViewModel
     /// Bound text for the search field
     @State private var searchText: String = ""
+    /// Work item for debouncing search requests
+    @State private var searchWorkItem: DispatchWorkItem?
 
     /**
      * Create the view with a router and optional ViewModel.
@@ -36,7 +38,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
         _viewModel = StateObject(wrappedValue: viewModel ?? HomeViewModel())
     }
 
-    /// View content: renders based on viewState
+    /// View content: renders based on viewState with persistent search
     var body: some View {
         Group {
             switch viewModel.viewState {
@@ -84,21 +86,32 @@ struct HomeView<R: HomeNavigationRouter>: View {
                     viewModel.fetchData()
                 }
                 .scrollIndicators(.hidden)
-                .searchable(text: $searchText)
-                .onChange(of: searchText) { _, newValue in
-                    handleSearchQueryChange(newValue)
-                }
             }
+        }
+        .searchable(text: $searchText)
+        .onChange(of: searchText) { _, newValue in
+            handleSearchQueryChange(newValue)
         }
     }
 
     /// Handle changes to the search text by fetching or searching
+    /// Uses debouncing to avoid excessive API calls while typing
     private func handleSearchQueryChange(_ query: String) {
-        if query.isEmpty {
-            viewModel.fetchData()
-        } else {
-            viewModel.searchMovies(query: query)
+        // Cancel any pending search
+        searchWorkItem?.cancel()
+
+        // Create a new work item for the search
+        let workItem = DispatchWorkItem { [weak viewModel] in
+            if query.isEmpty {
+                viewModel?.fetchData()
+            } else {
+                viewModel?.searchMovies(query: query)
+            }
         }
+
+        // Store the work item and schedule it
+        searchWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: workItem)
     }
 }
 
