@@ -226,7 +226,7 @@ The Clean Architecture implementation follows these key principles:
 - **Single Source of Truth**: ViewModels maintain a single published state
 - **Testability**: Each component can be tested in isolation
 
-### Component Communication Flow
+### Generic Clean Architecture Component Communication
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
@@ -234,41 +234,44 @@ The Clean Architecture implementation follows these key principles:
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
 │    ┌─────────────────┐                                                          │
-│    │   HomeView      │                                                          │
+│    │      View       │                                                          │
+│    │   (SwiftUI)     │                                                          │
 │    │                 │                                                          │
 │    │ • @StateObject  │                                                          │
-│    │ • .searchable() │                                                          │
+│    │ • User Actions  │                                                          │
 │    │ • UI Rendering  │                                                          │
+│    │ • Reactive UI   │                                                          │
 │    └─────────────────┘                                                          │
 │            │                                                                    │
-│            │ HomeViewEvent                                                      │
-│            │ (.fetchData, .searchMovies,                                        │
-│            │  .toggleLike, .loadLikedMovies)                                    │
+│            │ ViewEvent                                                          │
+│            │ (User interactions, lifecycle events)                              │
 │            ▼                                                                    │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                                VIEWMODEL LAYER                                   │
+│                              PRESENTATION LAYER                                 │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
 │    ┌─────────────────┐                        ┌─────────────────┐               │
-│    │  HomeViewModel  │◄──────────────────────►│HomeViewState    │               │
-│    │                 │                        │Reducing         │               │
+│    │   ViewModel     │◄──────────────────────►│  ViewState      │               │
+│    │                 │                        │  Reducing       │               │
 │    │ • CombineViewModel                       │                 │               │
 │    │ • @Published    │                        │ • Protocol      │               │
-│    │   viewState     │                        │ • Converts      │               │
-│    │ • Single Source │                        │   Domain→View   │               │
-│    │   of Truth      │                        │                 │               │
+│    │   viewState     │                        │ • Domain→View   │               │
+│    │ • Single Source │                        │   Transformation│               │
+│    │   of Truth      │                        │ • Pure Function │               │
 │    └─────────────────┘                        └─────────────────┘               │
 │            │                                           ▲                        │
-│            │ HomeDomainAction                          │                        │
+│            │ DomainAction                              │                        │
 │            │                                           │                        │
-│            ▼                                           │ HomeDomainState        │
+│            ▼                                           │ DomainState            │
 │    ┌─────────────────┐                                 │                        │
-│    │HomeDomainEvent  │                                 │                        │
-│    │ActionMap        │─────────────────────────────────┘                        │
+│    │ DomainEvent     │                                 │                        │
+│    │ ActionMap       │─────────────────────────────────┘                        │
 │    │                 │                                                          │
-│    │ • Maps Events   │                                                          │
-│    │   to Actions    │                                                          │
+│    │ • Maps ViewEvent│                                                          │
+│    │   to DomainAction                                                          │
+│    │ • Translation   │                                                          │
+│    │   Layer         │                                                          │
 │    └─────────────────┘                                                          │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────────────────────────┐
@@ -276,84 +279,109 @@ The Clean Architecture implementation follows these key principles:
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
 │    ┌─────────────────┐                        ┌─────────────────┐               │
-│    │HomeDomainAction │                        │HomeDomainState  │               │
+│    │  DomainAction   │                        │  DomainState    │               │
 │    │                 │                        │                 │               │
-│    │ • .fetchUpcoming│                        │ • movies: []    │               │
-│    │   Movies        │                        │ • likedMovies   │               │
-│    │ • .searchMovies │                        │ • isLoading     │               │
-│    │ • .toggleMovie  │                        │ • error         │               │
-│    │   Like          │                        │ • searchQuery   │               │
-│    │ • .loadPersisted│                        │                 │               │
-│    │   LikedMovies   │                        │ • Equatable     │               │
-│    └─────────────────┘                        │ • .initial      │               │
+│    │ • Enum Cases    │                        │ • Complete      │               │
+│    │ • Business      │                        │   Feature State │               │
+│    │   Operations    │                        │ • Data Models   │               │
+│    │ • Pure Values   │                        │ • Loading/Error │               │
+│    │ • Equatable     │                        │ • Equatable     │               │
+│    └─────────────────┘                        │ • Initial State │               │
 │            │                                  └─────────────────┘               │
 │            │                                           ▲                        │
 │            ▼                                           │                        │
 │    ┌─────────────────┐                                 │                        │
-│    │HomeDomainInterac│                                 │                        │
-│    │tor              │─────────────────────────────────┘                        │
-│    │                 │          @Published                                      │
-│    │ • CombineInterac│          currentState                                    │
-│    │   tor           │                                                          │
+│    │ DomainInteractor│                                 │                        │
+│    │                 │─────────────────────────────────┘                        │
+│    │ • CombineInterac│          @Published                                      │
+│    │   tor Protocol  │          currentState                                    │
 │    │ • Business Logic│                                                          │
-│    │ • State Manage  │                                                          │
+│    │ • State Machine │                                                          │
+│    │ • Side Effects  │                                                          │
 │    │ • Persistence   │                                                          │
+│    │ • API Orchestra │                                                          │
+│    │   tion          │                                                          │
 │    └─────────────────┘                                                          │
 │            │                                                                    │
-│            │ API Calls                                                          │
+│            │ Service Calls                                                      │
 │            ▼                                                                    │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                                SERVICE LAYER                                     │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
-│    ┌─────────────────┐                                                          │
-│    │  HomeService    │                                                          │
-│    │                 │                                                          │
-│    │ • HomeServiceProtocol                                                      │
-│    │ • fetchMovies()                                                            │
-│    │ • searchMovies(query)                                                      │
-│    │ • AnyPublisher<MoviesResponse, Error>                                      │
-│    │                                                                            │
-│    │ ┌─────────────────────────────────────────────────────────────────────┐    │
-│    │ │                    External APIs                                    │    │
-│    │ │  • The Movie Database (TMDB) API                                   │    │
-│    │ │  • /movie/upcoming                                                 │    │
-│    │ │  • /search/movie                                                   │    │
-│    │ └─────────────────────────────────────────────────────────────────────┘    │
-│    └─────────────────┘                                                          │
+│    ┌─────────────────┐                        ┌─────────────────┐               │
+│    │    Service      │                        │  External APIs  │               │
+│    │                 │                        │                 │               │
+│    │ • Protocol      │◄──────────────────────►│ • REST APIs     │               │
+│    │   Conformance   │                        │ • GraphQL       │               │
+│    │ • AnyPublisher  │                        │ • Third-party   │               │
+│    │   Return Types  │                        │   Services      │               │
+│    │ • Network Layer │                        │ • Databases     │               │
+│    │ • Data Mapping  │                        │ • File System   │               │
+│    │ • Error Handling│                        │                 │               │
+│    └─────────────────┘                        └─────────────────┘               │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
-DATA FLOW LEGEND:
-═══════════════
-│ Synchronous Call/Response    ▲ State Observation (Combine)
-▼ Asynchronous Flow           ◄► Bidirectional Communication
+COMMUNICATION FLOW:
+═════════════════
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                            DATA FLOW DIRECTION                                   │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│ View ──ViewEvent──► ViewModel ──DomainAction──► DomainInteractor                 │
+│  ▲                     ▲                              │                         │
+│  │                     │                              │                         │
+│  │                     │ ◄──ViewState──               ▼                         │
+│  │                ViewState                      Service                        │
+│  │                Reducing                          │                           │
+│  │                     ▲                           ▼                            │
+│  │                     │ ◄──DomainState──     API Response                      │
+│  │                     │                           │                            │
+│  └───UI Update─────────┘                           │                            │
+│                                                    │                            │
+│                    DomainEventActionMap            │                            │
+│                           │                        │                            │
+│                           ▼                        ▼                            │
+│                    Translation Layer          External System                   │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+SYMBOLS LEGEND:
+══════════════
+──►  Synchronous Call/Data Pass    │  Dependency/Call Direction
+◄──  Reactive State Flow           ▼  Asynchronous Operation  
+◄──► Bidirectional Communication   ▲  State Observation/Update
 ```
 
 ### Key Components
 
 #### View Layer
-- **HomeView**: SwiftUI view that renders the UI and handles user interactions
-- Uses `@StateObject` for proper reactive updates
-- Implements search bar with debouncing to prevent API spam
-- Observes `viewState` for reactive UI updates
+- **View**: SwiftUI view that renders the UI and handles user interactions
+- Uses `@StateObject` for proper reactive updates and lifecycle management
+- Implements user interaction handling (buttons, search, gestures, etc.)
+- Observes `viewState` for reactive UI updates and re-rendering
+- Focuses purely on presentation logic and user experience
 
-#### ViewModel Layer  
-- **HomeViewModel**: Coordinates between view and domain layer
+#### Presentation Layer  
+- **ViewModel**: Coordinates between view and domain layer using `CombineViewModel`
 - Implements single source of truth with `@Published viewState`
-- Uses `HomeDomainEventActionMap` to translate UI events to domain actions
-- Uses `HomeViewStateReducing` to convert domain state to view state
+- Uses `DomainEventActionMap` to translate UI events to domain actions
+- Uses `ViewStateReducing` to convert domain state to view state
+- Acts as the presentation coordinator without business logic
 
 #### Domain Layer
-- **HomeDomainInteractor**: Contains all business logic and state management
-- **HomeDomainAction**: Defines all possible business operations
-- **HomeDomainState**: Represents the complete domain state
-- Handles data persistence, API orchestration, and business rules
+- **DomainInteractor**: Contains all business logic and state management using `CombineInteractor`
+- **DomainAction**: Defines all possible business operations as enum cases
+- **DomainState**: Represents the complete feature state with all necessary data
+- Handles data persistence, validation, API orchestration, and business rules
+- Pure business logic without UI or framework dependencies
 
 #### Service Layer
-- **HomeService**: Handles external API communications
-- Returns reactive publishers (`AnyPublisher<MoviesResponse, Error>`)
-- Manages network requests to TMDB API
+- **Service**: Handles external data sources and API communications
+- Returns reactive publishers (`AnyPublisher<Response, Error>`) for async operations
+- Manages network requests, database operations, file system access
+- Provides data transformation and error handling
 
 ### Benefits
 
@@ -376,14 +404,40 @@ The architecture enables comprehensive testing at every layer:
 
 ### Implementation Reference
 
-The Home feature serves as the reference implementation for this Clean Architecture pattern. Other features should follow the same structure:
+Any feature can implement this Clean Architecture pattern by following these steps:
 
-1. Create domain actions and state models
-2. Implement domain interactor with business logic
-3. Create event-to-action mapper
-4. Implement view state reducer
-5. Update ViewModel to use Clean Architecture
-6. Add comprehensive unit tests
+1. **Define Domain Models**: Create `DomainAction` (enum) and `DomainState` (struct) for your feature
+2. **Implement Business Logic**: Create `DomainInteractor` conforming to `CombineInteractor`
+3. **Create Translation Layer**: Implement `DomainEventActionMap` to map UI events to domain actions
+4. **Build State Reducer**: Create `ViewStateReducing` protocol and implementation
+5. **Refactor Presentation Layer**: Update `ViewModel` to conform to `CombineViewModel`
+6. **Update View Layer**: Ensure `View` uses `@StateObject` and observes `viewState`
+7. **Add Comprehensive Testing**: Create unit tests for each component in isolation
+
+### Example Implementation Pattern
+
+For any feature (e.g., UserProfile, Settings, Dashboard):
+
+```swift
+// 1. Domain Models
+enum UserProfileDomainAction { ... }
+struct UserProfileDomainState { ... }
+
+// 2. Business Logic
+class UserProfileDomainInteractor: CombineInteractor { ... }
+
+// 3. Translation Layer  
+enum UserProfileDomainEventActionMap { ... }
+
+// 4. State Reducer
+protocol UserProfileViewStateReducing { ... }
+
+// 5. Presentation Layer
+class UserProfileViewModel: CombineViewModel { ... }
+
+// 6. View Layer
+struct UserProfileView: View { ... }
+```
 
 ## Git Hooks Setup
 
