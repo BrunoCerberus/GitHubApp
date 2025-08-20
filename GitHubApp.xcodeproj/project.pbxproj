@@ -52,6 +52,7 @@
 		770E0B4556132F98B6394B94 /* MovieReviewsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA9BC20DAF34B80AD4BFA7ED /* MovieReviewsTests.swift */; };
 		77CC84722F61D2FA3C45D384 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6225CEEB8842834DF359CD86 /* UIKit.framework */; };
 		77EACF8B7BF748D273823AFB /* LikedMoviesViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03E3CF36E9E8FD94C2CD949 /* LikedMoviesViewTests.swift */; };
+		7C092D65A46492D1021C5514 /* UniversalLinksSceneDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2BCDFE2319DD270612B4BB /* UniversalLinksSceneDelegateTests.swift */; };
 		7D97DD42029A4F8E08875D55 /* MockHomeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9418519936B566A9C4A68597 /* MockHomeService.swift */; };
 		7F2825CBA0E8F8D765D324B1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9FEC59DF6588F4395BE51CA9 /* Preview Assets.xcassets */; };
 		81EC818F450EC0B3A24A7A85 /* HomeNavigationEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DAA8007057028D6735383D5 /* HomeNavigationEvent.swift */; };
@@ -190,6 +191,7 @@
 		75DF9594E63D25F26535BA3C /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		782574CC5E89471BE1E763C1 /* HomeDomainEventActionMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDomainEventActionMapTests.swift; sourceTree = "<group>"; };
 		798953201A8C2F97BB7ABCFC /* Combine.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Combine.framework; path = System/Library/Frameworks/Combine.framework; sourceTree = SDKROOT; };
+		7C2BCDFE2319DD270612B4BB /* UniversalLinksSceneDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalLinksSceneDelegateTests.swift; sourceTree = "<group>"; };
 		81B76BAE162D093A3208F7FE /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		8365D23EB991839890A94BFF /* HomeHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHostingController.swift; sourceTree = "<group>"; };
 		849BA574297CB3F1FD833C82 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -535,6 +537,7 @@
 				DB0F844B077A041601BF05F3 /* SettingsManagerTests.swift */,
 				718327EA716036CFEF1F24EA /* SharedDataManagerMainAppTests.swift */,
 				2E5436AECC1C7D29B3415149 /* SharedMovieMainAppTests.swift */,
+				7C2BCDFE2319DD270612B4BB /* UniversalLinksSceneDelegateTests.swift */,
 			);
 			path = Configs;
 			sourceTree = "<group>";
@@ -951,6 +954,7 @@
 				962480D27BB1587017A14F38 /* SettingsViewTests.swift in Sources */,
 				B51B4C4E47A7B98C85B9F4A3 /* SharedDataManagerMainAppTests.swift in Sources */,
 				E93FBBF2175412E260846160 /* SharedMovieMainAppTests.swift in Sources */,
+				7C092D65A46492D1021C5514 /* UniversalLinksSceneDelegateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

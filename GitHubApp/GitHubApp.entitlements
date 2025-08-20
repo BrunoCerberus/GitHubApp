@@ -6,5 +6,9 @@
 	<array>
 		<string>group.com.bruno.GitHubApp</string>
 	</array>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:githubapp.com</string>
+	</array>
 </dict>
 </plist>

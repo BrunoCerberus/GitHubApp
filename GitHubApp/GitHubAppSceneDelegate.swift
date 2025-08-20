@@ -169,4 +169,26 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         }
     }
+
+    /**
+     * Handle universal links when the app is being activated.
+     *
+     * This method is called when the app is opened via a universal link.
+     * Universal links use HTTPS URLs and are handled differently from custom schemes.
+     *
+     * - Parameter scene: The scene that received the activity
+     * - Parameter userActivity: The user activity containing the universal link
+     */
+    func scene(_: UIScene, continue userActivity: NSUserActivity) {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+              let url = userActivity.webpageURL
+        else {
+            return
+        }
+
+        if deeplinkManager.isValidDeeplink(url: url) {
+            // Process the universal link if the router is available
+            _ = deeplinkRouter?.process(url: url)
+        }
+    }
 }
