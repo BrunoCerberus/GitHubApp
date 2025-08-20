@@ -35,10 +35,29 @@ final class HomeViewTests: XCTestCase {
     }
 
     /// Snapshot of populated HomeView matches stored reference
-    func testHomeView() async {
+    func testHomeView() async throws {
         _ = view.wrappedViewController
 
+        // Wait for the viewModel to load data using Clean Architecture
+        let expectation = XCTestExpectation(description: "viewState loaded")
+        var cancellables: Set<AnyCancellable> = []
+
+        viewModel.$viewState
+            .sink { viewState in
+                if case .success = viewState {
+                    expectation.fulfill()
+                }
+            }
+            .store(in: &cancellables)
+
+        // Trigger data fetch
         viewModel.fetchData()
+
+        // Wait for async loading to complete
+        await fulfillment(of: [expectation], timeout: 3.0)
+
+        // Give the UI additional time to update after state change
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
 
         // Using iPhone SE configuration but with iPhone 16 Pro dimensions
         let iPhone16ProConfig = ViewImageConfig(
@@ -47,7 +66,7 @@ final class HomeViewTests: XCTestCase {
             traits: UITraitCollection()
         )
 
-        assertSnapshot(of: view.wrappedViewController, as: .wait(for: 0.3, on: .image(on: iPhone16ProConfig)))
+        assertSnapshot(of: view.wrappedViewController, as: .wait(for: 1.0, on: .image(on: iPhone16ProConfig)))
     }
 
     /**
