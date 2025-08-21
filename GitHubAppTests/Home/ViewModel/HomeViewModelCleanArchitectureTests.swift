@@ -9,7 +9,9 @@ import XCTest
 
 final class HomeViewModelCleanArchitectureTests: XCTestCase {
     private var sut: HomeViewModel!
-    private var mockService: MockHomeService!
+    private var mockHomeService: MockHomeService!
+    private var mockStorageService: MockStorageService!
+    private var mockDomainInteractor: HomeDomainInteractor!
     private var cancellables: Set<AnyCancellable> = []
 
     override func setUp() {
@@ -18,8 +20,10 @@ final class HomeViewModelCleanArchitectureTests: XCTestCase {
         // Ensure API key exists in case anything inadvertently touches HomeAPI
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
 
-        mockService = MockHomeService()
-        sut = HomeViewModel(service: mockService)
+        mockHomeService = MockHomeService()
+        mockStorageService = MockStorageService()
+        mockDomainInteractor = HomeDomainInteractor(homeService: mockHomeService, storageService: mockStorageService)
+        sut = HomeViewModel(service: mockHomeService, domainInteractor: mockDomainInteractor)
     }
 
     override func tearDown() {
@@ -27,7 +31,9 @@ final class HomeViewModelCleanArchitectureTests: XCTestCase {
         try? APIKeysProvider.removeMovieAPIKey()
         cancellables.removeAll()
         sut = nil
-        mockService = nil
+        mockHomeService = nil
+        mockStorageService = nil
+        mockDomainInteractor = nil
         super.tearDown()
     }
 
@@ -148,27 +154,32 @@ final class HomeViewModelCleanArchitectureTests: XCTestCase {
             // When
             self.sut.toggleLike(for: movie)
 
-            // Give it time to process
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            // Give it time to process the async storage operation
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 expectation.fulfill()
             }
         }
 
         // Then
-        wait(for: [expectation], timeout: 2.0)
+        wait(for: [expectation], timeout: 3.0)
 
-        // Check that movie is marked as liked
+        // Check that movie is marked as liked in the view model
         XCTAssertTrue(sut.isLiked(movie: movie))
 
-        // Check persistence
-        let persistedData = UserDefaults.standard.data(forKey: "likedMoviesKey")
-        XCTAssertNotNil(persistedData)
-
-        if let data = persistedData,
-           let persistedMovies = try? JSONDecoder().decode([Movie].self, from: data)
-        {
-            XCTAssertTrue(persistedMovies.contains { $0.id == movie.id })
+        // Check persistence in mock storage service asynchronously
+        let storageExpectation = XCTestExpectation(description: "check storage")
+        Task {
+            do {
+                let likedMovies = try await self.mockStorageService.fetchLikedMovies()
+                XCTAssertTrue(likedMovies.contains { $0.id == movie.id })
+                storageExpectation.fulfill()
+            } catch {
+                XCTFail("Failed to fetch liked movies: \(error)")
+                storageExpectation.fulfill()
+            }
         }
+
+        wait(for: [storageExpectation], timeout: 2.0)
     }
 
     func testMoviesPropertyFromViewState() {
@@ -214,7 +225,7 @@ final class HomeViewModelCleanArchitectureTests: XCTestCase {
 
     func testErrorPropertyFromViewState() {
         // Given
-        mockService.shouldFail = true
+        mockHomeService.shouldFail = true
         let expectation = XCTestExpectation(description: "error state")
 
         sut.$viewState
@@ -261,12 +272,22 @@ final class HomeViewModelCleanArchitectureTests: XCTestCase {
         // After toggling like
         sut.toggleLike(for: movie)
 
-        // Give it time to process
-        let toggleExpectation = XCTestExpectation(description: "toggle complete")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            toggleExpectation.fulfill()
-        }
-        wait(for: [toggleExpectation], timeout: 1.0)
+        // Wait for the view state to update with the liked movie
+        let toggleExpectation = XCTestExpectation(description: "movie liked")
+
+        // Cancel previous subscription and create new one to observe state changes
+        cancellables.removeAll()
+        sut.$viewState
+            .sink { viewState in
+                if case let .success(dataViewState) = viewState,
+                   dataViewState.likedMovies.contains(where: { $0.id == movie.id })
+                {
+                    toggleExpectation.fulfill()
+                }
+            }
+            .store(in: &cancellables)
+
+        wait(for: [toggleExpectation], timeout: 3.0)
 
         // Movie should be liked now
         XCTAssertTrue(sut.isLiked(movie: movie))

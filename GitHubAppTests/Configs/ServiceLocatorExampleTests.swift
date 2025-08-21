@@ -147,7 +147,7 @@ final class ServiceLocatorExampleTests: XCTestCase {
      * can work with various service protocols.
      */
     func testExampleFunctionsWorkWithDifferentServiceTypes() {
-        // When - call example functions (they use HomeServiceProtocol internally)
+        // When - call example functions (they use HomeService internally)
         ServiceLocatorExample.exampleCreateAndUseServiceLocator()
         ServiceLocatorExample.exampleRetrieveService()
         ServiceLocatorExample.exampleSafeRetrieveService()

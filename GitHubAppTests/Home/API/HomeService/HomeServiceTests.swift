@@ -8,9 +8,9 @@ import Combine
 import XCTest
 
 /**
- * Tests for HomeService implementation.
+ * Tests for LiveHomeService implementation.
  *
- * These tests verify that HomeService correctly implements the HomeServiceProtocol
+ * These tests verify that LiveHomeService correctly implements the HomeService protocol
  * and handles network requests properly. The tests focus on:
  * - Method implementations
  * - Return type correctness
@@ -18,7 +18,7 @@ import XCTest
  */
 final class HomeServiceTests: XCTestCase {
     /// Service instance to test
-    private var homeService: HomeService!
+    private var homeService: LiveHomeService!
 
     /// Storage for cancellables to prevent memory leaks
     private var cancellables: Set<AnyCancellable>!
@@ -27,7 +27,7 @@ final class HomeServiceTests: XCTestCase {
         super.setUp()
         // Ensure API key is present for tests
         try? APIKeysProvider.setMovieAPIKey("api-key-for-tests")
-        homeService = HomeService()
+        homeService = LiveHomeService()
         cancellables = Set<AnyCancellable>()
     }
 

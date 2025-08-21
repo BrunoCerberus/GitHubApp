@@ -38,7 +38,7 @@ final class LikedDomainInteractor: ObservableObject, CombineInteractor {
     // MARK: - Dependencies
 
     /// Service for handling liked movies persistence
-    private let likedService: LikedServiceProtocol
+    private let likedService: FavoritesService
 
     /// Combine cancellables for memory management
     private var cancellables: Set<AnyCancellable> = []
@@ -51,19 +51,19 @@ final class LikedDomainInteractor: ObservableObject, CombineInteractor {
      * - Parameter likedService: Service for handling liked movies persistence (optional, will use ServiceLocator if nil)
      * - Parameter serviceLocator: Service locator for dependency injection (optional)
      */
-    init(likedService: LikedServiceProtocol? = nil, serviceLocator: ServiceLocator? = nil) {
+    init(likedService: FavoritesService? = nil, serviceLocator: ServiceLocator? = nil) {
         // Use provided service or get from ServiceLocator
         if let likedService {
             self.likedService = likedService
         } else if let serviceLocator {
             do {
-                self.likedService = try serviceLocator.retrieve(LikedServiceProtocol.self)
+                self.likedService = try serviceLocator.retrieve(FavoritesService.self)
             } catch {
                 print("⚠️ Failed to retrieve LikedService from ServiceLocator: \(error)")
-                self.likedService = LikedService()
+                self.likedService = LiveFavoritesService()
             }
         } else {
-            self.likedService = LikedService()
+            self.likedService = LiveFavoritesService()
         }
 
         // Initialize with cached data to avoid loading flicker
@@ -214,7 +214,7 @@ final class LikedDomainInteractor: ObservableObject, CombineInteractor {
      * Since the StorageService is async, we'll return empty array for now
      * and let the normal loading process populate the data.
      */
-    private static func loadCachedMovies(from _: LikedServiceProtocol) -> [Movie] {
+    private static func loadCachedMovies(from _: FavoritesService) -> [Movie] {
         // For now, return empty array to avoid complex async initialization
         // The data will be loaded via the normal loadLikedMovies flow
         []

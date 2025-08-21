@@ -1,5 +1,5 @@
 //
-//  LikedServiceTests.swift
+//  FavoritesServiceTests.swift
 //  GitHubAppTests
 //
 //  Created by bruno on feature/liked-clean-architecture.
@@ -9,20 +9,20 @@ import Combine
 @testable import GitHubApp
 import XCTest
 
-final class LikedServiceTests: XCTestCase {
-    private var sut: LikedServiceProtocol!
-    private var mockLikedService: MockLikedService!
+final class FavoritesServiceTests: XCTestCase {
+    private var sut: FavoritesService!
+    private var mockFavoritesService: MockFavoritesService!
     private var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
         super.setUp()
-        mockLikedService = MockLikedService()
-        sut = mockLikedService
+        mockFavoritesService = MockFavoritesService()
+        sut = mockFavoritesService
         cancellables = Set<AnyCancellable>()
     }
 
     override func tearDown() {
-        mockLikedService = nil
+        mockFavoritesService = nil
         sut = nil
         cancellables = nil
         super.tearDown()
@@ -32,6 +32,9 @@ final class LikedServiceTests: XCTestCase {
         // Given
         let expectation = XCTestExpectation(description: "Load empty liked movies")
         var result: [Movie]?
+
+        // Clear pre-populated mock data
+        mockFavoritesService.setMockLikedMovies([])
 
         // When
         sut.loadLikedMovies()
@@ -56,9 +59,12 @@ final class LikedServiceTests: XCTestCase {
 
     func testToggleMovieLikeAddMovie() {
         // Given
-        let movie = Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
+        let movie = Movie(id: 999, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
         let expectation = XCTestExpectation(description: "Toggle movie like - add")
         var result: [Movie]?
+
+        // Clear pre-populated mock data to start fresh
+        mockFavoritesService.setMockLikedMovies([])
 
         // When
         sut.toggleMovieLike(movie)
@@ -83,11 +89,14 @@ final class LikedServiceTests: XCTestCase {
 
     func testToggleMovieLikeRemoveMovie() {
         // Given
-        let movie = Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
+        let movie = Movie(id: 998, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
         let addExpectation = XCTestExpectation(description: "Add movie")
         let removeExpectation = XCTestExpectation(description: "Remove movie")
         var addResult: [Movie]?
         var removeResult: [Movie]?
+
+        // Clear pre-populated mock data to start fresh
+        mockFavoritesService.setMockLikedMovies([])
 
         // When - First add the movie
         sut.toggleMovieLike(movie)
@@ -171,12 +180,15 @@ final class LikedServiceTests: XCTestCase {
 
     func testIsMovieLiked() {
         // Given
-        let movie1 = Movie(id: 1, title: "Test Movie 1", overview: "Test Overview 1", posterPath: "/test1.jpg")
-        let movie2 = Movie(id: 2, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg")
+        let movie1 = Movie(id: 997, title: "Test Movie 1", overview: "Test Overview 1", posterPath: "/test1.jpg")
+        let movie2 = Movie(id: 996, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg")
         let addExpectation = XCTestExpectation(description: "Add movie")
         let checkExpectation = XCTestExpectation(description: "Check movie liked")
         var isMovie1Liked: Bool?
         var isMovie2Liked: Bool?
+
+        // Clear pre-populated mock data to start fresh
+        mockFavoritesService.setMockLikedMovies([])
 
         // When - Add movie1
         sut.toggleMovieLike(movie1)

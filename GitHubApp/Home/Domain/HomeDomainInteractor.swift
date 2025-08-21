@@ -39,7 +39,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     // MARK: - Dependencies
 
     /// Service for fetching movie data from external APIs
-    private let homeService: HomeServiceProtocol
+    private let homeService: HomeService
 
     /// Storage service for persisting liked movies
     private let storageService: StorageServiceProtocol
@@ -61,7 +61,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
      * - Parameter initialState: Initial domain state (defaults to HomeDomainState.initial)
      */
     init(
-        homeService: HomeServiceProtocol? = nil,
+        homeService: HomeService? = nil,
         storageService: StorageServiceProtocol? = nil,
         serviceLocator: ServiceLocator? = nil,
         initialState: HomeDomainState = .initial
@@ -71,13 +71,13 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
             self.homeService = homeService
         } else if let serviceLocator {
             do {
-                self.homeService = try serviceLocator.retrieve(HomeServiceProtocol.self)
+                self.homeService = try serviceLocator.retrieve(HomeService.self)
             } catch {
                 print("⚠️ Failed to retrieve HomeService from ServiceLocator: \(error)")
-                self.homeService = HomeService()
+                self.homeService = LiveHomeService()
             }
         } else {
-            self.homeService = HomeService()
+            self.homeService = LiveHomeService()
         }
 
         // Initialize storage service

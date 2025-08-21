@@ -92,17 +92,17 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
             // Check if running in test environment
             if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
                 // Use mock services for tests
-                serviceLocator.register(HomeServiceProtocol.self, instance: MockService())
-                serviceLocator.register(LikedServiceProtocol.self, instance: MockLikedService())
+                serviceLocator.register(HomeService.self, instance: MockHomeService())
+                serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())
             } else {
                 // Use real services for debug builds
-                serviceLocator.register(HomeServiceProtocol.self, instance: HomeService())
-                serviceLocator.register(LikedServiceProtocol.self, instance: LikedService())
+                serviceLocator.register(HomeService.self, instance: LiveHomeService())
+                serviceLocator.register(FavoritesService.self, instance: LiveFavoritesService())
             }
         #else
             // Use real services for release builds
-            serviceLocator.register(HomeServiceProtocol.self, instance: HomeService())
-            serviceLocator.register(LikedServiceProtocol.self, instance: LikedService())
+            serviceLocator.register(HomeService.self, instance: LiveHomeService())
+            serviceLocator.register(FavoritesService.self, instance: LiveFavoritesService())
         #endif
     }
 

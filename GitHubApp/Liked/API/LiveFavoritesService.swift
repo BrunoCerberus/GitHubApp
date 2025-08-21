@@ -1,5 +1,5 @@
 //
-//  LikedService.swift
+//  LiveFavoritesService.swift
 //  GitHubApp
 //
 //  Created by bruno on feature/liked-clean-architecture.
@@ -10,30 +10,13 @@ import Foundation
 import SwiftData
 
 /**
- * Protocol defining the interface for liked movies service operations.
- */
-protocol LikedServiceProtocol {
-    /// Load liked movies from persistence
-    func loadLikedMovies() -> AnyPublisher<[Movie], Error>
-
-    /// Toggle the liked status of a movie
-    func toggleMovieLike(_ movie: Movie) -> AnyPublisher<[Movie], Error>
-
-    /// Clear all liked movies
-    func clearAllLikedMovies() -> AnyPublisher<Void, Error>
-
-    /// Check if a movie is liked
-    func isMovieLiked(_ movie: Movie) -> AnyPublisher<Bool, Error>
-}
-
-/**
- * Service responsible for managing liked movies persistence and operations.
+ * Live implementation of FavoritesService.
  *
  * This service handles all persistence operations for liked movies using StorageService.
  * It provides a reactive interface using Combine publishers while leveraging
  * the modern SwiftData-based storage system.
  */
-final class LikedService: LikedServiceProtocol {
+final class LiveFavoritesService: FavoritesService {
     // MARK: - Dependencies
 
     /// Storage service for persistence operations
@@ -61,7 +44,7 @@ final class LikedService: LikedServiceProtocol {
         }
     }
 
-    // MARK: - LikedServiceProtocol Implementation
+    // MARK: - FavoritesService Implementation
 
     /**
      * Load liked movies from persistence.
@@ -71,7 +54,7 @@ final class LikedService: LikedServiceProtocol {
     func loadLikedMovies() -> AnyPublisher<[Movie], Error> {
         Future { [weak self] promise in
             guard let self else {
-                promise(.failure(LikedServiceError.serviceUnavailable))
+                promise(.failure(FavoritesServiceError.serviceUnavailable))
                 return
             }
 
@@ -96,7 +79,7 @@ final class LikedService: LikedServiceProtocol {
     func toggleMovieLike(_ movie: Movie) -> AnyPublisher<[Movie], Error> {
         Future { [weak self] promise in
             guard let self else {
-                promise(.failure(LikedServiceError.serviceUnavailable))
+                promise(.failure(FavoritesServiceError.serviceUnavailable))
                 return
             }
 
@@ -120,7 +103,7 @@ final class LikedService: LikedServiceProtocol {
     func clearAllLikedMovies() -> AnyPublisher<Void, Error> {
         Future { [weak self] promise in
             guard let self else {
-                promise(.failure(LikedServiceError.serviceUnavailable))
+                promise(.failure(FavoritesServiceError.serviceUnavailable))
                 return
             }
 
@@ -145,7 +128,7 @@ final class LikedService: LikedServiceProtocol {
     func isMovieLiked(_ movie: Movie) -> AnyPublisher<Bool, Error> {
         Future { [weak self] promise in
             guard let self else {
-                promise(.failure(LikedServiceError.serviceUnavailable))
+                promise(.failure(FavoritesServiceError.serviceUnavailable))
                 return
             }
 
@@ -165,9 +148,9 @@ final class LikedService: LikedServiceProtocol {
 // MARK: - Error Types
 
 /**
- * Errors that can occur in the LikedService.
+ * Errors that can occur in the FavoritesService.
  */
-enum LikedServiceError: LocalizedError {
+enum FavoritesServiceError: LocalizedError {
     case serviceUnavailable
     case encodingFailed(Error)
     case decodingFailed(Error)
@@ -175,11 +158,11 @@ enum LikedServiceError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .serviceUnavailable:
-            "Liked service is unavailable"
+            "Favorites service is unavailable"
         case let .encodingFailed(error):
-            "Failed to encode liked movies: \(error.localizedDescription)"
+            "Failed to encode favorite movies: \(error.localizedDescription)"
         case let .decodingFailed(error):
-            "Failed to decode liked movies: \(error.localizedDescription)"
+            "Failed to decode favorite movies: \(error.localizedDescription)"
         }
     }
 }

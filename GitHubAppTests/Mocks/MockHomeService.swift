@@ -10,9 +10,9 @@ import Foundation
 @testable import GitHubApp
 
 /**
- * Mock implementation of `HomeServiceProtocol` returning fixed data for tests.
+ * Mock implementation of `HomeService` returning fixed data for tests.
  */
-final class MockHomeService: HomeServiceProtocol {
+final class MockHomeService: HomeService {
     /// Flag to control whether service calls should fail
     var shouldFail: Bool = false
     private let mockMoviesResponse = MoviesResponse(results: [

@@ -1,5 +1,5 @@
 //
-//  MockServiceTests.swift
+//  MockHomeServiceTests.swift
 //  GitHubAppTests
 //
 
@@ -7,11 +7,11 @@ import Combine
 @testable import GitHubApp
 import XCTest
 
-final class MockServiceTests: XCTestCase {
+final class MockHomeServiceTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = .init()
 
     func testFetchMoviesEmitsResults() {
-        let sut = MockService()
+        let sut = MockHomeService()
 
         let exp = expectation(description: "movies")
         sut.fetchMovies()
@@ -24,7 +24,7 @@ final class MockServiceTests: XCTestCase {
     }
 
     func testSearchMoviesEmitsResults() {
-        let sut = MockService()
+        let sut = MockHomeService()
 
         let exp = expectation(description: "search")
         sut.searchMovies(with: "query")
@@ -37,7 +37,7 @@ final class MockServiceTests: XCTestCase {
     }
 
     func testFetchCreditsEmitsCast() {
-        let sut = MockService()
+        let sut = MockHomeService()
 
         let exp = expectation(description: "credits")
         sut.fetchCredits(with: 1)
@@ -50,7 +50,7 @@ final class MockServiceTests: XCTestCase {
     }
 
     func testFetchReviewsEmitsReviews() {
-        let sut = MockService()
+        let sut = MockHomeService()
 
         let exp = expectation(description: "reviews")
         sut.fetchReviews(with: 1)

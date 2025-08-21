@@ -7,6 +7,7 @@
 
 import Combine
 @testable import GitHubApp
+import SwiftData
 import XCTest
 
 @MainActor
@@ -17,7 +18,14 @@ final class SwiftDataStorageServiceTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         // Create test storage service with in-memory storage
-        sut = try SwiftDataStorageService(container: nil, performMigration: false)
+        let schema = Schema([StoredMovie.self, UserSetting.self])
+        let configuration = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: true,
+            allowsSave: true
+        )
+        let container = try ModelContainer(for: schema, configurations: [configuration])
+        sut = try SwiftDataStorageService(container: container, performMigration: false)
         cancellables = Set<AnyCancellable>()
     }
 

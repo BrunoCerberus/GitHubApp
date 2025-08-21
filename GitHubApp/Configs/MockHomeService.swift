@@ -1,5 +1,5 @@
 //
-//  MockService.swift
+//  MockHomeService.swift
 //  GitHubApp
 //
 //  Created by bruno on 05/08/25.
@@ -9,12 +9,12 @@ import Combine
 import Foundation
 
 /**
- * Simple mock service for test environment detection.
+ * Mock implementation of HomeService for testing.
  *
  * This service provides mock data when running in test environment
  * to avoid real network requests during testing.
  */
-struct MockService: HomeServiceProtocol {
+struct MockHomeService: HomeService {
     private let mockMoviesResponse = MoviesResponse(results: [
         Movie(id: 346_698,
               title: "Barbie",

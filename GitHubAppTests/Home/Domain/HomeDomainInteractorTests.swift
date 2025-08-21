@@ -9,13 +9,15 @@ import XCTest
 
 final class HomeDomainInteractorTests: XCTestCase {
     private var sut: HomeDomainInteractor!
-    private var mockService: MockHomeService!
+    private var mockHomeService: MockHomeService!
+    private var mockStorageService: MockStorageService!
     private var cancellables: Set<AnyCancellable> = []
 
     override func setUp() {
         super.setUp()
-        mockService = MockHomeService()
-        sut = HomeDomainInteractor(homeService: mockService)
+        mockHomeService = MockHomeService()
+        mockStorageService = MockStorageService()
+        sut = HomeDomainInteractor(homeService: mockHomeService, storageService: mockStorageService)
         UserDefaults.standard.removeObject(forKey: "likedMoviesKey")
         // Ensure API key exists in case anything inadvertently touches HomeAPI
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
@@ -26,7 +28,8 @@ final class HomeDomainInteractorTests: XCTestCase {
         try? APIKeysProvider.removeMovieAPIKey()
         cancellables.removeAll()
         sut = nil
-        mockService = nil
+        mockHomeService = nil
+        mockStorageService = nil
         super.tearDown()
     }
 
@@ -118,21 +121,18 @@ final class HomeDomainInteractorTests: XCTestCase {
             // When - toggle like
             self.sut.handleAction(.toggleMovieLike(movie))
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                // Then
-                let finalState = self.sut.currentState
-
-                // Check if movie is persisted to UserDefaults
-                let persistedData = UserDefaults.standard.data(forKey: "likedMoviesKey")
-                XCTAssertNotNil(persistedData)
-
-                if let data = persistedData,
-                   let persistedMovies = try? JSONDecoder().decode([Movie].self, from: data)
-                {
-                    XCTAssertTrue(persistedMovies.contains { $0.id == movie.id })
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                // Then - Check if movie is in mock storage service
+                Task {
+                    do {
+                        let likedMovies = try await self.mockStorageService.fetchLikedMovies()
+                        XCTAssertTrue(likedMovies.contains { $0.id == movie.id })
+                        expectation.fulfill()
+                    } catch {
+                        XCTFail("Failed to fetch liked movies: \(error)")
+                        expectation.fulfill()
+                    }
                 }
-
-                expectation.fulfill()
             }
         }
 
@@ -144,27 +144,25 @@ final class HomeDomainInteractorTests: XCTestCase {
         let movie = createMockMovie(id: 1, title: "Test Movie")
         let expectation = XCTestExpectation(description: "toggle like removes movie")
 
-        // First add the movie to liked movies
-        let initialLikedMovies = [movie]
-        let data = try! JSONEncoder().encode(initialLikedMovies)
-        UserDefaults.standard.set(data, forKey: "likedMoviesKey")
+        // First add the movie to test storage
+        Task {
+            try await self.mockStorageService.save([movie], context: StorageContext.likedMovies)
 
-        // When
-        sut.handleAction(.toggleMovieLike(movie))
-
-        // Then
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            // Check if movie is removed from UserDefaults
-            let persistedData = UserDefaults.standard.data(forKey: "likedMoviesKey")
-            if let data = persistedData,
-               let persistedMovies = try? JSONDecoder().decode([Movie].self, from: data)
-            {
-                XCTAssertFalse(persistedMovies.contains { $0.id == movie.id })
+            // When - toggle to remove
+            await MainActor.run {
+                self.sut.handleAction(.toggleMovieLike(movie))
             }
+
+            // Wait a bit for async operation
+            try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+
+            // Then - Check if movie is removed from storage
+            let likedMovies = try await self.mockStorageService.fetchLikedMovies()
+            XCTAssertFalse(likedMovies.contains { $0.id == movie.id })
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 2.0)
+        wait(for: [expectation], timeout: 3.0)
     }
 
     func testLoadPersistedLikedMovies() {
@@ -172,20 +170,30 @@ final class HomeDomainInteractorTests: XCTestCase {
         let movie1 = createMockMovie(id: 346_698, title: "Barbie") // This matches MockHomeService
         let movie2 = createMockMovie(id: 615_656, title: "Meg 2") // This matches MockHomeService
         let likedMovies = [movie1, movie2]
-        let data = try! JSONEncoder().encode(likedMovies)
-        UserDefaults.standard.set(data, forKey: "likedMoviesKey")
-
         let expectation = XCTestExpectation(description: "load persisted liked movies")
 
-        // First load some movies from MockHomeService
-        sut.handleAction(.fetchUpcomingMovies)
+        // Setup test storage with liked movies
+        Task {
+            try await self.mockStorageService.save(likedMovies, context: StorageContext.likedMovies)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            // When
-            self.sut.handleAction(.loadPersistedLikedMovies)
+            // First load some movies from MockHomeService
+            await MainActor.run {
+                self.sut.handleAction(.fetchUpcomingMovies)
+            }
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                // Then
+            // Wait for fetch to complete
+            try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+
+            // When - load persisted liked movies
+            await MainActor.run {
+                self.sut.handleAction(.loadPersistedLikedMovies)
+            }
+
+            // Wait for load to complete
+            try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+
+            // Then
+            await MainActor.run {
                 let finalState = self.sut.currentState
                 // Should contain both movies since they're both in current movies and persisted liked movies
                 XCTAssertTrue(finalState.likedMovies.contains { $0.id == movie1.id })
@@ -200,7 +208,7 @@ final class HomeDomainInteractorTests: XCTestCase {
     func testFetchMoviesWithServiceError() {
         // Given
         let expectation = XCTestExpectation(description: "fetch movies with error")
-        mockService.shouldFail = true
+        mockHomeService.shouldFail = true
 
         // When
         sut.handleAction(.fetchUpcomingMovies)

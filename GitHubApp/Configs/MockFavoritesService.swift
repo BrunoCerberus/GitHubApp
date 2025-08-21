@@ -1,5 +1,5 @@
 //
-//  MockLikedService.swift
+//  MockFavoritesService.swift
 //  GitHubApp
 //
 //  Created by bruno on storage-migration.
@@ -9,13 +9,13 @@ import Combine
 import Foundation
 
 /**
- * Mock implementation of LikedServiceProtocol for testing.
+ * Mock implementation of FavoritesService for testing.
  *
- * This service provides mock behavior for liked movies operations
+ * This service provides mock behavior for favorite movies operations
  * without requiring actual persistence or real data.
  * Useful for unit tests and when running in test environment.
  */
-final class MockLikedService: LikedServiceProtocol {
+final class MockFavoritesService: FavoritesService {
     // MARK: - Mock Data
 
     /// In-memory storage for mock liked movies
@@ -61,7 +61,7 @@ final class MockLikedService: LikedServiceProtocol {
         mockLikedMovies = Array(mockMovies.prefix(2))
     }
 
-    // MARK: - LikedServiceProtocol Implementation
+    // MARK: - FavoritesService Implementation
 
     /**
      * Load liked movies from mock storage.
@@ -70,7 +70,7 @@ final class MockLikedService: LikedServiceProtocol {
      */
     func loadLikedMovies() -> AnyPublisher<[Movie], Error> {
         if shouldSimulateErrors {
-            return Fail(error: MockLikedServiceError.simulatedError)
+            return Fail(error: MockFavoritesServiceError.simulatedError)
                 .eraseToAnyPublisher()
         }
 
@@ -95,7 +95,7 @@ final class MockLikedService: LikedServiceProtocol {
      */
     func toggleMovieLike(_ movie: Movie) -> AnyPublisher<[Movie], Error> {
         if shouldSimulateErrors {
-            return Fail(error: MockLikedServiceError.simulatedError)
+            return Fail(error: MockFavoritesServiceError.simulatedError)
                 .eraseToAnyPublisher()
         }
 
@@ -126,7 +126,7 @@ final class MockLikedService: LikedServiceProtocol {
      */
     func clearAllLikedMovies() -> AnyPublisher<Void, Error> {
         if shouldSimulateErrors {
-            return Fail(error: MockLikedServiceError.simulatedError)
+            return Fail(error: MockFavoritesServiceError.simulatedError)
                 .eraseToAnyPublisher()
         }
 
@@ -153,7 +153,7 @@ final class MockLikedService: LikedServiceProtocol {
      */
     func isMovieLiked(_ movie: Movie) -> AnyPublisher<Bool, Error> {
         if shouldSimulateErrors {
-            return Fail(error: MockLikedServiceError.simulatedError)
+            return Fail(error: MockFavoritesServiceError.simulatedError)
                 .eraseToAnyPublisher()
         }
 
@@ -176,9 +176,9 @@ final class MockLikedService: LikedServiceProtocol {
 // MARK: - Mock Error Types
 
 /**
- * Errors that can be simulated by MockLikedService.
+ * Errors that can be simulated by MockFavoritesService.
  */
-enum MockLikedServiceError: LocalizedError {
+enum MockFavoritesServiceError: LocalizedError {
     case simulatedError
     case networkError
     case dataCorruption
@@ -197,7 +197,7 @@ enum MockLikedServiceError: LocalizedError {
 
 // MARK: - Test Helper Methods
 
-extension MockLikedService {
+extension MockFavoritesService {
     /**
      * Reset mock storage to initial state.
      * Useful for test setup and teardown.

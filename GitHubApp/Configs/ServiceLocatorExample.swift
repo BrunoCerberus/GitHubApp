@@ -22,11 +22,11 @@ enum ServiceLocatorExample {
         let serviceLocator = ServiceLocator()
 
         // Register a service
-        serviceLocator.register(HomeServiceProtocol.self, instance: HomeService())
+        serviceLocator.register(HomeService.self, instance: LiveHomeService())
 
         // Retrieve a service
         do {
-            let homeService = try serviceLocator.retrieve(HomeServiceProtocol.self)
+            let homeService = try serviceLocator.retrieve(HomeService.self)
             print("✅ Successfully retrieved HomeService")
         } catch {
             print("❌ Failed to retrieve HomeService: \(error)")
@@ -40,11 +40,11 @@ enum ServiceLocatorExample {
         let serviceLocator = ServiceLocator()
 
         // Register a service first
-        serviceLocator.register(HomeServiceProtocol.self, instance: HomeService())
+        serviceLocator.register(HomeService.self, instance: LiveHomeService())
 
         // Retrieve a service (this is what ViewModels do automatically)
         do {
-            let homeService = try serviceLocator.retrieve(HomeServiceProtocol.self)
+            let homeService = try serviceLocator.retrieve(HomeService.self)
             print("✅ Successfully retrieved HomeService")
         } catch {
             print("❌ Failed to retrieve HomeService: \(error)")
@@ -58,7 +58,7 @@ enum ServiceLocatorExample {
         let serviceLocator = ServiceLocator()
 
         // Safe retrieval that returns nil if service is not registered
-        if let homeService = serviceLocator.safeRetrieve(HomeServiceProtocol.self) {
+        if let homeService = serviceLocator.safeRetrieve(HomeService.self) {
             print("✅ Successfully retrieved HomeService safely")
         } else {
             print("⚠️ HomeService not registered in ServiceLocator")
@@ -72,7 +72,7 @@ enum ServiceLocatorExample {
         let serviceLocator = ServiceLocator()
 
         // Check if a service is registered before trying to retrieve it
-        if serviceLocator.isRegistered(HomeServiceProtocol.self) {
+        if serviceLocator.isRegistered(HomeService.self) {
             print("✅ HomeService is registered in ServiceLocator")
         } else {
             print("❌ HomeService is not registered in ServiceLocator")
@@ -86,11 +86,11 @@ enum ServiceLocatorExample {
         let serviceLocator = ServiceLocator()
 
         // Register a custom service instance
-        serviceLocator.register(HomeServiceProtocol.self, instance: MockService())
-        print("✅ Registered MockService for HomeServiceProtocol")
+        serviceLocator.register(HomeService.self, instance: MockHomeService())
+        print("✅ Registered MockService for HomeService")
 
         // Verify it's registered
-        if serviceLocator.isRegistered(HomeServiceProtocol.self) {
+        if serviceLocator.isRegistered(HomeService.self) {
             print("✅ Service registration confirmed")
         }
     }
@@ -102,9 +102,9 @@ enum ServiceLocatorExample {
         let serviceLocator = ServiceLocator()
 
         // Register a factory that creates the service when needed
-        serviceLocator.register(HomeServiceProtocol.self) {
+        serviceLocator.register(HomeService.self) {
             // This closure will be called each time the service is retrieved
-            HomeService()
+            LiveHomeService()
         }
         print("✅ Registered HomeService factory")
     }
@@ -126,22 +126,22 @@ enum ServiceLocatorExample {
  *
  * ```swift
  * class HomeViewModel {
- *     private let service: HomeServiceProtocol
+ *     private let service: HomeService
  *
- *     init(service: HomeServiceProtocol? = nil, serviceLocator: ServiceLocator? = nil) {
+ *     init(service: HomeService? = nil, serviceLocator: ServiceLocator? = nil) {
  *         // Try to get service from ServiceLocator, fallback to HomeService if not registered
  *         if let service = service {
  *             self.service = service
  *         } else if let serviceLocator = serviceLocator {
  *             do {
- *                 self.service = try serviceLocator.retrieve(HomeServiceProtocol.self)
+ *                 self.service = try serviceLocator.retrieve(HomeService.self)
  *             } catch {
  *                 // Fallback to HomeService if not registered in ServiceLocator
- *                 self.service = HomeService()
+ *                 self.service = LiveHomeService()
  *             }
  *         } else {
  *             // Fallback to HomeService if no ServiceLocator provided
- *             self.service = HomeService()
+ *             self.service = LiveHomeService()
  *         }
  *     }
  * }
@@ -157,12 +157,12 @@ enum ServiceLocatorExample {
  *         // Register HomeService based on environment
  *         #if DEBUG
  *             if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
- *                 serviceLocator.register(HomeServiceProtocol.self, instance: MockService())
+ *                 serviceLocator.register(HomeService.self, instance: MockHomeService())
  *             } else {
- *                 serviceLocator.register(HomeServiceProtocol.self, instance: HomeService())
+ *                 serviceLocator.register(HomeService.self, instance: LiveHomeService())
  *             }
  *         #else
- *             serviceLocator.register(HomeServiceProtocol.self, instance: HomeService())
+ *             serviceLocator.register(HomeService.self, instance: LiveHomeService())
  *         #endif
  *     }
  * }

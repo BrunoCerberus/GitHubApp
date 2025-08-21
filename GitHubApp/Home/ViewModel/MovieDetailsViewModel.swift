@@ -46,7 +46,7 @@ final class MovieDetailsViewModel {
     let movie: Movie
 
     /// Network service for API calls
-    let service: HomeServiceProtocol
+    let service: HomeService
 
     /// Combine cancellables for memory management
     private var cancellables: Set<AnyCancellable> = .init()
@@ -59,7 +59,7 @@ final class MovieDetailsViewModel {
      * - Parameter serviceLocator: Service locator for dependency injection
      */
     init(movie: Movie,
-         service: HomeServiceProtocol? = nil,
+         service: HomeService? = nil,
          serviceLocator: ServiceLocator? = nil)
     {
         self.movie = movie
@@ -69,14 +69,14 @@ final class MovieDetailsViewModel {
             self.service = service
         } else if let serviceLocator {
             do {
-                self.service = try serviceLocator.retrieve(HomeServiceProtocol.self)
+                self.service = try serviceLocator.retrieve(HomeService.self)
             } catch {
                 // Fallback to HomeService if not registered in ServiceLocator
-                self.service = HomeService()
+                self.service = LiveHomeService()
             }
         } else {
-            // Fallback to HomeService if no ServiceLocator provided
-            self.service = HomeService()
+            // Fallback to LiveHomeService if no ServiceLocator provided
+            self.service = LiveHomeService()
         }
     }
 

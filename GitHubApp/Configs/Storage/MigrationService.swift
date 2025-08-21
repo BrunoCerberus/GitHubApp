@@ -80,22 +80,23 @@ final class MigrationService {
         let likedMoviesKey = "likedMoviesKey"
 
         guard let data = userDefaults.data(forKey: likedMoviesKey),
-              let movies = try? JSONDecoder().decode([Movie].self, from: data),
-              !movies.isEmpty
+              let movies = try? JSONDecoder().decode([Movie].self, from: data)
         else {
             print("📝 No liked movies to migrate")
             return
         }
 
-        print("📝 Migrating \(movies.count) liked movies...")
+        if movies.isEmpty {
+            print("📝 No liked movies to migrate")
+        } else {
+            print("📝 Migrating \(movies.count) liked movies...")
+            // Save movies to SwiftData
+            try await storageService.save(movies, context: StorageContext.likedMovies)
+            print("✅ Liked movies migrated successfully")
+        }
 
-        // Save movies to SwiftData
-        try await storageService.save(movies, context: StorageContext.likedMovies)
-
-        // Clean up UserDefaults
+        // Always clean up UserDefaults when there's valid data (even if empty array)
         userDefaults.removeObject(forKey: likedMoviesKey)
-
-        print("✅ Liked movies migrated successfully")
     }
 
     /**

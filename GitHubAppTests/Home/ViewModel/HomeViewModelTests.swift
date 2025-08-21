@@ -76,7 +76,7 @@ final class HomeViewModelTests: XCTestCase {
     // Use HomeViewModelCleanArchitectureTests for Clean Architecture tests
     /*
      func testErrorHandlingSetsErrorAndClearsMovies() {
-         struct FailingService: HomeServiceProtocol {
+         struct FailingService: HomeService {
              func fetchMovies() -> AnyPublisher<MoviesResponse, Error> { Fail(error: NSError(domain: "t", code: 1)).eraseToAnyPublisher() }
              func searchMovies(with _: String) -> AnyPublisher<MoviesResponse, Error> { Fail(error: NSError(domain: "t", code: 1)).eraseToAnyPublisher() }
              func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> { Fail(error: NSError(domain: "t", code: 1)).eraseToAnyPublisher() }

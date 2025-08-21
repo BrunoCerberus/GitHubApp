@@ -36,7 +36,7 @@ final class MovieDetailsViewModelTests: XCTestCase {
     }
 
     func testErrorHandlingSetsError() {
-        struct FailingService: HomeServiceProtocol {
+        struct FailingService: HomeService {
             func fetchMovies() -> AnyPublisher<MoviesResponse, Error> { Fail(error: NSError(domain: "e", code: 1)).eraseToAnyPublisher() }
             func searchMovies(with _: String) -> AnyPublisher<MoviesResponse, Error> { Fail(error: NSError(domain: "e", code: 1)).eraseToAnyPublisher() }
             func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> { Fail(error: NSError(domain: "e", code: 1)).eraseToAnyPublisher() }
