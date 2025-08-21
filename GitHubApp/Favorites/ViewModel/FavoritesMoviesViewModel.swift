@@ -1,5 +1,5 @@
 //
-//  LikedMoviesViewModel.swift
+//  FavoritesMoviesViewModel.swift
 //  GitHubApp
 //
 //  Created by bruno on 29/05/23.
@@ -10,36 +10,36 @@ import EntropyCore
 import Foundation
 
 /**
- * ViewModel for the Liked screen using Clean Architecture principles.
+ * ViewModel for the Favorites screen using Clean Architecture principles.
  *
  * This ViewModel now follows Clean Architecture by:
  * - Using CombineViewModel from EntropyCore
  * - Having a single source of truth through viewState
- * - Delegating business logic to LikedDomainInteractor
+ * - Delegating business logic to FavoritesDomainInteractor
  * - Converting view events to domain actions
  * - Converting domain state to view state
  *
  * Uses Combine for reactive programming and state management.
  */
-final class LikedMoviesViewModel: CombineViewModel {
+final class FavoritesMoviesViewModel: CombineViewModel {
     /// Single source of truth for the view state
-    @Published var viewState: LikedViewState = .loading
+    @Published var viewState: FavoritesViewState = .loading
 
     // MARK: - CombineViewModel Requirements
 
     /// Type alias for the view event type
-    typealias ViewEventType = LikedViewEvent
+    typealias ViewEventType = FavoritesViewEvent
 
     /// Type alias for the view state type
-    typealias ViewStateType = LikedViewState
+    typealias ViewStateType = FavoritesViewState
 
     // MARK: - Dependencies
 
     /// Domain interactor handling business logic
-    private let domainInteractor: LikedDomainInteractor
+    private let domainInteractor: FavoritesDomainInteractor
 
     /// Reducer for converting domain state to view state
-    private let viewStateReducer: LikedViewStateReducing
+    private let viewStateReducer: FavoritesViewStateReducing
 
     /// Service locator for dependency management
     private let serviceLocator: ServiceLocator?
@@ -55,12 +55,12 @@ final class LikedMoviesViewModel: CombineViewModel {
      *   - serviceLocator: Service locator for dependency injection (optional)
      */
     init(
-        domainInteractor: LikedDomainInteractor? = nil,
-        viewStateReducer: LikedViewStateReducing? = nil,
+        domainInteractor: FavoritesDomainInteractor? = nil,
+        viewStateReducer: FavoritesViewStateReducing? = nil,
         serviceLocator: ServiceLocator? = nil
     ) {
-        self.domainInteractor = domainInteractor ?? LikedDomainInteractor(serviceLocator: serviceLocator)
-        self.viewStateReducer = viewStateReducer ?? LikedViewStateReducer()
+        self.domainInteractor = domainInteractor ?? FavoritesDomainInteractor(serviceLocator: serviceLocator)
+        self.viewStateReducer = viewStateReducer ?? FavoritesViewStateReducer()
         self.serviceLocator = serviceLocator
 
         setupStateObservation()
@@ -69,76 +69,76 @@ final class LikedMoviesViewModel: CombineViewModel {
     // MARK: - Public Interface
 
     /**
-     * Load liked movies from persistence.
+     * Load favorite movies from persistence.
      */
-    func loadLikedMovies() {
-        handle(.loadLikedMovies)
+    func loadFavoriteMovies() {
+        handle(.loadFavoriteMovies)
     }
 
     /**
-     * Toggle the liked status of a movie.
+     * Toggle the favorite status of a movie.
      *
-     * - Parameter movie: The movie to toggle like status for
+     * - Parameter movie: The movie to toggle favorite status for
      */
-    func toggleLike(for movie: Movie) {
-        handle(.toggleLike(movie))
+    func toggleFavorite(for movie: Movie) {
+        handle(.toggleFavorite(movie))
     }
 
     /**
-     * Check if a movie is currently liked by the user.
+     * Check if a movie is currently favorited by the user.
      *
      * - Parameter movie: The movie to check
-     * - Returns: True if the movie is liked, false otherwise
+     * - Returns: True if the movie is favorited, false otherwise
      */
-    func isLiked(movie: Movie) -> Bool {
+    func isFavorited(movie: Movie) -> Bool {
         switch viewState {
         case let .success(dataViewState):
-            dataViewState.likedMovies.contains(where: { $0.id == movie.id })
+            dataViewState.favoriteMovies.contains(where: { $0.id == movie.id })
         default:
             false
         }
     }
 
     /**
-     * Clear all liked movies.
+     * Clear all favorite movies.
      */
-    func clearAllLikedMovies() {
-        handle(.clearAllLikedMovies)
+    func clearAllFavoriteMovies() {
+        handle(.clearAllFavoriteMovies)
     }
 
     /**
-     * Refresh the liked movies list.
+     * Refresh the favorite movies list.
      */
-    func refreshLikedMovies() {
-        handle(.refreshLikedMovies)
+    func refreshFavoriteMovies() {
+        handle(.refreshFavoriteMovies)
     }
 
     // MARK: - Test Support
 
     /**
-     * Get current liked movies from view state - for backward compatibility with tests.
+     * Get current favorite movies from view state - for backward compatibility with tests.
      *
-     * - Returns: Array of liked movies, or empty array if not in success state
+     * - Returns: Array of favorite movies, or empty array if not in success state
      */
-    var likedMovies: [Movie] {
+    var favoriteMovies: [Movie] {
         switch viewState {
         case let .success(dataViewState):
-            dataViewState.likedMovies
+            dataViewState.favoriteMovies
         default:
             []
         }
     }
 
     /**
-     * Set liked movies directly for testing purposes.
+     * Set favorite movies directly for testing purposes.
      * This bypasses the normal Clean Architecture flow and should only be used in tests.
      *
-     * - Parameter movies: Array of movies to set as liked
+     * - Parameter movies: Array of movies to set as favorites
      */
-    func setLikedMoviesForTesting(_ movies: [Movie]) {
-        let dataViewState = LikedDataViewState(
-            title: Localizable.likedMovies.title,
-            likedMovies: movies
+    func setFavoriteMoviesForTesting(_ movies: [Movie]) {
+        let dataViewState = FavoritesDataViewState(
+            title: Localizable.favorites.title,
+            favoriteMovies: movies
         )
         viewState = .success(dataViewState)
     }
@@ -153,7 +153,7 @@ final class LikedMoviesViewModel: CombineViewModel {
      *
      * - Parameter event: The view event to handle
      */
-    func handle(_ event: LikedViewEvent) {
+    func handle(_ event: FavoritesViewEvent) {
         let domainAction = convertToDomainAction(event)
         domainInteractor.process(domainAction)
     }
@@ -165,7 +165,7 @@ final class LikedMoviesViewModel: CombineViewModel {
      *
      * - Parameter event: The view event to send
      */
-    func sendViewEvent(_ event: LikedViewEvent) {
+    func sendViewEvent(_ event: FavoritesViewEvent) {
         handle(event)
     }
 
@@ -194,16 +194,16 @@ final class LikedMoviesViewModel: CombineViewModel {
      * - Parameter event: The view event to convert
      * - Returns: The corresponding domain action
      */
-    private func convertToDomainAction(_ event: LikedViewEvent) -> LikedDomainAction {
+    private func convertToDomainAction(_ event: FavoritesViewEvent) -> FavoritesDomainAction {
         switch event {
-        case .loadLikedMovies:
-            .loadLikedMovies
-        case let .toggleLike(movie):
-            .toggleMovieLike(movie)
-        case .clearAllLikedMovies:
-            .clearAllLikedMovies
-        case .refreshLikedMovies:
-            .refreshLikedMovies
+        case .loadFavoriteMovies:
+            .loadFavoriteMovies
+        case let .toggleFavorite(movie):
+            .toggleMovieFavorite(movie)
+        case .clearAllFavoriteMovies:
+            .clearAllFavoriteMovies
+        case .refreshFavoriteMovies:
+            .refreshFavoriteMovies
         }
     }
 }

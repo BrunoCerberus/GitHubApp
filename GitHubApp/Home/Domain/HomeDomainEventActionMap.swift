@@ -27,8 +27,8 @@ enum HomeDomainEventActionMap {
         case let .searchMovies(query):
             .searchMovies(query)
         case let .toggleLike(movie):
-            .toggleMovieLike(movie)
-        case .loadLikedMovies:
+            .toggleMovieFavorite(movie)
+        case .loadFavoriteMovies:
             .loadPersistedLikedMovies
         }
     }

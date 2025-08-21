@@ -17,8 +17,8 @@ struct HomeDomainState: Equatable {
     /// Current list of movies (upcoming or search results)
     var movies: [Movie]
 
-    /// Movies that the user has liked
-    var likedMovies: [Movie]
+    /// Movies that the user has favorited
+    var favoriteMovies: [Movie]
 
     /// Current loading state
     var isLoading: Bool
@@ -32,7 +32,7 @@ struct HomeDomainState: Equatable {
     /// Default initial state
     static let initial = HomeDomainState(
         movies: [],
-        likedMovies: [],
+        favoriteMovies: [],
         isLoading: false,
         error: nil,
         searchQuery: nil

@@ -73,7 +73,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
                                    viewModel.toggleLike(for: movie)
                                },
                                label: {
-                                   Image(systemName: dataViewState.likedMovies.contains(where: { $0.id == movie.id }) ? "heart.fill" : "heart")
+                                   Image(systemName: dataViewState.favoriteMovies.contains(where: { $0.id == movie.id }) ? "heart.fill" : "heart")
                                        .foregroundColor(.red)
                                })
                                .buttonStyle(PlainButtonStyle())

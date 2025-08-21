@@ -44,18 +44,18 @@ struct Localizable {
         static let reviewsEmpty = NSLocalizedString("movie_details.reviews.empty", comment: "No reviews available message")
     }
 
-    // MARK: - Liked Movies
+    // MARK: - Favorites
 
-    /// Liked movies related localized strings
-    struct LikedMovies {
+    /// Favorites related localized strings
+    struct Favorites {
         /// Private initializer to prevent instantiation
         private init() {}
 
-        /// "Liked Movies" title
-        static let title = NSLocalizedString("liked_movies.title", comment: "Liked Movies title")
+        /// "Favorites" title
+        static let title = NSLocalizedString("favorites.title", comment: "Favorites title")
 
-        /// "Your liked movies will appear here." empty state message
-        static let emptyState = NSLocalizedString("liked_movies.empty_state", comment: "Empty state message for liked movies")
+        /// "Your favorite movies will appear here." empty state message
+        static let emptyState = NSLocalizedString("favorites.empty_state", comment: "Empty state message for favorite movies")
     }
 
     // MARK: - Settings
@@ -77,23 +77,23 @@ struct Localizable {
         /// "App Version" label
         static let appVersion = NSLocalizedString("settings.app_version", comment: "App Version label")
 
-        /// "Clear Liked Movies" button
-        static let clearLikedMovies = NSLocalizedString("settings.clear_liked_movies", comment: "Clear Liked Movies button")
+        /// "Clear Favorites" button
+        static let clearFavoriteMovies = NSLocalizedString("settings.clear_favorite_movies", comment: "Clear Favorites button")
 
-        /// "Clear Liked Movies" confirmation message
-        static let clearLikedMoviesConfirmation = NSLocalizedString("settings.clear_liked_movies_confirmation", comment: "Clear Liked Movies confirmation message")
+        /// "Clear Favorites" confirmation message
+        static let clearFavoriteMoviesConfirmation = NSLocalizedString("settings.clear_favorite_movies_confirmation", comment: "Clear Favorites confirmation message")
 
-        /// "Clear Liked Movies" alert title
-        static let clearLikedMoviesAlertTitle = NSLocalizedString("settings.clear_liked_movies_alert_title", comment: "Clear Liked Movies alert title")
+        /// "Clear Favorites" alert title
+        static let clearFavoriteMoviesAlertTitle = NSLocalizedString("settings.clear_favorite_movies_alert_title", comment: "Clear Favorites alert title")
 
-        /// "Clear Liked Movies" alert message
-        static let clearLikedMoviesAlertMessage = NSLocalizedString("settings.clear_liked_movies_alert_message", comment: "Clear Liked Movies alert message")
+        /// "Clear Favorites" alert message
+        static let clearFavoriteMoviesAlertMessage = NSLocalizedString("settings.clear_favorite_movies_alert_message", comment: "Clear Favorites alert message")
 
         /// "Clear All" button
-        static let clearLikedMoviesAlertClear = NSLocalizedString("settings.clear_liked_movies_alert_clear", comment: "Clear All button")
+        static let clearFavoriteMoviesAlertClear = NSLocalizedString("settings.clear_favorite_movies_alert_clear", comment: "Clear All button")
 
         /// "Cancel" button
-        static let clearLikedMoviesAlertCancel = NSLocalizedString("settings.clear_liked_movies_alert_cancel", comment: "Cancel button")
+        static let clearFavoriteMoviesAlertCancel = NSLocalizedString("settings.clear_favorite_movies_alert_cancel", comment: "Cancel button")
 
         /// "Rate App" section title
         static let rateApp = NSLocalizedString("settings.rate_app", comment: "Rate App section title")
@@ -131,8 +131,8 @@ struct Localizable {
     /// Convenience access to movie details strings
     static let movieDetails = MovieDetails.self
 
-    /// Convenience access to liked movies strings
-    static let likedMovies = LikedMovies.self
+    /// Convenience access to favorite movies strings
+    static let favorites = Favorites.self
 
     /// Convenience access to settings strings
     static let settings = Settings.self

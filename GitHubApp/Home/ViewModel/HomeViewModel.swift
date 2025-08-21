@@ -144,23 +144,23 @@ final class HomeViewModel: CombineViewModel {
     }
 
     /**
-     * Toggle the liked status of a movie.
+     * Toggle the favorite status of a movie.
      *
      * Delegates to domain interactor through view event handling.
      *
-     * - Parameter movie: The movie to toggle like status for
+     * - Parameter movie: The movie to toggle favorite status for
      */
     func toggleLike(for movie: Movie) {
         handle(.toggleLike(movie))
     }
 
     /**
-     * Load liked movies from persistence.
+     * Load favorite movies from persistence.
      *
      * Delegates to domain interactor through view event handling.
      */
-    func loadLikedMovies() {
-        handle(.loadLikedMovies)
+    func loadFavoriteMovies() {
+        handle(.loadFavoriteMovies)
     }
 
     /**
@@ -173,7 +173,7 @@ final class HomeViewModel: CombineViewModel {
         guard case let .success(dataViewState) = viewState else {
             return false
         }
-        return dataViewState.likedMovies.contains(where: { $0.id == movie.id })
+        return dataViewState.favoriteMovies.contains(where: { $0.id == movie.id })
     }
 
     /**
@@ -189,15 +189,15 @@ final class HomeViewModel: CombineViewModel {
     }
 
     /**
-     * Get current liked movies from view state.
+     * Get current favorite movies from view state.
      *
-     * - Returns: Array of liked movies, or empty array if not in success state
+     * - Returns: Array of favorite movies, or empty array if not in success state
      */
-    var likedMovies: [Movie] {
+    var favoriteMovies: [Movie] {
         guard case let .success(dataViewState) = viewState else {
             return []
         }
-        return dataViewState.likedMovies
+        return dataViewState.favoriteMovies
     }
 
     /**
@@ -236,7 +236,7 @@ final class HomeViewModel: CombineViewModel {
         // Use a small delay to ensure the state observation pipeline is fully set up
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.001) { [weak self] in
             self?.handle(.fetchData)
-            self?.handle(.loadLikedMovies)
+            self?.handle(.loadFavoriteMovies)
         }
     }
 

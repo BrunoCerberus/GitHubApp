@@ -56,7 +56,7 @@ struct HomeViewStateReducer: HomeViewStateReducing {
         let dataViewState = HomeDataViewState(
             title: domainState.searchQuery != nil ? "Search Results" : "Upcoming Movies",
             movies: domainState.movies,
-            likedMovies: domainState.likedMovies,
+            favoriteMovies: domainState.favoriteMovies,
             searchQuery: domainState.searchQuery
         )
         return .success(dataViewState)

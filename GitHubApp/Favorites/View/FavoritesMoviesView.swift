@@ -1,5 +1,5 @@
 //
-//  LikedMoviesView.swift
+//  FavoritesMoviesView.swift
 //  GitHubApp
 //
 //  Created by bruno on 29/05/23.
@@ -9,11 +9,11 @@ import EntropyCore
 import SwiftUI
 
 /**
- * View showing the user's liked movies.
+ * View showing the user's favorite movies.
  */
-struct LikedMoviesView: View {
-    /// ViewModel providing liked movies and actions
-    @StateObject var viewModel: LikedMoviesViewModel
+struct FavoritesMoviesView: View {
+    /// ViewModel providing favorite movies and actions
+    @StateObject var viewModel: FavoritesMoviesViewModel
     /// Selected movie to navigate to details
     @State private var selectedMovie: Movie?
 
@@ -23,7 +23,7 @@ struct LikedMoviesView: View {
             VStack {
                 switch viewModel.viewState {
                 case .loading:
-                    ProgressView("Loading liked movies...")
+                    ProgressView("Loading favorite movies...")
                         .font(.caption)
                         .padding()
                 case let .error(message):
@@ -38,13 +38,13 @@ struct LikedMoviesView: View {
                     .padding()
                 case let .success(dataViewState):
                     if dataViewState.isEmpty {
-                        Text(Localizable.likedMovies.title)
+                        Text(Localizable.favorites.title)
                             .font(.largeTitle)
                             .padding()
-                        Text(Localizable.likedMovies.emptyState)
+                        Text(Localizable.favorites.emptyState)
                             .foregroundColor(.secondary)
                     } else {
-                        List(dataViewState.likedMovies, id: \.id) { movie in
+                        List(dataViewState.favoriteMovies, id: \.id) { movie in
                             Button(
                                 action: {
                                     selectedMovie = movie
@@ -67,10 +67,10 @@ struct LikedMoviesView: View {
                                         }
                                         Spacer()
                                         Button(action: {
-                                                   viewModel.toggleLike(for: movie)
+                                                   viewModel.toggleFavorite(for: movie)
                                                },
                                                label: {
-                                                   Image(systemName: viewModel.isLiked(movie: movie) ? "heart.fill" : "heart")
+                                                   Image(systemName: viewModel.isFavorited(movie: movie) ? "heart.fill" : "heart")
                                                        .foregroundColor(.red)
                                                })
                                                .buttonStyle(PlainButtonStyle())
@@ -85,11 +85,11 @@ struct LikedMoviesView: View {
             }
             .onAppear {
                 // Only refresh data if needed, to avoid loading flicker
-                if case let .success(dataViewState) = viewModel.viewState, !dataViewState.likedMovies.isEmpty {
+                if case let .success(dataViewState) = viewModel.viewState, !dataViewState.favoriteMovies.isEmpty {
                     // Data already loaded, no need to reload
                     return
                 }
-                viewModel.loadLikedMovies()
+                viewModel.loadFavoriteMovies()
             }
             .navigationDestination(item: $selectedMovie) { movie in
                 MovieDetailsView(viewModel: MovieDetailsViewModel(movie: movie))
@@ -99,5 +99,5 @@ struct LikedMoviesView: View {
 }
 
 #Preview {
-    LikedMoviesView(viewModel: LikedMoviesViewModel())
+    FavoritesMoviesView(viewModel: FavoritesMoviesViewModel())
 }

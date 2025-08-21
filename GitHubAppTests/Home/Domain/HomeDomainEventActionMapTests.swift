@@ -33,18 +33,18 @@ final class HomeDomainEventActionMapTests: XCTestCase {
     func testMapToggleLikeEvent() {
         // Given
         let movie = createMockMovie(id: 1, title: "Test Movie")
-        let event = HomeViewEvent.toggleLike(movie)
+        let event = HomeViewEvent.toggleFavorite(movie)
 
         // When
         let action = HomeDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, HomeDomainAction.toggleMovieLike(movie))
+        XCTAssertEqual(action, HomeDomainAction.toggleMovieFavorite(movie))
     }
 
     func testMapLoadLikedMoviesEvent() {
         // Given
-        let event = HomeViewEvent.loadLikedMovies
+        let event = HomeViewEvent.loadFavoriteMovies
 
         // When
         let action = HomeDomainEventActionMap.map(event)
@@ -59,8 +59,8 @@ final class HomeDomainEventActionMapTests: XCTestCase {
         let events: [HomeViewEvent] = [
             .fetchData,
             .searchMovies("query"),
-            .toggleLike(movie),
-            .loadLikedMovies,
+            .toggleFavorite(movie),
+            .loadFavoriteMovies,
         ]
 
         // When/Then - Verify all events can be mapped without throwing
@@ -82,11 +82,11 @@ final class HomeDomainEventActionMapTests: XCTestCase {
         let action3 = HomeDomainEventActionMap.map(.searchMovies(query))
         let action4 = HomeDomainEventActionMap.map(.searchMovies(query))
 
-        let action5 = HomeDomainEventActionMap.map(.toggleLike(movie))
-        let action6 = HomeDomainEventActionMap.map(.toggleLike(movie))
+        let action5 = HomeDomainEventActionMap.map(.toggleFavorite(movie))
+        let action6 = HomeDomainEventActionMap.map(.toggleFavorite(movie))
 
-        let action7 = HomeDomainEventActionMap.map(.loadLikedMovies)
-        let action8 = HomeDomainEventActionMap.map(.loadLikedMovies)
+        let action7 = HomeDomainEventActionMap.map(.loadFavoriteMovies)
+        let action8 = HomeDomainEventActionMap.map(.loadFavoriteMovies)
 
         // Then - Verify mapping is consistent
         XCTAssertEqual(action1, action2)

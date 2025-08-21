@@ -45,8 +45,8 @@ final class SwiftDataStorageServiceTests: XCTestCase {
         ]
 
         // When
-        try await sut.save(movies, context: StorageContext.likedMovies)
-        let fetchedMovies = try await sut.fetch(Movie.self, context: StorageContext.likedMovies)
+        try await sut.save(movies, context: StorageContext.favoriteMovies)
+        let fetchedMovies = try await sut.fetch(Movie.self, context: StorageContext.favoriteMovies)
 
         // Then
         XCTAssertEqual(fetchedMovies.count, 2)
@@ -59,14 +59,14 @@ final class SwiftDataStorageServiceTests: XCTestCase {
         let movie = Movie(id: 1, title: "Test Movie", overview: "Overview", posterPath: "/test.jpg")
 
         // When - Add movie to liked
-        let likedMovies = try await sut.toggleMovieLike(movie)
+        let favoriteMovies = try await sut.toggleMovieFavorite(movie)
 
         // Then
-        XCTAssertEqual(likedMovies.count, 1)
-        XCTAssertEqual(likedMovies.first?.id, movie.id)
+        XCTAssertEqual(favoriteMovies.count, 1)
+        XCTAssertEqual(favoriteMovies.first?.id, movie.id)
 
         // When - Remove movie from liked
-        let updatedMovies = try await sut.toggleMovieLike(movie)
+        let updatedMovies = try await sut.toggleMovieFavorite(movie)
 
         // Then
         XCTAssertTrue(updatedMovies.isEmpty)
@@ -83,7 +83,7 @@ final class SwiftDataStorageServiceTests: XCTestCase {
         XCTAssertFalse(isLikedBefore)
 
         // When - Add movie to liked
-        _ = try await sut.toggleMovieLike(movie)
+        _ = try await sut.toggleMovieFavorite(movie)
         let isLikedAfter = try await sut.isMovieLiked(movie)
 
         // Then
@@ -99,14 +99,14 @@ final class SwiftDataStorageServiceTests: XCTestCase {
 
         // When
         for movie in movies {
-            _ = try await sut.toggleMovieLike(movie)
+            _ = try await sut.toggleMovieFavorite(movie)
         }
-        let likedMovies = try await sut.fetchLikedMovies()
+        let favoriteMovies = try await sut.fetchLikedMovies()
 
         // Then
-        XCTAssertEqual(likedMovies.count, 2)
-        XCTAssertTrue(likedMovies.contains { $0.id == 1 })
-        XCTAssertTrue(likedMovies.contains { $0.id == 2 })
+        XCTAssertEqual(favoriteMovies.count, 2)
+        XCTAssertTrue(favoriteMovies.contains { $0.id == 1 })
+        XCTAssertTrue(favoriteMovies.contains { $0.id == 2 })
     }
 
     func testClearLikedMovies() async throws {
@@ -117,15 +117,15 @@ final class SwiftDataStorageServiceTests: XCTestCase {
         ]
 
         for movie in movies {
-            _ = try await sut.toggleMovieLike(movie)
+            _ = try await sut.toggleMovieFavorite(movie)
         }
 
         // When
-        try await sut.clearLikedMovies()
-        let likedMovies = try await sut.fetchLikedMovies()
+        try await sut.clearFavoriteMovies()
+        let favoriteMovies = try await sut.fetchLikedMovies()
 
         // Then
-        XCTAssertTrue(likedMovies.isEmpty)
+        XCTAssertTrue(favoriteMovies.isEmpty)
     }
 
     func testDeleteSpecificMovie() async throws {
@@ -135,11 +135,11 @@ final class SwiftDataStorageServiceTests: XCTestCase {
             Movie(id: 2, title: "Movie 2", overview: "Overview 2", posterPath: "/test2.jpg"),
         ]
 
-        try await sut.save(movies, context: StorageContext.likedMovies)
+        try await sut.save(movies, context: StorageContext.favoriteMovies)
 
         // When
-        try await sut.delete(movies[0], context: StorageContext.likedMovies)
-        let remainingMovies = try await sut.fetch(Movie.self, context: StorageContext.likedMovies)
+        try await sut.delete(movies[0], context: StorageContext.favoriteMovies)
+        let remainingMovies = try await sut.fetch(Movie.self, context: StorageContext.favoriteMovies)
 
         // Then
         XCTAssertEqual(remainingMovies.count, 1)
@@ -149,10 +149,10 @@ final class SwiftDataStorageServiceTests: XCTestCase {
     func testFetchMovieById() async throws {
         // Given
         let movie = Movie(id: 1, title: "Test Movie", overview: "Overview", posterPath: "/test.jpg")
-        try await sut.save(movie, context: StorageContext.likedMovies)
+        try await sut.save(movie, context: StorageContext.favoriteMovies)
 
         // When
-        let fetchedMovie = try await sut.fetch(Movie.self, id: 1, context: StorageContext.likedMovies)
+        let fetchedMovie = try await sut.fetch(Movie.self, id: 1, context: StorageContext.favoriteMovies)
 
         // Then
         XCTAssertNotNil(fetchedMovie)
@@ -166,15 +166,15 @@ final class SwiftDataStorageServiceTests: XCTestCase {
         let movie2 = Movie(id: 2, title: "Widget Movie", overview: "Overview", posterPath: "/test2.jpg")
 
         // When
-        try await sut.save(movie1, context: StorageContext.likedMovies)
+        try await sut.save(movie1, context: StorageContext.favoriteMovies)
         try await sut.save(movie2, context: StorageContext.widget)
 
-        let likedMovies = try await sut.fetch(Movie.self, context: StorageContext.likedMovies)
+        let favoriteMovies = try await sut.fetch(Movie.self, context: StorageContext.favoriteMovies)
         let widgetMovies = try await sut.fetch(Movie.self, context: StorageContext.widget)
 
         // Then
-        XCTAssertEqual(likedMovies.count, 1)
-        XCTAssertEqual(likedMovies.first?.id, 1)
+        XCTAssertEqual(favoriteMovies.count, 1)
+        XCTAssertEqual(favoriteMovies.first?.id, 1)
 
         XCTAssertEqual(widgetMovies.count, 1)
         XCTAssertEqual(widgetMovies.first?.id, 2)
@@ -188,8 +188,8 @@ final class SwiftDataStorageServiceTests: XCTestCase {
         let movie = Movie(id: 1, title: "Test Movie", overview: "Overview", posterPath: "/test.jpg")
 
         do {
-            try await sut.save(movie, context: StorageContext.likedMovies)
-            let fetchedMovies = try await sut.fetch(Movie.self, context: StorageContext.likedMovies)
+            try await sut.save(movie, context: StorageContext.favoriteMovies)
+            let fetchedMovies = try await sut.fetch(Movie.self, context: StorageContext.favoriteMovies)
             XCTAssertEqual(fetchedMovies.count, 1)
         } catch {
             XCTFail("Should not throw error with valid data: \(error)")

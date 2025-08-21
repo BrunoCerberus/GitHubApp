@@ -17,15 +17,15 @@ import UIKit
  * - Profile image selection and management
  * - Language selection
  * - App rating functionality
- * - Clearing liked movies
+ * - Clearing favorite movies
  * - Settings persistence
  */
 final class SettingsViewModel: ObservableObject {
     /// Settings manager for handling settings
     @Published var settingsManager: SettingsManager
 
-    /// Liked movies view model for clearing liked movies
-    private let likedMoviesViewModel: LikedMoviesViewModel
+    /// Liked movies view model for clearing favorite movies
+    private let favoriteMoviesViewModel: FavoritesMoviesViewModel
 
     /// Current app version
     let appVersion: String
@@ -36,19 +36,19 @@ final class SettingsViewModel: ObservableObject {
     /// Show photo picker
     @Published var isPhotoPickerPresented = false
 
-    /// Show clear liked movies confirmation
+    /// Show clear favorite movies confirmation
     @Published var isClearLikedMoviesConfirmationPresented = false
 
-    /// Show clear liked movies alert
+    /// Show clear favorite movies alert
     @Published var showClearLikedMoviesAlert = false
 
     /// Show rate app thanks message
     @Published var showRateAppThanks = false
 
     /// Initialize the settings view model
-    /// - Parameter likedMoviesViewModel: View model for managing liked movies
-    init(likedMoviesViewModel: LikedMoviesViewModel) {
-        self.likedMoviesViewModel = likedMoviesViewModel
+    /// - Parameter favoriteMoviesViewModel: View model for managing favorite movies
+    init(favoriteMoviesViewModel: FavoritesMoviesViewModel) {
+        self.favoriteMoviesViewModel = favoriteMoviesViewModel
         settingsManager = SettingsManager()
 
         // Get app version and build number
@@ -78,10 +78,10 @@ final class SettingsViewModel: ObservableObject {
 
     // MARK: - Liked Movies Management
 
-    /// Clear all liked movies
-    func clearAllLikedMovies() {
-        // Clear liked movies from the view model
-        likedMoviesViewModel.clearAllLikedMovies()
+    /// Clear all favorite movies
+    func clearAllFavoriteMovies() {
+        // Clear favorite movies from the view model
+        favoriteMoviesViewModel.clearAllFavoriteMovies()
 
         // Show confirmation
         showClearLikedMoviesAlert = true
@@ -143,12 +143,12 @@ final class SettingsViewModel: ObservableObject {
 
     // MARK: - Clear Liked Movies Confirmation
 
-    /// Show clear liked movies confirmation
+    /// Show clear favorite movies confirmation
     func showClearLikedMoviesConfirmation() {
         isClearLikedMoviesConfirmationPresented = true
     }
 
-    /// Hide clear liked movies confirmation
+    /// Hide clear favorite movies confirmation
     func hideClearLikedMoviesConfirmation() {
         isClearLikedMoviesConfirmationPresented = false
     }

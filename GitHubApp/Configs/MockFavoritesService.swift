@@ -18,7 +18,7 @@ import Foundation
 final class MockFavoritesService: FavoritesService {
     // MARK: - Mock Data
 
-    /// In-memory storage for mock liked movies
+    /// In-memory storage for mock favorite movies
     private var mockLikedMovies: [Movie] = []
 
     /// Mock movies for testing
@@ -57,18 +57,18 @@ final class MockFavoritesService: FavoritesService {
         self.delayDuration = delayDuration
         self.shouldSimulateErrors = shouldSimulateErrors
 
-        // Pre-populate with some mock liked movies for testing
+        // Pre-populate with some mock favorite movies for testing
         mockLikedMovies = Array(mockMovies.prefix(2))
     }
 
     // MARK: - FavoritesService Implementation
 
     /**
-     * Load liked movies from mock storage.
+     * Load favorite movies from mock storage.
      *
-     * - Returns: Publisher emitting array of mock liked movies or error
+     * - Returns: Publisher emitting array of mock favorite movies or error
      */
-    func loadLikedMovies() -> AnyPublisher<[Movie], Error> {
+    func loadFavoriteMovies() -> AnyPublisher<[Movie], Error> {
         if shouldSimulateErrors {
             return Fail(error: MockFavoritesServiceError.simulatedError)
                 .eraseToAnyPublisher()
@@ -88,12 +88,12 @@ final class MockFavoritesService: FavoritesService {
     }
 
     /**
-     * Toggle the liked status of a movie in mock storage.
+     * Toggle the favorite status of a movie in mock storage.
      *
-     * - Parameter movie: The movie to toggle like status for
-     * - Returns: Publisher emitting updated array of liked movies or error
+     * - Parameter movie: The movie to toggle favorite status for
+     * - Returns: Publisher emitting updated array of favorite movies or error
      */
-    func toggleMovieLike(_ movie: Movie) -> AnyPublisher<[Movie], Error> {
+    func toggleMovieFavorite(_ movie: Movie) -> AnyPublisher<[Movie], Error> {
         if shouldSimulateErrors {
             return Fail(error: MockFavoritesServiceError.simulatedError)
                 .eraseToAnyPublisher()
@@ -120,11 +120,11 @@ final class MockFavoritesService: FavoritesService {
     }
 
     /**
-     * Clear all liked movies from mock storage.
+     * Clear all favorite movies from mock storage.
      *
      * - Returns: Publisher emitting completion or error
      */
-    func clearAllLikedMovies() -> AnyPublisher<Void, Error> {
+    func clearAllFavoriteMovies() -> AnyPublisher<Void, Error> {
         if shouldSimulateErrors {
             return Fail(error: MockFavoritesServiceError.simulatedError)
                 .eraseToAnyPublisher()
@@ -207,7 +207,7 @@ extension MockFavoritesService {
     }
 
     /**
-     * Set specific mock liked movies for testing scenarios.
+     * Set specific mock favorite movies for testing scenarios.
      *
      * - Parameter movies: Movies to set as liked
      */
@@ -216,9 +216,9 @@ extension MockFavoritesService {
     }
 
     /**
-     * Get current mock liked movies for test assertions.
+     * Get current mock favorite movies for test assertions.
      *
-     * - Returns: Current array of mock liked movies
+     * - Returns: Current array of mock favorite movies
      */
     func getCurrentMockLikedMovies() -> [Movie] {
         mockLikedMovies

@@ -63,20 +63,20 @@ final class LocalizableTests: XCTestCase {
     // MARK: - Liked Movies Tests
 
     /**
-     * Test that liked movies title is properly localized.
+     * Test that favorite movies title is properly localized.
      */
     func testLikedMoviesTitle() {
-        let title = Localizable.likedMovies.title
+        let title = Localizable.favorites.title
 
         XCTAssertFalse(title.isEmpty, "Liked movies title should not be empty")
         XCTAssertNotEqual(title, "liked_movies.title", "String should be localized, not showing the key")
     }
 
     /**
-     * Test that liked movies empty state message is properly localized.
+     * Test that favorite movies empty state message is properly localized.
      */
     func testLikedMoviesEmptyState() {
-        let emptyState = Localizable.likedMovies.emptyState
+        let emptyState = Localizable.favorites.emptyState
 
         XCTAssertFalse(emptyState.isEmpty, "Liked movies empty state should not be empty")
         XCTAssertNotEqual(emptyState, "liked_movies.empty_state", "String should be localized, not showing the key")
@@ -117,11 +117,11 @@ final class LocalizableTests: XCTestCase {
     }
 
     /**
-     * Test that convenience access to liked movies works correctly.
+     * Test that convenience access to favorite movies works correctly.
      */
     func testLikedMoviesConvenience() {
-        XCTAssertNotNil(Localizable.likedMovies, "Liked movies should be accessible")
-        XCTAssertEqual(Localizable.likedMovies.title, Localizable.LikedMovies.title, "Convenience access should match direct access")
+        XCTAssertNotNil(Localizable.favorites, "Liked movies should be accessible")
+        XCTAssertEqual(Localizable.favorites.title, Localizable.favorites.title, "Convenience access should match direct access")
     }
 
     /**
@@ -166,8 +166,8 @@ final class LocalizableTests: XCTestCase {
             Localizable.movieDetails.creditsEmpty,
             Localizable.movieDetails.reviewsTitle,
             Localizable.movieDetails.reviewsEmpty,
-            Localizable.likedMovies.title,
-            Localizable.likedMovies.emptyState,
+            Localizable.favorites.title,
+            Localizable.favorites.emptyState,
             Localizable.apiErrors.urlConstructionFailed,
         ]
 

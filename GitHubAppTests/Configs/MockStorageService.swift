@@ -62,12 +62,12 @@ final class MockStorageService: StorageServiceProtocol {
         movies.contains { $0.id == movie.id }
     }
 
-    func toggleMovieLike(_ movie: Movie) async throws -> [Movie] {
+    func toggleMovieFavorite(_ movie: Movie) async throws -> [Movie] {
         let isLiked = try await isMovieLiked(movie)
         if isLiked {
-            try await delete(movie, context: StorageContext.likedMovies)
+            try await delete(movie, context: StorageContext.favoriteMovies)
         } else {
-            try await save(movie, context: StorageContext.likedMovies)
+            try await save(movie, context: StorageContext.favoriteMovies)
         }
         return try await fetchLikedMovies()
     }
@@ -76,7 +76,7 @@ final class MockStorageService: StorageServiceProtocol {
         movies
     }
 
-    func clearLikedMovies() async throws {
+    func clearFavoriteMovies() async throws {
         movies.removeAll()
     }
 }

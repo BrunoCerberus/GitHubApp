@@ -13,7 +13,7 @@ final class HomeDomainStateTests: XCTestCase {
 
         // Then
         XCTAssertTrue(state.movies.isEmpty)
-        XCTAssertTrue(state.likedMovies.isEmpty)
+        XCTAssertTrue(state.favoriteMovies.isEmpty)
         XCTAssertFalse(state.isLoading)
         XCTAssertNil(state.error)
         XCTAssertNil(state.searchQuery)
@@ -26,7 +26,7 @@ final class HomeDomainStateTests: XCTestCase {
 
         let state1 = HomeDomainState(
             movies: [movie1],
-            likedMovies: [movie2],
+            favoriteMovies: [movie2],
             isLoading: true,
             error: "Error",
             searchQuery: "query"
@@ -34,7 +34,7 @@ final class HomeDomainStateTests: XCTestCase {
 
         let state2 = HomeDomainState(
             movies: [movie1],
-            likedMovies: [movie2],
+            favoriteMovies: [movie2],
             isLoading: true,
             error: "Error",
             searchQuery: "query"
@@ -42,7 +42,7 @@ final class HomeDomainStateTests: XCTestCase {
 
         let state3 = HomeDomainState(
             movies: [movie2], // Different movies
-            likedMovies: [movie2],
+            favoriteMovies: [movie2],
             isLoading: true,
             error: "Error",
             searchQuery: "query"
@@ -60,7 +60,7 @@ final class HomeDomainStateTests: XCTestCase {
 
         let loadingState = HomeDomainState(
             movies: [],
-            likedMovies: [],
+            favoriteMovies: [],
             isLoading: true,
             error: nil,
             searchQuery: nil
@@ -68,7 +68,7 @@ final class HomeDomainStateTests: XCTestCase {
 
         let errorState = HomeDomainState(
             movies: [],
-            likedMovies: [],
+            favoriteMovies: [],
             isLoading: false,
             error: "Network error",
             searchQuery: nil
@@ -76,7 +76,7 @@ final class HomeDomainStateTests: XCTestCase {
 
         let successState = HomeDomainState(
             movies: [movie],
-            likedMovies: [],
+            favoriteMovies: [],
             isLoading: false,
             error: nil,
             searchQuery: nil
@@ -84,7 +84,7 @@ final class HomeDomainStateTests: XCTestCase {
 
         let searchState = HomeDomainState(
             movies: [movie],
-            likedMovies: [],
+            favoriteMovies: [],
             isLoading: false,
             error: nil,
             searchQuery: "test query"

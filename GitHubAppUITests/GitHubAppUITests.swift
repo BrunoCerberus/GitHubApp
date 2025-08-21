@@ -34,7 +34,7 @@ final class GitHubAppUITests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
 
-    /// Navigate to Liked tab to exercise LikedMoviesView
+    /// Navigate to Liked tab to exercise FavoritesMoviesView
     func testNavigateToLikedTab() throws {
         let app = XCUIApplication()
         app.launchEnvironment["API_KEY"] = "ui-tests-key"

@@ -103,28 +103,28 @@ protocol StorageServiceProtocol: AnyObject {
     func isMovieLiked(_ movie: Movie) async throws -> Bool
 
     /**
-     * Toggle the liked status of a movie.
+     * Toggle the favorite status of a movie.
      *
      * - Parameter movie: The movie to toggle
-     * - Returns: Updated list of all liked movies
+     * - Returns: Updated list of all favorite movies
      * - Throws: StorageError if the operation fails
      */
-    func toggleMovieLike(_ movie: Movie) async throws -> [Movie]
+    func toggleMovieFavorite(_ movie: Movie) async throws -> [Movie]
 
     /**
-     * Fetch all liked movies.
+     * Fetch all favorite movies.
      *
-     * - Returns: Array of liked movies
+     * - Returns: Array of favorite movies
      * - Throws: StorageError if the operation fails
      */
     func fetchLikedMovies() async throws -> [Movie]
 
     /**
-     * Clear all liked movies.
+     * Clear all favorite movies.
      *
      * - Throws: StorageError if the operation fails
      */
-    func clearLikedMovies() async throws
+    func clearFavoriteMovies() async throws
 }
 
 /**
@@ -160,7 +160,7 @@ enum StorageError: Error, LocalizedError {
  * Context identifiers for organizing data in storage.
  */
 enum StorageContext {
-    static let likedMovies = "liked_movies"
+    static let favoriteMovies = "liked_movies"
     static let settings = "user_settings"
     static let widget = "widget_data"
 }

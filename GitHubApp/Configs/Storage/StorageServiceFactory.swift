@@ -167,7 +167,7 @@ struct StorageConfiguration {
  */
 final class UserDefaultsStorageService: StorageServiceProtocol {
     private let userDefaults: UserDefaults
-    private let likedMoviesKey = "likedMoviesKey"
+    private let favoriteMoviesKey = "favoriteMoviesKey"
 
     init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
@@ -221,7 +221,7 @@ final class UserDefaultsStorageService: StorageServiceProtocol {
 
     func deleteAll(_ type: (some Codable & Identifiable).Type, context _: String?) async throws {
         if type == Movie.self {
-            try await clearLikedMovies()
+            try await clearFavoriteMovies()
         }
     }
 
@@ -232,7 +232,7 @@ final class UserDefaultsStorageService: StorageServiceProtocol {
         return movies.contains { $0.id == movie.id }
     }
 
-    func toggleMovieLike(_ movie: Movie) async throws -> [Movie] {
+    func toggleMovieFavorite(_ movie: Movie) async throws -> [Movie] {
         var movies = try await fetchLikedMovies()
 
         if let index = movies.firstIndex(where: { $0.id == movie.id }) {
@@ -246,7 +246,7 @@ final class UserDefaultsStorageService: StorageServiceProtocol {
     }
 
     func fetchLikedMovies() async throws -> [Movie] {
-        guard let data = userDefaults.data(forKey: likedMoviesKey),
+        guard let data = userDefaults.data(forKey: favoriteMoviesKey),
               let movies = try? JSONDecoder().decode([Movie].self, from: data)
         else {
             return []
@@ -254,14 +254,14 @@ final class UserDefaultsStorageService: StorageServiceProtocol {
         return movies
     }
 
-    func clearLikedMovies() async throws {
-        userDefaults.removeObject(forKey: likedMoviesKey)
+    func clearFavoriteMovies() async throws {
+        userDefaults.removeObject(forKey: favoriteMoviesKey)
     }
 
     // MARK: - Private Methods
 
     private func saveMoviesToUserDefaults(_ movies: [Movie]) throws {
         let data = try JSONEncoder().encode(movies)
-        userDefaults.set(data, forKey: likedMoviesKey)
+        userDefaults.set(data, forKey: favoriteMoviesKey)
     }
 }

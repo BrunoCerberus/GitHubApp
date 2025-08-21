@@ -16,6 +16,6 @@ import Foundation
 enum HomeDomainAction: Equatable {
     case fetchUpcomingMovies
     case searchMovies(String)
-    case toggleMovieLike(Movie)
+    case toggleMovieFavorite(Movie)
     case loadPersistedLikedMovies
 }

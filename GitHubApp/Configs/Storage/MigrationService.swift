@@ -54,7 +54,7 @@ final class MigrationService {
         print("🔄 Starting migration from UserDefaults to SwiftData...")
 
         do {
-            // Migrate liked movies
+            // Migrate favorite movies
             try await migrateLikedMovies(to: storageService)
 
             // Migrate user settings
@@ -74,29 +74,29 @@ final class MigrationService {
     // MARK: - Private Migration Methods
 
     /**
-     * Migrate liked movies from UserDefaults to SwiftData.
+     * Migrate favorite movies from UserDefaults to SwiftData.
      */
     private func migrateLikedMovies(to storageService: StorageServiceProtocol) async throws {
-        let likedMoviesKey = "likedMoviesKey"
+        let favoriteMoviesKey = "favoriteMoviesKey"
 
-        guard let data = userDefaults.data(forKey: likedMoviesKey),
+        guard let data = userDefaults.data(forKey: favoriteMoviesKey),
               let movies = try? JSONDecoder().decode([Movie].self, from: data)
         else {
-            print("📝 No liked movies to migrate")
+            print("📝 No favorite movies to migrate")
             return
         }
 
         if movies.isEmpty {
-            print("📝 No liked movies to migrate")
+            print("📝 No favorite movies to migrate")
         } else {
-            print("📝 Migrating \(movies.count) liked movies...")
+            print("📝 Migrating \(movies.count) favorite movies...")
             // Save movies to SwiftData
-            try await storageService.save(movies, context: StorageContext.likedMovies)
+            try await storageService.save(movies, context: StorageContext.favoriteMovies)
             print("✅ Liked movies migrated successfully")
         }
 
         // Always clean up UserDefaults when there's valid data (even if empty array)
-        userDefaults.removeObject(forKey: likedMoviesKey)
+        userDefaults.removeObject(forKey: favoriteMoviesKey)
     }
 
     /**

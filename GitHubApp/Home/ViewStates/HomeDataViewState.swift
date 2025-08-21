@@ -20,7 +20,7 @@ struct HomeDataViewState: Equatable {
     var movies: [Movie]
 
     /// Movies that are currently liked by the user
-    var likedMovies: [Movie]
+    var favoriteMovies: [Movie]
 
     /// Current search query (if any)
     var searchQuery: String?

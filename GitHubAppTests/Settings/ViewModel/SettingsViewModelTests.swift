@@ -17,17 +17,17 @@ import XCTest
 @MainActor
 final class SettingsViewModelTests: XCTestCase {
     var mockFavoritesService: MockFavoritesService!
-    var mockDomainInteractor: LikedDomainInteractor!
-    var likedMoviesViewModel: LikedMoviesViewModel!
+    var mockDomainInteractor: FavoritesDomainInteractor!
+    var favoriteMoviesViewModel: FavoritesMoviesViewModel!
     var settingsViewModel: SettingsViewModel!
     var cancellables: Set<AnyCancellable> = []
 
     override func setUp() {
         super.setUp()
         mockFavoritesService = MockFavoritesService()
-        mockDomainInteractor = LikedDomainInteractor(likedService: mockFavoritesService)
-        likedMoviesViewModel = LikedMoviesViewModel(domainInteractor: mockDomainInteractor)
-        settingsViewModel = SettingsViewModel(likedMoviesViewModel: likedMoviesViewModel)
+        mockDomainInteractor = FavoritesDomainInteractor(favoritesService: mockFavoritesService)
+        favoriteMoviesViewModel = FavoritesMoviesViewModel(domainInteractor: mockDomainInteractor)
+        settingsViewModel = SettingsViewModel(favoriteMoviesViewModel: favoriteMoviesViewModel)
         cancellables = Set<AnyCancellable>()
     }
 
@@ -35,7 +35,7 @@ final class SettingsViewModelTests: XCTestCase {
         cancellables.removeAll()
         mockFavoritesService = nil
         mockDomainInteractor = nil
-        likedMoviesViewModel = nil
+        favoriteMoviesViewModel = nil
         settingsViewModel = nil
         super.tearDown()
     }
@@ -64,7 +64,7 @@ final class SettingsViewModelTests: XCTestCase {
     // MARK: - Liked Movies Management Tests
 
     func testClearAllLikedMovies() {
-        let expectation = XCTestExpectation(description: "clear liked movies")
+        let expectation = XCTestExpectation(description: "clear favorite movies")
 
         // Given
         let testMovie = Movie(
@@ -80,12 +80,12 @@ final class SettingsViewModelTests: XCTestCase {
         // Wait for initial state and then clear
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             // When
-            self.settingsViewModel.clearAllLikedMovies()
+            self.settingsViewModel.clearAllFavoriteMovies()
 
             // Wait for async clear operation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 // Then
-                XCTAssertEqual(self.likedMoviesViewModel.likedMovies.count, 0)
+                XCTAssertEqual(self.favoriteMoviesViewModel.favoriteMovies.count, 0)
                 XCTAssertTrue(self.settingsViewModel.showClearLikedMoviesAlert)
                 expectation.fulfill()
             }

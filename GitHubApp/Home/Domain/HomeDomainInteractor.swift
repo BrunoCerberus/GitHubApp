@@ -41,11 +41,11 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     /// Service for fetching movie data from external APIs
     private let homeService: HomeService
 
-    /// Storage service for persisting liked movies
+    /// Storage service for persisting favorite movies
     private let storageService: StorageServiceProtocol
 
-    /// UserDefaults key for persisting liked movies (legacy, kept for migration)
-    private let likedMoviesKey: String = "likedMoviesKey"
+    /// UserDefaults key for persisting favorite movies (legacy, kept for migration)
+    private let favoriteMoviesKey: String = "favoriteMoviesKey"
 
     /// Combine cancellables for memory management
     private var cancellables: Set<AnyCancellable> = []
@@ -131,7 +131,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
             handleFetchUpcomingMovies()
         case let .searchMovies(query):
             handleSearchMovies(query: query)
-        case let .toggleMovieLike(movie):
+        case let .toggleMovieFavorite(movie):
             handleToggleMovieLike(movie: movie)
         case .loadPersistedLikedMovies:
             handleLoadPersistedLikedMovies()
@@ -173,7 +173,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
 
                     currentState = currentState.copy(
                         movies: movies,
-                        likedMovies: updatedLikedMovies,
+                        favoriteMovies: updatedLikedMovies,
                         isLoading: false,
                         error: nil,
                         searchQuery: nil
@@ -213,7 +213,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
 
                     currentState = currentState.copy(
                         movies: movies,
-                        likedMovies: updatedLikedMovies,
+                        favoriteMovies: updatedLikedMovies,
                         isLoading: false,
                         error: nil,
                         searchQuery: query
@@ -224,32 +224,32 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     }
 
     /**
-     * Handle toggling like status for a movie.
+     * Handle toggling favorite status for a movie.
      */
     private func handleToggleMovieLike(movie: Movie) {
         Task {
             do {
-                // Use StorageService to toggle the movie like status
-                let updatedLikedMovies = try await storageService.toggleMovieLike(movie)
+                // Use StorageService to toggle the movie favorite status
+                let updatedLikedMovies = try await storageService.toggleMovieFavorite(movie)
 
-                // Filter to only show liked movies that are in the current movies list
+                // Filter to only show favorite movies that are in the current movies list
                 let filteredLikedMovies = filterLikedMovies(from: currentState.movies, persistedLikedMovies: updatedLikedMovies)
 
                 // Update state on main thread
                 await MainActor.run {
-                    currentState = currentState.copy(likedMovies: filteredLikedMovies)
+                    currentState = currentState.copy(favoriteMovies: filteredLikedMovies)
                 }
             } catch {
                 print("⚠️ Failed to toggle movie like: \(error)")
                 await MainActor.run {
-                    currentState = currentState.copy(error: "Failed to update liked status")
+                    currentState = currentState.copy(error: "Failed to update favorite status")
                 }
             }
         }
     }
 
     /**
-     * Handle loading persisted liked movies.
+     * Handle loading persisted favorite movies.
      */
     private func handleLoadPersistedLikedMovies() {
         Task {
@@ -258,10 +258,10 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
                 let filteredLikedMovies = filterLikedMovies(from: currentState.movies, persistedLikedMovies: persistedLikedMovies)
 
                 await MainActor.run {
-                    currentState = currentState.copy(likedMovies: filteredLikedMovies)
+                    currentState = currentState.copy(favoriteMovies: filteredLikedMovies)
                 }
             } catch {
-                print("⚠️ Failed to load persisted liked movies: \(error)")
+                print("⚠️ Failed to load persisted favorite movies: \(error)")
             }
         }
     }
@@ -269,7 +269,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     // MARK: - Private Helper Methods
 
     /**
-     * Filter liked movies to only include those currently in the movies list.
+     * Filter favorite movies to only include those currently in the movies list.
      */
     private func filterLikedMovies(from movies: [Movie], persistedLikedMovies: [Movie]? = nil) -> [Movie] {
         let persisted = persistedLikedMovies ?? loadPersistedLikedMovies()
@@ -279,20 +279,20 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     }
 
     /**
-     * Save liked movies using StorageService.
+     * Save favorite movies using StorageService.
      */
     private func savePersistedLikedMovies(_ movies: [Movie]) {
         Task {
             do {
-                try await storageService.save(movies, context: StorageContext.likedMovies)
+                try await storageService.save(movies, context: StorageContext.favoriteMovies)
             } catch {
-                print("⚠️ Failed to save liked movies: \(error)")
+                print("⚠️ Failed to save favorite movies: \(error)")
             }
         }
     }
 
     /**
-     * Load liked movies using StorageService.
+     * Load favorite movies using StorageService.
      */
     private func loadPersistedLikedMovies() -> [Movie] {
         // Since this is called synchronously but StorageService is async,
@@ -302,13 +302,13 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     }
 
     /**
-     * Load liked movies asynchronously using StorageService.
+     * Load favorite movies asynchronously using StorageService.
      */
     private func loadPersistedLikedMoviesAsync() async -> [Movie] {
         do {
             return try await storageService.fetchLikedMovies()
         } catch {
-            print("⚠️ Failed to load liked movies: \(error)")
+            print("⚠️ Failed to load favorite movies: \(error)")
             return []
         }
     }
@@ -322,14 +322,14 @@ private extension HomeDomainState {
      */
     func copy(
         movies: [Movie]? = nil,
-        likedMovies: [Movie]? = nil,
+        favoriteMovies: [Movie]? = nil,
         isLoading: Bool? = nil,
         error: String?? = nil,
         searchQuery: String?? = nil
     ) -> HomeDomainState {
         HomeDomainState(
             movies: movies ?? self.movies,
-            likedMovies: likedMovies ?? self.likedMovies,
+            favoriteMovies: favoriteMovies ?? self.favoriteMovies,
             isLoading: isLoading ?? self.isLoading,
             error: error ?? self.error,
             searchQuery: searchQuery ?? self.searchQuery

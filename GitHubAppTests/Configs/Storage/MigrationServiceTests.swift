@@ -36,8 +36,8 @@ final class MigrationServiceTests: XCTestCase {
         try await migrationService.migrateToSwiftData(storageService: testStorageService)
 
         // Then - Should complete without errors
-        let likedMovies = try await testStorageService.fetchLikedMovies()
-        XCTAssertTrue(likedMovies.isEmpty)
+        let favoriteMovies = try await testStorageService.fetchLikedMovies()
+        XCTAssertTrue(favoriteMovies.isEmpty)
     }
 
     func testMigrationWithLikedMovies() async throws {
@@ -47,7 +47,7 @@ final class MigrationServiceTests: XCTestCase {
             Movie(id: 2, title: "Test Movie 2", overview: "Overview 2", posterPath: "/test2.jpg"),
         ]
         let moviesData = try JSONEncoder().encode(movies)
-        mockUserDefaults.set(moviesData, forKey: "likedMoviesKey")
+        mockUserDefaults.set(moviesData, forKey: "favoriteMoviesKey")
 
         // When
         try await migrationService.migrateToSwiftData(storageService: testStorageService)
@@ -59,7 +59,7 @@ final class MigrationServiceTests: XCTestCase {
         XCTAssertTrue(migratedMovies.contains { $0.id == 2 })
 
         // Verify UserDefaults was cleaned up
-        XCTAssertNil(mockUserDefaults.data(forKey: "likedMoviesKey"))
+        XCTAssertNil(mockUserDefaults.data(forKey: "favoriteMoviesKey"))
     }
 
     func testMigrationIsOnlyPerformedOnce() async throws {
@@ -68,7 +68,7 @@ final class MigrationServiceTests: XCTestCase {
             Movie(id: 1, title: "Test Movie", overview: "Overview", posterPath: "/test.jpg"),
         ]
         let moviesData = try JSONEncoder().encode(movies)
-        mockUserDefaults.set(moviesData, forKey: "likedMoviesKey")
+        mockUserDefaults.set(moviesData, forKey: "favoriteMoviesKey")
 
         // When - First migration
         try await migrationService.migrateToSwiftData(storageService: testStorageService)
@@ -78,7 +78,7 @@ final class MigrationServiceTests: XCTestCase {
             Movie(id: 2, title: "New Movie", overview: "New Overview", posterPath: "/new.jpg"),
         ]
         let newMoviesData = try JSONEncoder().encode(newMovies)
-        mockUserDefaults.set(newMoviesData, forKey: "likedMoviesKey")
+        mockUserDefaults.set(newMoviesData, forKey: "favoriteMoviesKey")
 
         // When - Second migration
         try await migrationService.migrateToSwiftData(storageService: testStorageService)
@@ -91,7 +91,7 @@ final class MigrationServiceTests: XCTestCase {
 
     func testMigrationWithInvalidData() async throws {
         // Given - Invalid JSON data
-        mockUserDefaults.set("invalid json data".data(using: .utf8), forKey: "likedMoviesKey")
+        mockUserDefaults.set("invalid json data".data(using: .utf8), forKey: "favoriteMoviesKey")
 
         // When & Then - Should not throw error
         try await migrationService.migrateToSwiftData(storageService: testStorageService)
@@ -104,7 +104,7 @@ final class MigrationServiceTests: XCTestCase {
         // Given
         let emptyMovies: [Movie] = []
         let moviesData = try JSONEncoder().encode(emptyMovies)
-        mockUserDefaults.set(moviesData, forKey: "likedMoviesKey")
+        mockUserDefaults.set(moviesData, forKey: "favoriteMoviesKey")
 
         // When
         try await migrationService.migrateToSwiftData(storageService: testStorageService)
@@ -114,6 +114,6 @@ final class MigrationServiceTests: XCTestCase {
         XCTAssertTrue(migratedMovies.isEmpty)
 
         // Verify UserDefaults was cleaned up even for empty array
-        XCTAssertNil(mockUserDefaults.data(forKey: "likedMoviesKey"))
+        XCTAssertNil(mockUserDefaults.data(forKey: "favoriteMoviesKey"))
     }
 }

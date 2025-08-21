@@ -12,7 +12,7 @@ import SwiftData
 /**
  * Live implementation of FavoritesService.
  *
- * This service handles all persistence operations for liked movies using StorageService.
+ * This service handles all persistence operations for favorite movies using StorageService.
  * It provides a reactive interface using Combine publishers while leveraging
  * the modern SwiftData-based storage system.
  */
@@ -47,11 +47,11 @@ final class LiveFavoritesService: FavoritesService {
     // MARK: - FavoritesService Implementation
 
     /**
-     * Load liked movies from persistence.
+     * Load favorite movies from persistence.
      *
-     * - Returns: Publisher emitting array of liked movies or error
+     * - Returns: Publisher emitting array of favorite movies or error
      */
-    func loadLikedMovies() -> AnyPublisher<[Movie], Error> {
+    func loadFavoriteMovies() -> AnyPublisher<[Movie], Error> {
         Future { [weak self] promise in
             guard let self else {
                 promise(.failure(FavoritesServiceError.serviceUnavailable))
@@ -71,12 +71,12 @@ final class LiveFavoritesService: FavoritesService {
     }
 
     /**
-     * Toggle the liked status of a movie.
+     * Toggle the favorite status of a movie.
      *
-     * - Parameter movie: The movie to toggle like status for
-     * - Returns: Publisher emitting updated array of liked movies or error
+     * - Parameter movie: The movie to toggle favorite status for
+     * - Returns: Publisher emitting updated array of favorite movies or error
      */
-    func toggleMovieLike(_ movie: Movie) -> AnyPublisher<[Movie], Error> {
+    func toggleMovieFavorite(_ movie: Movie) -> AnyPublisher<[Movie], Error> {
         Future { [weak self] promise in
             guard let self else {
                 promise(.failure(FavoritesServiceError.serviceUnavailable))
@@ -85,7 +85,7 @@ final class LiveFavoritesService: FavoritesService {
 
             Task {
                 do {
-                    let movies = try await self.storageService.toggleMovieLike(movie)
+                    let movies = try await self.storageService.toggleMovieFavorite(movie)
                     promise(.success(movies))
                 } catch {
                     promise(.failure(error))
@@ -96,11 +96,11 @@ final class LiveFavoritesService: FavoritesService {
     }
 
     /**
-     * Clear all liked movies.
+     * Clear all favorite movies.
      *
      * - Returns: Publisher emitting completion or error
      */
-    func clearAllLikedMovies() -> AnyPublisher<Void, Error> {
+    func clearAllFavoriteMovies() -> AnyPublisher<Void, Error> {
         Future { [weak self] promise in
             guard let self else {
                 promise(.failure(FavoritesServiceError.serviceUnavailable))
@@ -109,7 +109,7 @@ final class LiveFavoritesService: FavoritesService {
 
             Task {
                 do {
-                    try await self.storageService.clearLikedMovies()
+                    try await self.storageService.clearFavoriteMovies()
                     promise(.success(()))
                 } catch {
                     promise(.failure(error))

@@ -30,14 +30,14 @@ final class FavoritesServiceTests: XCTestCase {
 
     func testLoadLikedMoviesEmpty() {
         // Given
-        let expectation = XCTestExpectation(description: "Load empty liked movies")
+        let expectation = XCTestExpectation(description: "Load empty favorite movies")
         var result: [Movie]?
 
         // Clear pre-populated mock data
         mockFavoritesService.setMockLikedMovies([])
 
         // When
-        sut.loadLikedMovies()
+        sut.loadFavoriteMovies()
             .sink(
                 receiveCompletion: { completion in
                     if case .failure = completion {
@@ -67,7 +67,7 @@ final class FavoritesServiceTests: XCTestCase {
         mockFavoritesService.setMockLikedMovies([])
 
         // When
-        sut.toggleMovieLike(movie)
+        sut.toggleMovieFavorite(movie)
             .sink(
                 receiveCompletion: { completion in
                     if case .failure = completion {
@@ -99,7 +99,7 @@ final class FavoritesServiceTests: XCTestCase {
         mockFavoritesService.setMockLikedMovies([])
 
         // When - First add the movie
-        sut.toggleMovieLike(movie)
+        sut.toggleMovieFavorite(movie)
             .sink(
                 receiveCompletion: { _ in },
                 receiveValue: { movies in
@@ -112,7 +112,7 @@ final class FavoritesServiceTests: XCTestCase {
         wait(for: [addExpectation], timeout: 1.0)
 
         // Then add again to remove
-        sut.toggleMovieLike(movie)
+        sut.toggleMovieFavorite(movie)
             .sink(
                 receiveCompletion: { _ in },
                 receiveValue: { movies in
@@ -138,7 +138,7 @@ final class FavoritesServiceTests: XCTestCase {
         var loadResult: [Movie]?
 
         // When - First add a movie
-        sut.toggleMovieLike(movie)
+        sut.toggleMovieFavorite(movie)
             .sink(
                 receiveCompletion: { _ in },
                 receiveValue: { _ in
@@ -150,7 +150,7 @@ final class FavoritesServiceTests: XCTestCase {
         wait(for: [addExpectation], timeout: 1.0)
 
         // Then clear all
-        sut.clearAllLikedMovies()
+        sut.clearAllFavoriteMovies()
             .sink(
                 receiveCompletion: { _ in },
                 receiveValue: { _ in
@@ -162,7 +162,7 @@ final class FavoritesServiceTests: XCTestCase {
         wait(for: [clearExpectation], timeout: 1.0)
 
         // Then load to verify
-        sut.loadLikedMovies()
+        sut.loadFavoriteMovies()
             .sink(
                 receiveCompletion: { _ in },
                 receiveValue: { movies in
@@ -191,7 +191,7 @@ final class FavoritesServiceTests: XCTestCase {
         mockFavoritesService.setMockLikedMovies([])
 
         // When - Add movie1
-        sut.toggleMovieLike(movie1)
+        sut.toggleMovieFavorite(movie1)
             .sink(
                 receiveCompletion: { _ in },
                 receiveValue: { _ in

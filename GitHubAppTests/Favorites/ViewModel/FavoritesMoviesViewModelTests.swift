@@ -1,5 +1,5 @@
 //
-//  LikedMoviesViewModelTests.swift
+//  FavoritesMoviesViewModelTests.swift
 //  GitHubAppTests
 //
 
@@ -7,24 +7,24 @@ import Combine
 @testable import GitHubApp
 import XCTest
 
-final class LikedMoviesViewModelTests: XCTestCase {
+final class FavoritesMoviesViewModelTests: XCTestCase {
     private var mockFavoritesService: MockFavoritesService!
-    private var mockDomainInteractor: LikedDomainInteractor!
+    private var mockDomainInteractor: FavoritesDomainInteractor!
     private var cancellables: Set<AnyCancellable> = []
 
     override func setUp() {
         super.setUp()
-        // Clear persisted state used by LikedMoviesViewModel
-        UserDefaults.standard.removeObject(forKey: "likedMoviesKey")
+        // Clear persisted state used by FavoritesMoviesViewModel
+        UserDefaults.standard.removeObject(forKey: "favoriteMoviesKey")
 
         // Set up mock services
         mockFavoritesService = MockFavoritesService()
-        mockDomainInteractor = LikedDomainInteractor(likedService: mockFavoritesService)
+        mockDomainInteractor = FavoritesDomainInteractor(favoritesService: mockFavoritesService)
         cancellables = Set<AnyCancellable>()
     }
 
     override func tearDown() {
-        UserDefaults.standard.removeObject(forKey: "likedMoviesKey")
+        UserDefaults.standard.removeObject(forKey: "favoriteMoviesKey")
         cancellables.removeAll()
         mockFavoritesService = nil
         mockDomainInteractor = nil
@@ -37,24 +37,24 @@ final class LikedMoviesViewModelTests: XCTestCase {
         // Clear pre-populated mock data
         mockFavoritesService.setMockLikedMovies([])
 
-        let sut = LikedMoviesViewModel(domainInteractor: mockDomainInteractor)
+        let sut = FavoritesMoviesViewModel(domainInteractor: mockDomainInteractor)
         let expectation = XCTestExpectation(description: "toggle like test")
 
         // Wait for initial state to load
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertFalse(sut.isLiked(movie: movie))
+            XCTAssertFalse(sut.isFavorited(movie: movie))
 
-            sut.toggleLike(for: movie)
+            sut.toggleFavorite(for: movie)
 
             // Wait for async operation to complete
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                XCTAssertTrue(sut.isLiked(movie: movie))
+                XCTAssertTrue(sut.isFavorited(movie: movie))
 
-                sut.toggleLike(for: movie)
+                sut.toggleFavorite(for: movie)
 
                 // Wait for second async operation to complete
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    XCTAssertFalse(sut.isLiked(movie: movie))
+                    XCTAssertFalse(sut.isFavorited(movie: movie))
                     expectation.fulfill()
                 }
             }
@@ -71,19 +71,19 @@ final class LikedMoviesViewModelTests: XCTestCase {
         mockFavoritesService.setMockLikedMovies([])
 
         // first instance writes
-        let sut1 = LikedMoviesViewModel(domainInteractor: mockDomainInteractor)
+        let sut1 = FavoritesMoviesViewModel(domainInteractor: mockDomainInteractor)
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            sut1.toggleLike(for: movie)
+            sut1.toggleFavorite(for: movie)
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                XCTAssertTrue(sut1.isLiked(movie: movie))
+                XCTAssertTrue(sut1.isFavorited(movie: movie))
 
                 // second instance reads - use same mock service to ensure persistence
-                let sut2 = LikedMoviesViewModel(domainInteractor: self.mockDomainInteractor)
+                let sut2 = FavoritesMoviesViewModel(domainInteractor: self.mockDomainInteractor)
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    XCTAssertTrue(sut2.isLiked(movie: movie))
+                    XCTAssertTrue(sut2.isFavorited(movie: movie))
                     expectation.fulfill()
                 }
             }

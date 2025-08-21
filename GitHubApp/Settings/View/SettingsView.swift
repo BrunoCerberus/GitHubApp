@@ -14,7 +14,7 @@ import SwiftUI
  * This view provides:
  * - Profile image management with photo picker
  * - App version display
- * - Clear liked movies functionality
+ * - Clear favorite movies functionality
  * - App rating functionality
  */
 struct SettingsView: View {
@@ -40,7 +40,7 @@ struct SettingsView: View {
                     // Settings Cards
                     VStack(spacing: 16) {
                         appVersionCard
-                        clearLikedMoviesCard
+                        clearFavoriteMoviesCard
                         if !viewModel.settingsManager.hasRatedApp {
                             rateAppCard
                         }
@@ -81,23 +81,23 @@ struct SettingsView: View {
             }
         }
         .alert(
-            Localizable.settings.clearLikedMoviesAlertTitle,
+            Localizable.settings.clearFavoriteMoviesAlertTitle,
             isPresented: $viewModel.isClearLikedMoviesConfirmationPresented
         ) {
-            Button(Localizable.settings.clearLikedMoviesAlertClear, role: .destructive) {
-                viewModel.clearAllLikedMovies()
+            Button(Localizable.settings.clearFavoriteMoviesAlertClear, role: .destructive) {
+                viewModel.clearAllFavoriteMovies()
             }
-            Button(Localizable.settings.clearLikedMoviesAlertCancel, role: .cancel) {}
+            Button(Localizable.settings.clearFavoriteMoviesAlertCancel, role: .cancel) {}
         } message: {
-            Text(Localizable.settings.clearLikedMoviesConfirmation)
+            Text(Localizable.settings.clearFavoriteMoviesConfirmation)
         }
         .alert(
-            Localizable.settings.clearLikedMoviesAlertTitle,
+            Localizable.settings.clearFavoriteMoviesAlertTitle,
             isPresented: $viewModel.showClearLikedMoviesAlert
         ) {
             Button("OK") {}
         } message: {
-            Text(Localizable.settings.clearLikedMoviesAlertMessage)
+            Text(Localizable.settings.clearFavoriteMoviesAlertMessage)
         }
         .alert(
             Localizable.settings.rateApp,
@@ -235,7 +235,7 @@ struct SettingsView: View {
 
     // MARK: - Clear Liked Movies Card
 
-    private var clearLikedMoviesCard: some View {
+    private var clearFavoriteMoviesCard: some View {
         Button(action: {
             viewModel.showClearLikedMoviesConfirmation()
         }) {
@@ -245,7 +245,7 @@ struct SettingsView: View {
                         .font(.title2)
                         .foregroundColor(.red)
 
-                    Text(Localizable.settings.clearLikedMovies)
+                    Text(Localizable.settings.clearFavoriteMovies)
                         .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
@@ -335,5 +335,5 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView(viewModel: SettingsViewModel(likedMoviesViewModel: LikedMoviesViewModel()))
+    SettingsView(viewModel: SettingsViewModel(favoriteMoviesViewModel: FavoritesMoviesViewModel()))
 }

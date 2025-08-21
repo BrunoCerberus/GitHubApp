@@ -17,7 +17,7 @@ import XCTest
  */
 @MainActor
 final class SettingsViewTests: XCTestCase {
-    var likedMoviesViewModel: LikedMoviesViewModel!
+    var favoriteMoviesViewModel: FavoritesMoviesViewModel!
     var settingsViewModel: SettingsViewModel!
     var view: SettingsView!
 
@@ -29,8 +29,8 @@ final class SettingsViewTests: XCTestCase {
         UserDefaults.standard.removeObject(forKey: "hasRatedApp")
         UserDefaults.standard.synchronize()
 
-        likedMoviesViewModel = LikedMoviesViewModel()
-        settingsViewModel = SettingsViewModel(likedMoviesViewModel: likedMoviesViewModel)
+        favoriteMoviesViewModel = FavoritesMoviesViewModel()
+        settingsViewModel = SettingsViewModel(favoriteMoviesViewModel: favoriteMoviesViewModel)
         view = SettingsView(viewModel: settingsViewModel)
     }
 

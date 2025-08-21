@@ -10,7 +10,7 @@ import SwiftUI
 /**
  * Root SwiftUI container that wires the Coordinator into the UI.
  *
- * Hosts a `TabView` with the main navigation stack and the Liked tab.
+ * Hosts a `TabView` with the main navigation stack and the Favorites tab.
  */
 struct CoordinatorView: View {
     @StateObject private var coordinator: Coordinator
@@ -42,9 +42,9 @@ struct CoordinatorView: View {
             }
             .environmentObject(coordinator)
 
-            LikedMoviesView(viewModel: coordinator.likedMoviesViewModel)
+            FavoritesMoviesView(viewModel: coordinator.favoriteMoviesViewModel)
                 .tabItem {
-                    Label("Liked", systemImage: "heart")
+                    Label("Favorites", systemImage: "heart")
                 }
 
             SettingsView(viewModel: coordinator.settingsViewModel)

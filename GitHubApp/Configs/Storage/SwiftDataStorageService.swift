@@ -18,7 +18,7 @@ import SwiftData
  * Features:
  * - Generic object storage with type safety
  * - Context-based data organization
- * - Optimized movie operations for liked movies
+ * - Optimized movie operations for favorite movies
  * - Automatic migration from UserDefaults
  * - Thread-safe operations
  */
@@ -79,7 +79,7 @@ final class SwiftDataStorageService: StorageServiceProtocol {
     func save<T: Codable & Identifiable>(_ object: T, context: String?) async throws {
         do {
             if let movie = object as? Movie {
-                try await saveMovie(movie, context: context ?? StorageContext.likedMovies)
+                try await saveMovie(movie, context: context ?? StorageContext.favoriteMovies)
             } else {
                 // For other types, use UserSetting storage
                 let key = "\(T.self)_\(object.id)"
@@ -104,7 +104,7 @@ final class SwiftDataStorageService: StorageServiceProtocol {
     func fetch<T: Codable & Identifiable>(_ type: T.Type, context: String?) async throws -> [T] {
         do {
             if type == Movie.self {
-                let movies = try await fetchMovies(context: context ?? StorageContext.likedMovies)
+                let movies = try await fetchMovies(context: context ?? StorageContext.favoriteMovies)
                 return movies as! [T]
             } else {
                 // For other types, fetch from UserSetting
@@ -139,7 +139,7 @@ final class SwiftDataStorageService: StorageServiceProtocol {
     func delete<T: Codable & Identifiable>(_ object: T, context: String?) async throws {
         do {
             if let movie = object as? Movie {
-                try await deleteMovie(movie, context: context ?? StorageContext.likedMovies)
+                try await deleteMovie(movie, context: context ?? StorageContext.favoriteMovies)
             } else {
                 // For other types, delete from UserSetting
                 let key = "\(T.self)_\(object.id)"
@@ -161,7 +161,7 @@ final class SwiftDataStorageService: StorageServiceProtocol {
     func deleteAll(_ type: (some Codable & Identifiable).Type, context: String?) async throws {
         do {
             if type == Movie.self {
-                try await clearMovies(context: context ?? StorageContext.likedMovies)
+                try await clearMovies(context: context ?? StorageContext.favoriteMovies)
             } else {
                 // For other types, delete all from category
                 let category = context ?? "generic"
@@ -184,7 +184,7 @@ final class SwiftDataStorageService: StorageServiceProtocol {
     @MainActor
     func isMovieLiked(_ movie: Movie) async throws -> Bool {
         do {
-            let predicate = StoredMovie.moviePredicate(movieID: movie.id, context: StorageContext.likedMovies)
+            let predicate = StoredMovie.moviePredicate(movieID: movie.id, context: StorageContext.favoriteMovies)
             let descriptor = FetchDescriptor<StoredMovie>(predicate: predicate)
             let results = try context.fetch(descriptor)
             return !results.isEmpty
@@ -194,14 +194,14 @@ final class SwiftDataStorageService: StorageServiceProtocol {
     }
 
     @MainActor
-    func toggleMovieLike(_ movie: Movie) async throws -> [Movie] {
+    func toggleMovieFavorite(_ movie: Movie) async throws -> [Movie] {
         do {
             let isLiked = try await isMovieLiked(movie)
 
             if isLiked {
-                try await deleteMovie(movie, context: StorageContext.likedMovies)
+                try await deleteMovie(movie, context: StorageContext.favoriteMovies)
             } else {
-                try await saveMovie(movie, context: StorageContext.likedMovies)
+                try await saveMovie(movie, context: StorageContext.favoriteMovies)
             }
 
             return try await fetchLikedMovies()
@@ -212,12 +212,12 @@ final class SwiftDataStorageService: StorageServiceProtocol {
 
     @MainActor
     func fetchLikedMovies() async throws -> [Movie] {
-        try await fetchMovies(context: StorageContext.likedMovies)
+        try await fetchMovies(context: StorageContext.favoriteMovies)
     }
 
     @MainActor
-    func clearLikedMovies() async throws {
-        try await clearMovies(context: StorageContext.likedMovies)
+    func clearFavoriteMovies() async throws {
+        try await clearMovies(context: StorageContext.favoriteMovies)
     }
 
     // MARK: - Private Movie Helpers

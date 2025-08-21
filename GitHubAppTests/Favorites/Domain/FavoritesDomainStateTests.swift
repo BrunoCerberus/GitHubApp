@@ -1,5 +1,5 @@
 //
-//  LikedDomainStateTests.swift
+//  FavoritesDomainStateTests.swift
 //  GitHubAppTests
 //
 //  Created by bruno on feature/liked-clean-architecture.
@@ -8,13 +8,13 @@
 @testable import GitHubApp
 import XCTest
 
-final class LikedDomainStateTests: XCTestCase {
+final class FavoritesDomainStateTests: XCTestCase {
     func testInitialState() {
         // When
-        let state = LikedDomainState.initial
+        let state = FavoritesDomainState.initial
 
         // Then
-        XCTAssertTrue(state.likedMovies.isEmpty)
+        XCTAssertTrue(state.favoriteMovies.isEmpty)
         XCTAssertFalse(state.isLoading)
         XCTAssertNil(state.error)
     }
@@ -24,11 +24,11 @@ final class LikedDomainStateTests: XCTestCase {
         let movie1 = Movie(id: 1, title: "Test Movie 1", overview: "Overview 1", posterPath: "/test1.jpg")
         let movie2 = Movie(id: 2, title: "Test Movie 2", overview: "Overview 2", posterPath: "/test2.jpg")
 
-        let state1 = LikedDomainState(likedMovies: [movie1], isLoading: false, error: nil)
-        let state2 = LikedDomainState(likedMovies: [movie1], isLoading: false, error: nil)
-        let state3 = LikedDomainState(likedMovies: [movie2], isLoading: false, error: nil)
-        let state4 = LikedDomainState(likedMovies: [movie1], isLoading: true, error: nil)
-        let state5 = LikedDomainState(likedMovies: [movie1], isLoading: false, error: "Error")
+        let state1 = FavoritesDomainState(favoriteMovies: [movie1], isLoading: false, error: nil)
+        let state2 = FavoritesDomainState(favoriteMovies: [movie1], isLoading: false, error: nil)
+        let state3 = FavoritesDomainState(favoriteMovies: [movie2], isLoading: false, error: nil)
+        let state4 = FavoritesDomainState(favoriteMovies: [movie1], isLoading: true, error: nil)
+        let state5 = FavoritesDomainState(favoriteMovies: [movie1], isLoading: false, error: "Error")
 
         // When & Then
         XCTAssertEqual(state1, state2)
@@ -45,34 +45,34 @@ final class LikedDomainStateTests: XCTestCase {
         ]
 
         // When
-        let state = LikedDomainState(likedMovies: movies, isLoading: false, error: nil)
+        let state = FavoritesDomainState(favoriteMovies: movies, isLoading: false, error: nil)
 
         // Then
-        XCTAssertEqual(state.likedMovies.count, 2)
-        XCTAssertEqual(state.likedMovies, movies)
+        XCTAssertEqual(state.favoriteMovies.count, 2)
+        XCTAssertEqual(state.favoriteMovies, movies)
         XCTAssertFalse(state.isLoading)
         XCTAssertNil(state.error)
     }
 
     func testStateWithError() {
         // Given
-        let errorMessage = "Failed to load liked movies"
+        let errorMessage = "Failed to load favorite movies"
 
         // When
-        let state = LikedDomainState(likedMovies: [], isLoading: false, error: errorMessage)
+        let state = FavoritesDomainState(favoriteMovies: [], isLoading: false, error: errorMessage)
 
         // Then
-        XCTAssertTrue(state.likedMovies.isEmpty)
+        XCTAssertTrue(state.favoriteMovies.isEmpty)
         XCTAssertFalse(state.isLoading)
         XCTAssertEqual(state.error, errorMessage)
     }
 
     func testLoadingState() {
         // When
-        let state = LikedDomainState(likedMovies: [], isLoading: true, error: nil)
+        let state = FavoritesDomainState(favoriteMovies: [], isLoading: true, error: nil)
 
         // Then
-        XCTAssertTrue(state.likedMovies.isEmpty)
+        XCTAssertTrue(state.favoriteMovies.isEmpty)
         XCTAssertTrue(state.isLoading)
         XCTAssertNil(state.error)
     }

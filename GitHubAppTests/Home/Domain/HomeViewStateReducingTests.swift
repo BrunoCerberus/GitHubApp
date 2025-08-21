@@ -24,7 +24,7 @@ final class HomeViewStateReducingTests: XCTestCase {
         let errorMessage = "Network error occurred"
         let domainState = HomeDomainState(
             movies: [],
-            likedMovies: [],
+            favoriteMovies: [],
             isLoading: false,
             error: errorMessage,
             searchQuery: nil
@@ -45,7 +45,7 @@ final class HomeViewStateReducingTests: XCTestCase {
         // Given
         let domainState = HomeDomainState(
             movies: [],
-            likedMovies: [],
+            favoriteMovies: [],
             isLoading: true,
             error: nil,
             searchQuery: nil
@@ -70,7 +70,7 @@ final class HomeViewStateReducingTests: XCTestCase {
 
         let domainState = HomeDomainState(
             movies: [movie1, movie2],
-            likedMovies: [likedMovie],
+            favoriteMovies: [likedMovie],
             isLoading: false,
             error: nil,
             searchQuery: nil
@@ -83,10 +83,10 @@ final class HomeViewStateReducingTests: XCTestCase {
         if case let .success(dataViewState) = viewState {
             XCTAssertEqual(dataViewState.title, "Upcoming Movies")
             XCTAssertEqual(dataViewState.movies.count, 2)
-            XCTAssertEqual(dataViewState.likedMovies.count, 1)
+            XCTAssertEqual(dataViewState.favoriteMovies.count, 1)
             XCTAssertNil(dataViewState.searchQuery)
             XCTAssertEqual(dataViewState.movies.first?.title, "Movie 1")
-            XCTAssertEqual(dataViewState.likedMovies.first?.title, "Liked Movie")
+            XCTAssertEqual(dataViewState.favoriteMovies.first?.title, "Liked Movie")
         } else {
             XCTFail("Expected success state but got: \(viewState)")
         }
@@ -100,7 +100,7 @@ final class HomeViewStateReducingTests: XCTestCase {
 
         let domainState = HomeDomainState(
             movies: [movie1, movie2],
-            likedMovies: [],
+            favoriteMovies: [],
             isLoading: false,
             error: nil,
             searchQuery: searchQuery
@@ -113,7 +113,7 @@ final class HomeViewStateReducingTests: XCTestCase {
         if case let .success(dataViewState) = viewState {
             XCTAssertEqual(dataViewState.title, "Search Results")
             XCTAssertEqual(dataViewState.movies.count, 2)
-            XCTAssertTrue(dataViewState.likedMovies.isEmpty)
+            XCTAssertTrue(dataViewState.favoriteMovies.isEmpty)
             XCTAssertEqual(dataViewState.searchQuery, searchQuery)
             XCTAssertEqual(dataViewState.movies.first?.title, "Search Result 1")
         } else {
@@ -125,7 +125,7 @@ final class HomeViewStateReducingTests: XCTestCase {
         // Given - State with both error and loading
         let domainState = HomeDomainState(
             movies: [],
-            likedMovies: [],
+            favoriteMovies: [],
             isLoading: true,
             error: "Error message",
             searchQuery: nil
@@ -146,7 +146,7 @@ final class HomeViewStateReducingTests: XCTestCase {
         // Given
         let domainState = HomeDomainState(
             movies: [],
-            likedMovies: [],
+            favoriteMovies: [],
             isLoading: false,
             error: nil,
             searchQuery: nil
@@ -159,7 +159,7 @@ final class HomeViewStateReducingTests: XCTestCase {
         if case let .success(dataViewState) = viewState {
             XCTAssertEqual(dataViewState.title, "Upcoming Movies")
             XCTAssertTrue(dataViewState.movies.isEmpty)
-            XCTAssertTrue(dataViewState.likedMovies.isEmpty)
+            XCTAssertTrue(dataViewState.favoriteMovies.isEmpty)
             XCTAssertNil(dataViewState.searchQuery)
         } else {
             XCTFail("Expected success state but got: \(viewState)")

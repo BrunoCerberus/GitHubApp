@@ -16,8 +16,8 @@ final class HomeDomainActionTests: XCTestCase {
         let action5 = HomeDomainAction.searchMovies("different")
 
         let movie = createMockMovie(id: 1, title: "Test Movie")
-        let action6 = HomeDomainAction.toggleMovieLike(movie)
-        let action7 = HomeDomainAction.toggleMovieLike(movie)
+        let action6 = HomeDomainAction.toggleMovieFavorite(movie)
+        let action7 = HomeDomainAction.toggleMovieFavorite(movie)
 
         let action8 = HomeDomainAction.loadPersistedLikedMovies
         let action9 = HomeDomainAction.loadPersistedLikedMovies
@@ -38,7 +38,7 @@ final class HomeDomainActionTests: XCTestCase {
         // Given/When/Then
         let fetchAction = HomeDomainAction.fetchUpcomingMovies
         let searchAction = HomeDomainAction.searchMovies("query")
-        let toggleAction = HomeDomainAction.toggleMovieLike(createMockMovie(id: 1, title: "Test"))
+        let toggleAction = HomeDomainAction.toggleMovieFavorite(createMockMovie(id: 1, title: "Test"))
         let loadAction = HomeDomainAction.loadPersistedLikedMovies
 
         // Verify that all cases can be instantiated
