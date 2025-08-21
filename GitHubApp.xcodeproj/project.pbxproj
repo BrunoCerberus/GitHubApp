@@ -29,6 +29,7 @@
 		2E909FD5864E83D2D3573D49 /* FavoritesDataViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE06D8188671E65C9C306794 /* FavoritesDataViewState.swift */; };
 		2FF46CF8B792475A4C5FE6B8 /* HomeViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1AECDB3B54A5C16F44B975 /* HomeViewState.swift */; };
 		30E9B297C39BB0215ED23AEA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DD65EE1A94EB96515FCE0B35 /* Localizable.strings */; };
+		3644643AFCC43FA04E0FEA62 /* HomeViewModelCleanArchitectureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14604DD0CBA7A6FF5448142 /* HomeViewModelCleanArchitectureTests.swift */; };
 		36DA9099FB5D2C89FF0DFB60 /* ServiceLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28E1D9470B0FCE1A0B49FFA9 /* ServiceLocator.swift */; };
 		3731CC7F6A6B8AA91CAE6A91 /* CoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7E7AE5F273CD093D0820DEA /* CoordinatorTests.swift */; };
 		398716AEC9556BA21878E8FE /* FavoritesViewStateReducing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1BF5172327432833522363 /* FavoritesViewStateReducing.swift */; };
@@ -258,6 +259,7 @@
 		BDD89CE9D7E0FD3BA7ACF281 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		BDDCDC80EFF1F8A8BA65564B /* SharedMovie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedMovie.swift; sourceTree = "<group>"; };
 		BF4EC8F557939293F4555669 /* GitHubAppWidgetExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = GitHubAppWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C14604DD0CBA7A6FF5448142 /* HomeViewModelCleanArchitectureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModelCleanArchitectureTests.swift; sourceTree = "<group>"; };
 		C1A4E17536733E9E9B87592A /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		C24B537659EE5A09E502CBBD /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
 		C25BB6100187142341F560F6 /* MigrationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationService.swift; sourceTree = "<group>"; };
@@ -343,6 +345,7 @@
 		0062B4A433F108ABABA9B334 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				C14604DD0CBA7A6FF5448142 /* HomeViewModelCleanArchitectureTests.swift */,
 				4470E33C78EC78EC3DA5583A /* HomeViewModelTests.swift */,
 				5BCD4BD5F5DCBD585641415D /* MovieDetailsViewModelTests.swift */,
 			);
@@ -1181,6 +1184,7 @@
 				F0AD67A04920DD3ECAD114C5 /* HomeNavigationRouterAdditionalTests.swift in Sources */,
 				01EEA149D533F34ED4F0E0E1 /* HomeNavigationRouterTests.swift in Sources */,
 				AEF58A94CBA1B5E9E40415F9 /* HomeServiceTests.swift in Sources */,
+				3644643AFCC43FA04E0FEA62 /* HomeViewModelCleanArchitectureTests.swift in Sources */,
 				FE28CF6CC5A7DE5249E2F404 /* HomeViewModelTests.swift in Sources */,
 				D649DD72861A1DDB4511920F /* HomeViewStateReducingTests.swift in Sources */,
 				E3A1C16A2E594F1FE5F77CC3 /* HomeViewTests.swift in Sources */,
