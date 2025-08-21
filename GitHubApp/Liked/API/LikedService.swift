@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+import SwiftData
 
 /**
  * Protocol defining the interface for liked movies service operations.
@@ -28,37 +29,36 @@ protocol LikedServiceProtocol {
 /**
  * Service responsible for managing liked movies persistence and operations.
  *
- * This service handles all persistence operations for liked movies using UserDefaults.
- * It provides a reactive interface using Combine publishers.
+ * This service handles all persistence operations for liked movies using StorageService.
+ * It provides a reactive interface using Combine publishers while leveraging
+ * the modern SwiftData-based storage system.
  */
 final class LikedService: LikedServiceProtocol {
-    // MARK: - Constants
-
-    /// UserDefaults key for persisting liked movies
-    private let likedMoviesKey: String = "likedMoviesKey"
-
     // MARK: - Dependencies
 
-    /// UserDefaults instance for persistence
-    private let userDefaults: UserDefaults
-
-    /// JSON encoder for serialization
-    private let encoder: JSONEncoder
-
-    /// JSON decoder for deserialization
-    private let decoder: JSONDecoder
+    /// Storage service for persistence operations
+    private let storageService: StorageServiceProtocol
 
     // MARK: - Initialization
 
     /**
      * Initialize the service with dependencies.
      *
-     * - Parameter userDefaults: UserDefaults instance for persistence (defaults to .standard)
+     * - Parameter storageService: Storage service for persistence (defaults to shared instance)
      */
-    init(userDefaults: UserDefaults = .standard) {
-        self.userDefaults = userDefaults
-        encoder = JSONEncoder()
-        decoder = JSONDecoder()
+    init(storageService: StorageServiceProtocol? = nil) {
+        if let storageService {
+            self.storageService = storageService
+        } else {
+            // Use the shared storage service from factory
+            do {
+                self.storageService = try StorageServiceFactory.shared.getStorageService()
+            } catch {
+                // Fallback to legacy UserDefaults service if SwiftData fails
+                print("⚠️ Failed to initialize SwiftData storage, falling back to UserDefaults: \(error)")
+                self.storageService = UserDefaultsStorageService()
+            }
+        }
     }
 
     // MARK: - LikedServiceProtocol Implementation
@@ -75,11 +75,13 @@ final class LikedService: LikedServiceProtocol {
                 return
             }
 
-            do {
-                let movies = try loadPersistedLikedMovies()
-                promise(.success(movies))
-            } catch {
-                promise(.failure(error))
+            Task {
+                do {
+                    let movies = try await self.storageService.fetchLikedMovies()
+                    promise(.success(movies))
+                } catch {
+                    promise(.failure(error))
+                }
             }
         }
         .eraseToAnyPublisher()
@@ -98,21 +100,13 @@ final class LikedService: LikedServiceProtocol {
                 return
             }
 
-            do {
-                var movies = try loadPersistedLikedMovies()
-
-                if let index = movies.firstIndex(where: { $0.id == movie.id }) {
-                    // Remove from liked movies if already liked
-                    movies.remove(at: index)
-                } else {
-                    // Add to liked movies if not liked
-                    movies.append(movie)
+            Task {
+                do {
+                    let movies = try await self.storageService.toggleMovieLike(movie)
+                    promise(.success(movies))
+                } catch {
+                    promise(.failure(error))
                 }
-
-                try savePersistedLikedMovies(movies)
-                promise(.success(movies))
-            } catch {
-                promise(.failure(error))
             }
         }
         .eraseToAnyPublisher()
@@ -130,11 +124,13 @@ final class LikedService: LikedServiceProtocol {
                 return
             }
 
-            do {
-                try savePersistedLikedMovies([])
-                promise(.success(()))
-            } catch {
-                promise(.failure(error))
+            Task {
+                do {
+                    try await self.storageService.clearLikedMovies()
+                    promise(.success(()))
+                } catch {
+                    promise(.failure(error))
+                }
             }
         }
         .eraseToAnyPublisher()
@@ -147,46 +143,22 @@ final class LikedService: LikedServiceProtocol {
      * - Returns: Publisher emitting boolean result or error
      */
     func isMovieLiked(_ movie: Movie) -> AnyPublisher<Bool, Error> {
-        loadLikedMovies()
-            .map { likedMovies in
-                likedMovies.contains(where: { $0.id == movie.id })
+        Future { [weak self] promise in
+            guard let self else {
+                promise(.failure(LikedServiceError.serviceUnavailable))
+                return
             }
-            .eraseToAnyPublisher()
-    }
 
-    // MARK: - Private Helper Methods
-
-    /**
-     * Load liked movies from UserDefaults.
-     *
-     * - Returns: Array of persisted liked movies
-     * - Throws: LikedServiceError if decoding fails
-     */
-    private func loadPersistedLikedMovies() throws -> [Movie] {
-        guard let data = userDefaults.data(forKey: likedMoviesKey) else {
-            return [] // No data found, return empty array
+            Task {
+                do {
+                    let isLiked = try await self.storageService.isMovieLiked(movie)
+                    promise(.success(isLiked))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
         }
-
-        do {
-            return try decoder.decode([Movie].self, from: data)
-        } catch {
-            throw LikedServiceError.decodingFailed(error)
-        }
-    }
-
-    /**
-     * Save liked movies to UserDefaults.
-     *
-     * - Parameter movies: Array of movies to persist
-     * - Throws: LikedServiceError if encoding fails
-     */
-    private func savePersistedLikedMovies(_ movies: [Movie]) throws {
-        do {
-            let data = try encoder.encode(movies)
-            userDefaults.set(data, forKey: likedMoviesKey)
-        } catch {
-            throw LikedServiceError.encodingFailed(error)
-        }
+        .eraseToAnyPublisher()
     }
 }
 
