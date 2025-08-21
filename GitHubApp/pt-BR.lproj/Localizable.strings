@@ -11,9 +11,9 @@
 "movie_details.reviews.title" = "Avaliações";
 "movie_details.reviews.empty" = "Nenhuma avaliação disponível";
 
-// MARK: - Liked Movies View
-"liked_movies.title" = "Filmes Favoritos";
-"liked_movies.empty_state" = "Seus filmes favoritos aparecerão aqui.";
+// MARK: - Favorite Movies View
+"favorites.title" = "Filmes Favoritos";
+"favorites.empty_state" = "Seus filmes favoritos aparecerão aqui.";
 
 // MARK: - Settings View
 "settings.title" = "Configurações";

@@ -11,11 +11,9 @@
 "movie_details.reviews.title" = "Reviews";
 "movie_details.reviews.empty" = "No reviews available";
 
-// MARK: - Liked Movies View
-"liked_movies.title" = "Liked Movies";
-"liked_movies.empty_state" = "Your liked movies will appear here.";
-"liked_no_movies_title" = "No Liked Movies";
-"liked_movies_count_title" = "%d Liked Movies";
+// MARK: - Favorite Movies View
+"favorites.title" = "Favorite Movies";
+"favorites.empty_state" = "Your liked movies will appear here.";
 
 // MARK: - Settings View
 "settings.title" = "Settings";

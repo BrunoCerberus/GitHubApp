@@ -34,16 +34,17 @@ final class GitHubAppUITests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
 
-    /// Navigate to Liked tab to exercise FavoritesMoviesView
-    func testNavigateToLikedTab() throws {
+    /// Navigate to Favorites tab to exercise FavoritesMoviesView
+    func testNavigateToFavoritesTab() throws {
         let app = XCUIApplication()
         app.launchEnvironment["API_KEY"] = "ui-tests-key"
         app.launchEnvironment["XCTestConfigurationFilePath"] = "UI"
         app.launch()
 
-        app.tabBars.buttons["Liked"].tap()
-        // Expect the title to be visible in empty state
-        XCTAssertTrue(app.staticTexts["Liked Movies"].exists)
+        app.tabBars.buttons["Favorites"].tap()
+        // Expect the mock movie titles to be visible
+        XCTAssertTrue(app.staticTexts["Mock Movie 1"].exists)
+        XCTAssertTrue(app.staticTexts["Mock Movie 2"].exists)
     }
 
     /// Measures cold launch performance for the app

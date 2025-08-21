@@ -68,8 +68,8 @@ final class LocalizableTests: XCTestCase {
     func testLikedMoviesTitle() {
         let title = Localizable.favorites.title
 
-        XCTAssertFalse(title.isEmpty, "Liked movies title should not be empty")
-        XCTAssertNotEqual(title, "liked_movies.title", "String should be localized, not showing the key")
+        XCTAssertFalse(title.isEmpty, "Favorite movies title should not be empty")
+        XCTAssertNotEqual(title, "favorites.title", "String should be localized, not showing the key")
     }
 
     /**
@@ -78,8 +78,8 @@ final class LocalizableTests: XCTestCase {
     func testLikedMoviesEmptyState() {
         let emptyState = Localizable.favorites.emptyState
 
-        XCTAssertFalse(emptyState.isEmpty, "Liked movies empty state should not be empty")
-        XCTAssertNotEqual(emptyState, "liked_movies.empty_state", "String should be localized, not showing the key")
+        XCTAssertFalse(emptyState.isEmpty, "Favorite movies empty state should not be empty")
+        XCTAssertNotEqual(emptyState, "favorites.empty_state", "String should be localized, not showing the key")
     }
 
     // MARK: - API Errors Tests
@@ -120,7 +120,7 @@ final class LocalizableTests: XCTestCase {
      * Test that convenience access to favorite movies works correctly.
      */
     func testLikedMoviesConvenience() {
-        XCTAssertNotNil(Localizable.favorites, "Liked movies should be accessible")
+        XCTAssertNotNil(Localizable.favorites, "Favorite movies should be accessible")
         XCTAssertEqual(Localizable.favorites.title, Localizable.favorites.title, "Convenience access should match direct access")
     }
 
@@ -173,7 +173,7 @@ final class LocalizableTests: XCTestCase {
 
         for string in strings {
             XCTAssertFalse(string.isEmpty, "Localized string should not be empty: \(string)")
-            XCTAssertFalse(string.hasPrefix("movie_details.") || string.hasPrefix("liked_movies.") || string.hasPrefix("api_error."),
+            XCTAssertFalse(string.hasPrefix("movie_details.") || string.hasPrefix("favorites.") || string.hasPrefix("api_error."),
                            "String should be localized, not showing the key: \(string)")
         }
     }

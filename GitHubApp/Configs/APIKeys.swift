@@ -48,6 +48,7 @@ enum APIKeysProvider {
      */
     static let theMovieAPIKey: String = {
         // First try to get from environment variable (for CI/CD and debugging)
+
         if let apiKey = ProcessInfo.processInfo.environment["API_KEY"], !apiKey.isEmpty {
             return apiKey
         }
