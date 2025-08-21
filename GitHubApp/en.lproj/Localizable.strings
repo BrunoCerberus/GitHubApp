@@ -14,6 +14,8 @@
 // MARK: - Liked Movies View
 "liked_movies.title" = "Liked Movies";
 "liked_movies.empty_state" = "Your liked movies will appear here.";
+"liked_no_movies_title" = "No Liked Movies";
+"liked_movies_count_title" = "%d Liked Movies";
 
 // MARK: - Settings View
 "settings.title" = "Settings";

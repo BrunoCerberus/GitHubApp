@@ -17,53 +17,70 @@ struct LikedMoviesView: View {
     /// Selected movie to navigate to details
     @State private var selectedMovie: Movie?
 
-    /// View content: placeholder when empty, list otherwise
+    /// View content: loading, error, or success state
     var body: some View {
         NavigationStack {
             VStack {
-                if viewModel.likedMovies.isEmpty {
-                    Text(Localizable.likedMovies.title)
-                        .font(.largeTitle)
+                switch viewModel.viewState {
+                case .loading:
+                    ProgressView("Loading liked movies...")
+                        .font(.caption)
                         .padding()
-                    Text(Localizable.likedMovies.emptyState)
-                        .foregroundColor(.secondary)
-                } else {
-                    List(viewModel.likedMovies, id: \.id) { movie in
-                        Button(
-                            action: {
-                                selectedMovie = movie
-                            },
-                            label: {
-                                HStack {
-                                    AsyncImageViewer(
-                                        url: movie.posterURL,
-                                        placeholder: {
-                                            ProgressView()
-                                        }
-                                    )
-                                    .frame(width: 100)
-                                    VStack(alignment: .leading) {
-                                        Text(movie.title)
-                                            .font(.headline)
-                                        Text(movie.overview)
-                                            .font(.caption)
-                                            .lineLimit(3)
-                                    }
-                                    Spacer()
-                                    Button(action: {
-                                               viewModel.toggleLike(for: movie)
-                                           },
-                                           label: {
-                                               Image(systemName: viewModel.isLiked(movie: movie) ? "heart.fill" : "heart")
-                                                   .foregroundColor(.red)
-                                           })
-                                           .buttonStyle(PlainButtonStyle())
-                                }
-                            }
-                        )
-                        .buttonStyle(PlainButtonStyle())
+                case let .error(message):
+                    VStack {
+                        Image(systemName: "exclamationmark.triangle")
+                            .foregroundColor(.red)
+                        Text("Error")
+                            .font(.headline)
+                        Text(message)
+                            .foregroundColor(.secondary)
                     }
-                    .scrollIndicators(.hidden)
+                    .padding()
+                case let .success(dataViewState):
+                    if dataViewState.isEmpty {
+                        Text(Localizable.likedMovies.title)
+                            .font(.largeTitle)
+                            .padding()
+                        Text(Localizable.likedMovies.emptyState)
+                            .foregroundColor(.secondary)
+                    } else {
+                        List(dataViewState.likedMovies, id: \.id) { movie in
+                            Button(
+                                action: {
+                                    selectedMovie = movie
+                                },
+                                label: {
+                                    HStack {
+                                        AsyncImageViewer(
+                                            url: movie.posterURL,
+                                            placeholder: {
+                                                ProgressView()
+                                            }
+                                        )
+                                        .frame(width: 100)
+                                        VStack(alignment: .leading) {
+                                            Text(movie.title)
+                                                .font(.headline)
+                                            Text(movie.overview)
+                                                .font(.caption)
+                                                .lineLimit(3)
+                                        }
+                                        Spacer()
+                                        Button(action: {
+                                                   viewModel.toggleLike(for: movie)
+                                               },
+                                               label: {
+                                                   Image(systemName: viewModel.isLiked(movie: movie) ? "heart.fill" : "heart")
+                                                       .foregroundColor(.red)
+                                               })
+                                               .buttonStyle(PlainButtonStyle())
+                                    }
+                                }
+                            )
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                        .scrollIndicators(.hidden)
+                    }
                 }
             }
             .onAppear {

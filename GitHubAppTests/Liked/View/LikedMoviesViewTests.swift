@@ -29,9 +29,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testLikedMoviesListRenders() {
         let vm = LikedMoviesViewModel()
-        vm.likedMovies = [
+        vm.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
         let view = LikedMoviesView(viewModel: vm)
         let host = UIHostingController(rootView: view)
         XCTAssertNotNil(host.view)
@@ -39,10 +39,10 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testMultipleLikedMoviesListRenders() {
         let vm = LikedMoviesViewModel()
-        vm.likedMovies = [
+        vm.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie 1", overview: "Test Overview 1", posterPath: "/test1.jpg"),
             Movie(id: 2, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg"),
-        ]
+        ])
         let view = LikedMoviesView(viewModel: vm)
         let host = UIHostingController(rootView: view)
         XCTAssertNotNil(host.view)
@@ -51,9 +51,9 @@ final class LikedMoviesViewTests: XCTestCase {
     func testNavigationDestinationConfiguration() {
         // Given
         let testViewModel = LikedMoviesViewModel()
-        testViewModel.likedMovies = [
+        testViewModel.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let testView = LikedMoviesView(viewModel: testViewModel)
 
@@ -68,9 +68,9 @@ final class LikedMoviesViewTests: XCTestCase {
     func testOnAppearBehavior() {
         // Given
         let testViewModel = LikedMoviesViewModel()
-        testViewModel.likedMovies = [
+        testViewModel.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let testView = LikedMoviesView(viewModel: testViewModel)
 
@@ -84,9 +84,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testAsyncImageViewerRendering() {
         let testViewModel = LikedMoviesViewModel()
-        testViewModel.likedMovies = [
+        testViewModel.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let testView = LikedMoviesView(viewModel: testViewModel)
 
@@ -100,9 +100,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testButtonStylingConfiguration() {
         let testViewModel = LikedMoviesViewModel()
-        testViewModel.likedMovies = [
+        testViewModel.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let testView = LikedMoviesView(viewModel: testViewModel)
 
@@ -116,10 +116,10 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testScrollIndicatorsHiddenConfiguration() {
         let testViewModel = LikedMoviesViewModel()
-        testViewModel.likedMovies = [
+        testViewModel.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
             Movie(id: 2, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg"),
-        ]
+        ])
 
         let testView = LikedMoviesView(viewModel: testViewModel)
 
@@ -133,9 +133,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testTextStylingAndConfiguration() {
         let testViewModel = LikedMoviesViewModel()
-        testViewModel.likedMovies = [
+        testViewModel.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let testView = LikedMoviesView(viewModel: testViewModel)
 
@@ -149,9 +149,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testVStackAlignmentConfiguration() {
         let testViewModel = LikedMoviesViewModel()
-        testViewModel.likedMovies = [
+        testViewModel.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let testView = LikedMoviesView(viewModel: testViewModel)
 
@@ -165,9 +165,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testHStackLayoutConfiguration() {
         let testViewModel = LikedMoviesViewModel()
-        testViewModel.likedMovies = [
+        testViewModel.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let testView = LikedMoviesView(viewModel: testViewModel)
 
@@ -181,9 +181,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testFrameConfigurationForAsyncImageViewer() {
         let testViewModel = LikedMoviesViewModel()
-        testViewModel.likedMovies = [
+        testViewModel.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let testView = LikedMoviesView(viewModel: testViewModel)
 
@@ -198,9 +198,9 @@ final class LikedMoviesViewTests: XCTestCase {
     func testLineLimitConfigurationForOverviewText() {
         // Given
         let testViewModel = LikedMoviesViewModel()
-        testViewModel.likedMovies = [
+        testViewModel.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let testView = LikedMoviesView(viewModel: testViewModel)
 
@@ -214,9 +214,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testSpacerConfiguration() {
         let testViewModel = LikedMoviesViewModel()
-        testViewModel.likedMovies = [
+        testViewModel.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let testView = LikedMoviesView(viewModel: testViewModel)
 
@@ -252,9 +252,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testMovieListButtonConfiguration() {
         let vm = LikedMoviesViewModel()
-        vm.likedMovies = [
+        vm.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let view = LikedMoviesView(viewModel: vm)
         let host = UIHostingController(rootView: view)
@@ -266,9 +266,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testMovieDetailsNavigationSetup() {
         let vm = LikedMoviesViewModel()
-        vm.likedMovies = [
+        vm.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let view = LikedMoviesView(viewModel: vm)
 
@@ -279,9 +279,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testLikeButtonConfiguration() {
         let vm = LikedMoviesViewModel()
-        vm.likedMovies = [
+        vm.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let view = LikedMoviesView(viewModel: vm)
 
@@ -294,7 +294,7 @@ final class LikedMoviesViewTests: XCTestCase {
     func testMovieTitleAndOverviewDisplay() {
         let vm = LikedMoviesViewModel()
         let testMovie = Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
-        vm.likedMovies = [testMovie]
+        vm.setLikedMoviesForTesting([testMovie])
 
         let view = LikedMoviesView(viewModel: vm)
 
@@ -308,7 +308,7 @@ final class LikedMoviesViewTests: XCTestCase {
     func testPosterURLConfiguration() {
         let vm = LikedMoviesViewModel()
         let testMovie = Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
-        vm.likedMovies = [testMovie]
+        vm.setLikedMoviesForTesting([testMovie])
 
         let view = LikedMoviesView(viewModel: vm)
 
@@ -329,11 +329,11 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testListConfigurationWithMultipleMovies() {
         let vm = LikedMoviesViewModel()
-        vm.likedMovies = [
+        vm.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie 1", overview: "Test Overview 1", posterPath: "/test1.jpg"),
             Movie(id: 2, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg"),
             Movie(id: 3, title: "Test Movie 3", overview: "Test Overview 3", posterPath: "/test3.jpg"),
-        ]
+        ])
 
         let view = LikedMoviesView(viewModel: vm)
 
@@ -345,9 +345,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testPlainButtonStyleConfiguration() {
         let vm = LikedMoviesViewModel()
-        vm.likedMovies = [
+        vm.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let view = LikedMoviesView(viewModel: vm)
 
@@ -358,9 +358,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testHeartIconConfiguration() {
         let vm = LikedMoviesViewModel()
-        vm.likedMovies = [
+        vm.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let view = LikedMoviesView(viewModel: vm)
 
@@ -372,9 +372,9 @@ final class LikedMoviesViewTests: XCTestCase {
 
     func testProgressViewPlaceholder() {
         let vm = LikedMoviesViewModel()
-        vm.likedMovies = [
+        vm.setLikedMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ]
+        ])
 
         let view = LikedMoviesView(viewModel: vm)
 
