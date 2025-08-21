@@ -84,6 +84,11 @@ struct LikedMoviesView: View {
                 }
             }
             .onAppear {
+                // Only refresh data if needed, to avoid loading flicker
+                if case let .success(dataViewState) = viewModel.viewState, !dataViewState.likedMovies.isEmpty {
+                    // Data already loaded, no need to reload
+                    return
+                }
                 viewModel.loadLikedMovies()
             }
             .navigationDestination(item: $selectedMovie) { movie in

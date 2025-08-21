@@ -64,9 +64,6 @@ final class LikedMoviesViewModel: CombineViewModel {
         self.serviceLocator = serviceLocator
 
         setupStateObservation()
-
-        // Load liked movies on initialization
-        loadLikedMovies()
     }
 
     // MARK: - Public Interface

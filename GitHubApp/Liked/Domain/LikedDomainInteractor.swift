@@ -52,7 +52,14 @@ final class LikedDomainInteractor: ObservableObject, CombineInteractor {
      */
     init(likedService: LikedServiceProtocol = LikedService()) {
         self.likedService = likedService
-        currentState = .initial
+
+        // Initialize with cached data to avoid loading flicker
+        let cachedMovies = Self.loadCachedMovies()
+        currentState = LikedDomainState(
+            likedMovies: cachedMovies,
+            isLoading: false,
+            error: nil
+        )
     }
 
     // MARK: - CombineInteractor Implementation
@@ -183,5 +190,23 @@ final class LikedDomainInteractor: ObservableObject, CombineInteractor {
      */
     private func refreshLikedMovies() {
         loadLikedMovies()
+    }
+
+    // MARK: - Static Helper Methods
+
+    /**
+     * Load cached movies synchronously to avoid loading flicker.
+     * This provides immediate data on initialization.
+     */
+    private static func loadCachedMovies() -> [Movie] {
+        let userDefaults = UserDefaults.standard
+        let likedMoviesKey = "likedMoviesKey"
+
+        guard let data = userDefaults.data(forKey: likedMoviesKey),
+              let movies = try? JSONDecoder().decode([Movie].self, from: data)
+        else {
+            return []
+        }
+        return movies
     }
 }
