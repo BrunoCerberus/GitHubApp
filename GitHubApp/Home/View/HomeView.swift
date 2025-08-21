@@ -70,7 +70,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
                         }
                         Spacer()
                         Button(action: {
-                                   viewModel.toggleLike(for: movie)
+                                   viewModel.toggleFavorite(for: movie)
                                },
                                label: {
                                    Image(systemName: dataViewState.favoriteMovies.contains(where: { $0.id == movie.id }) ? "heart.fill" : "heart")

@@ -13,6 +13,6 @@ import Foundation
 enum HomeViewEvent: Equatable {
     case fetchData
     case searchMovies(String)
-    case toggleLike(Movie)
+    case toggleFavorite(Movie)
     case loadFavoriteMovies
 }

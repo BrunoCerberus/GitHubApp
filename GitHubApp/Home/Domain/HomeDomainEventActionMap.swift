@@ -26,10 +26,10 @@ enum HomeDomainEventActionMap {
             .fetchUpcomingMovies
         case let .searchMovies(query):
             .searchMovies(query)
-        case let .toggleLike(movie):
+        case let .toggleFavorite(movie):
             .toggleMovieFavorite(movie)
         case .loadFavoriteMovies:
-            .loadPersistedLikedMovies
+            .loadPersistedFavoriteMovies
         }
     }
 }

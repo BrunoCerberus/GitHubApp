@@ -186,7 +186,7 @@ final class HomeDomainInteractorTests: XCTestCase {
 
             // When - load persisted favorite movies
             await MainActor.run {
-                self.sut.handleAction(.loadPersistedLikedMovies)
+                self.sut.handleAction(.loadPersistedFavoriteMovies)
             }
 
             // Wait for load to complete

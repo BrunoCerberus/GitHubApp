@@ -19,8 +19,8 @@ final class HomeDomainActionTests: XCTestCase {
         let action6 = HomeDomainAction.toggleMovieFavorite(movie)
         let action7 = HomeDomainAction.toggleMovieFavorite(movie)
 
-        let action8 = HomeDomainAction.loadPersistedLikedMovies
-        let action9 = HomeDomainAction.loadPersistedLikedMovies
+        let action8 = HomeDomainAction.loadPersistedFavoriteMovies
+        let action9 = HomeDomainAction.loadPersistedFavoriteMovies
 
         // Then
         XCTAssertEqual(action1, action2)
@@ -39,7 +39,7 @@ final class HomeDomainActionTests: XCTestCase {
         let fetchAction = HomeDomainAction.fetchUpcomingMovies
         let searchAction = HomeDomainAction.searchMovies("query")
         let toggleAction = HomeDomainAction.toggleMovieFavorite(createMockMovie(id: 1, title: "Test"))
-        let loadAction = HomeDomainAction.loadPersistedLikedMovies
+        let loadAction = HomeDomainAction.loadPersistedFavoriteMovies
 
         // Verify that all cases can be instantiated
         XCTAssertNotNil(fetchAction)

@@ -30,7 +30,7 @@ final class HomeDomainEventActionMapTests: XCTestCase {
         XCTAssertEqual(action, HomeDomainAction.searchMovies(query))
     }
 
-    func testMapToggleLikeEvent() {
+    func testMapToggleFavoriteEvent() {
         // Given
         let movie = createMockMovie(id: 1, title: "Test Movie")
         let event = HomeViewEvent.toggleFavorite(movie)
@@ -42,7 +42,7 @@ final class HomeDomainEventActionMapTests: XCTestCase {
         XCTAssertEqual(action, HomeDomainAction.toggleMovieFavorite(movie))
     }
 
-    func testMapLoadLikedMoviesEvent() {
+    func testMapLoadFavoriteMoviesEvent() {
         // Given
         let event = HomeViewEvent.loadFavoriteMovies
 
@@ -50,7 +50,7 @@ final class HomeDomainEventActionMapTests: XCTestCase {
         let action = HomeDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, HomeDomainAction.loadPersistedLikedMovies)
+        XCTAssertEqual(action, HomeDomainAction.loadPersistedFavoriteMovies)
     }
 
     func testAllViewEventsAreMapped() {

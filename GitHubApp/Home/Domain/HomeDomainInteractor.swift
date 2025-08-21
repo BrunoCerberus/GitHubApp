@@ -132,9 +132,9 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
         case let .searchMovies(query):
             handleSearchMovies(query: query)
         case let .toggleMovieFavorite(movie):
-            handleToggleMovieLike(movie: movie)
-        case .loadPersistedLikedMovies:
-            handleLoadPersistedLikedMovies()
+            handleToggleMovieFavorite(movie: movie)
+        case .loadPersistedFavoriteMovies:
+            handleLoadPersistedFavoriteMovies()
         }
     }
 
@@ -226,7 +226,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     /**
      * Handle toggling favorite status for a movie.
      */
-    private func handleToggleMovieLike(movie: Movie) {
+    private func handleToggleMovieFavorite(movie: Movie) {
         Task {
             do {
                 // Use StorageService to toggle the movie favorite status
@@ -251,7 +251,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     /**
      * Handle loading persisted favorite movies.
      */
-    private func handleLoadPersistedLikedMovies() {
+    private func handleLoadPersistedFavoriteMovies() {
         Task {
             do {
                 let persistedLikedMovies = try await storageService.fetchLikedMovies()

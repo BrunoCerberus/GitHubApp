@@ -151,7 +151,7 @@ final class HomeViewModel: CombineViewModel {
      * - Parameter movie: The movie to toggle favorite status for
      */
     func toggleLike(for movie: Movie) {
-        handle(.toggleLike(movie))
+        handle(.toggleFavorite(movie))
     }
 
     /**
