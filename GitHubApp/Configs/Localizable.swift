@@ -78,22 +78,22 @@ struct Localizable {
         static let appVersion = NSLocalizedString("settings.app_version", comment: "App Version label")
 
         /// "Clear Favorites" button
-        static let clearFavoriteMovies = NSLocalizedString("settings.clear_favorite_movies", comment: "Clear Favorites button")
+        static let clearFavoriteMovies = NSLocalizedString("settings.clear_favorited_movies", comment: "Clear Favorites button")
 
         /// "Clear Favorites" confirmation message
-        static let clearFavoriteMoviesConfirmation = NSLocalizedString("settings.clear_favorite_movies_confirmation", comment: "Clear Favorites confirmation message")
+        static let clearFavoriteMoviesConfirmation = NSLocalizedString("settings.clear_favorited_movies_confirmation", comment: "Clear Favorites confirmation message")
 
         /// "Clear Favorites" alert title
-        static let clearFavoriteMoviesAlertTitle = NSLocalizedString("settings.clear_favorite_movies_alert_title", comment: "Clear Favorites alert title")
+        static let clearFavoriteMoviesAlertTitle = NSLocalizedString("settings.clear_favorited_movies_alert_title", comment: "Clear Favorites alert title")
 
         /// "Clear Favorites" alert message
-        static let clearFavoriteMoviesAlertMessage = NSLocalizedString("settings.clear_favorite_movies_alert_message", comment: "Clear Favorites alert message")
+        static let clearFavoriteMoviesAlertMessage = NSLocalizedString("settings.clear_favorited_movies_alert_message", comment: "Clear Favorites alert message")
 
         /// "Clear All" button
-        static let clearFavoriteMoviesAlertClear = NSLocalizedString("settings.clear_favorite_movies_alert_clear", comment: "Clear All button")
+        static let clearFavoriteMoviesAlertClear = NSLocalizedString("settings.clear_favorited_movies_alert_clear", comment: "Clear All button")
 
         /// "Cancel" button
-        static let clearFavoriteMoviesAlertCancel = NSLocalizedString("settings.clear_favorite_movies_alert_cancel", comment: "Cancel button")
+        static let clearFavoriteMoviesAlertCancel = NSLocalizedString("settings.clear_favorited_movies_alert_cancel", comment: "Cancel button")
 
         /// "Rate App" section title
         static let rateApp = NSLocalizedString("settings.rate_app", comment: "Rate App section title")
