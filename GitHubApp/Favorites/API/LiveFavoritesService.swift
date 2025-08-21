@@ -37,9 +37,7 @@ final class LiveFavoritesService: FavoritesService {
             do {
                 self.storageService = try StorageServiceFactory.shared.getStorageService()
             } catch {
-                // Fallback to legacy UserDefaults service if SwiftData fails
-                print("⚠️ Failed to initialize SwiftData storage, falling back to UserDefaults: \(error)")
-                self.storageService = UserDefaultsStorageService()
+                fatalError("Failed to initialize storage service: \(error)")
             }
         }
     }

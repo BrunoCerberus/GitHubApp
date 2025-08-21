@@ -72,7 +72,6 @@ final class StorageServiceFactoryTests: XCTestCase {
         // Then
         XCTAssertEqual(config.type, .swiftData)
         XCTAssertFalse(config.isInMemory)
-        XCTAssertTrue(config.performMigration)
     }
 
     func testStorageConfigurationTesting() {
@@ -82,16 +81,5 @@ final class StorageServiceFactoryTests: XCTestCase {
         // Then
         XCTAssertEqual(config.type, .swiftData)
         XCTAssertTrue(config.isInMemory)
-        XCTAssertFalse(config.performMigration)
-    }
-
-    func testStorageConfigurationLegacy() {
-        // When
-        let config = StorageConfiguration.legacy
-
-        // Then
-        XCTAssertEqual(config.type, .userDefaults)
-        XCTAssertFalse(config.isInMemory)
-        XCTAssertFalse(config.performMigration)
     }
 }

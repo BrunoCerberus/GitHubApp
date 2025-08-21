@@ -14,8 +14,8 @@ final class FavoritesMoviesViewModelTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        // Clear persisted state used by FavoritesMoviesViewModel
-        UserDefaults.standard.removeObject(forKey: "favoriteMoviesKey")
+        // Reset storage cache for test isolation
+        StorageServiceFactory.shared.resetCache()
 
         // Set up mock services
         mockFavoritesService = MockFavoritesService()
@@ -24,7 +24,7 @@ final class FavoritesMoviesViewModelTests: XCTestCase {
     }
 
     override func tearDown() {
-        UserDefaults.standard.removeObject(forKey: "favoriteMoviesKey")
+        StorageServiceFactory.shared.resetCache()
         cancellables.removeAll()
         mockFavoritesService = nil
         mockDomainInteractor = nil

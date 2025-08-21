@@ -44,9 +44,6 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     /// Storage service for persisting favorite movies
     private let storageService: StorageServiceProtocol
 
-    /// UserDefaults key for persisting favorite movies (legacy, kept for migration)
-    private let favoriteMoviesKey: String = "favoriteMoviesKey"
-
     /// Combine cancellables for memory management
     private var cancellables: Set<AnyCancellable> = []
 
@@ -87,9 +84,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
             do {
                 self.storageService = try StorageServiceFactory.shared.getStorageService()
             } catch {
-                // Fallback to legacy UserDefaults service if SwiftData fails
-                print("⚠️ HomeDomainInteractor: Failed to initialize SwiftData storage, falling back to UserDefaults: \(error)")
-                self.storageService = UserDefaultsStorageService()
+                fatalError("Failed to initialize storage service: \(error)")
             }
         }
 

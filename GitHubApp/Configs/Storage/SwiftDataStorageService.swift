@@ -31,9 +31,6 @@ final class SwiftDataStorageService: StorageServiceProtocol {
     /// SwiftData model context for database operations
     private let context: ModelContext
 
-    /// Migration service for UserDefaults data
-    private let migrationService: MigrationService
-
     // MARK: - Initialization
 
     /**
@@ -41,10 +38,9 @@ final class SwiftDataStorageService: StorageServiceProtocol {
      *
      * - Parameters:
      *   - container: Optional model container (creates default if nil)
-     *   - performMigration: Whether to automatically migrate UserDefaults data
      * - Throws: StorageError if initialization fails
      */
-    init(container: ModelContainer? = nil, performMigration: Bool = true) throws {
+    init(container: ModelContainer? = nil) throws {
         do {
             // Set up SwiftData container and context
             if let container {
@@ -60,14 +56,6 @@ final class SwiftDataStorageService: StorageServiceProtocol {
             }
 
             context = ModelContext(self.container)
-            migrationService = MigrationService()
-
-            // Perform migration if requested
-            if performMigration {
-                Task { @MainActor in
-                    try await migrateFromUserDefaults()
-                }
-            }
         } catch {
             throw StorageError.saveFailure("Failed to initialize SwiftDataStorageService: \(error.localizedDescription)")
         }
@@ -276,16 +264,5 @@ final class SwiftDataStorageService: StorageServiceProtocol {
         }
 
         try self.context.save()
-    }
-
-    // MARK: - Migration
-
-    @MainActor
-    private func migrateFromUserDefaults() async throws {
-        do {
-            try await migrationService.migrateToSwiftData(storageService: self)
-        } catch {
-            throw StorageError.migrationFailure("UserDefaults migration failed: \(error.localizedDescription)")
-        }
     }
 }

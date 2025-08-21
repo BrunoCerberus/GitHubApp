@@ -18,13 +18,13 @@ final class HomeDomainInteractorTests: XCTestCase {
         mockHomeService = MockHomeService()
         mockStorageService = MockStorageService()
         sut = HomeDomainInteractor(homeService: mockHomeService, storageService: mockStorageService)
-        UserDefaults.standard.removeObject(forKey: "favoriteMoviesKey")
+        StorageServiceFactory.shared.resetCache()
         // Ensure API key exists in case anything inadvertently touches HomeAPI
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
     }
 
     override func tearDown() {
-        UserDefaults.standard.removeObject(forKey: "favoriteMoviesKey")
+        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.removeMovieAPIKey()
         cancellables.removeAll()
         sut = nil

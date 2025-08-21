@@ -28,10 +28,20 @@ final class HomeViewTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
+        // Reset storage service cache to ensure fresh instances
+        StorageServiceFactory.shared.resetCache()
+
         router = HomeNavigationRouter()
         mockService = MockHomeService()
         viewModel = HomeViewModel(service: mockService)
         view = HomeView(router: router, viewModel: viewModel)
+    }
+
+    override func tearDown() {
+        // Reset storage service cache for test isolation
+        StorageServiceFactory.shared.resetCache()
+
+        super.tearDown()
     }
 
     /// Snapshot of populated HomeView matches stored reference

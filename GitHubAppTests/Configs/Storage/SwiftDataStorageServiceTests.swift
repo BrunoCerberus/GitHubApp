@@ -25,7 +25,7 @@ final class SwiftDataStorageServiceTests: XCTestCase {
             allowsSave: true
         )
         let container = try ModelContainer(for: schema, configurations: [configuration])
-        sut = try SwiftDataStorageService(container: container, performMigration: false)
+        sut = try SwiftDataStorageService(container: container)
         cancellables = Set<AnyCancellable>()
     }
 

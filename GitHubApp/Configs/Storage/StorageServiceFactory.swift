@@ -97,13 +97,7 @@ final class StorageServiceFactory {
         switch config.type {
         case .swiftData:
             let container = try createModelContainer(for: config)
-            return try SwiftDataStorageService(
-                container: container,
-                performMigration: config.performMigration
-            )
-        case .userDefaults:
-            // Fallback to UserDefaults-based service (for legacy support)
-            return UserDefaultsStorageService()
+            return try SwiftDataStorageService(container: container)
         }
     }
 
@@ -128,140 +122,20 @@ final class StorageServiceFactory {
 struct StorageConfiguration {
     enum StorageType {
         case swiftData
-        case userDefaults
     }
 
     let type: StorageType
     let isInMemory: Bool
-    let performMigration: Bool
 
     /// Production configuration with persistent SwiftData storage
     static let production = StorageConfiguration(
         type: .swiftData,
-        isInMemory: false,
-        performMigration: true
+        isInMemory: false
     )
 
     /// Testing configuration with in-memory storage
     static let testing = StorageConfiguration(
         type: .swiftData,
-        isInMemory: true,
-        performMigration: false
+        isInMemory: true
     )
-
-    /// Legacy configuration using UserDefaults
-    static let legacy = StorageConfiguration(
-        type: .userDefaults,
-        isInMemory: false,
-        performMigration: false
-    )
-}
-
-// MARK: - Legacy UserDefaults Service
-
-/**
- * Legacy UserDefaults-based storage service for backward compatibility.
- *
- * This service maintains the existing UserDefaults-based storage
- * and can serve as a fallback if SwiftData is not available.
- */
-final class UserDefaultsStorageService: StorageServiceProtocol {
-    private let userDefaults: UserDefaults
-    private let favoriteMoviesKey = "favoriteMoviesKey"
-
-    init(userDefaults: UserDefaults = .standard) {
-        self.userDefaults = userDefaults
-    }
-
-    // MARK: - Generic CRUD Operations (Limited Implementation)
-
-    func save(_ object: some Codable & Identifiable, context _: String?) async throws {
-        if let movie = object as? Movie {
-            var movies = try await fetchLikedMovies()
-            if !movies.contains(where: { $0.id == movie.id }) {
-                movies.append(movie)
-                try saveMoviesToUserDefaults(movies)
-            }
-        }
-        // Other types not supported in legacy mode
-    }
-
-    func save(_ objects: [some Codable & Identifiable], context: String?) async throws {
-        for object in objects {
-            try await save(object, context: context)
-        }
-    }
-
-    func fetch<T: Codable & Identifiable>(_ type: T.Type, context _: String?) async throws -> [T] {
-        if type == Movie.self {
-            let movies = try await fetchLikedMovies()
-            return movies as! [T]
-        }
-        return []
-    }
-
-    func fetch<T: Codable & Identifiable>(_ type: T.Type, id: T.ID, context: String?) async throws -> T? {
-        let objects = try await fetch(type, context: context)
-        return objects.first { $0.id == id }
-    }
-
-    func delete(_ objects: [some Codable & Identifiable], context: String?) async throws {
-        for object in objects {
-            try await delete(object, context: context)
-        }
-    }
-
-    func delete(_ object: some Codable & Identifiable, context _: String?) async throws {
-        if let movie = object as? Movie {
-            var movies = try await fetchLikedMovies()
-            movies.removeAll { $0.id == movie.id }
-            try saveMoviesToUserDefaults(movies)
-        }
-    }
-
-    func deleteAll(_ type: (some Codable & Identifiable).Type, context _: String?) async throws {
-        if type == Movie.self {
-            try await clearFavoriteMovies()
-        }
-    }
-
-    // MARK: - Movie Operations
-
-    func isMovieLiked(_ movie: Movie) async throws -> Bool {
-        let movies = try await fetchLikedMovies()
-        return movies.contains { $0.id == movie.id }
-    }
-
-    func toggleMovieFavorite(_ movie: Movie) async throws -> [Movie] {
-        var movies = try await fetchLikedMovies()
-
-        if let index = movies.firstIndex(where: { $0.id == movie.id }) {
-            movies.remove(at: index)
-        } else {
-            movies.append(movie)
-        }
-
-        try saveMoviesToUserDefaults(movies)
-        return movies
-    }
-
-    func fetchLikedMovies() async throws -> [Movie] {
-        guard let data = userDefaults.data(forKey: favoriteMoviesKey),
-              let movies = try? JSONDecoder().decode([Movie].self, from: data)
-        else {
-            return []
-        }
-        return movies
-    }
-
-    func clearFavoriteMovies() async throws {
-        userDefaults.removeObject(forKey: favoriteMoviesKey)
-    }
-
-    // MARK: - Private Methods
-
-    private func saveMoviesToUserDefaults(_ movies: [Movie]) throws {
-        let data = try JSONEncoder().encode(movies)
-        userDefaults.set(data, forKey: favoriteMoviesKey)
-    }
 }

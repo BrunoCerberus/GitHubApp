@@ -28,7 +28,13 @@ final class Coordinator: ObservableObject, CoordinatorProtocol {
     private let serviceLocator: ServiceLocator
 
     /// Shared HomeViewModel instance
-    lazy var homeViewModel: HomeViewModel = .init(serviceLocator: serviceLocator)
+    lazy var homeViewModel: HomeViewModel = {
+        do {
+            return try .init(serviceLocator: serviceLocator)
+        } catch {
+            fatalError("Failed to initialize HomeViewModel: \(error)")
+        }
+    }()
 
     /// Shared FavoritesMoviesViewModel instance
     lazy var favoriteMoviesViewModel: FavoritesMoviesViewModel = .init(serviceLocator: serviceLocator)

@@ -10,12 +10,12 @@ import XCTest
 final class FavoritesMoviesViewTests: XCTestCase {
     override func setUp() {
         super.setUp()
-        UserDefaults.standard.removeObject(forKey: "favoriteMoviesKey")
+        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("ui-key")
     }
 
     override func tearDown() {
-        UserDefaults.standard.removeObject(forKey: "favoriteMoviesKey")
+        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.removeMovieAPIKey()
         super.tearDown()
     }

@@ -12,19 +12,19 @@ final class HomeViewModelTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        UserDefaults.standard.removeObject(forKey: "favoriteMoviesKey")
+        StorageServiceFactory.shared.resetCache()
         // Ensure API key exists in case anything inadvertently touches HomeAPI
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
     }
 
     override func tearDown() {
-        UserDefaults.standard.removeObject(forKey: "favoriteMoviesKey")
+        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.removeMovieAPIKey()
         cancellables.removeAll()
         super.tearDown()
     }
 
-    func testFetchDataPopulatesMoviesAndLikedSync() {
+    func testFetchDataPopulatesMoviesAndFavoritesSync() {
         let service = MockHomeService()
         let sut = HomeViewModel(service: service)
 
