@@ -10,21 +10,19 @@ import Combine
 import XCTest
 
 final class LikedServiceTests: XCTestCase {
-    private var sut: LikedService!
-    private var mockUserDefaults: UserDefaults!
+    private var sut: LikedServiceProtocol!
+    private var mockLikedService: MockLikedService!
     private var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
         super.setUp()
-        mockUserDefaults = UserDefaults(suiteName: "LikedServiceTests")
-        mockUserDefaults.removePersistentDomain(forName: "LikedServiceTests")
-        sut = LikedService(userDefaults: mockUserDefaults)
+        mockLikedService = MockLikedService()
+        sut = mockLikedService
         cancellables = Set<AnyCancellable>()
     }
 
     override func tearDown() {
-        mockUserDefaults.removePersistentDomain(forName: "LikedServiceTests")
-        mockUserDefaults = nil
+        mockLikedService = nil
         sut = nil
         cancellables = nil
         super.tearDown()

@@ -80,7 +80,10 @@ final class HomeViewModel: CombineViewModel {
         }
 
         // Initialize domain interactor
-        self.domainInteractor = domainInteractor ?? HomeDomainInteractor(homeService: resolvedService)
+        self.domainInteractor = domainInteractor ?? HomeDomainInteractor(
+            homeService: resolvedService,
+            serviceLocator: serviceLocator
+        )
 
         // Initialize view state reducer
         self.viewStateReducer = viewStateReducer ?? HomeViewStateReducer()

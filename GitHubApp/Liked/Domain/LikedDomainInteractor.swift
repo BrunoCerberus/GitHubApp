@@ -48,13 +48,26 @@ final class LikedDomainInteractor: ObservableObject, CombineInteractor {
     /**
      * Initialize the interactor with dependencies.
      *
-     * - Parameter likedService: Service for handling liked movies persistence
+     * - Parameter likedService: Service for handling liked movies persistence (optional, will use ServiceLocator if nil)
+     * - Parameter serviceLocator: Service locator for dependency injection (optional)
      */
-    init(likedService: LikedServiceProtocol = LikedService()) {
-        self.likedService = likedService
+    init(likedService: LikedServiceProtocol? = nil, serviceLocator: ServiceLocator? = nil) {
+        // Use provided service or get from ServiceLocator
+        if let likedService {
+            self.likedService = likedService
+        } else if let serviceLocator {
+            do {
+                self.likedService = try serviceLocator.retrieve(LikedServiceProtocol.self)
+            } catch {
+                print("⚠️ Failed to retrieve LikedService from ServiceLocator: \(error)")
+                self.likedService = LikedService()
+            }
+        } else {
+            self.likedService = LikedService()
+        }
 
         // Initialize with cached data to avoid loading flicker
-        let cachedMovies = Self.loadCachedMovies(from: likedService)
+        let cachedMovies = Self.loadCachedMovies(from: self.likedService)
         currentState = LikedDomainState(
             likedMovies: cachedMovies,
             isLoading: false,

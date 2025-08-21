@@ -55,16 +55,30 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     /**
      * Initialize the domain interactor with required dependencies.
      *
-     * - Parameter homeService: Service for movie data operations
+     * - Parameter homeService: Service for movie data operations (optional, will use ServiceLocator if nil)
      * - Parameter storageService: Storage service for persistence (defaults to shared instance)
+     * - Parameter serviceLocator: Service locator for dependency injection (optional)
      * - Parameter initialState: Initial domain state (defaults to HomeDomainState.initial)
      */
     init(
-        homeService: HomeServiceProtocol,
+        homeService: HomeServiceProtocol? = nil,
         storageService: StorageServiceProtocol? = nil,
+        serviceLocator: ServiceLocator? = nil,
         initialState: HomeDomainState = .initial
     ) {
-        self.homeService = homeService
+        // Initialize home service
+        if let homeService {
+            self.homeService = homeService
+        } else if let serviceLocator {
+            do {
+                self.homeService = try serviceLocator.retrieve(HomeServiceProtocol.self)
+            } catch {
+                print("⚠️ Failed to retrieve HomeService from ServiceLocator: \(error)")
+                self.homeService = HomeService()
+            }
+        } else {
+            self.homeService = HomeService()
+        }
 
         // Initialize storage service
         if let storageService {

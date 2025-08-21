@@ -59,7 +59,7 @@ final class LikedMoviesViewModel: CombineViewModel {
         viewStateReducer: LikedViewStateReducing? = nil,
         serviceLocator: ServiceLocator? = nil
     ) {
-        self.domainInteractor = domainInteractor ?? LikedDomainInteractor()
+        self.domainInteractor = domainInteractor ?? LikedDomainInteractor(serviceLocator: serviceLocator)
         self.viewStateReducer = viewStateReducer ?? LikedViewStateReducer()
         self.serviceLocator = serviceLocator
 
