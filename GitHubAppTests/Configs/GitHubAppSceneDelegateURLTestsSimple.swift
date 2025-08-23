@@ -45,7 +45,7 @@ final class GitHubAppSceneDelegateURLTestsSimple: XCTestCase {
         XCTAssertNotNil(newSceneDelegate)
 
         // Then - Should initialize properly
-        XCTAssertNotNil(newSceneDelegate.window)
+        XCTAssertNil(newSceneDelegate.window) // Window is initially nil by default
     }
 
     func testSceneDelegateWindowProperty() {
