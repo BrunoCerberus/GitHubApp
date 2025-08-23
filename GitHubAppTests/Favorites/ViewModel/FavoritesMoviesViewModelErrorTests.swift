@@ -46,9 +46,14 @@ final class FavoritesMoviesViewModelErrorTests: XCTestCase {
             serviceLocator: nil
         )
 
-        // Then - Should initialize with defaults
+        // Then - Should initialize with success state containing empty favorites to avoid loading flicker
         XCTAssertNotNil(viewModel)
-        XCTAssertEqual(viewModel.viewState, .loading)
+        if case let .success(dataState) = viewModel.viewState {
+            XCTAssertTrue(dataState.favoriteMovies.isEmpty)
+            XCTAssertEqual(dataState.title, "favorites_no_movies_title")
+        } else {
+            XCTFail("Expected success state with empty favorites")
+        }
     }
 
     func testInitializationWithServiceLocator() {
@@ -58,9 +63,14 @@ final class FavoritesMoviesViewModelErrorTests: XCTestCase {
         // When
         let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
 
-        // Then
+        // Then - Should initialize with success state containing empty favorites to avoid loading flicker
         XCTAssertNotNil(viewModel)
-        XCTAssertEqual(viewModel.viewState, .loading)
+        if case let .success(dataState) = viewModel.viewState {
+            XCTAssertTrue(dataState.favoriteMovies.isEmpty)
+            XCTAssertEqual(dataState.title, "favorites_no_movies_title")
+        } else {
+            XCTFail("Expected success state with empty favorites")
+        }
     }
 
     func testViewModelPropertiesInLoadingState() {
