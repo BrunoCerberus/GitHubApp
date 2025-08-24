@@ -101,7 +101,7 @@ final class GitHubAppSettingsUITests: XCTestCase {
         navigateToSettings()
 
         // Verify clear favorites card elements
-        let clearFavoritesText = app.staticTexts["Clear Favorite Movies?"]
+        let clearFavoritesText = app.staticTexts["Clear Favorite Movies"]
         XCTAssertTrue(clearFavoritesText.exists, "Clear Favorite Movies text should be visible")
 
         let descriptionText = app.staticTexts["Remove all movies from your favorites list"]
@@ -116,13 +116,13 @@ final class GitHubAppSettingsUITests: XCTestCase {
         XCTAssertTrue(chevronIcon.exists, "Chevron right icon should be visible")
 
         // Test clear favorites button interaction
-        let clearFavoritesButton = app.buttons.containing(.staticText, identifier: "Clear Favorite Movies?").firstMatch
+        let clearFavoritesButton = app.buttons.containing(.staticText, identifier: "Clear Favorite Movies").firstMatch
         XCTAssertTrue(clearFavoritesButton.exists, "Clear favorites button should exist")
 
         clearFavoritesButton.tap()
 
         // Verify confirmation alert appears
-        let confirmationAlert = app.alerts["Favorite Movies removed"]
+        let confirmationAlert = app.alerts["Remove favorite movies?"]
         XCTAssertTrue(confirmationAlert.waitForExistence(timeout: 2.0), "Confirmation alert should appear")
 
         // Verify alert buttons
@@ -141,10 +141,10 @@ final class GitHubAppSettingsUITests: XCTestCase {
     func testClearFavoriteMoviesConfirmation() throws {
         navigateToSettings()
 
-        let clearFavoritesButton = app.buttons.containing(.staticText, identifier: "Clear Favorite Movies?").firstMatch
+        let clearFavoritesButton = app.buttons.containing(.staticText, identifier: "Clear Favorite Movies").firstMatch
         clearFavoritesButton.tap()
 
-        let confirmationAlert = app.alerts["Favorite Movies removed"]
+        let confirmationAlert = app.alerts["Remove favorite movies?"]
         XCTAssertTrue(confirmationAlert.waitForExistence(timeout: 2.0), "Confirmation alert should appear")
 
         // Test clear confirmation
@@ -152,7 +152,7 @@ final class GitHubAppSettingsUITests: XCTestCase {
         clearButton.tap()
 
         // Verify success alert appears
-        let successAlert = app.alerts["Favorite Movies removed"]
+        let successAlert = app.alerts["Remove favorite movies?"]
         XCTAssertTrue(successAlert.waitForExistence(timeout: 3.0), "Success alert should appear")
 
         let okButton = successAlert.buttons["OK"]
@@ -243,7 +243,7 @@ final class GitHubAppSettingsUITests: XCTestCase {
         // Verify all main elements are still accessible after scrolling
         let profileImageText = app.staticTexts["Profile Image"]
         let appVersionText = app.staticTexts["App Version"]
-        let clearFavoritesText = app.staticTexts["Clear Favorite Movies?"]
+        let clearFavoritesText = app.staticTexts["Clear Favorite Movies"]
 
         XCTAssertTrue(profileImageText.exists, "Profile Image should be visible after scrolling")
         XCTAssertTrue(appVersionText.exists, "App Version should be visible after scrolling")
@@ -264,7 +264,7 @@ final class GitHubAppSettingsUITests: XCTestCase {
         let profileImageButton = app.buttons.containing(.image, identifier: "person.fill").firstMatch
         XCTAssertTrue(profileImageButton.isHittable, "Profile image button should be accessible")
 
-        let clearFavoritesButton = app.buttons.containing(.staticText, identifier: "Clear Favorite Movies?").firstMatch
+        let clearFavoritesButton = app.buttons.containing(.staticText, identifier: "Clear Favorite Movies").firstMatch
         XCTAssertTrue(clearFavoritesButton.isHittable, "Clear favorites button should be accessible")
 
         let rateAppButton = app.buttons.containing(.staticText, identifier: "Rate App").firstMatch
