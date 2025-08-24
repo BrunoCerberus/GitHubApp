@@ -1,0 +1,1 @@
+Run only the unit tests for the GitHubApp project using the `make test-unit` command. This executes unit tests while excluding UI tests.

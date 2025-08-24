@@ -1,0 +1,1 @@
+Stage all changes, create a commit, and push to the current branch. This will add all modified files, commit them with a message, and push to the remote repository.

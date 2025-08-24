@@ -1,0 +1,1 @@
+Discard all current changes in the working directory and reset to the last commit using `git reset --hard`. This will permanently remove all uncommitted changes.

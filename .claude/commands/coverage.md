@@ -1,0 +1,1 @@
+Run tests and generate a code coverage report for the GitHubApp project using the `make coverage` command. This will show the current test coverage percentage.

@@ -1,0 +1,1 @@
+Generate and update the code coverage badge using the `make coverage-badge` command. This will create or update the coverage.svg badge file with the current test coverage percentage.

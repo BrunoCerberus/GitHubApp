@@ -1,0 +1,1 @@
+Run the full test suite for the GitHubApp project using the `make test` command. This will execute all tests on the iOS 18.2 iPhone 16 Pro simulator.

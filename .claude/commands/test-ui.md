@@ -1,0 +1,1 @@
+Run only the UI tests for the GitHubApp project using the `make test-ui` command. This executes UI tests including snapshot testing while excluding unit tests.
