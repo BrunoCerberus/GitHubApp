@@ -16,7 +16,6 @@ import XCTest
 final class SettingsViewPhotoPickerTests: XCTestCase {
     var favoriteMoviesViewModel: FavoritesMoviesViewModel!
     var settingsViewModel: SettingsViewModel!
-    var view: SettingsView!
 
     override func setUp() {
         super.setUp()
@@ -28,13 +27,11 @@ final class SettingsViewPhotoPickerTests: XCTestCase {
 
         favoriteMoviesViewModel = FavoritesMoviesViewModel()
         settingsViewModel = SettingsViewModel(favoriteMoviesViewModel: favoriteMoviesViewModel)
-        view = SettingsView(viewModel: settingsViewModel)
     }
 
     override func tearDown() {
         favoriteMoviesViewModel = nil
         settingsViewModel = nil
-        view = nil
 
         // Clean up UserDefaults
         UserDefaults.standard.removeObject(forKey: "profileImageData")
@@ -48,7 +45,8 @@ final class SettingsViewPhotoPickerTests: XCTestCase {
 
     func testPhotoPickerPresentationState() {
         // Given
-        let hostingController = UIHostingController(rootView: view)
+        let localView = SettingsView(viewModel: settingsViewModel)
+        let hostingController = UIHostingController(rootView: localView)
         _ = hostingController.view
 
         // When - Initially should not be presented
@@ -65,7 +63,8 @@ final class SettingsViewPhotoPickerTests: XCTestCase {
 
     func testAllAlertStatesIndependently() {
         // Given
-        let hostingController = UIHostingController(rootView: view)
+        let localView = SettingsView(viewModel: settingsViewModel)
+        let hostingController = UIHostingController(rootView: localView)
         _ = hostingController.view
 
         // When & Then - Test all alert states can be toggled independently
@@ -97,7 +96,8 @@ final class SettingsViewPhotoPickerTests: XCTestCase {
 
     func testProfileImageSelectionWithValidImage() {
         // Given
-        let hostingController = UIHostingController(rootView: view)
+        let localView = SettingsView(viewModel: settingsViewModel)
+        let hostingController = UIHostingController(rootView: localView)
         _ = hostingController.view
 
         // Create a test image
@@ -113,20 +113,21 @@ final class SettingsViewPhotoPickerTests: XCTestCase {
     func testViewRenderingWithPhotoPickerPresented() {
         // Given
         settingsViewModel.isPhotoPickerPresented = true
-        let hostingController = UIHostingController(rootView: view)
+        let localView = SettingsView(viewModel: settingsViewModel)
+        let hostingController = UIHostingController(rootView: localView)
 
         // When
         _ = hostingController.view
-        _ = view.body
 
         // Then - Should render without crashing
-        XCTAssertNotNil(view)
+        XCTAssertNotNil(hostingController)
         XCTAssertTrue(settingsViewModel.isPhotoPickerPresented)
     }
 
     func testProfileImageWorkflowIntegration() {
         // Given
-        let hostingController = UIHostingController(rootView: view)
+        let localView = SettingsView(viewModel: settingsViewModel)
+        let hostingController = UIHostingController(rootView: localView)
         _ = hostingController.view
 
         // When - Full profile image workflow
@@ -148,7 +149,8 @@ final class SettingsViewPhotoPickerTests: XCTestCase {
 
     func testClearFavoritesWorkflowIntegration() {
         // Given
-        let hostingController = UIHostingController(rootView: view)
+        let localView = SettingsView(viewModel: settingsViewModel)
+        let hostingController = UIHostingController(rootView: localView)
         _ = hostingController.view
 
         // When - Full clear favorites workflow
@@ -174,7 +176,8 @@ final class SettingsViewPhotoPickerTests: XCTestCase {
 
     func testRateAppWorkflowIntegration() {
         // Given
-        let hostingController = UIHostingController(rootView: view)
+        let localView = SettingsView(viewModel: settingsViewModel)
+        let hostingController = UIHostingController(rootView: localView)
         _ = hostingController.view
 
         // When - Full rate app workflow
@@ -195,7 +198,8 @@ final class SettingsViewPhotoPickerTests: XCTestCase {
 
     func testUIStateConsistencyAfterMultipleInteractions() {
         // Given
-        let hostingController = UIHostingController(rootView: view)
+        let localView = SettingsView(viewModel: settingsViewModel)
+        let hostingController = UIHostingController(rootView: localView)
         _ = hostingController.view
 
         // When - Perform many UI interactions rapidly
@@ -217,7 +221,7 @@ final class SettingsViewPhotoPickerTests: XCTestCase {
         }
 
         // Then - Should maintain UI consistency
-        XCTAssertNotNil(view)
+        XCTAssertNotNil(hostingController)
         XCTAssertNotNil(settingsViewModel)
     }
 }

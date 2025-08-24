@@ -171,9 +171,6 @@ final class SettingsViewButtonInteractionTests: XCTestCase {
         // When - Force render all buttons and cards
         _ = hostingController.view
 
-        // Force all the computed properties to be evaluated
-        _ = view.body
-
         // Then - All buttons should render without crashing
         XCTAssertNotNil(view)
         XCTAssertNotNil(settingsViewModel)
@@ -190,7 +187,6 @@ final class SettingsViewButtonInteractionTests: XCTestCase {
 
         // When - Render with different states
         _ = hostingController.view
-        _ = view.body
 
         // Then - Should handle all states without crashing
         XCTAssertNotNil(view)

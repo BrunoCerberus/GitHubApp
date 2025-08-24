@@ -58,12 +58,13 @@ final class HomeViewSearchTests: XCTestCase {
     func testHomeViewBodyRendersCorrectly() {
         // Given
         let view = HomeView(router: router, viewModel: viewModel)
-
-        // When - Access the body property to trigger rendering
-        let body = view.body
-
-        // Then - Body should not be nil
-        XCTAssertNotNil(body)
+        // When - Embed the view in a UIHostingController to ensure proper SwiftUI View lifecycle
+        let hostingController = UIHostingController(rootView: view)
+        // Trigger view appearance
+        _ = hostingController.view
+        // Then - Verify the hosting controller and its root view exist
+        XCTAssertNotNil(hostingController)
+        XCTAssertNotNil(hostingController.rootView)
     }
 
     func testHomeViewWithLoadingState() {

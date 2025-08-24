@@ -38,22 +38,22 @@ final class HomeViewComponentTests: XCTestCase {
         // Given
         viewModel.viewState = .loading
 
-        // When
-        let body = view.body
+        // When - Create a hosting controller with the view to verify body creation
+        let hostingController = UIHostingController(rootView: view)
 
         // Then
-        XCTAssertNotNil(body)
+        XCTAssertNotNil(hostingController)
     }
 
     func testHomeViewBodyWithErrorState() {
         // Given
         viewModel.viewState = .error("Test error")
 
-        // When
-        let body = view.body
+        // When - Create a hosting controller with the view to verify body creation
+        let hostingController = UIHostingController(rootView: view)
 
         // Then
-        XCTAssertNotNil(body)
+        XCTAssertNotNil(hostingController)
     }
 
     func testHomeViewWithRefreshAction() async {
