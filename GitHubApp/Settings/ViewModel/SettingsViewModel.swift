@@ -5,146 +5,335 @@
 //  Created by bruno on settings functionality.
 //
 
+import Combine
+import EntropyCore
 import Foundation
-import PhotosUI
-import StoreKit
 import UIKit
 
 /**
- * ViewModel for managing settings functionality.
+ * ViewModel for the Settings screen using Clean Architecture principles.
  *
- * This ViewModel handles:
- * - Profile image selection and management
- * - Language selection
- * - App rating functionality
- * - Clearing favorite movies
- * - Settings persistence
+ * This ViewModel now follows Clean Architecture by:
+ * - Using CombineViewModel from EntropyCore
+ * - Having a single source of truth through viewState
+ * - Delegating business logic to SettingsDomainInteractor
+ * - Converting view events to domain actions
+ * - Converting domain state to view state
+ *
+ * Uses Combine for reactive programming and state management.
  */
-final class SettingsViewModel: ObservableObject {
-    /// Settings manager for handling settings
-    @Published var settingsManager: SettingsManager
+final class SettingsViewModel: CombineViewModel {
+    /// Single source of truth for the view state
+    @Published var viewState: SettingsViewState = .loading
 
-    /// Liked movies view model for clearing favorite movies
-    private let favoriteMoviesViewModel: FavoritesMoviesViewModel
+    // MARK: - CombineViewModel Requirements
 
-    /// Current app version
-    let appVersion: String
+    /// Type alias for the view event type
+    typealias ViewEventType = SettingsViewEvent
 
-    /// Current app build number
-    let appBuildNumber: String
+    /// Type alias for the view state type
+    typealias ViewStateType = SettingsViewState
 
-    /// Show photo picker
-    @Published var isPhotoPickerPresented = false
+    // MARK: - Dependencies
 
-    /// Show clear favorite movies confirmation
-    @Published var isClearLikedMoviesConfirmationPresented = false
+    /// Domain interactor handling business logic
+    private let domainInteractor: SettingsDomainInteractor
 
-    /// Show clear favorite movies alert
-    @Published var showClearLikedMoviesAlert = false
+    /// Reducer for converting domain state to view state
+    private let viewStateReducer: SettingsViewStateReducing
 
-    /// Show rate app thanks message
-    @Published var showRateAppThanks = false
+    /// Service locator for dependency management
+    private let serviceLocator: ServiceLocator?
 
-    /// Initialize the settings view model
-    /// - Parameter favoriteMoviesViewModel: View model for managing favorite movies
-    init(favoriteMoviesViewModel: FavoritesMoviesViewModel) {
-        self.favoriteMoviesViewModel = favoriteMoviesViewModel
-        settingsManager = SettingsManager()
+    // MARK: - Initialization
 
-        // Get app version and build number
-        if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
-           let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
-        {
-            appVersion = version
-            appBuildNumber = build
+    /**
+     * Initialize the ViewModel with dependencies.
+     *
+     * - Parameter service: Settings service for API calls (retrieved from ServiceLocator)
+     * - Parameter serviceLocator: Service locator for dependency injection
+     * - Parameter domainInteractor: Optional domain interactor (created if not provided)
+     * - Parameter viewStateReducer: Optional view state reducer (created if not provided)
+     */
+    init(
+        service: SettingsService? = nil,
+        serviceLocator: ServiceLocator? = nil,
+        domainInteractor: SettingsDomainInteractor? = nil,
+        viewStateReducer: SettingsViewStateReducing? = nil
+    ) {
+        // Store serviceLocator for dependency resolution
+        self.serviceLocator = serviceLocator
+
+        // Resolve service dependency
+        let resolvedService: SettingsService = if let service {
+            service
         } else {
-            appVersion = "1.0"
-            appBuildNumber = "1"
+            LiveSettingsService()
         }
+
+        // Initialize domain interactor
+        self.domainInteractor = domainInteractor ?? SettingsDomainInteractor(
+            settingsService: resolvedService,
+            serviceLocator: serviceLocator
+        )
+
+        // Initialize view state reducer
+        self.viewStateReducer = viewStateReducer ?? SettingsViewStateReducer()
+
+        // Set up state observation
+        setupStateObservation()
+
+        // Load initial data
+        loadInitialData()
     }
 
-    // MARK: - Profile Image Management
+    // MARK: - CombineViewModel Implementation
 
-    /// Handle profile image selection
-    /// - Parameter image: The selected image
+    /**
+     * Handle incoming view events and delegate to domain interactor.
+     *
+     * This method implements the CombineViewModel protocol by processing view events,
+     * converting them to domain actions, and sending them to the domain interactor.
+     *
+     * - Parameter event: The view event to handle
+     */
+    func handle(_ event: SettingsViewEvent) {
+        let domainAction = SettingsDomainEventActionMap.map(event)
+        domainInteractor.handleAction(domainAction)
+    }
+
+    /**
+     * Send view event - required by CombineViewModel protocol.
+     *
+     * This method is the protocol requirement for sending view events.
+     *
+     * - Parameter event: The view event to send
+     */
+    func sendViewEvent(_ event: SettingsViewEvent) {
+        handle(event)
+    }
+
+    // MARK: - Public Interface Methods
+
+    /**
+     * Handle profile image selection.
+     *
+     * Delegates to domain interactor through view event handling.
+     *
+     * - Parameter image: The selected image
+     */
     func handleProfileImageSelection(_ image: UIImage) {
-        settingsManager.saveProfileImage(image)
+        handle(.profileImageSelected(image))
     }
 
-    /// Clear profile image
+    /**
+     * Clear profile image.
+     *
+     * Delegates to domain interactor through view event handling.
+     */
     func clearProfileImage() {
-        settingsManager.clearProfileImage()
+        handle(.clearProfileImageTapped)
     }
 
-    // MARK: - Liked Movies Management
-
-    /// Clear all favorite movies
-    func clearAllFavoriteMovies() {
-        // Clear favorite movies from the view model
-        favoriteMoviesViewModel.clearAllFavoriteMovies()
-
-        // Show confirmation
-        showClearLikedMoviesAlert = true
-    }
-
-    // MARK: - App Rating
-
-    /// Rate the app
+    /**
+     * Rate the app.
+     *
+     * Delegates to domain interactor through view event handling.
+     */
     func rateApp() {
-        // Only proceed if the app hasn't been rated yet
-        guard !settingsManager.hasRatedApp else { return }
-
-        // Request app review (iOS 14.0+)
-        if #available(iOS 14.0, *) {
-            if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                // Only request review in production builds, not in test environments
-                #if DEBUG
-                    // In debug/test builds, just show the thanks message without requesting review
-                    print("DEBUG: Skipping app review request in debug/test build")
-                #else
-                    SKStoreReviewController.requestReview(in: scene)
-                #endif
-            }
-        } else {
-            // Fallback for older iOS versions
-            if let url = URL(string: "https://apps.apple.com/app/id1234567890") {
-                UIApplication.shared.open(url)
-            }
-        }
-
-        // Mark app as rated after requesting review
-        settingsManager.markAppAsRated()
-
-        // Show thanks message
-        showRateAppThanks = true
-
-        // Hide thanks message after a delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-            self?.showRateAppThanks = false
-        }
+        handle(.rateAppTapped)
     }
 
-    // MARK: - Photo Picker
+    /**
+     * Clear all favorite movies.
+     *
+     * Delegates to domain interactor through view event handling.
+     */
+    func clearAllFavoriteMovies() {
+        handle(.clearFavoriteMoviesConfirmed)
+    }
 
-    /// Show photo picker
+    /**
+     * Show photo picker.
+     *
+     * Delegates to domain interactor through view event handling.
+     */
     func showPhotoPicker() {
-        isPhotoPickerPresented = true
+        handle(.showPhotoPickerTapped)
     }
 
-    /// Hide photo picker
+    /**
+     * Hide photo picker.
+     *
+     * Delegates to domain interactor through view event handling.
+     */
     func hidePhotoPicker() {
-        isPhotoPickerPresented = false
+        handle(.hidePhotoPicker)
     }
 
-    // MARK: - Clear Liked Movies Confirmation
-
-    /// Show clear favorite movies confirmation
+    /**
+     * Show clear favorite movies confirmation.
+     *
+     * Delegates to domain interactor through view event handling.
+     */
     func showClearLikedMoviesConfirmation() {
-        isClearLikedMoviesConfirmationPresented = true
+        handle(.showClearFavoriteMoviesConfirmation)
     }
 
-    /// Hide clear favorite movies confirmation
+    /**
+     * Hide clear favorite movies confirmation.
+     *
+     * Delegates to domain interactor through view event handling.
+     */
     func hideClearLikedMoviesConfirmation() {
-        isClearLikedMoviesConfirmationPresented = false
+        handle(.hideClearFavoriteMoviesConfirmation)
+    }
+
+    // MARK: - Computed Properties from View State
+
+    /**
+     * Get current app version from view state.
+     *
+     * - Returns: App version string, or "1.0" if not in success state
+     */
+    var appVersion: String {
+        guard case let .success(dataViewState) = viewState else {
+            return "1.0"
+        }
+        return dataViewState.appVersion
+    }
+
+    /**
+     * Get current app build number from view state.
+     *
+     * - Returns: App build number string, or "1" if not in success state
+     */
+    var appBuildNumber: String {
+        guard case let .success(dataViewState) = viewState else {
+            return "1"
+        }
+        return dataViewState.appBuildNumber
+    }
+
+    /**
+     * Get current profile image from view state.
+     *
+     * - Returns: Profile image or nil if not available or not in success state
+     */
+    var profileImage: UIImage? {
+        guard case let .success(dataViewState) = viewState else {
+            return nil
+        }
+        return dataViewState.profileImage
+    }
+
+    /**
+     * Check if app has been rated from view state.
+     *
+     * - Returns: True if app has been rated, false otherwise
+     */
+    var hasRatedApp: Bool {
+        guard case let .success(dataViewState) = viewState else {
+            return false
+        }
+        return dataViewState.hasRatedApp
+    }
+
+    /**
+     * Check if photo picker is presented from view state.
+     *
+     * - Returns: True if photo picker is presented, false otherwise
+     */
+    var isPhotoPickerPresented: Bool {
+        guard case let .success(dataViewState) = viewState else {
+            return false
+        }
+        return dataViewState.isPhotoPickerPresented
+    }
+
+    /**
+     * Check if clear favorite movies confirmation is presented from view state.
+     *
+     * - Returns: True if confirmation is presented, false otherwise
+     */
+    var isClearLikedMoviesConfirmationPresented: Bool {
+        guard case let .success(dataViewState) = viewState else {
+            return false
+        }
+        return dataViewState.isClearFavoriteMoviesConfirmationPresented
+    }
+
+    /**
+     * Check if clear favorite movies alert should be shown from view state.
+     *
+     * - Returns: True if alert should be shown, false otherwise
+     */
+    var showClearLikedMoviesAlert: Bool {
+        guard case let .success(dataViewState) = viewState else {
+            return false
+        }
+        return dataViewState.showClearFavoriteMoviesAlert
+    }
+
+    /**
+     * Check if rate app thanks alert should be shown from view state.
+     *
+     * - Returns: True if alert should be shown, false otherwise
+     */
+    var showRateAppThanks: Bool {
+        guard case let .success(dataViewState) = viewState else {
+            return false
+        }
+        return dataViewState.showRateAppThanks
+    }
+
+    /**
+     * Get current error message from view state.
+     *
+     * - Returns: Error message if in error state, nil otherwise
+     */
+    var error: String? {
+        guard case let .error(errorMessage) = viewState else {
+            return nil
+        }
+        return errorMessage
+    }
+
+    // MARK: - Private Methods
+
+    /**
+     * Set up observation of domain state changes.
+     *
+     * This method observes the domain interactor's state and converts it to view state
+     * using the view state reducer.
+     */
+    private func setupStateObservation() {
+        domainInteractor.$currentState
+            .map { [weak self] domainState in
+                self?.viewStateReducer.reduce(domainState) ?? .loading
+            }
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$viewState)
+    }
+
+    /**
+     * Load initial data with appropriate timing to ensure state observation is established.
+     */
+    private func loadInitialData() {
+        // Use a small delay to ensure the state observation pipeline is fully set up
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.001) { [weak self] in
+            self?.handle(.viewDidAppear)
+        }
+    }
+
+    /**
+     * Cleanup method called when ViewModel is deallocated.
+     *
+     * Logs deallocation for debugging purposes.
+     */
+    deinit {
+        #if DEBUG
+            print("SettingsViewModel deallocated")
+        #endif
     }
 }

@@ -40,7 +40,7 @@ final class Coordinator: ObservableObject, CoordinatorProtocol {
     lazy var favoriteMoviesViewModel: FavoritesMoviesViewModel = .init(serviceLocator: serviceLocator)
 
     /// Shared SettingsViewModel instance
-    lazy var settingsViewModel: SettingsViewModel = .init(favoriteMoviesViewModel: favoriteMoviesViewModel)
+    lazy var settingsViewModel: SettingsViewModel = .init(serviceLocator: serviceLocator)
 
     /// Create a coordinator with a configured ServiceLocator
     init(serviceLocator: ServiceLocator) {

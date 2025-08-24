@@ -17,7 +17,7 @@ import XCTest
  */
 @MainActor
 final class SettingsViewTests: XCTestCase {
-    var favoriteMoviesViewModel: FavoritesMoviesViewModel!
+    var mockSettingsService: MockSettingsService!
     var settingsViewModel: SettingsViewModel!
     var view: SettingsView!
 
@@ -29,13 +29,23 @@ final class SettingsViewTests: XCTestCase {
         UserDefaults.standard.removeObject(forKey: "hasRatedApp")
         UserDefaults.standard.synchronize()
 
-        favoriteMoviesViewModel = FavoritesMoviesViewModel()
-        settingsViewModel = SettingsViewModel(favoriteMoviesViewModel: favoriteMoviesViewModel)
+        mockSettingsService = MockSettingsService()
+        settingsViewModel = SettingsViewModel(service: mockSettingsService)
         view = SettingsView(viewModel: settingsViewModel)
+    }
+
+    override func tearDown() {
+        mockSettingsService = nil
+        settingsViewModel = nil
+        view = nil
+        super.tearDown()
     }
 
     /// Snapshot of Settings view with default configuration
     func testSettingsView() async {
+        // Wait a moment for the view to load data
+        try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+
         _ = view.wrappedViewController
 
         // Using iPhone SE configuration but with iPhone 16 Pro dimensions
@@ -111,12 +121,22 @@ final class SettingsViewTests: XCTestCase {
     /// Test settings view initialization
     func testSettingsViewInitialization() {
         // Given
-        let customSettingsViewModel = SettingsViewModel(favoriteMoviesViewModel: favoriteMoviesViewModel)
+        let customMockService = MockSettingsService()
+        let customSettingsViewModel = SettingsViewModel(service: customMockService)
 
         // When
         let customView = SettingsView(viewModel: customSettingsViewModel)
 
         // Then
         XCTAssertNotNil(customView)
+    }
+
+    /// Test settings view with default initialization
+    func testSettingsViewDefaultInitialization() {
+        // When - Create view without providing a view model (should use default)
+        let defaultView = SettingsView()
+
+        // Then
+        XCTAssertNotNil(defaultView)
     }
 }

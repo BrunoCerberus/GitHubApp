@@ -26,46 +26,19 @@ struct SettingsView: View {
 
     /// Initialize the settings view
     /// - Parameter viewModel: The settings view model
-    init(viewModel: SettingsViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+    init(viewModel: SettingsViewModel? = nil) {
+        _viewModel = StateObject(wrappedValue: viewModel ?? SettingsViewModel())
     }
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 24) {
-                    // Header with Profile Section
-                    profileHeaderSection
-
-                    // Settings Cards
-                    VStack(spacing: 16) {
-                        appVersionCard
-                        clearFavoriteMoviesCard
-                        if !viewModel.settingsManager.hasRatedApp {
-                            rateAppCard
-                        }
-                    }
-                    .padding(.horizontal, 20)
-
-                    Spacer(minLength: 50)
-                }
-                .padding(.top, 20)
-            }
-            .background(
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color(.systemBackground),
-                        Color(.systemGray6).opacity(0.3),
-                    ]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .navigationTitle(Localizable.settings.title)
-            .navigationBarTitleDisplayMode(.large)
+            content
         }
         .photosPicker(
-            isPresented: $viewModel.isPhotoPickerPresented,
+            isPresented: Binding(
+                get: { viewModel.isPhotoPickerPresented },
+                set: { _ in viewModel.hidePhotoPicker() }
+            ),
             selection: $photoPickerItem,
             matching: .images
         )
@@ -82,18 +55,26 @@ struct SettingsView: View {
         }
         .alert(
             Localizable.settings.clearFavoriteMoviesAlertTitle,
-            isPresented: $viewModel.isClearLikedMoviesConfirmationPresented
+            isPresented: Binding(
+                get: { viewModel.isClearLikedMoviesConfirmationPresented },
+                set: { _ in viewModel.hideClearLikedMoviesConfirmation() }
+            )
         ) {
             Button(Localizable.settings.clearFavoriteMoviesAlertClear, role: .destructive) {
                 viewModel.clearAllFavoriteMovies()
             }
-            Button(Localizable.settings.clearFavoriteMoviesAlertCancel, role: .cancel) {}
+            Button(Localizable.settings.clearFavoriteMoviesAlertCancel, role: .cancel) {
+                viewModel.hideClearLikedMoviesConfirmation()
+            }
         } message: {
             Text(Localizable.settings.clearFavoriteMoviesConfirmation)
         }
         .alert(
             Localizable.settings.clearFavoriteMoviesAlertTitle,
-            isPresented: $viewModel.showClearLikedMoviesAlert
+            isPresented: Binding(
+                get: { viewModel.showClearLikedMoviesAlert },
+                set: { _ in /* Alert dismissal handled automatically */ }
+            )
         ) {
             Button("OK") {}
         } message: {
@@ -101,12 +82,127 @@ struct SettingsView: View {
         }
         .alert(
             Localizable.settings.rateApp,
-            isPresented: $viewModel.showRateAppThanks
+            isPresented: Binding(
+                get: { viewModel.showRateAppThanks },
+                set: { _ in /* Alert dismissal handled automatically */ }
+            )
         ) {
             Button("OK") {}
         } message: {
             Text(Localizable.settings.rateAppThanks)
         }
+        .onAppear {
+            viewModel.handle(.viewDidAppear)
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch viewModel.viewState {
+        case .loading:
+            loadingView
+        case .success:
+            successView
+        case let .error(message):
+            errorView(message)
+        }
+    }
+
+    private var loadingView: some View {
+        VStack {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle())
+                .scaleEffect(1.5)
+
+            Text("Loading settings...")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .padding(.top, 8)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(.systemBackground),
+                    Color(.systemGray6).opacity(0.3),
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+        .navigationTitle(Localizable.settings.title)
+        .navigationBarTitleDisplayMode(.large)
+    }
+
+    private func errorView(_ message: String) -> some View {
+        VStack(spacing: 16) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 48))
+                .foregroundColor(.orange)
+
+            Text("Settings Error")
+                .font(.title2)
+                .fontWeight(.semibold)
+
+            Text(message)
+                .font(.body)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+
+            Button("Retry") {
+                viewModel.handle(.viewDidAppear)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(.systemBackground),
+                    Color(.systemGray6).opacity(0.3),
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+        .navigationTitle(Localizable.settings.title)
+        .navigationBarTitleDisplayMode(.large)
+    }
+
+    private var successView: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                // Header with Profile Section
+                profileHeaderSection
+
+                // Settings Cards
+                VStack(spacing: 16) {
+                    appVersionCard
+                    clearFavoriteMoviesCard
+                    if !viewModel.hasRatedApp {
+                        rateAppCard
+                    }
+                }
+                .padding(.horizontal, 20)
+
+                Spacer(minLength: 50)
+            }
+            .padding(.top, 20)
+        }
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(.systemBackground),
+                    Color(.systemGray6).opacity(0.3),
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+        .navigationTitle(Localizable.settings.title)
+        .navigationBarTitleDisplayMode(.large)
     }
 
     // MARK: - Profile Header Section
@@ -133,7 +229,7 @@ struct SettingsView: View {
                         .frame(width: 120, height: 120)
                         .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
 
-                    if let profileImage = viewModel.settingsManager.profileImage {
+                    if let profileImage = viewModel.profileImage {
                         Image(uiImage: profileImage)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
@@ -335,5 +431,5 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView(viewModel: SettingsViewModel(favoriteMoviesViewModel: FavoritesMoviesViewModel()))
+    SettingsView()
 }
