@@ -76,7 +76,11 @@ final class MockStorageService: StorageServiceProtocol {
         if shouldSimulateErrors, let error = isMovieLikedError {
             throw error
         }
-        return movieLikedResult.self ? movieLikedResult : movies.contains { $0.id == movie.id }
+        // If movieLikedResult is set (true), use it; otherwise check actual movies
+        if movieLikedResult {
+            return movieLikedResult
+        }
+        return movies.contains { $0.id == movie.id }
     }
 
     func toggleMovieFavorite(_ movie: Movie) async throws -> [Movie] {

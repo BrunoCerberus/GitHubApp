@@ -35,10 +35,10 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
     // MARK: - Service Initialization Edge Cases
 
     func testInitializationWithNilServiceAndNilServiceLocator() {
-        // Given - Both service and serviceLocator are nil
+        // Given - Both homeService and serviceLocator are nil
 
         // When
-        let interactor = HomeDomainInteractor(service: nil, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(homeService: nil, serviceLocator: nil)
 
         // Then - Should initialize with default LiveHomeService
         XCTAssertNotNil(interactor)
@@ -50,7 +50,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         // Given - service is nil but serviceLocator exists (but doesn't have HomeService registered)
 
         // When
-        let interactor = HomeDomainInteractor(service: nil, serviceLocator: emptyServiceLocator)
+        let interactor = HomeDomainInteractor(homeService: nil, serviceLocator: emptyServiceLocator)
 
         // Then - Should fall back to LiveHomeService when service locator retrieval fails
         XCTAssertNotNil(interactor)
@@ -62,7 +62,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         // Given - Direct service injection
 
         // When
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
 
         // Then
         XCTAssertNotNil(interactor)
@@ -76,7 +76,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         serviceLocator.register(HomeService.self, instance: mockHomeService)
 
         // When
-        let interactor = HomeDomainInteractor(service: nil, serviceLocator: serviceLocator)
+        let interactor = HomeDomainInteractor(homeService: nil, serviceLocator: serviceLocator)
 
         // Then - Should use service from service locator
         XCTAssertNotNil(interactor)
@@ -90,11 +90,11 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         // Given
         mockHomeService.shouldSimulateError = true
         mockHomeService.errorToSimulate = NSError(domain: "SearchError", code: 500, userInfo: nil)
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
         let expectation = XCTestExpectation(description: "Error handled")
 
         // When
-        interactor.searchMovies(query: "test")
+        interactor.handleAction(.searchMovies("test"))
 
         // Then
         interactor.$currentState
@@ -111,39 +111,15 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
-    func testFetchMovieCreditsWithServiceError() {
+    func testFetchUpcomingMoviesWithServiceError() {
         // Given
         mockHomeService.shouldSimulateError = true
-        mockHomeService.errorToSimulate = NSError(domain: "CreditsError", code: 404, userInfo: nil)
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
-        let expectation = XCTestExpectation(description: "Credits error handled")
+        mockHomeService.errorToSimulate = NSError(domain: "UpcomingError", code: 404, userInfo: nil)
+        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let expectation = XCTestExpectation(description: "Upcoming movies error handled")
 
         // When
-        interactor.fetchMovieCredits(movieId: 123)
-
-        // Then
-        interactor.$currentState
-            .dropFirst()
-            .first()
-            .sink { state in
-                XCTAssertNotNil(state.error)
-                XCTAssertTrue(state.error?.contains("CreditsError") == true)
-                expectation.fulfill()
-            }
-            .store(in: &cancellables)
-
-        wait(for: [expectation], timeout: 1.0)
-    }
-
-    func testFetchPopularMoviesWithServiceError() {
-        // Given
-        mockHomeService.shouldSimulateError = true
-        mockHomeService.errorToSimulate = NSError(domain: "PopularError", code: 503, userInfo: nil)
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
-        let expectation = XCTestExpectation(description: "Popular movies error handled")
-
-        // When
-        interactor.fetchPopularMovies(page: 1)
+        interactor.handleAction(.fetchUpcomingMovies)
 
         // Then
         interactor.$currentState
@@ -152,7 +128,28 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
             .sink { state in
                 XCTAssertFalse(state.isLoading)
                 XCTAssertNotNil(state.error)
-                XCTAssertTrue(state.error?.contains("PopularError") == true)
+                XCTAssertTrue(state.error?.contains("UpcomingError") == true)
+                expectation.fulfill()
+            }
+            .store(in: &cancellables)
+
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    func testToggleMovieFavoriteAction() {
+        // Given
+        let movie = Movie(id: 1, title: "Test Movie", overview: "Test", posterPath: nil)
+        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let expectation = XCTestExpectation(description: "Toggle favorite handled")
+
+        // When
+        interactor.handleAction(.toggleMovieFavorite(movie))
+
+        // Then - Should not crash and should handle the action
+        interactor.$currentState
+            .dropFirst()
+            .first()
+            .sink { _ in
                 expectation.fulfill()
             }
             .store(in: &cancellables)
@@ -164,11 +161,11 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
     func testSearchMoviesWithEmptyQuery() {
         // Given
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
         let expectation = XCTestExpectation(description: "Empty query handled")
 
         // When
-        interactor.searchMovies(query: "")
+        interactor.handleAction(.searchMovies(""))
 
         // Then - Should still call service but may return empty results
         interactor.$currentState
@@ -185,11 +182,11 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
     func testSearchMoviesWithWhitespaceOnlyQuery() {
         // Given
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
         let expectation = XCTestExpectation(description: "Whitespace query handled")
 
         // When
-        interactor.searchMovies(query: "   ")
+        interactor.handleAction(.searchMovies("   "))
 
         // Then
         interactor.$currentState
@@ -204,39 +201,21 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
-    func testFetchMovieCreditsWithInvalidMovieId() {
+    func testFetchUpcomingMoviesAction() {
         // Given
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
-        let expectation = XCTestExpectation(description: "Invalid movie ID handled")
-
-        // When - Use edge case movie IDs
-        interactor.fetchMovieCredits(movieId: -1)
-
-        // Then
-        interactor.$currentState
-            .dropFirst()
-            .first()
-            .sink { _ in
-                expectation.fulfill()
-            }
-            .store(in: &cancellables)
-
-        wait(for: [expectation], timeout: 1.0)
-    }
-
-    func testFetchMovieCreditsWithZeroMovieId() {
-        // Given
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
-        let expectation = XCTestExpectation(description: "Zero movie ID handled")
+        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let expectation = XCTestExpectation(description: "Fetch upcoming movies handled")
 
         // When
-        interactor.fetchMovieCredits(movieId: 0)
+        interactor.handleAction(.fetchUpcomingMovies)
 
         // Then
         interactor.$currentState
             .dropFirst()
             .first()
-            .sink { _ in
+            .sink { state in
+                // Should complete without error
+                XCTAssertFalse(state.isLoading)
                 expectation.fulfill()
             }
             .store(in: &cancellables)
@@ -244,33 +223,13 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 
-    func testFetchPopularMoviesWithInvalidPage() {
+    func testLoadPersistedFavoriteMoviesAction() {
         // Given
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
-        let expectation = XCTestExpectation(description: "Invalid page handled")
-
-        // When - Use edge case page numbers
-        interactor.fetchPopularMovies(page: -1)
-
-        // Then
-        interactor.$currentState
-            .dropFirst()
-            .first()
-            .sink { _ in
-                expectation.fulfill()
-            }
-            .store(in: &cancellables)
-
-        wait(for: [expectation], timeout: 1.0)
-    }
-
-    func testFetchPopularMoviesWithZeroPage() {
-        // Given
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
-        let expectation = XCTestExpectation(description: "Zero page handled")
+        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let expectation = XCTestExpectation(description: "Load persisted favorites handled")
 
         // When
-        interactor.fetchPopularMovies(page: 0)
+        interactor.handleAction(.loadPersistedFavoriteMovies)
 
         // Then
         interactor.$currentState
@@ -288,14 +247,14 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
     func testMultipleConcurrentOperations() {
         // Given
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
         let expectation = XCTestExpectation(description: "Concurrent operations handled")
         expectation.expectedFulfillmentCount = 3
 
         // When - Start multiple operations concurrently
-        interactor.searchMovies(query: "action")
-        interactor.fetchPopularMovies(page: 1)
-        interactor.fetchMovieCredits(movieId: 123)
+        interactor.handleAction(.searchMovies("action"))
+        interactor.handleAction(.fetchUpcomingMovies)
+        interactor.handleAction(.loadPersistedFavoriteMovies)
 
         // Then - All should complete without conflicts
         interactor.$currentState
@@ -311,11 +270,11 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
     func testOperationCancellation() {
         // Given
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
 
         // When - Start an operation then immediately cancel by starting another
-        interactor.searchMovies(query: "first")
-        interactor.searchMovies(query: "second") // Should cancel first
+        interactor.handleAction(.searchMovies("first"))
+        interactor.handleAction(.searchMovies("second")) // Should cancel first
 
         // Then - Should handle gracefully without crashes
         XCTAssertNotNil(interactor)
@@ -328,12 +287,12 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         weak var weakInteractor: HomeDomainInteractor?
 
         autoreleasepool {
-            let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
+            let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
             weakInteractor = interactor
 
             // Start some operations
-            interactor.searchMovies(query: "test")
-            interactor.fetchPopularMovies(page: 1)
+            interactor.handleAction(.searchMovies("test"))
+            interactor.handleAction(.fetchUpcomingMovies)
         }
 
         // When - Interactor should be deallocated
@@ -349,13 +308,13 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
         autoreleasepool {
             let service = MockHomeService()
-            let interactor = HomeDomainInteractor(service: service, serviceLocator: nil)
+            let interactor = HomeDomainInteractor(homeService: service, serviceLocator: nil)
 
             weakService = service
             weakInteractor = interactor
 
             // Start operation to establish connections
-            interactor.searchMovies(query: "test")
+            interactor.handleAction(.searchMovies("test"))
         }
 
         // When - Both should be deallocated
@@ -368,13 +327,13 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
     // MARK: - Service Locator Error Path Coverage
 
     func testServiceLocatorRetrievalFailure() {
-        // Given - Mock a service locator that throws on retrieval
-        let failingServiceLocator = FailingServiceLocator()
+        // Given - Use empty service locator which will fail to retrieve HomeService
+        let emptyServiceLocator = ServiceLocator()
 
         // When - Should fall back to default service
-        let interactor = HomeDomainInteractor(service: nil, serviceLocator: failingServiceLocator)
+        let interactor = HomeDomainInteractor(homeService: nil, serviceLocator: emptyServiceLocator)
 
-        // Then - Should still initialize successfully
+        // Then - Should still initialize successfully with default LiveHomeService
         XCTAssertNotNil(interactor)
         XCTAssertEqual(interactor.currentState.movies.count, 0)
     }
@@ -383,11 +342,11 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
     func testAsyncOperationTaskCancellation() {
         // Given
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
         let expectation = XCTestExpectation(description: "Task cancellation handled")
 
         // When - Start operation and observe state changes
-        interactor.searchMovies(query: "test")
+        interactor.handleAction(.searchMovies("test"))
 
         // Then - Should handle task lifecycle properly
         interactor.$currentState
@@ -406,12 +365,12 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         // Given
         mockHomeService.shouldSimulateError = true
         mockHomeService.errorToSimulate = NSError(domain: "TestError", code: 500, userInfo: nil)
-        let interactor = HomeDomainInteractor(service: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
         let expectation = XCTestExpectation(description: "Error recovery")
         var stateChanges = 0
 
         // When - Cause an error, then perform successful operation
-        interactor.searchMovies(query: "error")
+        interactor.handleAction(.searchMovies("error"))
 
         // Then - Should recover from error state
         interactor.$currentState
@@ -423,7 +382,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
                     XCTAssertNotNil(state.error)
                     // Now disable error simulation and try again
                     self.mockHomeService.shouldSimulateError = false
-                    interactor.searchMovies(query: "success")
+                    interactor.handleAction(.searchMovies("success"))
                 } else if stateChanges == 2 {
                     // Second state change - should be successful
                     XCTAssertNil(state.error)
@@ -433,16 +392,5 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
             .store(in: &cancellables)
 
         wait(for: [expectation], timeout: 2.0)
-    }
-}
-
-// MARK: - Helper Classes
-
-/**
- * Mock service locator that fails to retrieve services to test error paths.
- */
-private class FailingServiceLocator: ServiceLocator {
-    override func retrieve<T>(_ type: T.Type) throws -> T {
-        throw ServiceLocatorError.serviceNotFound(serviceType: String(describing: type))
     }
 }
