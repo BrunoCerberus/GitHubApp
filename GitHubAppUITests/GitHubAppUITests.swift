@@ -16,10 +16,16 @@ final class GitHubAppUITests: XCTestCase {
 
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
+
+        // Ensure device starts in portrait mode before any UI tests
+        XCUIDevice.shared.orientation = .portrait
     }
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+
+        // Reset device orientation to portrait to avoid affecting other tests
+        XCUIDevice.shared.orientation = .portrait
     }
 
     /// Launches the app to verify it starts without crashing

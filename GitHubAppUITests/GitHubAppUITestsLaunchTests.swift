@@ -17,6 +17,14 @@ final class GitHubAppUITestsLaunchTests: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+
+        // Ensure device starts in portrait mode before launch tests
+        XCUIDevice.shared.orientation = .portrait
+    }
+
+    override func tearDownWithError() throws {
+        // Reset device orientation to portrait to avoid affecting other tests
+        XCUIDevice.shared.orientation = .portrait
     }
 
     func testLaunch() throws {
