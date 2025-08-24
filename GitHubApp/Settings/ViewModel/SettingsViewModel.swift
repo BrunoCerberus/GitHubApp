@@ -85,11 +85,6 @@ final class SettingsViewModel: ObservableObject {
 
         // Show confirmation
         showClearLikedMoviesAlert = true
-
-        // Hide confirmation after a delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-            self?.showClearLikedMoviesAlert = false
-        }
     }
 
     // MARK: - App Rating

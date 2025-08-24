@@ -1,1 +1,1 @@
-Run tests and generate a code coverage report for the GitHubApp project using the `make coverage` command. This will show the current test coverage percentage.
+Run tests and generate a code coverage report for the GitHubApp project using the `make coverage` command with an extended timeout since this command take some time, consider at least 300 seconds. This will show the current test coverage percentage.

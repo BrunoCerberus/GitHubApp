@@ -60,6 +60,7 @@
 		692E01215F8DFCA6BD048071 /* FavoritesViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BD52A20498847CA266B716 /* FavoritesViewState.swift */; };
 		6E77FB801E5284771BF66467 /* GitHubAppSceneDelegateURLHandlingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B63115679CD78F72F450297 /* GitHubAppSceneDelegateURLHandlingTests.swift */; };
 		6F4E114BE32BE6A60A7DF529 /* KeychainManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77E3F596E78EF9670F5407A /* KeychainManagerTests.swift */; };
+		725BC2A9FD876B6CB5CC501D /* GitHubAppSettingsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4729FA8FA04AC9BADB899FD /* GitHubAppSettingsUITests.swift */; };
 		7356CA0C872B3D688C587109 /* MockHomeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E4BEE7C534ED372977F623 /* MockHomeService.swift */; };
 		770E0B4556132F98B6394B94 /* MovieReviewsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA9BC20DAF34B80AD4BFA7ED /* MovieReviewsTests.swift */; };
 		77CC84722F61D2FA3C45D384 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6225CEEB8842834DF359CD86 /* UIKit.framework */; };
@@ -313,6 +314,7 @@
 		E2A4B6D622C220B4D24D16D0 /* UserSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSetting.swift; sourceTree = "<group>"; };
 		E2CED821A08D13AA5E4424BC /* GitHubAppWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GitHubAppWidgetExtension.entitlements; sourceTree = "<group>"; };
 		E418C365673A7565EDED5B8A /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
+		E4729FA8FA04AC9BADB899FD /* GitHubAppSettingsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAppSettingsUITests.swift; sourceTree = "<group>"; };
 		E72F291FDC656B5D91B1A351 /* HomeDomainInteractorEdgeCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDomainInteractorEdgeCaseTests.swift; sourceTree = "<group>"; };
 		EA6A8BFC838B10EAB19F21F8 /* LiveHomeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveHomeService.swift; sourceTree = "<group>"; };
 		EA91AD85F1369ECD0568C0BF /* GitHubAppSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAppSceneDelegate.swift; sourceTree = "<group>"; };
@@ -674,6 +676,7 @@
 		8130FF68464458B82BD984AD /* GitHubAppUITests */ = {
 			isa = PBXGroup;
 			children = (
+				E4729FA8FA04AC9BADB899FD /* GitHubAppSettingsUITests.swift */,
 				C6A39F39BC2BA81819D99646 /* GitHubAppUITests.swift */,
 				452A33B2856F041B862D734F /* GitHubAppUITestsLaunchTests.swift */,
 				4061D18F1790576FE396CF10 /* Info.plist */,
@@ -1340,6 +1343,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				725BC2A9FD876B6CB5CC501D /* GitHubAppSettingsUITests.swift in Sources */,
 				8BEC337A76EBE786970103AB /* GitHubAppUITests.swift in Sources */,
 				B7CDD6E745B1A6DFC7FCFB9A /* GitHubAppUITestsLaunchTests.swift in Sources */,
 			);
@@ -1420,6 +1424,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1439,6 +1444,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1491,6 +1497,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1504,6 +1511,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bruno.GitHubApp;
@@ -1530,6 +1538,7 @@
 				CODE_SIGN_ENTITLEMENTS = GitHubApp/GitHubApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = GitHubApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1537,6 +1546,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bruno.GitHubApp;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1576,6 +1586,7 @@
 				CODE_SIGN_ENTITLEMENTS = GitHubApp/GitHubApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = GitHubApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1583,6 +1594,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bruno.GitHubApp;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

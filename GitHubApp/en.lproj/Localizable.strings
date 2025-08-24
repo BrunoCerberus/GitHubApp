@@ -13,7 +13,7 @@
 
 // MARK: - Favorite Movies View
 "favorites.title" = "Favorite Movies";
-"favorites.empty_state" = "Your liked movies will appear here.";
+"favorites.empty_state" = "Your favorite movies will appear here.";
 
 // MARK: - Settings View
 "settings.title" = "Settings";
@@ -21,10 +21,10 @@
 "settings.profile_image_tap_to_change" = "Tap to change profile image";
 
 "settings.app_version" = "App Version";
-"settings.clear_favorited_movies" = "Clear Favorite Movies";
+"settings.clear_favorited_movies" = "Clear Favorite Movies?";
 "settings.clear_favorited_movies_confirmation" = "Are you sure you want to clear all favorited movies? This action cannot be undone.";
-"settings.clear_favorited_movies_alert_title" = "Clear Liked Movies";
-"settings.clear_favorited_movies_alert_message" = "All liked movies will be removed.";
+"settings.clear_favorited_movies_alert_title" = "Favorite Movies removed";
+"settings.clear_favorited_movies_alert_message" = "All favorite movies were removed.";
 "settings.clear_favorited_movies_alert_clear" = "Clear All";
 "settings.clear_favorited_movies_alert_cancel" = "Cancel";
 "settings.rate_app" = "Rate App";
