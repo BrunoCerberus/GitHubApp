@@ -14,6 +14,20 @@ import Foundation
 final class MockStorageService: StorageServiceProtocol {
     private var movies: [Movie] = []
 
+    // MARK: - Error Simulation Properties
+
+    var shouldSimulateErrors = false
+    var fetchLikedMoviesError: Error?
+    var toggleError: Error?
+    var clearError: Error?
+    var isMovieLikedError: Error?
+
+    // MARK: - Test Result Customization
+
+    var favoriteMovies: [Movie] = []
+    var toggledMovies: [Movie] = []
+    var movieLikedResult: Bool = false
+
     func save(_ object: some Codable & Identifiable, context _: String?) async throws {
         if let movie = object as? Movie {
             // Remove existing movie with same ID
@@ -59,10 +73,21 @@ final class MockStorageService: StorageServiceProtocol {
     }
 
     func isMovieLiked(_ movie: Movie) async throws -> Bool {
-        movies.contains { $0.id == movie.id }
+        if shouldSimulateErrors, let error = isMovieLikedError {
+            throw error
+        }
+        return movieLikedResult.self ? movieLikedResult : movies.contains { $0.id == movie.id }
     }
 
     func toggleMovieFavorite(_ movie: Movie) async throws -> [Movie] {
+        if shouldSimulateErrors, let error = toggleError {
+            throw error
+        }
+
+        if !toggledMovies.isEmpty {
+            return toggledMovies
+        }
+
         let isLiked = try await isMovieLiked(movie)
         if isLiked {
             try await delete(movie, context: StorageContext.favoriteMovies)
@@ -73,10 +98,16 @@ final class MockStorageService: StorageServiceProtocol {
     }
 
     func fetchLikedMovies() async throws -> [Movie] {
-        movies
+        if shouldSimulateErrors, let error = fetchLikedMoviesError {
+            throw error
+        }
+        return !favoriteMovies.isEmpty ? favoriteMovies : movies
     }
 
     func clearFavoriteMovies() async throws {
+        if shouldSimulateErrors, let error = clearError {
+            throw error
+        }
         movies.removeAll()
     }
 }
