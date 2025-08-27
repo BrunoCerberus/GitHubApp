@@ -140,4 +140,44 @@ enum APIKeysProvider {
         }
         return apiKey
     }
+
+    // MARK: - Testing Support
+
+    /**
+     * Get the Movie API key with fresh evaluation (for testing).
+     *
+     * This method re-evaluates the fallback hierarchy each time it's called,
+     * making it suitable for testing different scenarios.
+     *
+     * - Returns: The API key from the current fallback hierarchy
+     */
+    static func getCurrentMovieAPIKey() -> String {
+        // First try to get from Secrets.plist
+        if let apiKey = loadAPIKeyFromSecretsPlist(), !apiKey.isEmpty {
+            return apiKey
+        }
+
+        // Fallback to environment variable (for CI/CD and debugging)
+        if let apiKey = ProcessInfo.processInfo.environment["API_KEY"], !apiKey.isEmpty {
+            return apiKey
+        }
+
+        // Fallback to keychain if environment variable is not set
+        do {
+            return try getMovieAPIKey()
+        } catch {
+            // If keychain also fails, provide a helpful error message
+            debugPrint("""
+            API_KEY not found in Secrets.plist, environment variables, or keychain.
+
+            To fix this:
+            1. Add API_KEY to Secrets.plist file, OR
+            2. Set the API_KEY environment variable in your build configuration, OR
+            3. Call APIKeysProvider.setMovieAPIKey("your_api_key") before accessing theMovieAPIKey
+
+            Current environment: \(ProcessInfo.processInfo.environment.keys.filter { $0.contains("API") })
+            """)
+            return "123456"
+        }
+    }
 }
