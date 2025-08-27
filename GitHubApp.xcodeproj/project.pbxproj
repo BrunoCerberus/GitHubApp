@@ -64,6 +64,7 @@
 		62D3255202DEABC46F302BA4 /* SettingsDomainEventActionMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB66E817FDB19C8BA74BD42 /* SettingsDomainEventActionMap.swift */; };
 		6623DF0D667744D6D72B9A03 /* MovieCreditsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF72EDDB5C06EC083CF6EC8 /* MovieCreditsTests.swift */; };
 		692E01215F8DFCA6BD048071 /* FavoritesViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5BD52A20498847CA266B716 /* FavoritesViewState.swift */; };
+		6A889B5EA2972BA44D5758FF /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5155982CB2EC096342AC8642 /* Secrets.plist */; };
 		6E77FB801E5284771BF66467 /* GitHubAppSceneDelegateURLHandlingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B63115679CD78F72F450297 /* GitHubAppSceneDelegateURLHandlingTests.swift */; };
 		6F4E114BE32BE6A60A7DF529 /* KeychainManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77E3F596E78EF9670F5407A /* KeychainManagerTests.swift */; };
 		725BC2A9FD876B6CB5CC501D /* GitHubAppSettingsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4729FA8FA04AC9BADB899FD /* GitHubAppSettingsUITests.swift */; };
@@ -239,6 +240,7 @@
 		49DEEE1E4BFB3B42CF320C8A /* GitHubAppSceneDelegateComprehensiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAppSceneDelegateComprehensiveTests.swift; sourceTree = "<group>"; };
 		4A912895E593DA800E14EA14 /* Localizable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localizable.swift; sourceTree = "<group>"; };
 		4B3D26C51D6C1BB2AE7C3E11 /* HomeDomainInteractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDomainInteractorTests.swift; sourceTree = "<group>"; };
+		5155982CB2EC096342AC8642 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Secrets.plist; sourceTree = "<group>"; };
 		55940635D9BF7757D5094074 /* StoredMovie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredMovie.swift; sourceTree = "<group>"; };
 		5712D66361A0874AC7FF64DD /* HomeNavigationRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNavigationRouterTests.swift; sourceTree = "<group>"; };
 		5736B21032AB8F2DD3CCF727 /* HomeNavigationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNavigationRouter.swift; sourceTree = "<group>"; };
@@ -346,6 +348,7 @@
 		F546C3D30166D0F214ECED62 /* HomeDomainState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDomainState.swift; sourceTree = "<group>"; };
 		F5CA0BDDCE7E011312A86555 /* testMovieDetailsView.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testMovieDetailsView.1.png; sourceTree = "<group>"; };
 		F5DDE69A00D7563B52A47E57 /* FavoritesMoviesViewModelErrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesMoviesViewModelErrorTests.swift; sourceTree = "<group>"; };
+		F93C8AE711C77AB810F290BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FDF72EDDB5C06EC083CF6EC8 /* MovieCreditsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCreditsTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -560,7 +563,9 @@
 				C840192E8BA318CE6989A89A /* GitHubApp.entitlements */,
 				432F2765B106DB94ED84E10F /* GitHubAppDelegate.swift */,
 				EA91AD85F1369ECD0568C0BF /* GitHubAppSceneDelegate.swift */,
+				F93C8AE711C77AB810F290BB /* Info.plist */,
 				DD65EE1A94EB96515FCE0B35 /* Localizable.strings */,
+				5155982CB2EC096342AC8642 /* Secrets.plist */,
 			);
 			path = GitHubApp;
 			sourceTree = "<group>";
@@ -1243,6 +1248,7 @@
 				30E9B297C39BB0215ED23AEA /* Localizable.strings in Resources */,
 				7F2825CBA0E8F8D765D324B1 /* Preview Assets.xcassets in Resources */,
 				1EED291334C884E4B57BF7D9 /* README.md in Resources */,
+				6A889B5EA2972BA44D5758FF /* Secrets.plist in Resources */,
 				EAD45482696D348AFFAE76B3 /* ServiceLocator.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1619,7 +1625,6 @@
 		2A314133DAB463F70378B56B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				API_KEY = da9bc8815fb0fc31d5ef6b3da097a009;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
@@ -1667,7 +1672,6 @@
 		5B00E7AE6EABEF74860698EE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				API_KEY = da9bc8815fb0fc31d5ef6b3da097a009;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;

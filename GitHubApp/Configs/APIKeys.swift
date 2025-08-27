@@ -43,12 +43,16 @@ enum APIKeysProvider {
     /**
      * The Movie Database API key.
      *
-     * The key is read from environment variables set in the XcodeGen project configuration.
+     * The key is read from Secrets.plist file with fallbacks to environment variables and keychain.
      * This provides a clean separation between development and production environments.
      */
     static let theMovieAPIKey: String = {
-        // First try to get from environment variable (for CI/CD and debugging)
+        // First try to get from Secrets.plist
+        if let apiKey = loadAPIKeyFromSecretsPlist(), !apiKey.isEmpty {
+            return apiKey
+        }
 
+        // Fallback to environment variable (for CI/CD and debugging)
         if let apiKey = ProcessInfo.processInfo.environment["API_KEY"], !apiKey.isEmpty {
             return apiKey
         }
@@ -59,11 +63,12 @@ enum APIKeysProvider {
         } catch {
             // If keychain also fails, provide a helpful error message
             debugPrint("""
-            API_KEY not found in environment variables or keychain.
+            API_KEY not found in Secrets.plist, environment variables, or keychain.
 
             To fix this:
-            1. Set the API_KEY environment variable in your build configuration, OR
-            2. Call APIKeysProvider.setMovieAPIKey("your_api_key") before accessing theMovieAPIKey
+            1. Add API_KEY to Secrets.plist file, OR
+            2. Set the API_KEY environment variable in your build configuration, OR
+            3. Call APIKeysProvider.setMovieAPIKey("your_api_key") before accessing theMovieAPIKey
 
             Current environment: \(ProcessInfo.processInfo.environment.keys.filter { $0.contains("API") })
             """)
@@ -117,5 +122,22 @@ enum APIKeysProvider {
      */
     static func removeMovieAPIKey() throws {
         try keychainManager.delete(for: movieAPIKeyKey)
+    }
+
+    // MARK: - Private Methods
+
+    /**
+     * Load API key from Secrets.plist file.
+     *
+     * - Returns: The API key if found, nil otherwise
+     */
+    private static func loadAPIKeyFromSecretsPlist() -> String? {
+        guard let path = Bundle.main.path(forResource: "Secrets", ofType: "plist"),
+              let plist = NSDictionary(contentsOfFile: path),
+              let apiKey = plist["API_KEY"] as? String
+        else {
+            return nil
+        }
+        return apiKey
     }
 }

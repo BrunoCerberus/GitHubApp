@@ -33,3 +33,6 @@ DerivedData/
 # Logs
 *.log
 *.xcuserstate
+
+# Secrets
+Secrets.plist

@@ -62,7 +62,6 @@ targets:
     sources:
       - path: GitHubApp
         excludes:
-          - "**/*.plist"
           - "**/__Snapshots__/**"
           - "**/testView.*.png"
           - "**/movieDetailsView.*.png"
@@ -83,10 +82,8 @@ targets:
         CODE_SIGN_ENTITLEMENTS: GitHubApp/GitHubApp.entitlements
         CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION: YES
       configs:
-        Debug:
-          API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
-        Release:
-          API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
+        Debug: {}
+        Release: {}
     info:
       path: GitHubApp/Info.plist
       properties:
@@ -230,27 +227,22 @@ schemes:
         GitHubAppWidgetExtension: all
     run:
       config: Debug
-      environmentVariables:
-        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
+      environmentVariables: {}
     test:
       config: Debug
       targets:
         - GitHubAppTests
         - GitHubAppUITests
-      environmentVariables:
-        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
+      environmentVariables: {}
     profile:
       config: Release
-      environmentVariables:
-        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
+      environmentVariables: {}
     analyze:
       config: Debug
-      environmentVariables:
-        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
+      environmentVariables: {}
     archive:
       config: Release
-      environmentVariables:
-        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
+      environmentVariables: {}
 
   GitHubAppProd:
     build:
@@ -259,24 +251,19 @@ schemes:
         GitHubAppWidgetExtension: all
     run:
       config: Release
-      environmentVariables:
-        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
+      environmentVariables: {}
     test:
       config: Release
       targets:
         - GitHubAppTests
         - GitHubAppUITests
-      environmentVariables:
-        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
+      environmentVariables: {}
     profile:
       config: Release
-      environmentVariables:
-        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
+      environmentVariables: {}
     analyze:
       config: Release
-      environmentVariables:
-        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009
+      environmentVariables: {}
     archive:
       config: Release
-      environmentVariables:
-        API_KEY: da9bc8815fb0fc31d5ef6b3da097a009 
+      environmentVariables: {}
