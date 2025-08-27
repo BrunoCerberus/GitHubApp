@@ -52,8 +52,9 @@ GitHubApp/
 - **Clean**: `make clean` (removes generated project)
 
 ## API Configuration
-- **API Key**: The Movie Database API key configured in project.yml
-- **Environment Variables**: Set via schemes (GitHubAppDev/GitHubAppProd)
+- **API Key**: The Movie Database API key stored in `Secrets.plist` (gitignored for security)
+- **Fallback Hierarchy**: Secrets.plist → Environment Variables → Keychain → Default
+- **Environment Variables**: Available as fallback for CI/CD and testing scenarios
 
 ## Key Implementation Details
 
@@ -126,7 +127,7 @@ make clean             # Clean generated files
 - Check project.yml for configuration issues
 - Regenerate project if build issues occur
 - Ensure iOS 18.2 simulator is available for tests
-- Verify API_KEY environment variable is set
+- Verify `Secrets.plist` exists with valid API_KEY, or set API_KEY environment variable
 - Run `make clean-packages` if Swift Package issues occur
 
 ## Continuous Integration
@@ -134,3 +135,69 @@ make clean             # Clean generated files
 - Automated testing on pull requests
 - Build verification for multiple configurations
 - Release automation with tagged versions
+
+## Claude Code Custom Slash Commands
+
+This project includes custom slash commands for Claude Code to streamline development workflows. These commands are defined in `.claude/commands/` and provide quick access to common development tasks.
+
+### Available Commands
+
+#### `/test` - Run Full Test Suite
+- **Description**: Executes all tests (unit + UI) on iOS 18.2 iPhone 16 Pro simulator
+- **Usage**: `/test`
+- **Timeout**: 300 seconds (extensive test suite)
+- **Equivalent**: `make test`
+
+#### `/test-unit` - Run Unit Tests Only
+- **Description**: Executes only unit tests, excluding UI tests for faster feedback
+- **Usage**: `/test-unit`
+- **Equivalent**: `make test-unit`
+
+#### `/test-ui` - Run UI Tests Only
+- **Description**: Executes UI tests including snapshot testing
+- **Usage**: `/test-ui`
+- **Timeout**: 300 seconds (UI tests take time)
+- **Equivalent**: `make test-ui`
+
+#### `/coverage` - Generate Coverage Report
+- **Description**: Runs tests and generates detailed code coverage report
+- **Usage**: `/coverage`
+- **Timeout**: 300 seconds (includes full test execution)
+- **Equivalent**: `make coverage`
+
+#### `/badge` - Update Coverage Badge
+- **Description**: Generates and updates the coverage.svg badge file with current coverage percentage
+- **Usage**: `/badge`
+- **Equivalent**: `make coverage-badge`
+
+#### `/run` - Run App in Simulator
+- **Description**: Builds and launches the app in iOS 18.2 iPhone 16 Pro simulator
+- **Usage**: `/run`
+- **Target**: GitHubAppDev scheme
+- **Simulator**: iPhone 16 Pro (iOS 18.2)
+
+#### `/push` - Stage, Commit & Push
+- **Description**: Stages all changes, creates a commit, and pushes to the current branch
+- **Usage**: `/push`
+- **Warning**: Will commit all current changes
+- **Equivalent**: `git add . && git commit && git push`
+
+#### `/reset` - Discard All Changes
+- **Description**: Discards all uncommitted changes and resets to last commit
+- **Usage**: `/reset`
+- **Warning**: **DESTRUCTIVE** - Permanently removes all uncommitted changes
+- **Equivalent**: `git reset --hard`
+
+### Usage Tips
+
+1. **Test Commands**: Use `/test-unit` for quick feedback during development, `/test` for comprehensive testing before commits
+2. **Coverage Workflow**: Run `/coverage` to see detailed coverage, then `/badge` to update the README badge
+3. **Development Cycle**: Use `/run` to test in simulator, `/test-unit` to verify changes, `/push` when ready
+4. **Emergency Reset**: Use `/reset` only when you need to completely discard current work
+
+### Custom Command Development
+
+To add new slash commands:
+1. Create a new `.md` file in `.claude/commands/`
+2. Follow the existing format with description and bash commands
+3. Commands automatically become available in Claude Code
