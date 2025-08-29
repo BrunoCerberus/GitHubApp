@@ -18,6 +18,18 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
     private var emptyServiceLocator: ServiceLocator!
     private var cancellables: Set<AnyCancellable> = []
 
+    private func createServiceLocator() -> ServiceLocator {
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: mockHomeService)
+        return serviceLocator
+    }
+
+    private func createServiceLocatorWithService(_ service: HomeService) -> ServiceLocator {
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: service)
+        return serviceLocator
+    }
+
     override func setUp() {
         super.setUp()
         mockHomeService = MockHomeService()
@@ -38,7 +50,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         // Given - Both homeService and serviceLocator are nil
 
         // When
-        let interactor = HomeDomainInteractor(homeService: nil, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(serviceLocator: ServiceLocator())
 
         // Then - Should initialize with default LiveHomeService
         XCTAssertNotNil(interactor)
@@ -50,7 +62,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         // Given - service is nil but serviceLocator exists (but doesn't have HomeService registered)
 
         // When
-        let interactor = HomeDomainInteractor(homeService: nil, serviceLocator: emptyServiceLocator)
+        let interactor = HomeDomainInteractor(serviceLocator: emptyServiceLocator)
 
         // Then - Should fall back to LiveHomeService when service locator retrieval fails
         XCTAssertNotNil(interactor)
@@ -62,7 +74,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         // Given - Direct service injection
 
         // When
-        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(serviceLocator: createServiceLocator())
 
         // Then
         XCTAssertNotNil(interactor)
@@ -76,7 +88,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         serviceLocator.register(HomeService.self, instance: mockHomeService)
 
         // When
-        let interactor = HomeDomainInteractor(homeService: nil, serviceLocator: serviceLocator)
+        let interactor = HomeDomainInteractor(serviceLocator: serviceLocator)
 
         // Then - Should use service from service locator
         XCTAssertNotNil(interactor)
@@ -90,7 +102,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         // Given
         mockHomeService.shouldSimulateError = true
         mockHomeService.errorToSimulate = NSError(domain: "SearchError", code: 500, userInfo: nil)
-        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(serviceLocator: createServiceLocator())
         let expectation = XCTestExpectation(description: "Error handled")
 
         // When
@@ -115,7 +127,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         // Given
         mockHomeService.shouldSimulateError = true
         mockHomeService.errorToSimulate = NSError(domain: "UpcomingError", code: 404, userInfo: nil)
-        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(serviceLocator: createServiceLocator())
         let expectation = XCTestExpectation(description: "Upcoming movies error handled")
 
         // When
@@ -139,7 +151,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
     func testToggleMovieFavoriteAction() {
         // Given
         let movie = Movie(id: 1, title: "Test Movie", overview: "Test", posterPath: nil)
-        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(serviceLocator: createServiceLocator())
         let expectation = XCTestExpectation(description: "Toggle favorite handled")
 
         // When
@@ -161,7 +173,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
     func testSearchMoviesWithEmptyQuery() {
         // Given
-        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(serviceLocator: createServiceLocator())
         let expectation = XCTestExpectation(description: "Empty query handled")
 
         // When
@@ -182,7 +194,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
     func testSearchMoviesWithWhitespaceOnlyQuery() {
         // Given
-        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(serviceLocator: createServiceLocator())
         let expectation = XCTestExpectation(description: "Whitespace query handled")
 
         // When
@@ -203,7 +215,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
     func testFetchUpcomingMoviesAction() {
         // Given
-        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(serviceLocator: createServiceLocator())
         let expectation = XCTestExpectation(description: "Fetch upcoming movies handled")
 
         // When
@@ -225,7 +237,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
     func testLoadPersistedFavoriteMoviesAction() {
         // Given
-        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(serviceLocator: createServiceLocator())
         let expectation = XCTestExpectation(description: "Load persisted favorites handled")
 
         // When
@@ -247,7 +259,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
     func testMultipleConcurrentOperations() {
         // Given
-        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(serviceLocator: createServiceLocator())
         let expectation = XCTestExpectation(description: "Concurrent operations handled")
         expectation.expectedFulfillmentCount = 3
 
@@ -270,7 +282,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
     func testOperationCancellation() {
         // Given
-        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(serviceLocator: createServiceLocator())
 
         // When - Start an operation then immediately cancel by starting another
         interactor.handleAction(.searchMovies("first"))
@@ -287,7 +299,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         weak var weakInteractor: HomeDomainInteractor?
 
         autoreleasepool {
-            let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+            let interactor = HomeDomainInteractor(serviceLocator: createServiceLocator())
             weakInteractor = interactor
 
             // Start some operations
@@ -308,7 +320,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
         autoreleasepool {
             let service = MockHomeService()
-            let interactor = HomeDomainInteractor(homeService: service, serviceLocator: nil)
+            let interactor = HomeDomainInteractor(serviceLocator: createServiceLocatorWithService(service))
 
             weakService = service
             weakInteractor = interactor
@@ -331,7 +343,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         let emptyServiceLocator = ServiceLocator()
 
         // When - Should fall back to default service
-        let interactor = HomeDomainInteractor(homeService: nil, serviceLocator: emptyServiceLocator)
+        let interactor = HomeDomainInteractor(serviceLocator: emptyServiceLocator)
 
         // Then - Should still initialize successfully with default LiveHomeService
         XCTAssertNotNil(interactor)
@@ -342,7 +354,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
 
     func testAsyncOperationTaskCancellation() {
         // Given
-        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(serviceLocator: createServiceLocator())
         let expectation = XCTestExpectation(description: "Task cancellation handled")
 
         // When - Start operation and observe state changes
@@ -365,7 +377,7 @@ final class HomeDomainInteractorEdgeCaseTests: XCTestCase {
         // Given
         mockHomeService.shouldSimulateError = true
         mockHomeService.errorToSimulate = NSError(domain: "TestError", code: 500, userInfo: nil)
-        let interactor = HomeDomainInteractor(homeService: mockHomeService, serviceLocator: nil)
+        let interactor = HomeDomainInteractor(serviceLocator: createServiceLocator())
         let expectation = XCTestExpectation(description: "Error recovery")
         var stateChanges = 0
 

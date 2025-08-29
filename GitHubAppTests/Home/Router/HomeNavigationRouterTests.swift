@@ -16,7 +16,8 @@ final class HomeNavigationRouterTests: XCTestCase {
     func testRouter() {
         let mockMovie = Movie(id: 0, title: "The Movie", overview: "", posterPath: nil)
         let nav = UINavigationController(rootViewController: UIViewController())
-        let router = HomeNavigationRouter()
+        let serviceLocator = ServiceLocator()
+        let router = HomeNavigationRouter(serviceLocator: serviceLocator)
         router.navigation = nav
         router.route(navigationEvent: .detail(mockMovie))
         let expectation: XCTestExpectation = expectation(description: "Wait for UI")

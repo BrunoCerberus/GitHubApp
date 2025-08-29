@@ -8,6 +8,12 @@ import SwiftUI
 import XCTest
 
 final class FavoritesMoviesViewTests: XCTestCase {
+    private func createTestServiceLocator() -> ServiceLocator {
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())
+        return serviceLocator
+    }
+
     override func setUp() {
         super.setUp()
         StorageServiceFactory.shared.resetCache()
@@ -21,14 +27,14 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testEmptyStateRenders() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         let view = FavoritesMoviesView(viewModel: vm)
         let host = UIHostingController(rootView: view)
         XCTAssertNotNil(host.view)
     }
 
     func testLikedMoviesListRenders() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -38,7 +44,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testMultipleLikedMoviesListRenders() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie 1", overview: "Test Overview 1", posterPath: "/test1.jpg"),
             Movie(id: 2, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg"),
@@ -50,7 +56,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
     func testNavigationDestinationConfiguration() {
         // Given
-        let testViewModel = FavoritesMoviesViewModel()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -67,7 +73,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
     func testOnAppearBehavior() {
         // Given
-        let testViewModel = FavoritesMoviesViewModel()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -83,7 +89,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testAsyncImageViewerRendering() {
-        let testViewModel = FavoritesMoviesViewModel()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -99,7 +105,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testButtonStylingConfiguration() {
-        let testViewModel = FavoritesMoviesViewModel()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -115,7 +121,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testScrollIndicatorsHiddenConfiguration() {
-        let testViewModel = FavoritesMoviesViewModel()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
             Movie(id: 2, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg"),
@@ -132,7 +138,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testTextStylingAndConfiguration() {
-        let testViewModel = FavoritesMoviesViewModel()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -148,7 +154,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testVStackAlignmentConfiguration() {
-        let testViewModel = FavoritesMoviesViewModel()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -164,7 +170,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testHStackLayoutConfiguration() {
-        let testViewModel = FavoritesMoviesViewModel()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -180,7 +186,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testFrameConfigurationForAsyncImageViewer() {
-        let testViewModel = FavoritesMoviesViewModel()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -197,7 +203,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
     func testLineLimitConfigurationForOverviewText() {
         // Given
-        let testViewModel = FavoritesMoviesViewModel()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -213,7 +219,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testSpacerConfiguration() {
-        let testViewModel = FavoritesMoviesViewModel()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -230,7 +236,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
     func testPreviewConfiguration() {
         // When - create preview view
-        let previewView = FavoritesMoviesView(viewModel: FavoritesMoviesViewModel())
+        let previewView = FavoritesMoviesView(viewModel: FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator()))
 
         // Then - verify that the preview view is created
         XCTAssertNotNil(previewView)
@@ -239,7 +245,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     // MARK: - Enhanced Coverage Tests
 
     func testEmptyStateTextElements() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         let view = FavoritesMoviesView(viewModel: vm)
 
         // Test that empty state text elements are properly configured
@@ -251,7 +257,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testMovieListButtonConfiguration() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -265,7 +271,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testMovieDetailsNavigationSetup() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -278,7 +284,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testLikeButtonConfiguration() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -292,7 +298,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testMovieTitleAndOverviewDisplay() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         let testMovie = Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
         vm.setFavoriteMoviesForTesting([testMovie])
 
@@ -306,7 +312,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testPosterURLConfiguration() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         let testMovie = Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
         vm.setFavoriteMoviesForTesting([testMovie])
 
@@ -319,7 +325,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testNavigationStackConfiguration() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         let view = FavoritesMoviesView(viewModel: vm)
 
         // Test that NavigationStack is properly configured
@@ -328,7 +334,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testListConfigurationWithMultipleMovies() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie 1", overview: "Test Overview 1", posterPath: "/test1.jpg"),
             Movie(id: 2, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg"),
@@ -344,7 +350,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testPlainButtonStyleConfiguration() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -357,7 +363,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testHeartIconConfiguration() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -371,7 +377,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
     }
 
     func testProgressViewPlaceholder() {
-        let vm = FavoritesMoviesViewModel()
+        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])

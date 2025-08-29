@@ -33,7 +33,9 @@ final class HomeViewTests: XCTestCase {
 
         router = HomeNavigationRouter()
         mockService = MockHomeService()
-        viewModel = HomeViewModel(service: mockService)
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: mockService)
+        viewModel = HomeViewModel(serviceLocator: serviceLocator)
         view = HomeView(router: router, viewModel: viewModel)
     }
 
@@ -156,13 +158,18 @@ final class HomeViewTests: XCTestCase {
      */
     func testHomeViewInitialization() {
         // Test initialization with provided ViewModel
-        let customViewModel = HomeViewModel(service: mockService)
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: mockService)
+        let customViewModel = HomeViewModel(serviceLocator: serviceLocator)
         let viewWithViewModel = HomeView(router: router, viewModel: customViewModel)
         XCTAssertNotNil(viewWithViewModel)
 
-        // Test initialization without ViewModel (should create default)
-        let viewWithoutViewModel = HomeView(router: router)
-        XCTAssertNotNil(viewWithoutViewModel)
+        // Test initialization with default ViewModel setup
+        let defaultServiceLocator = ServiceLocator()
+        defaultServiceLocator.register(HomeService.self, instance: MockHomeService())
+        let defaultViewModel = HomeViewModel(serviceLocator: defaultServiceLocator)
+        let viewWithDefaultViewModel = HomeView(router: router, viewModel: defaultViewModel)
+        XCTAssertNotNil(viewWithDefaultViewModel)
     }
 
     // DISABLED: These tests use the old MVVM architecture

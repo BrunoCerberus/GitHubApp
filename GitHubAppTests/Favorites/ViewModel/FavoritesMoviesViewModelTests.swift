@@ -12,6 +12,12 @@ final class FavoritesMoviesViewModelTests: XCTestCase {
     private var mockDomainInteractor: FavoritesDomainInteractor!
     private var cancellables: Set<AnyCancellable> = []
 
+    private func createServiceLocator() -> ServiceLocator {
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(FavoritesService.self, instance: mockFavoritesService)
+        return serviceLocator
+    }
+
     override func setUp() {
         super.setUp()
         // Reset storage cache for test isolation
@@ -19,7 +25,9 @@ final class FavoritesMoviesViewModelTests: XCTestCase {
 
         // Set up mock services
         mockFavoritesService = MockFavoritesService()
-        mockDomainInteractor = FavoritesDomainInteractor(favoritesService: mockFavoritesService)
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(FavoritesService.self, instance: mockFavoritesService)
+        mockDomainInteractor = FavoritesDomainInteractor(serviceLocator: serviceLocator)
         cancellables = Set<AnyCancellable>()
     }
 
@@ -37,7 +45,7 @@ final class FavoritesMoviesViewModelTests: XCTestCase {
         // Clear pre-populated mock data
         mockFavoritesService.setMockLikedMovies([])
 
-        let sut = FavoritesMoviesViewModel(domainInteractor: mockDomainInteractor)
+        let sut = FavoritesMoviesViewModel(serviceLocator: createServiceLocator(), domainInteractor: mockDomainInteractor)
         let expectation = XCTestExpectation(description: "toggle like test")
 
         // Wait for initial state to load
@@ -71,7 +79,7 @@ final class FavoritesMoviesViewModelTests: XCTestCase {
         mockFavoritesService.setMockLikedMovies([])
 
         // first instance writes
-        let sut1 = FavoritesMoviesViewModel(domainInteractor: mockDomainInteractor)
+        let sut1 = FavoritesMoviesViewModel(serviceLocator: createServiceLocator(), domainInteractor: mockDomainInteractor)
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             sut1.toggleFavorite(for: movie)
@@ -80,7 +88,7 @@ final class FavoritesMoviesViewModelTests: XCTestCase {
                 XCTAssertTrue(sut1.isFavorited(movie: movie))
 
                 // second instance reads - use same mock service to ensure persistence
-                let sut2 = FavoritesMoviesViewModel(domainInteractor: self.mockDomainInteractor)
+                let sut2 = FavoritesMoviesViewModel(serviceLocator: self.createServiceLocator(), domainInteractor: self.mockDomainInteractor)
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     XCTAssertTrue(sut2.isFavorited(movie: movie))

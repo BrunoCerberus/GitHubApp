@@ -24,7 +24,9 @@ final class HomeViewSearchTests: XCTestCase {
 
         router = HomeNavigationRouter()
         mockService = MockHomeService()
-        viewModel = HomeViewModel(service: mockService)
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: mockService)
+        viewModel = HomeViewModel(serviceLocator: serviceLocator)
     }
 
     override func tearDown() {
@@ -46,7 +48,10 @@ final class HomeViewSearchTests: XCTestCase {
 
     func testHomeViewInitializationWithDefaultViewModel() {
         // Given - Initialize without providing a viewModel
-        let view = HomeView(router: router)
+        let defaultServiceLocator = ServiceLocator()
+        defaultServiceLocator.register(HomeService.self, instance: MockHomeService())
+        let defaultViewModel = HomeViewModel(serviceLocator: defaultServiceLocator)
+        let view = HomeView(router: router, viewModel: defaultViewModel)
 
         // When - Create hosting controller
         let hostingController = UIHostingController(rootView: view)

@@ -16,9 +16,9 @@ final class MovieDetailsHostingController: BaseHostingController<MovieDetailsVie
     let movie: Movie
 
     /// Create a hosting controller configured with a given movie
-    init(movie: Movie) {
+    init(movie: Movie, serviceLocator: ServiceLocator) {
         self.movie = movie
-        let viewModel = MovieDetailsViewModel(movie: movie)
+        let viewModel = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
         let rootView = MovieDetailsView(viewModel: viewModel)
         super.init(rootView: rootView)
     }

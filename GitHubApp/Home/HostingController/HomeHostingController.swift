@@ -18,9 +18,9 @@ final class HomeHostingController<R: HomeNavigationRouter>: BaseHostingControlle
     let router: R
 
     /// Create a hosting controller for HomeView with a router
-    init(navigationRouter: R) {
+    init(navigationRouter: R, serviceLocator: ServiceLocator) {
         router = navigationRouter
-        let rootView = HomeView<R>(router: navigationRouter, viewModel: HomeViewModel())
+        let rootView = HomeView<R>(router: navigationRouter, viewModel: HomeViewModel(serviceLocator: serviceLocator))
         super.init(rootView: rootView)
     }
 

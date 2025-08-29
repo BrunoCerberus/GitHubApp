@@ -26,8 +26,8 @@ struct SettingsView: View {
 
     /// Initialize the settings view
     /// - Parameter viewModel: The settings view model
-    init(viewModel: SettingsViewModel? = nil) {
-        _viewModel = StateObject(wrappedValue: viewModel ?? SettingsViewModel())
+    init(viewModel: SettingsViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
@@ -431,5 +431,8 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView()
+    let serviceLocator = ServiceLocator()
+    serviceLocator.register(SettingsService.self, instance: MockSettingsService())
+    let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
+    return SettingsView(viewModel: viewModel)
 }

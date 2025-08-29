@@ -25,7 +25,9 @@ final class HomeViewComponentTests: XCTestCase {
 
         router = HomeNavigationRouter()
         mockService = MockHomeService()
-        viewModel = HomeViewModel(service: mockService)
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: mockService)
+        viewModel = HomeViewModel(serviceLocator: serviceLocator)
         view = HomeView(router: router, viewModel: viewModel)
     }
 

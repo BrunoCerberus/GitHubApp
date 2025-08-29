@@ -43,37 +43,27 @@ final class SettingsViewModel: CombineViewModel {
     private let viewStateReducer: SettingsViewStateReducing
 
     /// Service locator for dependency management
-    private let serviceLocator: ServiceLocator?
+    private let serviceLocator: ServiceLocator
 
     // MARK: - Initialization
 
     /**
      * Initialize the ViewModel with dependencies.
      *
-     * - Parameter service: Settings service for API calls (retrieved from ServiceLocator)
      * - Parameter serviceLocator: Service locator for dependency injection
      * - Parameter domainInteractor: Optional domain interactor (created if not provided)
      * - Parameter viewStateReducer: Optional view state reducer (created if not provided)
      */
     init(
-        service: SettingsService? = nil,
-        serviceLocator: ServiceLocator? = nil,
+        serviceLocator: ServiceLocator,
         domainInteractor: SettingsDomainInteractor? = nil,
         viewStateReducer: SettingsViewStateReducing? = nil
     ) {
         // Store serviceLocator for dependency resolution
         self.serviceLocator = serviceLocator
 
-        // Resolve service dependency
-        let resolvedService: SettingsService = if let service {
-            service
-        } else {
-            LiveSettingsService()
-        }
-
         // Initialize domain interactor
         self.domainInteractor = domainInteractor ?? SettingsDomainInteractor(
-            settingsService: resolvedService,
             serviceLocator: serviceLocator
         )
 

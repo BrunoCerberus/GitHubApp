@@ -94,15 +94,18 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
                 // Use mock services for tests
                 serviceLocator.register(HomeService.self, instance: MockHomeService())
                 serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())
+                serviceLocator.register(SettingsService.self, instance: MockSettingsService())
             } else {
                 // Use real services for debug builds
                 serviceLocator.register(HomeService.self, instance: LiveHomeService())
                 serviceLocator.register(FavoritesService.self, instance: LiveFavoritesService())
+                serviceLocator.register(SettingsService.self, instance: LiveSettingsService())
             }
         #else
             // Use real services for release builds
             serviceLocator.register(HomeService.self, instance: LiveHomeService())
             serviceLocator.register(FavoritesService.self, instance: LiveFavoritesService())
+            serviceLocator.register(SettingsService.self, instance: LiveSettingsService())
         #endif
     }
 

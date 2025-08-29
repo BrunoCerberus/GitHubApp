@@ -21,7 +21,9 @@ final class HomeHostingControllerTests: XCTestCase {
 
     func testViewDidLoadSetsTitleAndLargeTitlesAndRouterNav() {
         let router = HomeNavigationRouter()
-        let sut = HomeHostingController<HomeNavigationRouter>(navigationRouter: router)
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: MockHomeService())
+        let sut = HomeHostingController<HomeNavigationRouter>(navigationRouter: router, serviceLocator: serviceLocator)
         let nav = UINavigationController(rootViewController: sut)
 
         // Trigger lifecycle
@@ -35,7 +37,9 @@ final class HomeHostingControllerTests: XCTestCase {
 
     func testInitialization() {
         let router = HomeNavigationRouter()
-        let sut = HomeHostingController<HomeNavigationRouter>(navigationRouter: router)
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: MockHomeService())
+        let sut = HomeHostingController<HomeNavigationRouter>(navigationRouter: router, serviceLocator: serviceLocator)
 
         XCTAssertTrue(sut.router === router)
         XCTAssertNotNil(sut.view)

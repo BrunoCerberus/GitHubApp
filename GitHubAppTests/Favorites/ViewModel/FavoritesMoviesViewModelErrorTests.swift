@@ -17,12 +17,20 @@ final class FavoritesMoviesViewModelErrorTests: XCTestCase {
     private var mockDomainInteractor: FavoritesDomainInteractor!
     private var cancellables: Set<AnyCancellable> = []
 
+    private func createServiceLocator() -> ServiceLocator {
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(FavoritesService.self, instance: mockFavoritesService)
+        return serviceLocator
+    }
+
     override func setUp() {
         super.setUp()
         StorageServiceFactory.shared.resetCache()
 
         mockFavoritesService = MockFavoritesService()
-        mockDomainInteractor = FavoritesDomainInteractor(favoritesService: mockFavoritesService)
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(FavoritesService.self, instance: mockFavoritesService)
+        mockDomainInteractor = FavoritesDomainInteractor(serviceLocator: serviceLocator)
         cancellables = []
     }
 
@@ -40,10 +48,12 @@ final class FavoritesMoviesViewModelErrorTests: XCTestCase {
         // Given - All parameters nil to test default initialization paths
 
         // When
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())
         let viewModel = FavoritesMoviesViewModel(
+            serviceLocator: serviceLocator,
             domainInteractor: nil,
-            viewStateReducer: nil,
-            serviceLocator: nil
+            viewStateReducer: nil
         )
 
         // Then - Should initialize with success state containing empty favorites to avoid loading flicker
@@ -75,7 +85,7 @@ final class FavoritesMoviesViewModelErrorTests: XCTestCase {
 
     func testViewModelPropertiesInLoadingState() {
         // Given
-        let viewModel = FavoritesMoviesViewModel(domainInteractor: mockDomainInteractor)
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: createServiceLocator(), domainInteractor: mockDomainInteractor)
 
         // When - Keep in loading state (initial state)
 
@@ -88,7 +98,7 @@ final class FavoritesMoviesViewModelErrorTests: XCTestCase {
 
     func testSendViewEventMethod() {
         // Given
-        let viewModel = FavoritesMoviesViewModel(domainInteractor: mockDomainInteractor)
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: createServiceLocator(), domainInteractor: mockDomainInteractor)
         let movie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
 
         // When - Test the sendViewEvent method (CombineViewModel protocol requirement)
@@ -100,7 +110,7 @@ final class FavoritesMoviesViewModelErrorTests: XCTestCase {
 
     func testAllViewEventConversions() {
         // Given
-        let viewModel = FavoritesMoviesViewModel(domainInteractor: mockDomainInteractor)
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: createServiceLocator(), domainInteractor: mockDomainInteractor)
         let movie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
 
         // When & Then - Test all event types are handled
@@ -121,7 +131,7 @@ final class FavoritesMoviesViewModelErrorTests: XCTestCase {
 
     func testSetFavoriteMoviesForTestingWithEmptyArray() {
         // Given
-        let viewModel = FavoritesMoviesViewModel(domainInteractor: mockDomainInteractor)
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: createServiceLocator(), domainInteractor: mockDomainInteractor)
 
         // When
         viewModel.setFavoriteMoviesForTesting([])
@@ -141,7 +151,7 @@ final class FavoritesMoviesViewModelErrorTests: XCTestCase {
         weak var weakViewModel: FavoritesMoviesViewModel?
 
         autoreleasepool {
-            let viewModel = FavoritesMoviesViewModel(domainInteractor: mockDomainInteractor)
+            let viewModel = FavoritesMoviesViewModel(serviceLocator: createServiceLocator(), domainInteractor: mockDomainInteractor)
             weakViewModel = viewModel
 
             // Start some operations

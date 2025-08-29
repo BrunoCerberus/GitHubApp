@@ -10,26 +10,39 @@ import XCTest
 final class HomeDomainInteractorTests: XCTestCase {
     private var sut: HomeDomainInteractor!
     private var mockHomeService: MockHomeService!
-    private var mockStorageService: MockStorageService!
+    private var storageService: StorageServiceProtocol!
     private var cancellables: Set<AnyCancellable> = []
 
     override func setUp() {
         super.setUp()
         mockHomeService = MockHomeService()
-        mockStorageService = MockStorageService()
-        sut = HomeDomainInteractor(homeService: mockHomeService, storageService: mockStorageService)
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: mockHomeService)
+
+        // Configure StorageServiceFactory for testing
         StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.testing)
+
+        // Get the test storage service instance
+        do {
+            storageService = try StorageServiceFactory.shared.getStorageService()
+        } catch {
+            fatalError("Failed to get storage service for testing: \(error)")
+        }
+
+        sut = HomeDomainInteractor(serviceLocator: serviceLocator)
         // Ensure API key exists in case anything inadvertently touches HomeAPI
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
     }
 
     override func tearDown() {
         StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.production)
         try? APIKeysProvider.removeMovieAPIKey()
         cancellables.removeAll()
         sut = nil
         mockHomeService = nil
-        mockStorageService = nil
+        storageService = nil
         super.tearDown()
     }
 
@@ -122,10 +135,10 @@ final class HomeDomainInteractorTests: XCTestCase {
             self.sut.handleAction(.toggleMovieFavorite(movie))
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                // Then - Check if movie is in mock storage service
+                // Then - Check if movie is in storage service
                 Task {
                     do {
-                        let favoriteMovies = try await self.mockStorageService.fetchLikedMovies()
+                        let favoriteMovies = try await self.storageService.fetchLikedMovies()
                         XCTAssertTrue(favoriteMovies.contains { $0.id == movie.id })
                         expectation.fulfill()
                     } catch {
@@ -146,7 +159,7 @@ final class HomeDomainInteractorTests: XCTestCase {
 
         // First add the movie to test storage
         Task {
-            try await self.mockStorageService.save([movie], context: StorageContext.favoriteMovies)
+            try await self.storageService.save([movie], context: StorageContext.favoriteMovies)
 
             // When - toggle to remove
             await MainActor.run {
@@ -157,7 +170,7 @@ final class HomeDomainInteractorTests: XCTestCase {
             try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
 
             // Then - Check if movie is removed from storage
-            let favoriteMovies = try await self.mockStorageService.fetchLikedMovies()
+            let favoriteMovies = try await self.storageService.fetchLikedMovies()
             XCTAssertFalse(favoriteMovies.contains { $0.id == movie.id })
             expectation.fulfill()
         }
@@ -174,7 +187,7 @@ final class HomeDomainInteractorTests: XCTestCase {
 
         // Setup test storage with favorite movies
         Task {
-            try await self.mockStorageService.save(favoriteMovies, context: StorageContext.favoriteMovies)
+            try await self.storageService.save(favoriteMovies, context: StorageContext.favoriteMovies)
 
             // First load some movies from MockHomeService
             await MainActor.run {

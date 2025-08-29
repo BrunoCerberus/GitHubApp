@@ -42,7 +42,7 @@ final class FavoritesMoviesViewModel: CombineViewModel {
     private let viewStateReducer: FavoritesViewStateReducing
 
     /// Service locator for dependency management
-    private let serviceLocator: ServiceLocator?
+    let serviceLocator: ServiceLocator
 
     // MARK: - Initialization
 
@@ -50,18 +50,18 @@ final class FavoritesMoviesViewModel: CombineViewModel {
      * Initialize the ViewModel with dependencies.
      *
      * - Parameters:
+     *   - serviceLocator: Service locator for dependency injection
      *   - domainInteractor: Domain interactor for business logic (optional, will create default)
      *   - viewStateReducer: Reducer for view state conversion (optional, will create default)
-     *   - serviceLocator: Service locator for dependency injection (optional)
      */
     init(
+        serviceLocator: ServiceLocator,
         domainInteractor: FavoritesDomainInteractor? = nil,
-        viewStateReducer: FavoritesViewStateReducing? = nil,
-        serviceLocator: ServiceLocator? = nil
+        viewStateReducer: FavoritesViewStateReducing? = nil
     ) {
+        self.serviceLocator = serviceLocator
         self.domainInteractor = domainInteractor ?? FavoritesDomainInteractor(serviceLocator: serviceLocator)
         self.viewStateReducer = viewStateReducer ?? FavoritesViewStateReducer()
-        self.serviceLocator = serviceLocator
 
         setupStateObservation()
     }

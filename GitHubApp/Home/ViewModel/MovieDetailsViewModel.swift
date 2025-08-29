@@ -52,31 +52,20 @@ final class MovieDetailsViewModel {
     private var cancellables: Set<AnyCancellable> = .init()
 
     /**
-     * Initialize the ViewModel with a movie and optional service dependency.
+     * Initialize the ViewModel with a movie and service locator.
      *
      * - Parameter movie: The movie to display details for
-     * - Parameter service: Network service for API calls (retrieved from ServiceLocator)
      * - Parameter serviceLocator: Service locator for dependency injection
      */
-    init(movie: Movie,
-         service: HomeService? = nil,
-         serviceLocator: ServiceLocator? = nil)
-    {
+    init(movie: Movie, serviceLocator: ServiceLocator) {
         self.movie = movie
 
-        // Try to get service from ServiceLocator, fallback to HomeService if not registered
-        if let service {
-            self.service = service
-        } else if let serviceLocator {
-            do {
-                self.service = try serviceLocator.retrieve(HomeService.self)
-            } catch {
-                // Fallback to HomeService if not registered in ServiceLocator
-                self.service = LiveHomeService()
-            }
-        } else {
-            // Fallback to LiveHomeService if no ServiceLocator provided
-            self.service = LiveHomeService()
+        // Retrieve HomeService from ServiceLocator
+        do {
+            service = try serviceLocator.retrieve(HomeService.self)
+        } catch {
+            print("⚠️ Failed to retrieve HomeService from ServiceLocator: \(error)")
+            service = LiveHomeService()
         }
     }
 

@@ -19,10 +19,13 @@ final class HomeNavigationRouter: NavigationRouter, Equatable {
     weak var navigation: UINavigationController?
     /// Optional SwiftUI coordinator for declarative navigation
     private weak var coordinator: Coordinator?
+    /// Service locator for dependency injection
+    private let serviceLocator: ServiceLocator?
 
     /// Create a router with optional coordinator reference
-    init(coordinator: Coordinator? = nil) {
+    init(coordinator: Coordinator? = nil, serviceLocator: ServiceLocator? = nil) {
         self.coordinator = coordinator
+        self.serviceLocator = serviceLocator ?? coordinator?.serviceLocator
     }
 
     /**
@@ -36,9 +39,9 @@ final class HomeNavigationRouter: NavigationRouter, Equatable {
             if let coordinator {
                 // Use SwiftUI navigation
                 coordinator.push(page: .detail(movie))
-            } else if let navigation {
+            } else if let navigation, let serviceLocator {
                 // Fallback to UIKit navigation
-                let controller = MovieDetailsHostingController(movie: movie)
+                let controller = MovieDetailsHostingController(movie: movie, serviceLocator: serviceLocator)
                 navigation.pushViewController(controller, animated: true)
             }
         }

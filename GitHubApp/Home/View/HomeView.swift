@@ -25,17 +25,15 @@ struct HomeView<R: HomeNavigationRouter>: View {
     @State private var searchWorkItem: DispatchWorkItem?
 
     /**
-     * Create the view with a router and optional ViewModel.
+     * Create the view with a router and ViewModel.
      *
      * - Parameters:
      *   - router: Navigation router for routing actions
-     *   - viewModel: Optional ViewModel (created if not provided)
+     *   - viewModel: ViewModel for managing data and actions
      */
-    init(router: R,
-         viewModel: HomeViewModel? = nil)
-    {
+    init(router: R, viewModel: HomeViewModel) {
         self.router = router
-        _viewModel = StateObject(wrappedValue: viewModel ?? HomeViewModel())
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     /// View content: renders based on viewState with persistent search
@@ -116,9 +114,12 @@ struct HomeView<R: HomeNavigationRouter>: View {
 }
 
 #Preview {
-    let viewModel = HomeViewModel()
-    HomeView(
-        router: HomeNavigationRouter(),
+    let serviceLocator = ServiceLocator()
+    serviceLocator.register(HomeService.self, instance: MockHomeService())
+    let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+    let router = HomeNavigationRouter()
+    return HomeView(
+        router: router,
         viewModel: viewModel
     )
 }

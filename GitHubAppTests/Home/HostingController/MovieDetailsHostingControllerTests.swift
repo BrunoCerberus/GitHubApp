@@ -21,7 +21,9 @@ final class MovieDetailsHostingControllerTests: XCTestCase {
 
     func testViewDidLoadSetsTitleFromMovie() {
         let movie = Movie(id: 7, title: "Seven", overview: "o", posterPath: nil)
-        let sut = MovieDetailsHostingController(movie: movie)
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: MockHomeService())
+        let sut = MovieDetailsHostingController(movie: movie, serviceLocator: serviceLocator)
         _ = UINavigationController(rootViewController: sut)
 
         // Trigger lifecycle
@@ -33,7 +35,9 @@ final class MovieDetailsHostingControllerTests: XCTestCase {
 
     func testInitialization() {
         let movie = Movie(id: 123, title: "Test Movie", overview: "Test overview", posterPath: "/test.jpg")
-        let sut = MovieDetailsHostingController(movie: movie)
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: MockHomeService())
+        let sut = MovieDetailsHostingController(movie: movie, serviceLocator: serviceLocator)
 
         XCTAssertEqual(sut.movie.id, movie.id)
         XCTAssertEqual(sut.movie.title, movie.title)

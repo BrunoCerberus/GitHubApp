@@ -92,12 +92,12 @@ struct FavoritesMoviesView: View {
                 viewModel.loadFavoriteMovies()
             }
             .navigationDestination(item: $selectedMovie) { movie in
-                MovieDetailsView(viewModel: MovieDetailsViewModel(movie: movie))
+                MovieDetailsView(viewModel: MovieDetailsViewModel(movie: movie, serviceLocator: viewModel.serviceLocator))
             }
         }
     }
 }
 
 #Preview {
-    FavoritesMoviesView(viewModel: FavoritesMoviesViewModel())
+    FavoritesMoviesView(viewModel: FavoritesMoviesViewModel(serviceLocator: ServiceLocator()))
 }

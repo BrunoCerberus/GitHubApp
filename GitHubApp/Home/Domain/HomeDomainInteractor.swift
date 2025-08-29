@@ -52,40 +52,26 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     /**
      * Initialize the domain interactor with required dependencies.
      *
-     * - Parameter homeService: Service for movie data operations (optional, will use ServiceLocator if nil)
-     * - Parameter storageService: Storage service for persistence (defaults to shared instance)
-     * - Parameter serviceLocator: Service locator for dependency injection (optional)
+     * - Parameter serviceLocator: Service locator for dependency injection
      * - Parameter initialState: Initial domain state (defaults to HomeDomainState.initial)
      */
     init(
-        homeService: HomeService? = nil,
-        storageService: StorageServiceProtocol? = nil,
-        serviceLocator: ServiceLocator? = nil,
+        serviceLocator: ServiceLocator,
         initialState: HomeDomainState = .initial
     ) {
-        // Initialize home service
-        if let homeService {
-            self.homeService = homeService
-        } else if let serviceLocator {
-            do {
-                self.homeService = try serviceLocator.retrieve(HomeService.self)
-            } catch {
-                print("⚠️ Failed to retrieve HomeService from ServiceLocator: \(error)")
-                self.homeService = LiveHomeService()
-            }
-        } else {
-            self.homeService = LiveHomeService()
+        // Retrieve HomeService from ServiceLocator
+        do {
+            homeService = try serviceLocator.retrieve(HomeService.self)
+        } catch {
+            print("⚠️ Failed to retrieve HomeService from ServiceLocator: \(error)")
+            homeService = LiveHomeService()
         }
 
         // Initialize storage service
-        if let storageService {
-            self.storageService = storageService
-        } else {
-            do {
-                self.storageService = try StorageServiceFactory.shared.getStorageService()
-            } catch {
-                fatalError("Failed to initialize storage service: \(error)")
-            }
+        do {
+            storageService = try StorageServiceFactory.shared.getStorageService()
+        } catch {
+            fatalError("Failed to initialize storage service: \(error)")
         }
 
         currentState = initialState

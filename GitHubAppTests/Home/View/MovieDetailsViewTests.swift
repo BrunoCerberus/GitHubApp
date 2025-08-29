@@ -30,7 +30,9 @@ final class MovieDetailsViewTests: XCTestCase {
         super.setUp()
 
         mockService = MockHomeService()
-        viewModel = MovieDetailsViewModel(movie: movie, service: mockService)
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: mockService)
+        viewModel = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
         view = MovieDetailsView(viewModel: viewModel)
     }
 

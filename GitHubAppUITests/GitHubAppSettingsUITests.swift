@@ -92,10 +92,10 @@ final class GitHubAppSettingsUITests: XCTestCase {
         XCTAssertTrue(buildText.exists, "Build text should be visible")
 
         // Verify version and build numbers are displayed by looking for the actual version
-        let versionNumber = app.staticTexts["1.0.0"]
+        let versionNumber = app.staticTexts["1.0"]
         let buildNumber = app.staticTexts["1"]
 
-        XCTAssertTrue(versionNumber.exists, "Version 1.0.0 should be displayed")
+        XCTAssertTrue(versionNumber.exists, "Version 1.0 should be displayed")
         XCTAssertTrue(buildNumber.exists, "Build number 1 should be displayed")
 
         // Verify info circle icon

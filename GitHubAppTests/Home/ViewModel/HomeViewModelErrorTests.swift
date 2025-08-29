@@ -38,13 +38,13 @@ final class HomeViewModelErrorTests: XCTestCase {
 
     // MARK: - Basic Tests
 
-    func testInitializationWithNilService() {
-        // Given - Test service resolution when service is nil
+    func testInitializationWithServiceLocator() {
+        // Given - Test service resolution from ServiceLocator
 
         // When
-        let viewModel = HomeViewModel(service: nil)
+        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
 
-        // Then - Should initialize with LiveHomeService fallback
+        // Then - Should initialize with registered service
         XCTAssertNotNil(viewModel)
         XCTAssertEqual(viewModel.viewState, .loading)
     }
@@ -53,7 +53,7 @@ final class HomeViewModelErrorTests: XCTestCase {
         // Given - Test fallback when serviceLocator is nil
 
         // When
-        let viewModel = HomeViewModel(service: nil, serviceLocator: nil)
+        let viewModel = HomeViewModel(serviceLocator: ServiceLocator())
 
         // Then - Should use LiveHomeService fallback
         XCTAssertNotNil(viewModel)
@@ -65,7 +65,7 @@ final class HomeViewModelErrorTests: XCTestCase {
         let emptyServiceLocator = ServiceLocator()
 
         // When - Should fallback to LiveHomeService when retrieval fails
-        let viewModel = HomeViewModel(service: nil, serviceLocator: emptyServiceLocator)
+        let viewModel = HomeViewModel(serviceLocator: emptyServiceLocator)
 
         // Then
         XCTAssertNotNil(viewModel)
@@ -74,7 +74,7 @@ final class HomeViewModelErrorTests: XCTestCase {
 
     func testViewModelPropertiesInLoadingState() {
         // Given
-        let viewModel = HomeViewModel(service: mockService)
+        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
 
         // When - Keep in loading state (initial state)
 
@@ -89,7 +89,7 @@ final class HomeViewModelErrorTests: XCTestCase {
 
     func testSearchWithEmptyQuery() {
         // Given
-        let viewModel = HomeViewModel(service: mockService)
+        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
 
         // When
         viewModel.searchMovies(query: "")
@@ -100,7 +100,7 @@ final class HomeViewModelErrorTests: XCTestCase {
 
     func testSearchWithSpecialCharacters() {
         // Given
-        let viewModel = HomeViewModel(service: mockService)
+        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
 
         // When
         let specialQueries = [
@@ -118,7 +118,7 @@ final class HomeViewModelErrorTests: XCTestCase {
 
     func testSendViewEventMethod() {
         // Given
-        let viewModel = HomeViewModel(service: mockService)
+        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
         let testMovie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
 
         // When - Test the sendViewEvent protocol method
@@ -133,7 +133,7 @@ final class HomeViewModelErrorTests: XCTestCase {
 
     func testAllEventTypes() {
         // Given
-        let viewModel = HomeViewModel(service: mockService)
+        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
         let testMovie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
 
         // When - Test all possible event types
@@ -158,7 +158,7 @@ final class HomeViewModelErrorTests: XCTestCase {
         weak var weakViewModel: HomeViewModel?
 
         autoreleasepool {
-            let viewModel = HomeViewModel(service: mockService)
+            let viewModel = HomeViewModel(serviceLocator: serviceLocator)
             weakViewModel = viewModel
 
             // Trigger some operations
@@ -177,20 +177,20 @@ final class HomeViewModelErrorTests: XCTestCase {
 
         // 1. Direct service provided
         let directService = MockHomeService()
-        let viewModel1 = HomeViewModel(service: directService, serviceLocator: nil)
+        let viewModel1 = HomeViewModel(serviceLocator: serviceLocator)
         XCTAssertNotNil(viewModel1)
 
         // 2. Service from service locator
-        let viewModel2 = HomeViewModel(service: nil, serviceLocator: serviceLocator)
+        let viewModel2 = HomeViewModel(serviceLocator: serviceLocator)
         XCTAssertNotNil(viewModel2)
 
         // 3. Fallback to LiveHomeService
         let emptyServiceLocator = ServiceLocator()
-        let viewModel3 = HomeViewModel(service: nil, serviceLocator: emptyServiceLocator)
+        let viewModel3 = HomeViewModel(serviceLocator: emptyServiceLocator)
         XCTAssertNotNil(viewModel3)
 
         // 4. Complete fallback
-        let viewModel4 = HomeViewModel(service: nil, serviceLocator: nil)
+        let viewModel4 = HomeViewModel(serviceLocator: ServiceLocator())
         XCTAssertNotNil(viewModel4)
     }
 }

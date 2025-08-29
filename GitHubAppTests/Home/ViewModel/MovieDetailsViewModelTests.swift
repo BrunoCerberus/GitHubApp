@@ -23,7 +23,9 @@ final class MovieDetailsViewModelTests: XCTestCase {
 
     func testFetchDataSetsCreditsAndReviews() {
         let movie = Movie(id: 999, title: "T", overview: "O", posterPath: nil)
-        let sut = MovieDetailsViewModel(movie: movie, service: MockHomeService())
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: MockHomeService())
+        let sut = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
 
         let exp = expectation(description: "details")
         sut.fetchData()
@@ -44,7 +46,9 @@ final class MovieDetailsViewModelTests: XCTestCase {
         }
 
         let movie = Movie(id: 1, title: "T", overview: "O", posterPath: nil)
-        let sut = MovieDetailsViewModel(movie: movie, service: FailingService())
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: FailingService())
+        let sut = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
         let exp = expectation(description: "error")
         sut.fetchData()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

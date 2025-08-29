@@ -18,13 +18,19 @@ final class HomeViewSearchExecutionTests: XCTestCase {
     var mockService: MockHomeService!
     var viewModel: HomeViewModel!
 
+    private func createServiceLocator() -> ServiceLocator {
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: mockService)
+        return serviceLocator
+    }
+
     override func setUp() {
         super.setUp()
         StorageServiceFactory.shared.resetCache()
 
         router = HomeNavigationRouter()
         mockService = MockHomeService()
-        viewModel = HomeViewModel(service: mockService)
+        viewModel = HomeViewModel(serviceLocator: createServiceLocator())
     }
 
     override func tearDown() {

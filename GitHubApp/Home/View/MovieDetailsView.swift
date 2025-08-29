@@ -74,7 +74,7 @@ struct MovieDetailsView: View {
         posterPath: "poster_image_path_here"
     )
     NavigationStack {
-        MovieDetailsView(viewModel: MovieDetailsViewModel(movie: movie))
+        MovieDetailsView(viewModel: MovieDetailsViewModel(movie: movie, serviceLocator: ServiceLocator()))
             .navigationTitle(movie.title)
     }
     .preferredColorScheme(.dark)

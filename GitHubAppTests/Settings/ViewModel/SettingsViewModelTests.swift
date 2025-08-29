@@ -25,13 +25,15 @@ final class SettingsViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockSettingsService = MockSettingsService()
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(SettingsService.self, instance: mockSettingsService)
         mockDomainInteractor = SettingsDomainInteractor(
-            settingsService: mockSettingsService,
+            serviceLocator: serviceLocator,
             shouldLoadInitialData: false
         )
         mockViewStateReducer = SettingsViewStateReducer()
         settingsViewModel = SettingsViewModel(
-            service: mockSettingsService,
+            serviceLocator: serviceLocator,
             domainInteractor: mockDomainInteractor,
             viewStateReducer: mockViewStateReducer
         )
@@ -71,13 +73,15 @@ final class SettingsViewModelTests: XCTestCase {
         let freshMockService = MockSettingsService()
 
         // Create fresh domain interactor with updated mock
+        let freshServiceLocator = ServiceLocator()
+        freshServiceLocator.register(SettingsService.self, instance: freshMockService)
         let freshDomainInteractor = SettingsDomainInteractor(
-            settingsService: freshMockService,
+            serviceLocator: freshServiceLocator,
             shouldLoadInitialData: false
         )
 
         let freshViewModel = SettingsViewModel(
-            service: freshMockService,
+            serviceLocator: freshServiceLocator,
             domainInteractor: freshDomainInteractor,
             viewStateReducer: mockViewStateReducer
         )

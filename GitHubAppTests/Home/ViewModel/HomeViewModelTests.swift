@@ -10,6 +10,12 @@ import XCTest
 final class HomeViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = .init()
 
+    private func createTestServiceLocator(homeService: HomeService) -> ServiceLocator {
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: homeService)
+        return serviceLocator
+    }
+
     override func setUp() {
         super.setUp()
         StorageServiceFactory.shared.resetCache()
@@ -26,7 +32,7 @@ final class HomeViewModelTests: XCTestCase {
 
     func testFetchDataPopulatesMoviesAndFavoritesSync() {
         let service = MockHomeService()
-        let sut = HomeViewModel(service: service)
+        let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
         let exp = expectation(description: "movies")
         // Give the Combine pipeline a short moment; MockHomeService uses RunLoop delivery
@@ -40,7 +46,7 @@ final class HomeViewModelTests: XCTestCase {
 
     func testSearchMoviesReplacesMovies() {
         let service = MockHomeService()
-        let sut = HomeViewModel(service: service)
+        let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
         let exp = expectation(description: "search")
         sut.searchMovies(query: "barbie")
@@ -53,7 +59,7 @@ final class HomeViewModelTests: XCTestCase {
 
     func testToggleFavoriteForMovie() {
         let service = MockHomeService()
-        let sut = HomeViewModel(service: service)
+        let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
         // Create a test movie
         let testMovie = Movie(
@@ -72,7 +78,7 @@ final class HomeViewModelTests: XCTestCase {
 
     func testLoadFavoriteMovies() {
         let service = MockHomeService()
-        let sut = HomeViewModel(service: service)
+        let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
         // Test loading favorite movies
         sut.loadFavoriteMovies()
@@ -83,7 +89,7 @@ final class HomeViewModelTests: XCTestCase {
 
     func testIsLikedMovie() {
         let service = MockHomeService()
-        let sut = HomeViewModel(service: service)
+        let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
         // Create a test movie
         let testMovie = Movie(
@@ -102,7 +108,7 @@ final class HomeViewModelTests: XCTestCase {
 
     func testSendViewEvent() {
         let service = MockHomeService()
-        let sut = HomeViewModel(service: service)
+        let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
         // Test sending a view event
         sut.sendViewEvent(.fetchData)
@@ -113,7 +119,7 @@ final class HomeViewModelTests: XCTestCase {
 
     func testViewModelGetters() {
         let service = MockHomeService()
-        let sut = HomeViewModel(service: service)
+        let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
         // Test the computed properties for coverage - check what properties are available
         let movies = sut.movies

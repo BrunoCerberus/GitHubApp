@@ -24,8 +24,10 @@ final class SettingsDomainInteractorTests: XCTestCase {
         super.setUp()
         mockSettingsService = MockSettingsService()
         // Initialize with a clean initial state and prevent auto-loading
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(SettingsService.self, instance: mockSettingsService)
         domainInteractor = SettingsDomainInteractor(
-            settingsService: mockSettingsService,
+            serviceLocator: serviceLocator,
             initialState: SettingsDomainState.initial,
             shouldLoadInitialData: false
         )

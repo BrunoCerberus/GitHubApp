@@ -25,16 +25,10 @@ final class Coordinator: ObservableObject, CoordinatorProtocol {
     @Published var path: NavigationPath = .init()
 
     /// Service locator for dependency injection
-    private let serviceLocator: ServiceLocator
+    let serviceLocator: ServiceLocator
 
     /// Shared HomeViewModel instance
-    lazy var homeViewModel: HomeViewModel = {
-        do {
-            return try .init(serviceLocator: serviceLocator)
-        } catch {
-            fatalError("Failed to initialize HomeViewModel: \(error)")
-        }
-    }()
+    lazy var homeViewModel: HomeViewModel = .init(serviceLocator: serviceLocator)
 
     /// Shared FavoritesMoviesViewModel instance
     lazy var favoriteMoviesViewModel: FavoritesMoviesViewModel = .init(serviceLocator: serviceLocator)

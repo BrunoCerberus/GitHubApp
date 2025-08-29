@@ -48,26 +48,19 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
     /**
      * Initialize the interactor with dependencies.
      *
-     * - Parameter favoritesService: Service for handling favorite movies persistence (optional, will use ServiceLocator if nil)
-     * - Parameter serviceLocator: Service locator for dependency injection (optional)
+     * - Parameter serviceLocator: Service locator for dependency injection
      */
-    init(favoritesService: FavoritesService? = nil, serviceLocator: ServiceLocator? = nil) {
-        // Use provided service or get from ServiceLocator
-        if let favoritesService {
-            self.favoritesService = favoritesService
-        } else if let serviceLocator {
-            do {
-                self.favoritesService = try serviceLocator.retrieve(FavoritesService.self)
-            } catch {
-                print("⚠️ Failed to retrieve FavoritesService from ServiceLocator: \(error)")
-                self.favoritesService = LiveFavoritesService()
-            }
-        } else {
-            self.favoritesService = LiveFavoritesService()
+    init(serviceLocator: ServiceLocator) {
+        // Retrieve FavoritesService from ServiceLocator
+        do {
+            favoritesService = try serviceLocator.retrieve(FavoritesService.self)
+        } catch {
+            print("⚠️ Failed to retrieve FavoritesService from ServiceLocator: \(error)")
+            favoritesService = LiveFavoritesService()
         }
 
         // Initialize with cached data to avoid loading flicker
-        let cachedMovies = Self.loadCachedMovies(from: self.favoritesService)
+        let cachedMovies = Self.loadCachedMovies(from: favoritesService)
         currentState = FavoritesDomainState(
             favoriteMovies: cachedMovies,
             isLoading: false,

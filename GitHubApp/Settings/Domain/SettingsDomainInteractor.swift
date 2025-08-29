@@ -50,21 +50,21 @@ final class SettingsDomainInteractor: ObservableObject, CombineInteractor {
     /**
      * Initialize the domain interactor with required dependencies.
      *
-     * - Parameter settingsService: Service for settings operations (optional, will use LiveSettingsService if nil)
-     * - Parameter serviceLocator: Service locator for dependency injection (optional)
+     * - Parameter serviceLocator: Service locator for dependency injection
      * - Parameter initialState: Initial domain state (defaults to SettingsDomainState.initial)
+     * - Parameter shouldLoadInitialData: Whether to load initial data automatically
      */
     init(
-        settingsService: SettingsService? = nil,
-        serviceLocator _: ServiceLocator? = nil,
+        serviceLocator: ServiceLocator,
         initialState: SettingsDomainState = .initial,
         shouldLoadInitialData: Bool = true
     ) {
-        // Initialize settings service
-        if let settingsService {
-            self.settingsService = settingsService
-        } else {
-            self.settingsService = LiveSettingsService()
+        // Retrieve SettingsService from ServiceLocator
+        do {
+            settingsService = try serviceLocator.retrieve(SettingsService.self)
+        } catch {
+            print("⚠️ Failed to retrieve SettingsService from ServiceLocator: \(error)")
+            settingsService = LiveSettingsService()
         }
 
         currentState = initialState

@@ -30,7 +30,9 @@ final class SettingsViewTests: XCTestCase {
         UserDefaults.standard.synchronize()
 
         mockSettingsService = MockSettingsService()
-        settingsViewModel = SettingsViewModel(service: mockSettingsService)
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(SettingsService.self, instance: mockSettingsService)
+        settingsViewModel = SettingsViewModel(serviceLocator: serviceLocator)
         view = SettingsView(viewModel: settingsViewModel)
     }
 
@@ -122,7 +124,9 @@ final class SettingsViewTests: XCTestCase {
     func testSettingsViewInitialization() {
         // Given
         let customMockService = MockSettingsService()
-        let customSettingsViewModel = SettingsViewModel(service: customMockService)
+        let customServiceLocator = ServiceLocator()
+        customServiceLocator.register(SettingsService.self, instance: customMockService)
+        let customSettingsViewModel = SettingsViewModel(serviceLocator: customServiceLocator)
 
         // When
         let customView = SettingsView(viewModel: customSettingsViewModel)
@@ -133,8 +137,11 @@ final class SettingsViewTests: XCTestCase {
 
     /// Test settings view with default initialization
     func testSettingsViewDefaultInitialization() {
-        // When - Create view without providing a view model (should use default)
-        let defaultView = SettingsView()
+        // When - Create view with default service locator setup
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(SettingsService.self, instance: MockSettingsService())
+        let defaultViewModel = SettingsViewModel(serviceLocator: serviceLocator)
+        let defaultView = SettingsView(viewModel: defaultViewModel)
 
         // Then
         XCTAssertNotNil(defaultView)

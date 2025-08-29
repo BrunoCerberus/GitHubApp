@@ -42,46 +42,27 @@ final class HomeViewModel: CombineViewModel {
     private let viewStateReducer: HomeViewStateReducing
 
     /// Service locator for dependency management
-    private let serviceLocator: ServiceLocator?
+    private let serviceLocator: ServiceLocator
 
     // MARK: - Initialization
 
     /**
      * Initialize the ViewModel with dependencies.
      *
-     * - Parameter service: Network service for API calls (retrieved from ServiceLocator)
      * - Parameter serviceLocator: Service locator for dependency injection
      * - Parameter domainInteractor: Optional domain interactor (created if not provided)
      * - Parameter viewStateReducer: Optional view state reducer (created if not provided)
      */
     init(
-        service: HomeService? = nil,
-        serviceLocator: ServiceLocator? = nil,
+        serviceLocator: ServiceLocator,
         domainInteractor: HomeDomainInteractor? = nil,
         viewStateReducer: HomeViewStateReducing? = nil
     ) {
         // Store serviceLocator for dependency resolution
         self.serviceLocator = serviceLocator
 
-        // Resolve service dependency
-        let resolvedService: HomeService
-        if let service {
-            resolvedService = service
-        } else if let serviceLocator {
-            do {
-                resolvedService = try serviceLocator.retrieve(HomeService.self)
-            } catch {
-                // Fallback to HomeService if not registered in ServiceLocator
-                resolvedService = LiveHomeService()
-            }
-        } else {
-            // Fallback to LiveHomeService if no ServiceLocator provided
-            resolvedService = LiveHomeService()
-        }
-
         // Initialize domain interactor
         self.domainInteractor = domainInteractor ?? HomeDomainInteractor(
-            homeService: resolvedService,
             serviceLocator: serviceLocator
         )
 
