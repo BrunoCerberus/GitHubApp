@@ -5,6 +5,7 @@ This is a SwiftUI iOS application implementing Clean Architecture patterns with 
 
 ## Architecture & Patterns
 - **Clean Architecture**: Follows layered architecture (View → Presentation → Domain → Service)
+- **ServiceLocator Pattern**: Centralized dependency injection using ServiceLocator only
 - **MVVM + Redux**: Uses `CombineViewModel` and `CombineInteractor` protocols
 - **Reactive Programming**: Built with Combine framework for state management
 - **Single Source of Truth**: ViewModels maintain `@Published viewState`
@@ -28,7 +29,8 @@ GitHubApp/
 │   └── ViewModel/  # Presentation layer
 ├── Favorites/      # Movie favorites feature
 ├── Settings/       # App settings
-├── Configs/        # Shared configuration and utilities
+├── Configs/        # Shared configuration, utilities, and Mock services
+│   └── MockSettingsService.swift  # Mock service for testing
 └── Widgets/        # iOS widget extension
 ```
 
@@ -65,16 +67,56 @@ GitHubApp/
 4. **ViewModel**: Presentation coordinator using `CombineViewModel`
 5. **ViewStateReducing**: Protocol for domain-to-view state transformation
 
+### ServiceLocator Implementation
+The app uses a centralized ServiceLocator pattern for dependency injection:
+
+```swift
+// Service Registration (GitHubAppSceneDelegate.swift)
+serviceLocator.register(HomeService.self, instance: MockHomeService())
+serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())
+serviceLocator.register(SettingsService.self, instance: MockSettingsService())
+
+// Component Initialization
+class HomeDomainInteractor {
+    init(serviceLocator: ServiceLocator) {
+        self.homeService = try serviceLocator.retrieve(HomeService.self)
+    }
+}
+
+// Test Setup
+private func createTestServiceLocator() -> ServiceLocator {
+    let serviceLocator = ServiceLocator()
+    serviceLocator.register(HomeService.self, instance: MockHomeService())
+    return serviceLocator
+}
+```
+
+**Key Benefits:**
+- **Single Dependency**: Components only accept ServiceLocator as constructor parameter
+- **Centralized Registration**: All services registered in one place (GitHubAppSceneDelegate)
+- **Easy Testing**: Mock services automatically injected in test environments
+- **Type Safety**: Compile-time service resolution with proper error handling
+
+### Dependency Injection
+- **ServiceLocator Pattern**: All dependencies injected via ServiceLocator only
+- **Service Registration**: All services registered in GitHubAppSceneDelegate.swift
+- **Mock Services**: Comprehensive mock implementations for testing
+- **Environment Detection**: Automatic mock service selection for test environments
+- **Clean Initialization**: Components only accept ServiceLocator as dependency
+
 ### Service Layer
 - Services return `AnyPublisher<Response, Error>` for async operations
 - Protocol-based design for easy mocking and testing
 - Separate Live implementations for production usage
+- All services accessed through ServiceLocator dependency resolution
 
 ### Testing Strategy
-- Comprehensive unit tests for all layers
+- Comprehensive unit tests for all layers (465 tests, 0 failures)
 - UI tests with snapshot testing
-- Mock services for isolated testing
+- Mock services for isolated testing via ServiceLocator
 - Domain logic tested independently of UI
+- StorageServiceFactory configured for testing with in-memory storage
+- Automatic test environment detection and service injection
 
 ## Development Guidelines
 
@@ -82,9 +124,10 @@ GitHubApp/
 1. Follow the Home feature as reference implementation
 2. Create Domain models first (Action, State, Interactor)
 3. Implement Service layer with protocol
-4. Build ViewModel using CombineViewModel
-5. Create SwiftUI View with @StateObject
-6. Add comprehensive unit tests for each layer
+4. Register service in GitHubAppSceneDelegate.swift (Live + Mock implementations)
+5. Build ViewModel using CombineViewModel with ServiceLocator injection
+6. Create SwiftUI View with @StateObject
+7. Add comprehensive unit tests for each layer using ServiceLocator pattern
 
 ### Code Style
 - Follow existing patterns and naming conventions
@@ -92,13 +135,17 @@ GitHubApp/
 - Maintain single responsibility principle
 - Keep ViewModels thin - business logic belongs in Domain layer
 - Use Combine for reactive data flow
+- **Dependency Injection**: Only pass ServiceLocator through initializers
+- **Service Resolution**: Retrieve dependencies via ServiceLocator.retrieve()
 
 ### Testing Requirements
 - Always run `make test` before committing
 - Maintain high code coverage (current: ~87%)
 - Add unit tests for new business logic
 - Use snapshot tests for UI components
-- Mock external dependencies in tests
+- Mock external dependencies via ServiceLocator injection
+- Configure StorageServiceFactory for testing when needed
+- Use createTestServiceLocator() patterns in test setUp methods
 
 ### Git Workflow
 - Enable pre-commit hooks for automatic SwiftFormat
@@ -129,6 +176,13 @@ make clean             # Clean generated files
 - Ensure iOS 18.2 simulator is available for tests
 - Verify `Secrets.plist` exists with valid API_KEY, or set API_KEY environment variable
 - Run `make clean-packages` if Swift Package issues occur
+
+### ServiceLocator Issues
+- **Missing Service Registration**: Ensure all services are registered in GitHubAppSceneDelegate.swift
+- **Test Failures**: Use `createTestServiceLocator()` helper methods in test setUp
+- **Storage Service Issues**: Configure `StorageServiceFactory.shared.updateConfiguration(.testing)` for unit tests
+- **Mock Service Injection**: Verify MockServices are available in main bundle for test environment detection
+- **Dependency Resolution Errors**: Check service protocols match registered implementations
 
 ## Continuous Integration
 - GitHub Actions workflows for CI/CD
