@@ -5,30 +5,21 @@
 //  Created by bruno on feature/settings-clean-architecture.
 //
 
+import Testing
 import UIKit
-import XCTest
 
 @testable import GitHubApp
 
 /**
  * Unit tests for SettingsViewStateReducer.
  */
-final class SettingsViewStateReducingTests: XCTestCase {
-    var reducer: SettingsViewStateReducer!
-
-    override func setUp() {
-        super.setUp()
-        reducer = SettingsViewStateReducer()
-    }
-
-    override func tearDown() {
-        reducer = nil
-        super.tearDown()
-    }
+struct SettingsViewStateReducingTests {
+    let reducer = SettingsViewStateReducer()
 
     // MARK: - Loading State Tests
 
-    func testReduceLoadingState() {
+    @Test("Reduces to loading state when domain state is loading")
+    func reduceLoadingState() {
         // Given
         let domainState = SettingsDomainState(
             profileImage: nil,
@@ -47,12 +38,13 @@ final class SettingsViewStateReducingTests: XCTestCase {
         let viewState = reducer.reduce(domainState)
 
         // Then
-        XCTAssertEqual(viewState, .loading)
+        #expect(viewState == .loading)
     }
 
     // MARK: - Error State Tests
 
-    func testReduceErrorState() {
+    @Test("Reduces to error state when domain state has error")
+    func reduceErrorState() {
         // Given
         let errorMessage = "Test error message"
         let domainState = SettingsDomainState(
@@ -73,15 +65,16 @@ final class SettingsViewStateReducingTests: XCTestCase {
 
         // Then
         if case let .error(message) = viewState {
-            XCTAssertEqual(message, errorMessage)
+            #expect(message == errorMessage)
         } else {
-            XCTFail("Expected error state")
+            Issue.record("Expected error state")
         }
     }
 
     // MARK: - Success State Tests
 
-    func testReduceSuccessState() {
+    @Test("Reduces to success state with correct data mapping")
+    func reduceSuccessState() {
         // Given
         let testImage = UIImage(systemName: "person.fill")!
         let domainState = SettingsDomainState(
@@ -102,20 +95,21 @@ final class SettingsViewStateReducingTests: XCTestCase {
 
         // Then
         if case let .success(dataViewState) = viewState {
-            XCTAssertNotNil(dataViewState.profileImage)
-            XCTAssertTrue(dataViewState.hasRatedApp)
-            XCTAssertEqual(dataViewState.appVersion, "2.0.0")
-            XCTAssertEqual(dataViewState.appBuildNumber, "456")
-            XCTAssertFalse(dataViewState.isPhotoPickerPresented)
-            XCTAssertFalse(dataViewState.isClearFavoriteMoviesConfirmationPresented)
-            XCTAssertFalse(dataViewState.showClearFavoriteMoviesAlert)
-            XCTAssertFalse(dataViewState.showRateAppThanks)
+            #expect(dataViewState.profileImage != nil)
+            #expect(dataViewState.hasRatedApp)
+            #expect(dataViewState.appVersion == "2.0.0")
+            #expect(dataViewState.appBuildNumber == "456")
+            #expect(!dataViewState.isPhotoPickerPresented)
+            #expect(!dataViewState.isClearFavoriteMoviesConfirmationPresented)
+            #expect(!dataViewState.showClearFavoriteMoviesAlert)
+            #expect(!dataViewState.showRateAppThanks)
         } else {
-            XCTFail("Expected success state")
+            Issue.record("Expected success state")
         }
     }
 
-    func testReduceSuccessStateWithUIFlags() {
+    @Test("Reduces to success state with UI flags enabled")
+    func reduceSuccessStateWithUIFlags() {
         // Given
         let domainState = SettingsDomainState(
             profileImage: nil,
@@ -135,20 +129,21 @@ final class SettingsViewStateReducingTests: XCTestCase {
 
         // Then
         if case let .success(dataViewState) = viewState {
-            XCTAssertNil(dataViewState.profileImage)
-            XCTAssertFalse(dataViewState.hasRatedApp)
-            XCTAssertTrue(dataViewState.isPhotoPickerPresented)
-            XCTAssertTrue(dataViewState.isClearFavoriteMoviesConfirmationPresented)
-            XCTAssertTrue(dataViewState.showClearFavoriteMoviesAlert)
-            XCTAssertTrue(dataViewState.showRateAppThanks)
+            #expect(dataViewState.profileImage == nil)
+            #expect(!dataViewState.hasRatedApp)
+            #expect(dataViewState.isPhotoPickerPresented)
+            #expect(dataViewState.isClearFavoriteMoviesConfirmationPresented)
+            #expect(dataViewState.showClearFavoriteMoviesAlert)
+            #expect(dataViewState.showRateAppThanks)
         } else {
-            XCTFail("Expected success state")
+            Issue.record("Expected success state")
         }
     }
 
     // MARK: - State Precedence Tests
 
-    func testErrorStateTakesPrecedenceOverLoading() {
+    @Test("Error state takes precedence over loading state")
+    func errorStateTakesPrecedenceOverLoading() {
         // Given
         let domainState = SettingsDomainState(
             profileImage: nil,
@@ -168,15 +163,16 @@ final class SettingsViewStateReducingTests: XCTestCase {
 
         // Then
         if case let .error(message) = viewState {
-            XCTAssertEqual(message, "Test error")
+            #expect(message == "Test error")
         } else {
-            XCTFail("Expected error state to take precedence over loading")
+            Issue.record("Expected error state to take precedence over loading")
         }
     }
 
     // MARK: - Edge Cases Tests
 
-    func testReduceWithEmptyErrorString() {
+    @Test("Handles empty error string correctly")
+    func reduceWithEmptyErrorString() {
         // Given
         let domainState = SettingsDomainState(
             profileImage: nil,
@@ -196,13 +192,14 @@ final class SettingsViewStateReducingTests: XCTestCase {
 
         // Then
         if case let .error(message) = viewState {
-            XCTAssertEqual(message, "")
+            #expect(message == "")
         } else {
-            XCTFail("Expected error state with empty message")
+            Issue.record("Expected error state with empty message")
         }
     }
 
-    func testReduceInitialState() {
+    @Test("Reduces initial domain state correctly")
+    func reduceInitialState() {
         // Given
         let domainState = SettingsDomainState.initial
 
@@ -211,16 +208,16 @@ final class SettingsViewStateReducingTests: XCTestCase {
 
         // Then
         if case let .success(dataViewState) = viewState {
-            XCTAssertNil(dataViewState.profileImage)
-            XCTAssertFalse(dataViewState.hasRatedApp)
-            XCTAssertEqual(dataViewState.appVersion, "1.0")
-            XCTAssertEqual(dataViewState.appBuildNumber, "1")
-            XCTAssertFalse(dataViewState.isPhotoPickerPresented)
-            XCTAssertFalse(dataViewState.isClearFavoriteMoviesConfirmationPresented)
-            XCTAssertFalse(dataViewState.showClearFavoriteMoviesAlert)
-            XCTAssertFalse(dataViewState.showRateAppThanks)
+            #expect(dataViewState.profileImage == nil)
+            #expect(!dataViewState.hasRatedApp)
+            #expect(dataViewState.appVersion == "1.0")
+            #expect(dataViewState.appBuildNumber == "1")
+            #expect(!dataViewState.isPhotoPickerPresented)
+            #expect(!dataViewState.isClearFavoriteMoviesConfirmationPresented)
+            #expect(!dataViewState.showClearFavoriteMoviesAlert)
+            #expect(!dataViewState.showRateAppThanks)
         } else {
-            XCTFail("Expected success state for initial domain state")
+            Issue.record("Expected success state for initial domain state")
         }
     }
 }

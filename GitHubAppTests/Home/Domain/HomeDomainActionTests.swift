@@ -4,10 +4,11 @@
 //
 
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class HomeDomainActionTests: XCTestCase {
-    func testHomeDomainActionEquality() {
+struct HomeDomainActionTests {
+    @Test("Domain actions with same cases and parameters are equal")
+    func domainActionEquality() {
         // Given
         let action1 = HomeDomainAction.fetchUpcomingMovies
         let action2 = HomeDomainAction.fetchUpcomingMovies
@@ -23,18 +24,19 @@ final class HomeDomainActionTests: XCTestCase {
         let action9 = HomeDomainAction.loadPersistedFavoriteMovies
 
         // Then
-        XCTAssertEqual(action1, action2)
-        XCTAssertEqual(action3, action4)
-        XCTAssertEqual(action6, action7)
-        XCTAssertEqual(action8, action9)
+        #expect(action1 == action2)
+        #expect(action3 == action4)
+        #expect(action6 == action7)
+        #expect(action8 == action9)
 
-        XCTAssertNotEqual(action1, action3)
-        XCTAssertNotEqual(action3, action5)
-        XCTAssertNotEqual(action1, action6)
-        XCTAssertNotEqual(action1, action8)
+        #expect(action1 != action3)
+        #expect(action3 != action5)
+        #expect(action1 != action6)
+        #expect(action1 != action8)
     }
 
-    func testHomeDomainActionCases() {
+    @Test("All domain action cases can be instantiated")
+    func domainActionCases() {
         // Given/When/Then
         let fetchAction = HomeDomainAction.fetchUpcomingMovies
         let searchAction = HomeDomainAction.searchMovies("query")
@@ -42,10 +44,10 @@ final class HomeDomainActionTests: XCTestCase {
         let loadAction = HomeDomainAction.loadPersistedFavoriteMovies
 
         // Verify that all cases can be instantiated
-        XCTAssertNotNil(fetchAction)
-        XCTAssertNotNil(searchAction)
-        XCTAssertNotNil(toggleAction)
-        XCTAssertNotNil(loadAction)
+        #expect(fetchAction != nil)
+        #expect(searchAction != nil)
+        #expect(toggleAction != nil)
+        #expect(loadAction != nil)
     }
 
     // MARK: - Helper Methods

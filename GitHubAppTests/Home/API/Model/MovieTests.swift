@@ -4,21 +4,24 @@
 //
 
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class MovieTests: XCTestCase {
-    func testDisplayTitleFallback() {
+struct MovieTests {
+    @Test("Display title falls back to 'Untitled' when title is empty")
+    func displayTitleFallback() {
         let movie = Movie(id: 1, title: "", overview: "o", posterPath: nil)
-        XCTAssertEqual(movie.displayTitle, "Untitled")
+        #expect(movie.displayTitle == "Untitled")
     }
 
-    func testDisplayOverviewFallback() {
+    @Test("Display overview falls back to 'No overview available' when overview is empty")
+    func displayOverviewFallback() {
         let movie = Movie(id: 1, title: "t", overview: "", posterPath: nil)
-        XCTAssertEqual(movie.displayOverview, "No overview available")
+        #expect(movie.displayOverview == "No overview available")
     }
 
-    func testPosterURLNilWhenPathMissingOrEmpty() {
-        XCTAssertNil(Movie(id: 1, title: "t", overview: "o", posterPath: nil).posterURL)
-        XCTAssertNil(Movie(id: 1, title: "t", overview: "o", posterPath: "").posterURL)
+    @Test("Poster URL is nil when path is missing or empty")
+    func posterURLNilWhenPathMissingOrEmpty() {
+        #expect(Movie(id: 1, title: "t", overview: "o", posterPath: nil).posterURL == nil)
+        #expect(Movie(id: 1, title: "t", overview: "o", posterPath: "").posterURL == nil)
     }
 }
