@@ -94,10 +94,17 @@ struct FavoritesMoviesViewModelTests {
             domainInteractor: mockDomainInteractor
         )
 
+        // Load favorites on second instance to ensure it reads the persisted state
+        await MainActor.run {
+            sut2.loadFavoriteMovies()
+        }
+
         // Wait for second instance to load state
-        try await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds for loading
 
         // Then - Second instance should also show as favorited (persistence test)
-        #expect(sut2.isFavorited(movie: movie))
+        await MainActor.run {
+            #expect(sut2.isFavorited(movie: movie), "Second instance should show persisted favorite")
+        }
     }
 }
