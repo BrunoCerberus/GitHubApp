@@ -4,10 +4,11 @@
 //
 
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class ServiceLocatorExampleTests: XCTestCase {
-    func testExampleFunctionsDoNotCrash() {
+struct ServiceLocatorExampleTests {
+    @Test("Example functions do not crash")
+    func exampleFunctionsDoNotCrash() {
         // These are documentation examples; calling them should be safe.
         ServiceLocatorExample.exampleCreateAndUseServiceLocator()
         ServiceLocatorExample.exampleRetrieveService()
@@ -17,7 +18,7 @@ final class ServiceLocatorExampleTests: XCTestCase {
         ServiceLocatorExample.exampleRegisterServiceFactory()
         ServiceLocatorExample.exampleClearServices()
         // If any crashed, the test would fail; reaching here is success.
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
     /**
@@ -26,12 +27,13 @@ final class ServiceLocatorExampleTests: XCTestCase {
      * This test verifies that the example function demonstrates
      * proper service registration and retrieval.
      */
-    func testExampleCreateAndUseServiceLocator() {
+    @Test("Example create and use service locator")
+    func exampleCreateAndUseServiceLocator() {
         // When - call the example function
         ServiceLocatorExample.exampleCreateAndUseServiceLocator()
 
         // Then - function should complete without throwing
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
     /**
@@ -40,12 +42,13 @@ final class ServiceLocatorExampleTests: XCTestCase {
      * This test verifies that the example function demonstrates
      * proper service retrieval after registration.
      */
-    func testExampleRetrieveService() {
+    @Test("Example retrieve service")
+    func exampleRetrieveService() {
         // When - call the example function
         ServiceLocatorExample.exampleRetrieveService()
 
         // Then - function should complete without throwing
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
     /**
@@ -54,12 +57,13 @@ final class ServiceLocatorExampleTests: XCTestCase {
      * This test verifies that the example function demonstrates
      * safe service retrieval.
      */
-    func testExampleSafeRetrieveService() {
+    @Test("Example safe retrieve service")
+    func exampleSafeRetrieveService() {
         // When - call the example function
         ServiceLocatorExample.exampleSafeRetrieveService()
 
         // Then - function should complete without throwing
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
     /**
@@ -68,12 +72,13 @@ final class ServiceLocatorExampleTests: XCTestCase {
      * This test verifies that the example function demonstrates
      * service registration checking.
      */
-    func testExampleCheckServiceRegistration() {
+    @Test("Example check service registration")
+    func exampleCheckServiceRegistration() {
         // When - call the example function
         ServiceLocatorExample.exampleCheckServiceRegistration()
 
         // Then - function should complete without throwing
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
     /**
@@ -82,12 +87,13 @@ final class ServiceLocatorExampleTests: XCTestCase {
      * This test verifies that the example function demonstrates
      * manual service registration.
      */
-    func testExampleRegisterService() {
+    @Test("Example register service")
+    func exampleRegisterService() {
         // When - call the example function
         ServiceLocatorExample.exampleRegisterService()
 
         // Then - function should complete without throwing
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
     /**
@@ -96,12 +102,13 @@ final class ServiceLocatorExampleTests: XCTestCase {
      * This test verifies that the example function demonstrates
      * service factory registration.
      */
-    func testExampleRegisterServiceFactory() {
+    @Test("Example register service factory")
+    func exampleRegisterServiceFactory() {
         // When - call the example function
         ServiceLocatorExample.exampleRegisterServiceFactory()
 
         // Then - function should complete without throwing
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
     /**
@@ -110,12 +117,13 @@ final class ServiceLocatorExampleTests: XCTestCase {
      * This test verifies that the example function demonstrates
      * service clearing functionality.
      */
-    func testExampleClearServices() {
+    @Test("Example clear services")
+    func exampleClearServices() {
         // When - call the example function
         ServiceLocatorExample.exampleClearServices()
 
         // Then - function should complete without throwing
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
     /**
@@ -124,7 +132,8 @@ final class ServiceLocatorExampleTests: XCTestCase {
      * This test verifies that the example functions are robust
      * and can be called repeatedly without issues.
      */
-    func testExampleFunctionsCanBeCalledMultipleTimes() {
+    @Test("Example functions can be called multiple times")
+    func exampleFunctionsCanBeCalledMultipleTimes() {
         // When - call each example function multiple times
         for _ in 1 ... 3 {
             ServiceLocatorExample.exampleCreateAndUseServiceLocator()
@@ -137,7 +146,7 @@ final class ServiceLocatorExampleTests: XCTestCase {
         }
 
         // Then - all calls should complete without throwing
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
     /**
@@ -146,7 +155,8 @@ final class ServiceLocatorExampleTests: XCTestCase {
      * This test verifies that the examples are generic and
      * can work with various service protocols.
      */
-    func testExampleFunctionsWorkWithDifferentServiceTypes() {
+    @Test("Example functions work with different service types")
+    func exampleFunctionsWorkWithDifferentServiceTypes() {
         // When - call example functions (they use HomeService internally)
         ServiceLocatorExample.exampleCreateAndUseServiceLocator()
         ServiceLocatorExample.exampleRetrieveService()
@@ -157,7 +167,7 @@ final class ServiceLocatorExampleTests: XCTestCase {
         ServiceLocatorExample.exampleClearServices()
 
         // Then - all calls should complete without throwing
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
     /**
@@ -166,14 +176,15 @@ final class ServiceLocatorExampleTests: XCTestCase {
      * This test verifies that the examples show how to handle
      * potential errors in service operations.
      */
-    func testExampleFunctionsDemonstrateProperErrorHandling() {
+    @Test("Example functions demonstrate proper error handling")
+    func exampleFunctionsDemonstrateProperErrorHandling() {
         // When - call example functions that demonstrate error handling
         ServiceLocatorExample.exampleCreateAndUseServiceLocator()
         ServiceLocatorExample.exampleRetrieveService()
         ServiceLocatorExample.exampleSafeRetrieveService()
 
         // Then - all calls should complete without throwing
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
     /**
@@ -182,13 +193,14 @@ final class ServiceLocatorExampleTests: XCTestCase {
      * This test verifies that the examples show proper service
      * registration, usage, and cleanup patterns.
      */
-    func testExampleFunctionsDemonstrateServiceLifecycleManagement() {
+    @Test("Example functions demonstrate service lifecycle management")
+    func exampleFunctionsDemonstrateServiceLifecycleManagement() {
         // When - call example functions that demonstrate lifecycle management
         ServiceLocatorExample.exampleCreateAndUseServiceLocator()
         ServiceLocatorExample.exampleRegisterService()
         ServiceLocatorExample.exampleClearServices()
 
         // Then - all calls should complete without throwing
-        XCTAssertTrue(true)
+        #expect(true)
     }
 }

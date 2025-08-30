@@ -6,21 +6,23 @@
 //
 
 @testable import GitHubApp
-import XCTest
+import Testing
 
 /**
  * Additional tests for ServiceLocatorExample factory closures to improve coverage.
  */
-final class ServiceLocatorExampleFactoryTests: XCTestCase {
-    func testServiceLocatorExampleFactoryRegistration() {
+struct ServiceLocatorExampleFactoryTests {
+    @Test("Service locator example factory registration")
+    func serviceLocatorExampleFactoryRegistration() {
         // When - Call the example function that registers a factory
         ServiceLocatorExample.exampleRegisterServiceFactory()
 
         // Then - Function should complete without throwing
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
-    func testServiceLocatorExampleWithFactoryClosure() {
+    @Test("Service locator example with factory closure")
+    func serviceLocatorExampleWithFactoryClosure() {
         // Given - Create a fresh service locator
         let serviceLocator = ServiceLocator()
 
@@ -32,20 +34,22 @@ final class ServiceLocatorExampleFactoryTests: XCTestCase {
 
         // Then - Should be able to retrieve the service
         let service = try? serviceLocator.retrieve(HomeService.self)
-        XCTAssertNotNil(service)
+        #expect(service != nil)
     }
 
-    func testServiceLocatorExampleFactoryMultipleCalls() {
+    @Test("Service locator example factory multiple calls")
+    func serviceLocatorExampleFactoryMultipleCalls() {
         // When - Call factory example multiple times
         for _ in 1 ... 3 {
             ServiceLocatorExample.exampleRegisterServiceFactory()
         }
 
         // Then - Should handle multiple calls
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
-    func testServiceLocatorExampleFactoryErrorHandling() {
+    @Test("Service locator example factory error handling")
+    func serviceLocatorExampleFactoryErrorHandling() {
         // Given - The example should handle various scenarios
 
         // When - Call all factory-related examples
@@ -54,10 +58,11 @@ final class ServiceLocatorExampleFactoryTests: XCTestCase {
         ServiceLocatorExample.exampleClearServices()
 
         // Then - Should complete without errors
-        XCTAssertTrue(true)
+        #expect(true)
     }
 
-    func testServiceLocatorFactoryClosureExecution() {
+    @Test("Service locator factory closure execution")
+    func serviceLocatorFactoryClosureExecution() {
         // Given
         let serviceLocator = ServiceLocator()
         var factoryCallCount = 0
@@ -73,6 +78,6 @@ final class ServiceLocatorExampleFactoryTests: XCTestCase {
         _ = try? serviceLocator.retrieve(HomeService.self)
 
         // Then - Factory should be called (exact behavior depends on implementation)
-        XCTAssertGreaterThanOrEqual(factoryCallCount, 1)
+        #expect(factoryCallCount >= 1)
     }
 }

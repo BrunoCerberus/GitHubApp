@@ -8,15 +8,11 @@
 import Combine
 @testable import GitHubApp
 import SwiftData
-import XCTest
+import Testing
 
 @MainActor
-final class SwiftDataStorageServiceTests: XCTestCase {
-    private var sut: SwiftDataStorageService!
-    private var cancellables: Set<AnyCancellable>!
-
-    override func setUp() async throws {
-        try await super.setUp()
+struct SwiftDataStorageServiceTests {
+    private func createTestStorageService() throws -> SwiftDataStorageService {
         // Create test storage service with in-memory storage
         let schema = Schema([StoredMovie.self, UserSetting.self])
         let configuration = ModelConfiguration(
@@ -25,20 +21,15 @@ final class SwiftDataStorageServiceTests: XCTestCase {
             allowsSave: true
         )
         let container = try ModelContainer(for: schema, configurations: [configuration])
-        sut = try SwiftDataStorageService(container: container)
-        cancellables = Set<AnyCancellable>()
-    }
-
-    override func tearDown() async throws {
-        sut = nil
-        cancellables = nil
-        try await super.tearDown()
+        return try SwiftDataStorageService(container: container)
     }
 
     // MARK: - Movie Storage Tests
 
-    func testSaveAndFetchMovies() async throws {
+    @Test("Save and fetch movies")
+    func saveAndFetchMovies() async throws {
         // Given
+        let sut = try createTestStorageService()
         let movies = [
             Movie(id: 1, title: "Test Movie 1", overview: "Overview 1", posterPath: "/test1.jpg"),
             Movie(id: 2, title: "Test Movie 2", overview: "Overview 2", posterPath: "/test2.jpg"),
@@ -49,49 +40,55 @@ final class SwiftDataStorageServiceTests: XCTestCase {
         let fetchedMovies = try await sut.fetch(Movie.self, context: StorageContext.favoriteMovies)
 
         // Then
-        XCTAssertEqual(fetchedMovies.count, 2)
-        XCTAssertTrue(fetchedMovies.contains { $0.id == 1 })
-        XCTAssertTrue(fetchedMovies.contains { $0.id == 2 })
+        #expect(fetchedMovies.count == 2)
+        #expect(fetchedMovies.contains { $0.id == 1 })
+        #expect(fetchedMovies.contains { $0.id == 2 })
     }
 
-    func testToggleMovieLike() async throws {
+    @Test("Toggle movie like")
+    func toggleMovieLike() async throws {
         // Given
+        let sut = try createTestStorageService()
         let movie = Movie(id: 1, title: "Test Movie", overview: "Overview", posterPath: "/test.jpg")
 
         // When - Add movie to liked
         let favoriteMovies = try await sut.toggleMovieFavorite(movie)
 
         // Then
-        XCTAssertEqual(favoriteMovies.count, 1)
-        XCTAssertEqual(favoriteMovies.first?.id, movie.id)
+        #expect(favoriteMovies.count == 1)
+        #expect(favoriteMovies.first?.id == movie.id)
 
         // When - Remove movie from liked
         let updatedMovies = try await sut.toggleMovieFavorite(movie)
 
         // Then
-        XCTAssertTrue(updatedMovies.isEmpty)
+        #expect(updatedMovies.isEmpty)
     }
 
-    func testIsMovieLiked() async throws {
+    @Test("Is movie liked")
+    func isMovieLiked() async throws {
         // Given
+        let sut = try createTestStorageService()
         let movie = Movie(id: 1, title: "Test Movie", overview: "Overview", posterPath: "/test.jpg")
 
         // When - Movie not liked initially
         let isLikedBefore = try await sut.isMovieLiked(movie)
 
         // Then
-        XCTAssertFalse(isLikedBefore)
+        #expect(isLikedBefore == false)
 
         // When - Add movie to liked
         _ = try await sut.toggleMovieFavorite(movie)
         let isLikedAfter = try await sut.isMovieLiked(movie)
 
         // Then
-        XCTAssertTrue(isLikedAfter)
+        #expect(isLikedAfter == true)
     }
 
-    func testFetchLikedMovies() async throws {
+    @Test("Fetch liked movies")
+    func fetchLikedMovies() async throws {
         // Given
+        let sut = try createTestStorageService()
         let movies = [
             Movie(id: 1, title: "Liked Movie 1", overview: "Overview 1", posterPath: "/test1.jpg"),
             Movie(id: 2, title: "Liked Movie 2", overview: "Overview 2", posterPath: "/test2.jpg"),
@@ -104,13 +101,15 @@ final class SwiftDataStorageServiceTests: XCTestCase {
         let favoriteMovies = try await sut.fetchLikedMovies()
 
         // Then
-        XCTAssertEqual(favoriteMovies.count, 2)
-        XCTAssertTrue(favoriteMovies.contains { $0.id == 1 })
-        XCTAssertTrue(favoriteMovies.contains { $0.id == 2 })
+        #expect(favoriteMovies.count == 2)
+        #expect(favoriteMovies.contains { $0.id == 1 })
+        #expect(favoriteMovies.contains { $0.id == 2 })
     }
 
-    func testClearLikedMovies() async throws {
+    @Test("Clear liked movies")
+    func clearLikedMovies() async throws {
         // Given
+        let sut = try createTestStorageService()
         let movies = [
             Movie(id: 1, title: "Movie 1", overview: "Overview 1", posterPath: "/test1.jpg"),
             Movie(id: 2, title: "Movie 2", overview: "Overview 2", posterPath: "/test2.jpg"),
@@ -125,11 +124,13 @@ final class SwiftDataStorageServiceTests: XCTestCase {
         let favoriteMovies = try await sut.fetchLikedMovies()
 
         // Then
-        XCTAssertTrue(favoriteMovies.isEmpty)
+        #expect(favoriteMovies.isEmpty)
     }
 
-    func testDeleteSpecificMovie() async throws {
+    @Test("Delete specific movie")
+    func deleteSpecificMovie() async throws {
         // Given
+        let sut = try createTestStorageService()
         let movies = [
             Movie(id: 1, title: "Movie 1", overview: "Overview 1", posterPath: "/test1.jpg"),
             Movie(id: 2, title: "Movie 2", overview: "Overview 2", posterPath: "/test2.jpg"),
@@ -142,12 +143,14 @@ final class SwiftDataStorageServiceTests: XCTestCase {
         let remainingMovies = try await sut.fetch(Movie.self, context: StorageContext.favoriteMovies)
 
         // Then
-        XCTAssertEqual(remainingMovies.count, 1)
-        XCTAssertEqual(remainingMovies.first?.id, 2)
+        #expect(remainingMovies.count == 1)
+        #expect(remainingMovies.first?.id == 2)
     }
 
-    func testFetchMovieById() async throws {
+    @Test("Fetch movie by id")
+    func fetchMovieById() async throws {
         // Given
+        let sut = try createTestStorageService()
         let movie = Movie(id: 1, title: "Test Movie", overview: "Overview", posterPath: "/test.jpg")
         try await sut.save(movie, context: StorageContext.favoriteMovies)
 
@@ -155,13 +158,15 @@ final class SwiftDataStorageServiceTests: XCTestCase {
         let fetchedMovie = try await sut.fetch(Movie.self, id: 1, context: StorageContext.favoriteMovies)
 
         // Then
-        XCTAssertNotNil(fetchedMovie)
-        XCTAssertEqual(fetchedMovie?.id, movie.id)
-        XCTAssertEqual(fetchedMovie?.title, movie.title)
+        #expect(fetchedMovie != nil)
+        #expect(fetchedMovie?.id == movie.id)
+        #expect(fetchedMovie?.title == movie.title)
     }
 
-    func testContextIsolation() async throws {
+    @Test("Context isolation")
+    func contextIsolation() async throws {
         // Given
+        let sut = try createTestStorageService()
         let movie1 = Movie(id: 1, title: "Liked Movie", overview: "Overview", posterPath: "/test1.jpg")
         let movie2 = Movie(id: 2, title: "Widget Movie", overview: "Overview", posterPath: "/test2.jpg")
 
@@ -173,26 +178,26 @@ final class SwiftDataStorageServiceTests: XCTestCase {
         let widgetMovies = try await sut.fetch(Movie.self, context: StorageContext.widget)
 
         // Then
-        XCTAssertEqual(favoriteMovies.count, 1)
-        XCTAssertEqual(favoriteMovies.first?.id, 1)
+        #expect(favoriteMovies.count == 1)
+        #expect(favoriteMovies.first?.id == 1)
 
-        XCTAssertEqual(widgetMovies.count, 1)
-        XCTAssertEqual(widgetMovies.first?.id, 2)
+        #expect(widgetMovies.count == 1)
+        #expect(widgetMovies.first?.id == 2)
     }
 
     // MARK: - Error Handling Tests
 
-    func testErrorHandlingForInvalidData() async throws {
-        // This test verifies that the service handles errors gracefully
-        // For now, we'll test that no exceptions are thrown with valid data
+    @Test("Error handling for invalid data")
+    func errorHandlingForInvalidData() async throws {
+        // Given
+        let sut = try createTestStorageService()
         let movie = Movie(id: 1, title: "Test Movie", overview: "Overview", posterPath: "/test.jpg")
 
-        do {
-            try await sut.save(movie, context: StorageContext.favoriteMovies)
-            let fetchedMovies = try await sut.fetch(Movie.self, context: StorageContext.favoriteMovies)
-            XCTAssertEqual(fetchedMovies.count, 1)
-        } catch {
-            XCTFail("Should not throw error with valid data: \(error)")
-        }
+        // When
+        try await sut.save(movie, context: StorageContext.favoriteMovies)
+        let fetchedMovies = try await sut.fetch(Movie.self, context: StorageContext.favoriteMovies)
+
+        // Then
+        #expect(fetchedMovies.count == 1)
     }
 }

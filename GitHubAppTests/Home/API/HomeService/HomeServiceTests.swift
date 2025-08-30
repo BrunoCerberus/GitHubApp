@@ -5,7 +5,7 @@
 
 import Combine
 @testable import GitHubApp
-import XCTest
+import Testing
 
 /**
  * Tests for LiveHomeService implementation.
@@ -16,93 +16,75 @@ import XCTest
  * - Return type correctness
  * - Publisher chain setup
  */
-final class HomeServiceTests: XCTestCase {
-    /// Service instance to test
-    private var homeService: LiveHomeService!
-
-    /// Storage for cancellables to prevent memory leaks
-    private var cancellables: Set<AnyCancellable>!
-
-    override func setUp() {
-        super.setUp()
+struct HomeServiceTests {
+    private func createTestComponents() -> (LiveHomeService, Set<AnyCancellable>) {
         // Ensure API key is present for tests
         try? APIKeysProvider.setMovieAPIKey("api-key-for-tests")
-        homeService = LiveHomeService()
-        cancellables = Set<AnyCancellable>()
+        let homeService = LiveHomeService()
+        let cancellables = Set<AnyCancellable>()
+        return (homeService, cancellables)
     }
 
-    override func tearDown() {
+    private func cleanup() {
         try? APIKeysProvider.removeMovieAPIKey()
-        cancellables = nil
-        homeService = nil
-        super.tearDown()
     }
 
-    /**
-     * Test that searchMovies method returns correct publisher type.
-     *
-     * Verifies that the method returns an AnyPublisher<MoviesResponse, Error>
-     * and doesn't crash when called with various query strings.
-     */
-    func testSearchMoviesReturnsCorrectPublisherType() {
+    @Test("Search movies returns correct publisher type")
+    func searchMoviesReturnsCorrectPublisherType() {
         // Given
+        let (homeService, _) = createTestComponents()
+        defer { cleanup() }
         let query = "test query"
 
         // When
         let publisher = homeService.searchMovies(with: query)
 
         // Then
-        XCTAssertNotNil(publisher)
+        #expect(publisher != nil)
         // Verify it's the correct type (this will be caught at compile time)
         let _: AnyPublisher<MoviesResponse, Error> = publisher
     }
 
-    /**
-     * Test that fetchCredits method returns correct publisher type.
-     *
-     * Verifies that the method returns an AnyPublisher<MovieCreditsResponse, Error>
-     * and doesn't crash when called with various movie IDs.
-     */
-    func testFetchCreditsReturnsCorrectPublisherType() {
+    @Test("Fetch credits returns correct publisher type")
+    func fetchCreditsReturnsCorrectPublisherType() {
         // Given
+        let (homeService, _) = createTestComponents()
+        defer { cleanup() }
         let movieId = 123
 
         // When
         let publisher = homeService.fetchCredits(with: movieId)
 
         // Then
-        XCTAssertNotNil(publisher)
+        #expect(publisher != nil)
         // Verify it's the correct type (this will be caught at compile time)
         let _: AnyPublisher<MovieCreditsResponse, Error> = publisher
     }
 
-    /**
-     * Test that fetchReviews method returns correct publisher type.
-     *
-     * Verifies that the method returns an AnyPublisher<MovieReviewsResponse, Error>
-     * and doesn't crash when called with various movie IDs.
-     */
-    func testFetchReviewsReturnsCorrectPublisherType() {
+    @Test("Fetch reviews returns correct publisher type")
+    func fetchReviewsReturnsCorrectPublisherType() {
         // Given
+        let (homeService, _) = createTestComponents()
+        defer { cleanup() }
         let movieId = 456
 
         // When
         let publisher = homeService.fetchReviews(with: movieId)
 
         // Then
-        XCTAssertNotNil(publisher)
+        #expect(publisher != nil)
         // Verify it's the correct type (this will be caught at compile time)
         let _: AnyPublisher<MovieReviewsResponse, Error> = publisher
     }
 
-    /**
-     * Test that all methods return publishers that can be subscribed to.
-     *
-     * This test ensures that the publisher chain is properly set up
-     * and doesn't crash when attempting to subscribe.
-     */
-    func testAllMethodsReturnSubscribablePublishers() {
-        // Test searchMovies
+    @Test("All methods return subscribable publishers")
+    func allMethodsReturnSubscribablePublishers() {
+        // Given
+        let (homeService, initialCancellables) = createTestComponents()
+        defer { cleanup() }
+        var cancellables = initialCancellables
+
+        // When & Then - Test searchMovies
         homeService.searchMovies(with: "test")
             .sink(
                 receiveCompletion: { _ in },
@@ -127,6 +109,6 @@ final class HomeServiceTests: XCTestCase {
             .store(in: &cancellables)
 
         // If we get here without crashing, the test passes
-        XCTAssertTrue(true)
+        #expect(true)
     }
 }

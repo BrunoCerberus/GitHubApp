@@ -3,22 +3,15 @@
 //  GitHubAppTests
 //
 
+import Foundation
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class SharedDataManagerMainAppTests: XCTestCase {
-    // MARK: - Properties
+struct SharedDataManagerMainAppTests {
+    private func createTestComponents() -> (SharedDataManager, [SharedMovie]) {
+        let sharedDataManager = SharedDataManager.shared
 
-    private var sharedDataManager: SharedDataManager!
-    private var testMovies: [SharedMovie]!
-
-    // MARK: - Setup and Teardown
-
-    override func setUp() {
-        super.setUp()
-        sharedDataManager = SharedDataManager.shared
-
-        testMovies = [
+        let testMovies = [
             SharedMovie(
                 id: 1,
                 title: "Test Movie 1",
@@ -41,33 +34,40 @@ final class SharedDataManagerMainAppTests: XCTestCase {
 
         // Clear any existing data
         sharedDataManager.clearData()
+
+        return (sharedDataManager, testMovies)
     }
 
-    override func tearDown() {
+    private func cleanupTest(_ sharedDataManager: SharedDataManager) {
         sharedDataManager.clearData()
-        sharedDataManager = nil
-        testMovies = nil
-        super.tearDown()
     }
 
     // MARK: - Save and Retrieve Tests
 
-    func testSaveAndRetrieveUpcomingMovies() {
+    @Test("Save and retrieve upcoming movies")
+    func saveAndRetrieveUpcomingMovies() {
+        // Given
+        let (sharedDataManager, testMovies) = createTestComponents()
+        defer { cleanupTest(sharedDataManager) }
+
         // When
         sharedDataManager.saveUpcomingMovies(testMovies)
         let retrievedMovies = sharedDataManager.getUpcomingMovies()
 
         // Then
-        XCTAssertEqual(retrievedMovies.count, 3)
-        XCTAssertEqual(retrievedMovies[0].id, 1)
-        XCTAssertEqual(retrievedMovies[0].title, "Test Movie 1")
-        XCTAssertEqual(retrievedMovies[1].id, 2)
-        XCTAssertEqual(retrievedMovies[2].id, 3)
-        XCTAssertNil(retrievedMovies[2].posterPath)
+        #expect(retrievedMovies.count == 3)
+        #expect(retrievedMovies[0].id == 1)
+        #expect(retrievedMovies[0].title == "Test Movie 1")
+        #expect(retrievedMovies[1].id == 2)
+        #expect(retrievedMovies[2].id == 3)
+        #expect(retrievedMovies[2].posterPath == nil)
     }
 
-    func testSaveEmptyMoviesArray() {
+    @Test("Save empty movies array")
+    func saveEmptyMoviesArray() {
         // Given
+        let (sharedDataManager, _) = createTestComponents()
+        defer { cleanupTest(sharedDataManager) }
         let emptyMovies: [SharedMovie] = []
 
         // When
@@ -75,19 +75,27 @@ final class SharedDataManagerMainAppTests: XCTestCase {
         let retrievedMovies = sharedDataManager.getUpcomingMovies()
 
         // Then
-        XCTAssertTrue(retrievedMovies.isEmpty)
+        #expect(retrievedMovies.isEmpty)
     }
 
-    func testRetrieveMoviesWhenNoneExists() {
+    @Test("Retrieve movies when none exists")
+    func retrieveMoviesWhenNoneExists() {
+        // Given
+        let (sharedDataManager, _) = createTestComponents()
+        defer { cleanupTest(sharedDataManager) }
+
         // When
         let retrievedMovies = sharedDataManager.getUpcomingMovies()
 
         // Then
-        XCTAssertTrue(retrievedMovies.isEmpty)
+        #expect(retrievedMovies.isEmpty)
     }
 
-    func testOverwriteExistingMovies() {
+    @Test("Overwrite existing movies")
+    func overwriteExistingMovies() {
         // Given
+        let (sharedDataManager, testMovies) = createTestComponents()
+        defer { cleanupTest(sharedDataManager) }
         sharedDataManager.saveUpcomingMovies(testMovies)
         let newMovies = [
             SharedMovie(id: 4, title: "New Movie", overview: "New overview", posterPath: "/new.jpg"),
@@ -98,32 +106,45 @@ final class SharedDataManagerMainAppTests: XCTestCase {
         let retrievedMovies = sharedDataManager.getUpcomingMovies()
 
         // Then
-        XCTAssertEqual(retrievedMovies.count, 1)
-        XCTAssertEqual(retrievedMovies[0].id, 4)
-        XCTAssertEqual(retrievedMovies[0].title, "New Movie")
+        #expect(retrievedMovies.count == 1)
+        #expect(retrievedMovies[0].id == 4)
+        #expect(retrievedMovies[0].title == "New Movie")
     }
 
     // MARK: - Data Freshness Tests
 
-    func testIsDataFreshAfterSaving() {
+    @Test("Is data fresh after saving")
+    func isDataFreshAfterSaving() {
+        // Given
+        let (sharedDataManager, testMovies) = createTestComponents()
+        defer { cleanupTest(sharedDataManager) }
+
         // When
         sharedDataManager.saveUpcomingMovies(testMovies)
         let isFresh = sharedDataManager.isDataFresh()
 
         // Then
-        XCTAssertTrue(isFresh)
+        #expect(isFresh == true)
     }
 
-    func testIsDataFreshWhenNoDataExists() {
+    @Test("Is data fresh when no data exists")
+    func isDataFreshWhenNoDataExists() {
+        // Given
+        let (sharedDataManager, _) = createTestComponents()
+        defer { cleanupTest(sharedDataManager) }
+
         // When
         let isFresh = sharedDataManager.isDataFresh()
 
         // Then
-        XCTAssertFalse(isFresh)
+        #expect(isFresh == false)
     }
 
-    func testIsDataFreshWithOldData() {
+    @Test("Is data fresh with old data")
+    func isDataFreshWithOldData() {
         // Given
+        let (sharedDataManager, testMovies) = createTestComponents()
+        defer { cleanupTest(sharedDataManager) }
         sharedDataManager.saveUpcomingMovies(testMovies)
 
         // Simulate old data by directly setting an old timestamp
@@ -140,27 +161,35 @@ final class SharedDataManagerMainAppTests: XCTestCase {
         let isFresh = sharedDataManager.isDataFresh()
 
         // Then
-        XCTAssertFalse(isFresh)
+        #expect(isFresh == false)
     }
 
     // MARK: - Clear Data Tests
 
-    func testClearData() {
+    @Test("Clear data")
+    func clearData() {
         // Given
+        let (sharedDataManager, testMovies) = createTestComponents()
+        defer { cleanupTest(sharedDataManager) }
         sharedDataManager.saveUpcomingMovies(testMovies)
-        XCTAssertFalse(sharedDataManager.getUpcomingMovies().isEmpty)
-        XCTAssertTrue(sharedDataManager.isDataFresh())
+        #expect(!sharedDataManager.getUpcomingMovies().isEmpty)
+        #expect(sharedDataManager.isDataFresh() == true)
 
         // When
         sharedDataManager.clearData()
 
         // Then
-        XCTAssertTrue(sharedDataManager.getUpcomingMovies().isEmpty)
-        XCTAssertFalse(sharedDataManager.isDataFresh())
+        #expect(sharedDataManager.getUpcomingMovies().isEmpty)
+        #expect(sharedDataManager.isDataFresh() == false)
     }
 
-    func testRetrieveMoviesWithCorruptedUserDefaults() {
-        // Given - Manually set invalid data in UserDefaults
+    @Test("Retrieve movies with corrupted user defaults")
+    func retrieveMoviesWithCorruptedUserDefaults() {
+        // Given
+        let (sharedDataManager, _) = createTestComponents()
+        defer { cleanupTest(sharedDataManager) }
+
+        // Manually set invalid data in UserDefaults
         let userDefaults: UserDefaults = if let appGroupDefaults = UserDefaults(suiteName: "group.com.bruno.GitHubApp") {
             appGroupDefaults
         } else {
@@ -175,6 +204,6 @@ final class SharedDataManagerMainAppTests: XCTestCase {
         let retrievedMovies = sharedDataManager.getUpcomingMovies()
 
         // Then - Should return empty array when decoding fails
-        XCTAssertTrue(retrievedMovies.isEmpty)
+        #expect(retrievedMovies.isEmpty)
     }
 }

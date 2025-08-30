@@ -6,29 +6,26 @@
 //
 
 import EntropyCore
+import Foundation
 @testable import GitHubApp
-import XCTest
+import Testing
 
 /**
  * Comprehensive edge case tests for HomeAPI to improve test coverage.
  * These tests focus on boundary conditions and error handling.
  */
-final class HomeAPIEdgeCasesTests: XCTestCase {
-    override class func setUp() {
-        super.setUp()
+struct HomeAPIEdgeCasesTests {
+    private func ensureAPIKey() {
         // Ensure API key is present for URL construction
         try? APIKeysProvider.setMovieAPIKey("test-api-key-for-edge-cases")
     }
 
-    override func tearDown() {
-        try? APIKeysProvider.removeMovieAPIKey()
-        super.tearDown()
-    }
-
     // MARK: - Search Query Edge Cases
 
-    func testSearchMoviesWithVeryLongQuery() {
+    @Test("Search movies with very long query")
+    func searchMoviesWithVeryLongQuery() {
         // Given - A very long search query
+        ensureAPIKey()
         let longQuery = String(repeating: "a", count: 1000)
 
         // When
@@ -36,12 +33,13 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
         let path = searchAPI.path
 
         // Then - Should handle long queries without crashing
-        XCTAssertTrue(path.contains("/search/movie"))
-        XCTAssertTrue(path.contains("api_key="))
-        XCTAssertTrue(path.contains("query="))
+        #expect(path.contains("/search/movie"))
+        #expect(path.contains("api_key="))
+        #expect(path.contains("query="))
     }
 
-    func testSearchMoviesWithUnicodeCharacters() {
+    @Test("Search movies with unicode characters")
+    func searchMoviesWithUnicodeCharacters() {
         // Given - Search query with Unicode characters
         let unicodeQuery = "🎬 Movie with émojis and àccénts"
 
@@ -50,12 +48,13 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
         let path = searchAPI.path
 
         // Then - Should properly handle Unicode characters
-        XCTAssertTrue(path.contains("/search/movie"))
-        XCTAssertTrue(path.contains("api_key="))
-        XCTAssertTrue(path.contains("query="))
+        #expect(path.contains("/search/movie"))
+        #expect(path.contains("api_key="))
+        #expect(path.contains("query="))
     }
 
-    func testSearchMoviesWithWhitespaceOnly() {
+    @Test("Search movies with whitespace only")
+    func searchMoviesWithWhitespaceOnly() {
         // Given - Search query with only whitespace
         let whitespaceQuery = "   \t\n  "
 
@@ -64,12 +63,13 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
         let path = searchAPI.path
 
         // Then - Should handle whitespace-only queries
-        XCTAssertTrue(path.contains("/search/movie"))
-        XCTAssertTrue(path.contains("api_key="))
-        XCTAssertTrue(path.contains("query="))
+        #expect(path.contains("/search/movie"))
+        #expect(path.contains("api_key="))
+        #expect(path.contains("query="))
     }
 
-    func testSearchMoviesWithURLUnsafeCharacters() {
+    @Test("Search movies with URL unsafe characters")
+    func searchMoviesWithURLUnsafeCharacters() {
         // Given - Search query with URL-unsafe characters
         let unsafeQuery = "movie?query=test&param=value#fragment"
 
@@ -78,14 +78,15 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
         let path = searchAPI.path
 
         // Then - Should properly encode unsafe characters
-        XCTAssertTrue(path.contains("/search/movie"))
-        XCTAssertTrue(path.contains("api_key="))
-        XCTAssertTrue(path.contains("query="))
+        #expect(path.contains("/search/movie"))
+        #expect(path.contains("api_key="))
+        #expect(path.contains("query="))
     }
 
     // MARK: - Movie ID Edge Cases
 
-    func testFetchCreditsWithVeryLargeMovieID() {
+    @Test("Fetch credits with very large movie ID")
+    func fetchCreditsWithVeryLargeMovieID() {
         // Given - Very large movie ID
         let largeID = Int.max
 
@@ -94,11 +95,12 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
         let path = creditsAPI.path
 
         // Then - Should handle large IDs without overflow
-        XCTAssertTrue(path.contains("/movie/\(largeID)/credits"))
-        XCTAssertTrue(path.contains("api_key="))
+        #expect(path.contains("/movie/\(largeID)/credits"))
+        #expect(path.contains("api_key="))
     }
 
-    func testFetchReviewsWithVeryLargeMovieID() {
+    @Test("Fetch reviews with very large movie ID")
+    func fetchReviewsWithVeryLargeMovieID() {
         // Given - Very large movie ID
         let largeID = Int.max - 1
 
@@ -107,11 +109,12 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
         let path = reviewsAPI.path
 
         // Then - Should handle large IDs without overflow
-        XCTAssertTrue(path.contains("/movie/\(largeID)/reviews"))
-        XCTAssertTrue(path.contains("api_key="))
+        #expect(path.contains("/movie/\(largeID)/reviews"))
+        #expect(path.contains("api_key="))
     }
 
-    func testFetchCreditsWithVerySmallMovieID() {
+    @Test("Fetch credits with very small movie ID")
+    func fetchCreditsWithVerySmallMovieID() {
         // Given - Very small (negative) movie ID
         let smallID = Int.min
 
@@ -120,11 +123,12 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
         let path = creditsAPI.path
 
         // Then - Should handle small IDs without underflow
-        XCTAssertTrue(path.contains("/movie/\(smallID)/credits"))
-        XCTAssertTrue(path.contains("api_key="))
+        #expect(path.contains("/movie/\(smallID)/credits"))
+        #expect(path.contains("api_key="))
     }
 
-    func testFetchReviewsWithVerySmallMovieID() {
+    @Test("Fetch reviews with very small movie ID")
+    func fetchReviewsWithVerySmallMovieID() {
         // Given - Very small (negative) movie ID
         let smallID = Int.min + 1
 
@@ -133,13 +137,14 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
         let path = reviewsAPI.path
 
         // Then - Should handle small IDs without underflow
-        XCTAssertTrue(path.contains("/movie/\(smallID)/reviews"))
-        XCTAssertTrue(path.contains("api_key="))
+        #expect(path.contains("/movie/\(smallID)/reviews"))
+        #expect(path.contains("api_key="))
     }
 
     // MARK: - API Configuration Edge Cases
 
-    func testAllEndpointsHaveCorrectHTTPMethod() {
+    @Test("All endpoints have correct HTTP method")
+    func allEndpointsHaveCorrectHTTPMethod() {
         // Given - All possible API endpoints
         let endpoints: [HomeAPI] = [
             .fetchMovies,
@@ -150,11 +155,12 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
 
         // When & Then - All should use GET method
         for endpoint in endpoints {
-            XCTAssertEqual(endpoint.method, .GET, "Endpoint \(endpoint) should use GET method")
+            #expect(endpoint.method == .GET)
         }
     }
 
-    func testAllEndpointsHaveNilTask() {
+    @Test("All endpoints have nil task")
+    func allEndpointsHaveNilTask() {
         // Given - All possible API endpoints
         let endpoints: [HomeAPI] = [
             .fetchMovies,
@@ -165,11 +171,12 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
 
         // When & Then - All should have nil task (no request body)
         for endpoint in endpoints {
-            XCTAssertNil(endpoint.task, "Endpoint \(endpoint) should have nil task")
+            #expect(endpoint.task == nil)
         }
     }
 
-    func testAllEndpointsHaveNilHeader() {
+    @Test("All endpoints have nil header")
+    func allEndpointsHaveNilHeader() {
         // Given - All possible API endpoints
         let endpoints: [HomeAPI] = [
             .fetchMovies,
@@ -180,11 +187,12 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
 
         // When & Then - All should have nil header (no custom headers)
         for endpoint in endpoints {
-            XCTAssertNil(endpoint.header, "Endpoint \(endpoint) should have nil header")
+            #expect(endpoint.header == nil)
         }
     }
 
-    func testDebugConfigurationConsistency() {
+    @Test("Debug configuration consistency")
+    func debugConfigurationConsistency() {
         // Given - All possible API endpoints
         let endpoints: [HomeAPI] = [
             .fetchMovies,
@@ -203,13 +211,14 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
         }()
 
         for endpoint in endpoints {
-            XCTAssertEqual(endpoint.debug, expectedDebug, "Endpoint \(endpoint) should have consistent debug setting")
+            #expect(endpoint.debug == expectedDebug)
         }
     }
 
     // MARK: - URL Construction Stress Tests
 
-    func testURLConstructionWithManyQueryParameters() {
+    @Test("URL construction with many query parameters")
+    func urlConstructionWithManyQueryParameters() {
         // Given - Multiple endpoints that would create complex URLs
         let endpoints: [(HomeAPI, String)] = [
             (.fetchMovies, "fetchMovies"),
@@ -223,34 +232,36 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
             let path = endpoint.path
 
             // Basic URL validity checks
-            XCTAssertFalse(path.isEmpty, "\(name) should not produce empty path")
-            XCTAssertTrue(path.contains("api_key="), "\(name) should contain API key")
-            XCTAssertTrue(path.hasPrefix("http"), "\(name) should start with http protocol")
+            #expect(!path.isEmpty, "\(name) should not produce empty path")
+            #expect(path.contains("api_key="), "\(name) should contain API key")
+            #expect(path.hasPrefix("http"), "\(name) should start with http protocol")
 
             // Verify URL can be constructed
-            XCTAssertNotNil(URL(string: path), "\(name) should produce valid URL: \(path)")
+            #expect(URL(string: path) != nil, "\(name) should produce valid URL: \(path)")
         }
     }
 
-    func testAPIErrorDescriptionComplete() {
+    @Test("API error description complete")
+    func apiErrorDescriptionComplete() {
         // Given - Both API error types
         let invalidBaseError = APIError.invalidBaseURL("invalid://malformed-url")
         let constructionFailedError = APIError.urlConstructionFailed
 
         // When & Then - Both should have non-empty descriptions
-        XCTAssertNotNil(invalidBaseError.errorDescription)
-        XCTAssertFalse(invalidBaseError.errorDescription!.isEmpty)
+        #expect(invalidBaseError.errorDescription != nil)
+        #expect(!invalidBaseError.errorDescription!.isEmpty)
 
-        XCTAssertNotNil(constructionFailedError.errorDescription)
-        XCTAssertFalse(constructionFailedError.errorDescription!.isEmpty)
+        #expect(constructionFailedError.errorDescription != nil)
+        #expect(!constructionFailedError.errorDescription!.isEmpty)
 
         // Descriptions should be different
-        XCTAssertNotEqual(invalidBaseError.errorDescription, constructionFailedError.errorDescription)
+        #expect(invalidBaseError.errorDescription != constructionFailedError.errorDescription)
     }
 
     // MARK: - Multiple Query Parameters Test
 
-    func testSearchMoviesURLStructure() {
+    @Test("Search movies URL structure")
+    func searchMoviesURLStructure() {
         // Given
         let query = "action movie"
         let searchAPI = HomeAPI.searchMovies(query)
@@ -259,29 +270,30 @@ final class HomeAPIEdgeCasesTests: XCTestCase {
         let path = searchAPI.path
 
         // Then - Should have proper query parameter structure
-        XCTAssertTrue(path.contains("?"), "URL should contain query separator")
+        #expect(path.contains("?"), "URL should contain query separator")
 
         // Count query parameters - should have at least query and api_key
         let components = URLComponents(string: path)
-        XCTAssertNotNil(components)
-        XCTAssertNotNil(components?.queryItems)
-        XCTAssertGreaterThanOrEqual(components?.queryItems?.count ?? 0, 2)
+        #expect(components != nil)
+        #expect(components?.queryItems != nil)
+        #expect((components?.queryItems?.count ?? 0) >= 2)
 
         // Verify specific parameters exist
         let queryItems = components?.queryItems ?? []
-        XCTAssertTrue(queryItems.contains { $0.name == "query" })
-        XCTAssertTrue(queryItems.contains { $0.name == "api_key" })
+        #expect(queryItems.contains { $0.name == "query" })
+        #expect(queryItems.contains { $0.name == "api_key" })
     }
 
     // MARK: - Protocol Compliance Tests
 
-    func testAPIFetcherProtocolCompliance() {
+    @Test("API fetcher protocol compliance")
+    func apiFetcherProtocolCompliance() {
         // Given - HomeAPI should conform to APIFetcher protocol
         let api: any APIFetcher = HomeAPI.fetchMovies
 
         // When & Then - Should have all required properties
-        XCTAssertNotNil(api.path)
-        XCTAssertNotNil(api.method)
+        #expect(!api.path.isEmpty)
+        _ = api.method // Should not crash
         // task and header can be nil for this protocol
         // debug should exist
         _ = api.debug // Should not crash

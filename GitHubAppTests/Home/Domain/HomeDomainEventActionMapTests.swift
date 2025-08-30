@@ -4,10 +4,11 @@
 //
 
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class HomeDomainEventActionMapTests: XCTestCase {
-    func testMapFetchDataEvent() {
+struct HomeDomainEventActionMapTests {
+    @Test("Map fetch data event")
+    func mapFetchDataEvent() {
         // Given
         let event = HomeViewEvent.fetchData
 
@@ -15,10 +16,11 @@ final class HomeDomainEventActionMapTests: XCTestCase {
         let action = HomeDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, HomeDomainAction.fetchUpcomingMovies)
+        #expect(action == HomeDomainAction.fetchUpcomingMovies)
     }
 
-    func testMapSearchMoviesEvent() {
+    @Test("Map search movies event")
+    func mapSearchMoviesEvent() {
         // Given
         let query = "test query"
         let event = HomeViewEvent.searchMovies(query)
@@ -27,10 +29,11 @@ final class HomeDomainEventActionMapTests: XCTestCase {
         let action = HomeDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, HomeDomainAction.searchMovies(query))
+        #expect(action == HomeDomainAction.searchMovies(query))
     }
 
-    func testMapToggleFavoriteEvent() {
+    @Test("Map toggle favorite event")
+    func mapToggleFavoriteEvent() {
         // Given
         let movie = createMockMovie(id: 1, title: "Test Movie")
         let event = HomeViewEvent.toggleFavorite(movie)
@@ -39,10 +42,11 @@ final class HomeDomainEventActionMapTests: XCTestCase {
         let action = HomeDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, HomeDomainAction.toggleMovieFavorite(movie))
+        #expect(action == HomeDomainAction.toggleMovieFavorite(movie))
     }
 
-    func testMapLoadFavoriteMoviesEvent() {
+    @Test("Map load favorite movies event")
+    func mapLoadFavoriteMoviesEvent() {
         // Given
         let event = HomeViewEvent.loadFavoriteMovies
 
@@ -50,10 +54,11 @@ final class HomeDomainEventActionMapTests: XCTestCase {
         let action = HomeDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, HomeDomainAction.loadPersistedFavoriteMovies)
+        #expect(action == HomeDomainAction.loadPersistedFavoriteMovies)
     }
 
-    func testAllViewEventsAreMapped() {
+    @Test("All view events are mapped")
+    func allViewEventsAreMapped() {
         // Given
         let movie = createMockMovie(id: 1, title: "Test Movie")
         let events: [HomeViewEvent] = [
@@ -66,11 +71,12 @@ final class HomeDomainEventActionMapTests: XCTestCase {
         // When/Then - Verify all events can be mapped without throwing
         for event in events {
             let action = HomeDomainEventActionMap.map(event)
-            XCTAssertNotNil(action, "Failed to map event: \(event)")
+            #expect(action != nil, "Failed to map event: \(event)")
         }
     }
 
-    func testMappingConsistency() {
+    @Test("Mapping consistency")
+    func mappingConsistency() {
         // Given
         let movie = createMockMovie(id: 1, title: "Test Movie")
         let query = "consistent query"
@@ -89,10 +95,10 @@ final class HomeDomainEventActionMapTests: XCTestCase {
         let action8 = HomeDomainEventActionMap.map(.loadFavoriteMovies)
 
         // Then - Verify mapping is consistent
-        XCTAssertEqual(action1, action2)
-        XCTAssertEqual(action3, action4)
-        XCTAssertEqual(action5, action6)
-        XCTAssertEqual(action7, action8)
+        #expect(action1 == action2)
+        #expect(action3 == action4)
+        #expect(action5 == action6)
+        #expect(action7 == action8)
     }
 
     // MARK: - Helper Methods

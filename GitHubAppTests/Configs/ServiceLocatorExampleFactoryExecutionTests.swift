@@ -6,13 +6,14 @@
 //
 
 @testable import GitHubApp
-import XCTest
+import Testing
 
 /**
  * Tests specifically targeting ServiceLocatorExample factory closure with 0% coverage.
  */
-final class ServiceLocatorExampleFactoryExecutionTests: XCTestCase {
-    func testServiceLocatorExampleFactoryClosureExecution() {
+struct ServiceLocatorExampleFactoryExecutionTests {
+    @Test("Service locator example factory closure execution")
+    func serviceLocatorExampleFactoryClosureExecution() {
         // This test specifically targets the factory closure that has 0% coverage
         // by creating a scenario similar to what the example does
 
@@ -31,11 +32,12 @@ final class ServiceLocatorExampleFactoryExecutionTests: XCTestCase {
         let service = try? serviceLocator.retrieve(HomeService.self)
 
         // Then
-        XCTAssertNotNil(service)
-        XCTAssertTrue(closureExecuted, "Factory closure should have been executed")
+        #expect(service != nil)
+        #expect(closureExecuted == true, "Factory closure should have been executed")
     }
 
-    func testServiceLocatorExampleFactoryClosureMultipleRetrievals() {
+    @Test("Service locator example factory closure multiple retrievals")
+    func serviceLocatorExampleFactoryClosureMultipleRetrievals() {
         // Given
         let serviceLocator = ServiceLocator()
         var factoryCallCount = 0
@@ -53,10 +55,11 @@ final class ServiceLocatorExampleFactoryExecutionTests: XCTestCase {
         _ = try? serviceLocator.retrieve(HomeService.self)
 
         // Then - Factory should be called (behavior depends on implementation)
-        XCTAssertGreaterThan(factoryCallCount, 0, "Factory closure should be executed at least once")
+        #expect(factoryCallCount > 0, "Factory closure should be executed at least once")
     }
 
-    func testServiceLocatorExampleFactoryClosureWithDifferentServices() {
+    @Test("Service locator example factory closure with different services")
+    func serviceLocatorExampleFactoryClosureWithDifferentServices() {
         // Given
         let serviceLocator = ServiceLocator()
         var homeServiceFactoryCount = 0
@@ -78,11 +81,12 @@ final class ServiceLocatorExampleFactoryExecutionTests: XCTestCase {
         _ = try? serviceLocator.retrieve(FavoritesService.self)
 
         // Then - Both factories should be executed
-        XCTAssertGreaterThan(homeServiceFactoryCount, 0)
-        XCTAssertGreaterThan(favoritesServiceFactoryCount, 0)
+        #expect(homeServiceFactoryCount > 0)
+        #expect(favoritesServiceFactoryCount > 0)
     }
 
-    func testServiceLocatorExampleFactoryClosureErrorHandling() {
+    @Test("Service locator example factory closure error handling")
+    func serviceLocatorExampleFactoryClosureErrorHandling() {
         // Given
         let serviceLocator = ServiceLocator()
         var factoryExecuted = false
@@ -98,11 +102,12 @@ final class ServiceLocatorExampleFactoryExecutionTests: XCTestCase {
         let service = try? serviceLocator.retrieve(HomeService.self)
 
         // Then - Factory should execute and return service
-        XCTAssertTrue(factoryExecuted)
-        XCTAssertNotNil(service)
+        #expect(factoryExecuted == true)
+        #expect(service != nil)
     }
 
-    func testServiceLocatorExampleFactoryClosureWithComplexService() {
+    @Test("Service locator example factory closure with complex service")
+    func serviceLocatorExampleFactoryClosureWithComplexService() {
         // Given
         let serviceLocator = ServiceLocator()
         var complexFactoryExecuted = false
@@ -119,7 +124,7 @@ final class ServiceLocatorExampleFactoryExecutionTests: XCTestCase {
         let retrievedService = try? serviceLocator.retrieve(HomeService.self)
 
         // Then - Complex factory should execute successfully
-        XCTAssertTrue(complexFactoryExecuted)
-        XCTAssertNotNil(retrievedService)
+        #expect(complexFactoryExecuted == true)
+        #expect(retrievedService != nil)
     }
 }

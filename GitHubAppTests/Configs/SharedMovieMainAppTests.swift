@@ -3,134 +3,145 @@
 //  GitHubAppTests
 //
 
+import Foundation
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class SharedMovieMainAppTests: XCTestCase {
-    // MARK: - Properties
-
-    private var movieWithPoster: SharedMovie!
-    private var movieWithoutPoster: SharedMovie!
-    private var movieWithEmptyPoster: SharedMovie!
-    private var movieWithEmptyTitle: SharedMovie!
-    private var movieWithEmptyOverview: SharedMovie!
-
-    // MARK: - Setup and Teardown
-
-    override func setUp() {
-        super.setUp()
-
-        movieWithPoster = SharedMovie(
+struct SharedMovieMainAppTests {
+    private func createTestMovies() -> (SharedMovie, SharedMovie, SharedMovie, SharedMovie, SharedMovie) {
+        let movieWithPoster = SharedMovie(
             id: 1,
             title: "Test Movie",
             overview: "This is a test movie overview",
             posterPath: "/test-poster.jpg"
         )
 
-        movieWithoutPoster = SharedMovie(
+        let movieWithoutPoster = SharedMovie(
             id: 2,
             title: "Movie Without Poster",
             overview: "This movie has no poster",
             posterPath: nil
         )
 
-        movieWithEmptyPoster = SharedMovie(
+        let movieWithEmptyPoster = SharedMovie(
             id: 3,
             title: "Movie With Empty Poster",
             overview: "This movie has empty poster path",
             posterPath: ""
         )
 
-        movieWithEmptyTitle = SharedMovie(
+        let movieWithEmptyTitle = SharedMovie(
             id: 4,
             title: "",
             overview: "Movie with empty title",
             posterPath: "/poster.jpg"
         )
 
-        movieWithEmptyOverview = SharedMovie(
+        let movieWithEmptyOverview = SharedMovie(
             id: 5,
             title: "Movie With Empty Overview",
             overview: "",
             posterPath: "/poster.jpg"
         )
-    }
 
-    override func tearDown() {
-        movieWithPoster = nil
-        movieWithoutPoster = nil
-        movieWithEmptyPoster = nil
-        movieWithEmptyTitle = nil
-        movieWithEmptyOverview = nil
-        super.tearDown()
+        return (movieWithPoster, movieWithoutPoster, movieWithEmptyPoster, movieWithEmptyTitle, movieWithEmptyOverview)
     }
 
     // MARK: - Poster URL Tests
 
-    func testPosterURLWithValidPosterPath() {
+    @Test("Poster URL with valid poster path")
+    func posterURLWithValidPosterPath() {
+        // Given
+        let (movieWithPoster, _, _, _, _) = createTestMovies()
+
         // When
         let posterURL = movieWithPoster.posterURL
 
         // Then
-        XCTAssertNotNil(posterURL)
-        XCTAssertEqual(posterURL?.absoluteString, "https://image.tmdb.org/t/p/w500/test-poster.jpg")
+        #expect(posterURL != nil)
+        #expect(posterURL?.absoluteString == "https://image.tmdb.org/t/p/w500/test-poster.jpg")
     }
 
-    func testPosterURLWithNilPosterPath() {
+    @Test("Poster URL with nil poster path")
+    func posterURLWithNilPosterPath() {
+        // Given
+        let (_, movieWithoutPoster, _, _, _) = createTestMovies()
+
         // When
         let posterURL = movieWithoutPoster.posterURL
 
         // Then
-        XCTAssertNil(posterURL)
+        #expect(posterURL == nil)
     }
 
-    func testPosterURLWithEmptyPosterPath() {
+    @Test("Poster URL with empty poster path")
+    func posterURLWithEmptyPosterPath() {
+        // Given
+        let (_, _, movieWithEmptyPoster, _, _) = createTestMovies()
+
         // When
         let posterURL = movieWithEmptyPoster.posterURL
 
         // Then
-        XCTAssertNil(posterURL)
+        #expect(posterURL == nil)
     }
 
     // MARK: - Display Title Tests
 
-    func testDisplayTitleWithValidTitle() {
+    @Test("Display title with valid title")
+    func displayTitleWithValidTitle() {
+        // Given
+        let (movieWithPoster, _, _, _, _) = createTestMovies()
+
         // When
         let displayTitle = movieWithPoster.displayTitle
 
         // Then
-        XCTAssertEqual(displayTitle, "Test Movie")
+        #expect(displayTitle == "Test Movie")
     }
 
-    func testDisplayTitleWithEmptyTitle() {
+    @Test("Display title with empty title")
+    func displayTitleWithEmptyTitle() {
+        // Given
+        let (_, _, _, movieWithEmptyTitle, _) = createTestMovies()
+
         // When
         let displayTitle = movieWithEmptyTitle.displayTitle
 
         // Then
-        XCTAssertEqual(displayTitle, "Untitled")
+        #expect(displayTitle == "Untitled")
     }
 
     // MARK: - Display Overview Tests
 
-    func testDisplayOverviewWithValidOverview() {
+    @Test("Display overview with valid overview")
+    func displayOverviewWithValidOverview() {
+        // Given
+        let (movieWithPoster, _, _, _, _) = createTestMovies()
+
         // When
         let displayOverview = movieWithPoster.displayOverview
 
         // Then
-        XCTAssertEqual(displayOverview, "This is a test movie overview")
+        #expect(displayOverview == "This is a test movie overview")
     }
 
-    func testDisplayOverviewWithEmptyOverview() {
+    @Test("Display overview with empty overview")
+    func displayOverviewWithEmptyOverview() {
+        // Given
+        let (_, _, _, _, movieWithEmptyOverview) = createTestMovies()
+
         // When
         let displayOverview = movieWithEmptyOverview.displayOverview
 
         // Then
-        XCTAssertEqual(displayOverview, "No overview available")
+        #expect(displayOverview == "No overview available")
     }
 
     // MARK: - Codable Tests
 
-    func testSharedMovieEncodingAndDecoding() {
+    @Test("Shared movie encoding and decoding")
+    func sharedMovieEncodingAndDecoding() throws {
         // Given
         let movie = SharedMovie(
             id: 999,
@@ -140,17 +151,13 @@ final class SharedMovieMainAppTests: XCTestCase {
         )
 
         // When
-        do {
-            let encodedData = try JSONEncoder().encode(movie)
-            let decodedMovie = try JSONDecoder().decode(SharedMovie.self, from: encodedData)
+        let encodedData = try JSONEncoder().encode(movie)
+        let decodedMovie = try JSONDecoder().decode(SharedMovie.self, from: encodedData)
 
-            // Then
-            XCTAssertEqual(decodedMovie.id, movie.id)
-            XCTAssertEqual(decodedMovie.title, movie.title)
-            XCTAssertEqual(decodedMovie.overview, movie.overview)
-            XCTAssertEqual(decodedMovie.posterPath, movie.posterPath)
-        } catch {
-            XCTFail("Should not throw error during encoding/decoding: \(error)")
-        }
+        // Then
+        #expect(decodedMovie.id == movie.id)
+        #expect(decodedMovie.title == movie.title)
+        #expect(decodedMovie.overview == movie.overview)
+        #expect(decodedMovie.posterPath == movie.posterPath)
     }
 }
