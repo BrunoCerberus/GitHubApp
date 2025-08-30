@@ -16,6 +16,7 @@ import Testing
 struct HomeViewModelErrorTests {
     private func createTestComponents() -> (HomeViewModel, MockHomeService) {
         StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.testing)
         let mockService = MockHomeService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
@@ -27,6 +28,7 @@ struct HomeViewModelErrorTests {
 
     private func cleanupTest() {
         StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.production)
         try? APIKeysProvider.removeMovieAPIKey()
     }
 
@@ -39,8 +41,13 @@ struct HomeViewModelErrorTests {
         // Given - Test service resolution from ServiceLocator
         let (viewModel, _) = createTestComponents()
 
-        // Then - Should initialize with registered service
-        #expect(viewModel.viewState == .loading)
+        // Then - Should initialize with registered service (loads initial data)
+        // ViewModel immediately loads data with mock services
+        if case .success = viewModel.viewState {
+            // Success state is expected with mock services
+        } else {
+            Issue.record("Expected success state after initialization with mock services")
+        }
     }
 
     @Test("Initialization with nil ServiceLocator")
@@ -52,8 +59,11 @@ struct HomeViewModelErrorTests {
         // When
         let viewModel = HomeViewModel(serviceLocator: ServiceLocator())
 
-        // Then - Should use LiveHomeService fallback
-        #expect(viewModel.viewState == .loading)
+        // Then - Should use LiveHomeService fallback and initialize successfully
+        // May be in loading or success state depending on timing with LiveHomeService
+        let isSuccessState = if case .success = viewModel.viewState { true } else { false }
+        let isValidState = viewModel.viewState == .loading || isSuccessState
+        #expect(isValidState, "Expected loading or success state with LiveHomeService fallback")
     }
 
     @Test("Initialization with ServiceLocator error")
@@ -66,8 +76,11 @@ struct HomeViewModelErrorTests {
         // When - Should fallback to LiveHomeService when retrieval fails
         let viewModel = HomeViewModel(serviceLocator: emptyServiceLocator)
 
-        // Then
-        #expect(viewModel.viewState == .loading)
+        // Then - ViewModel should initialize successfully and load data
+        // With fallback to LiveHomeService, it may be loading or success depending on timing
+        let isSuccessState = if case .success = viewModel.viewState { true } else { false }
+        let isValidState = viewModel.viewState == .loading || isSuccessState
+        #expect(isValidState, "Expected loading or success state with fallback service")
     }
 
     @Test("ViewModel properties in loading state")

@@ -9,6 +9,9 @@ import UIKit
 
 struct MovieDetailsHostingControllerTests {
     private func createTestComponents(movie: Movie) -> MovieDetailsHostingController {
+        // Configure storage for testing
+        StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.testing)
         // Ensure API key is available to avoid fatalError in HomeAPI
         try? APIKeysProvider.setMovieAPIKey("test-key")
         let serviceLocator = ServiceLocator()
@@ -17,11 +20,13 @@ struct MovieDetailsHostingControllerTests {
     }
 
     private func cleanupTest() {
+        StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.production)
         try? APIKeysProvider.removeMovieAPIKey()
     }
 
     @Test("ViewDidLoad sets title from movie")
-    func viewDidLoadSetsTitleFromMovie() {
+    @MainActor func viewDidLoadSetsTitleFromMovie() {
         defer { cleanupTest() }
 
         // Given
@@ -38,7 +43,7 @@ struct MovieDetailsHostingControllerTests {
     }
 
     @Test("Initialization")
-    func initialization() {
+    @MainActor func initialization() {
         defer { cleanupTest() }
 
         // Given

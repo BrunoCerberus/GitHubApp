@@ -18,6 +18,9 @@ import Testing
 @MainActor
 struct SettingsViewTests {
     private func createTestComponents() -> (SettingsView, MockSettingsService) {
+        // Configure storage for testing
+        StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.testing)
         // Clear UserDefaults for clean testing
         UserDefaults.standard.removeObject(forKey: "profileImageData")
         UserDefaults.standard.removeObject(forKey: "hasRatedApp")

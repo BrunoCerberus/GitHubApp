@@ -10,6 +10,8 @@ import Testing
 
 struct MovieDetailsViewModelTests {
     private func createTestComponents(with service: HomeService) -> MovieDetailsViewModel {
+        StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.testing)
         try? APIKeysProvider.setMovieAPIKey("md-key")
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: service)
@@ -18,6 +20,8 @@ struct MovieDetailsViewModelTests {
     }
 
     private func cleanupTest() {
+        StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.production)
         try? APIKeysProvider.removeMovieAPIKey()
     }
 

@@ -165,6 +165,7 @@
 		F89176F6BCF54051B2AC7883 /* DeeplinkRouterExtraTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D29E6AEC5395C61A6ADB69EA /* DeeplinkRouterExtraTests.swift */; };
 		F9D0148572B7AE1BBF657F07 /* SwiftDataStorageServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601AE2398719DC31D97235C3 /* SwiftDataStorageServiceTests.swift */; };
 		F9DD74E79B24F04619368A68 /* UpcomingMoviesWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6E0C51CD685562576FE473 /* UpcomingMoviesWidgetBundle.swift */; };
+		FB43FFC5522A7F03CFAF1EF7 /* settingsView.1.png in Resources */ = {isa = PBXBuildFile; fileRef = B82DAB37CC7A36CA68FEAFAB /* settingsView.1.png */; };
 		FBBCD25A43E71F9B6C5BC493 /* NotificationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C459A022128C733DB34C24CF /* NotificationExtensions.swift */; };
 		FE28CF6CC5A7DE5249E2F404 /* HomeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4470E33C78EC78EC3DA5583A /* HomeViewModelTests.swift */; };
 /* End PBXBuildFile section */
@@ -305,6 +306,7 @@
 		B2100EC98FA49C80FC82A94B /* SettingsDomainAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDomainAction.swift; sourceTree = "<group>"; };
 		B5BD52A20498847CA266B716 /* FavoritesViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewState.swift; sourceTree = "<group>"; };
 		B7E7AE5F273CD093D0820DEA /* CoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorTests.swift; sourceTree = "<group>"; };
+		B82DAB37CC7A36CA68FEAFAB /* settingsView.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settingsView.1.png; sourceTree = "<group>"; };
 		B9F2DF8D4BE804634E50A851 /* TestUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUtilities.swift; sourceTree = "<group>"; };
 		BA9BC20DAF34B80AD4BFA7ED /* MovieReviewsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieReviewsTests.swift; sourceTree = "<group>"; };
 		BB23072E8A40CEEDABF2C8D5 /* GitHubApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = GitHubApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -908,6 +910,7 @@
 		B1A7E0157F7D7C6C8DA13E20 /* SettingsViewTests */ = {
 			isa = PBXGroup;
 			children = (
+				B82DAB37CC7A36CA68FEAFAB /* settingsView.1.png */,
 				19A46F4067000C431016C50A /* testSettingsView.1.png */,
 			);
 			path = SettingsViewTests;
@@ -1263,6 +1266,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB43FFC5522A7F03CFAF1EF7 /* settingsView.1.png in Resources */,
 				60968BA07A3467888D8C2A85 /* testHomeView.1.png in Resources */,
 				A8B6EF7201F394ACE4152C44 /* testMovieDetailsView.1.png in Resources */,
 				8B4D4EFB2D4B93F2FA53F4B9 /* testSettingsView.1.png in Resources */,
