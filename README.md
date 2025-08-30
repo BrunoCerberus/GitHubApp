@@ -32,7 +32,7 @@ This project includes comprehensive GitHub Actions workflows for continuous inte
 ### Pipeline Features
 
 - **XcodeGen Integration**: Automatically generates the Xcode project from `project.yml`
-- **Multi-Scheme Testing**: Tests both GitHubAppDev and GitHubAppProd schemes
+- **Multi-Scheme Testing**: Tests GitHubAppDev, GitHubAppProd, and dedicated test schemes (GitHubAppTests, GitHubAppUITests)
 - **Code Coverage**: Enables code coverage reporting for unit tests
 - **Artifact Management**: Preserves test results and build artifacts
 - **Matrix Builds**: Tests multiple configurations simultaneously
@@ -167,6 +167,23 @@ To modify the project structure:
 - **Consistent Structure**: Enforces consistent project organization
 - **Easy Maintenance**: No more merge conflicts in .pbxproj files
 - **Team Collaboration**: Everyone generates the same project structure
+
+### Project Schemes
+
+The project includes multiple Xcode schemes optimized for different development scenarios:
+
+| Scheme | Purpose | Configuration | Test Targets |
+|--------|---------|---------------|--------------|
+| **GitHubAppDev** | Main development | Debug | All tests (Unit + UI) |
+| **GitHubAppProd** | Production builds | Release | All tests (Unit + UI) |
+| **GitHubAppTests** | Unit testing only | Debug | Unit tests only |
+| **GitHubAppUITests** | UI testing only | Debug | UI tests only |
+
+**Usage Examples:**
+- Use `GitHubAppTests` scheme for rapid unit test iterations during development
+- Use `GitHubAppUITests` scheme when focusing on UI testing and debugging
+- Use `GitHubAppDev` for comprehensive testing before commits
+- Use `GitHubAppProd` for release validation
 
 ## Deeplinks
 

@@ -53,6 +53,24 @@ GitHubApp/
 - **Setup**: `make setup` (installs XcodeGen and generates project)
 - **Clean**: `make clean` (removes generated project)
 
+### Project Schemes
+The project includes multiple Xcode schemes for different purposes:
+
+- **GitHubAppDev**: Main development scheme (Debug configuration)
+  - Builds main app and widget extension
+  - Runs all tests (unit + UI) during test action
+- **GitHubAppProd**: Production scheme (Release configuration) 
+  - Builds main app and widget extension
+  - Runs all tests (unit + UI) during test action
+- **GitHubAppTests**: Dedicated unit testing scheme
+  - Focuses solely on unit test execution
+  - Builds and runs only the GitHubAppTests target
+  - Ideal for rapid unit test iterations during development
+- **GitHubAppUITests**: Dedicated UI testing scheme
+  - Focuses solely on UI test execution
+  - Builds and runs only the GitHubAppUITests target
+  - Useful for isolated UI testing and debugging
+
 ## API Configuration
 - **API Key**: The Movie Database API key stored in `Secrets.plist` (gitignored for security)
 - **Fallback Hierarchy**: Secrets.plist → Environment Variables → Keychain → Default
