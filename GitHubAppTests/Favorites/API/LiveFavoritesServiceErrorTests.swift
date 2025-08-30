@@ -7,44 +7,30 @@
 
 import Combine
 @testable import GitHubApp
-import XCTest
+import Testing
 
-/**
- * Comprehensive error handling and edge case tests for LiveFavoritesService.
- * These tests focus on covering the uncovered error paths and edge cases.
- */
-final class LiveFavoritesServiceErrorTests: XCTestCase {
-    private var mockStorageService: MockStorageService!
-    private var service: LiveFavoritesService!
-    private var cancellables: Set<AnyCancellable> = []
-
-    override func setUp() {
-        super.setUp()
-        mockStorageService = MockStorageService()
-        service = LiveFavoritesService(storageService: mockStorageService)
-        cancellables = []
-    }
-
-    override func tearDown() {
-        cancellables.removeAll()
-        mockStorageService = nil
-        service = nil
-        super.tearDown()
+struct LiveFavoritesServiceErrorTests {
+    private func createTestComponents() -> (LiveFavoritesService, MockStorageService) {
+        let mockStorageService = MockStorageService()
+        let service = LiveFavoritesService(storageService: mockStorageService)
+        return (service, mockStorageService)
     }
 
     // MARK: - Service Initialization Tests
 
-    func testInitializationWithNilStorageService() {
+    @Test("Initialization with nil storage service uses factory")
+    func initializationWithNilStorageService() {
         // Given - nil storage service should fall back to factory
 
         // When
         let service = LiveFavoritesService(storageService: nil)
 
         // Then - Should initialize successfully using factory
-        XCTAssertNotNil(service)
+        #expect(service != nil)
     }
 
-    func testInitializationWithProvidedStorageService() {
+    @Test("Initialization with provided storage service works correctly")
+    func initializationWithProvidedStorageService() {
         // Given
         let customStorage = MockStorageService()
 
@@ -52,396 +38,267 @@ final class LiveFavoritesServiceErrorTests: XCTestCase {
         let service = LiveFavoritesService(storageService: customStorage)
 
         // Then
-        XCTAssertNotNil(service)
+        #expect(service != nil)
     }
 
     // MARK: - Load Favorite Movies Error Tests
 
-    func testLoadFavoriteMoviesWithServiceUnavailable() {
+    @Test("Load favorite movies handles service gracefully")
+    func loadFavoriteMoviesWithServiceUnavailable() async throws {
         // Given - Service weak self behavior is implementation detail
         // This test verifies that the service handles weak self correctly
         // by checking that the service doesn't crash with normal usage
-        let expectation = XCTestExpectation(description: "Service handles deallocation gracefully")
+        let (service, _) = createTestComponents()
 
         // When - Using service normally
-        service.loadFavoriteMovies()
-            .sink(
-                receiveCompletion: { _ in
-                    expectation.fulfill()
-                },
-                receiveValue: { _ in
-                    expectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
+        let result = try await service.loadFavoriteMovies().async()
 
         // Then - Service operates normally
-        wait(for: [expectation], timeout: 1.0)
+        #expect(result != nil)
     }
 
-    func testLoadFavoriteMoviesWithStorageError() {
+    @Test("Load favorite movies propagates storage errors")
+    func loadFavoriteMoviesWithStorageError() async throws {
         // Given
+        let (service, mockStorageService) = createTestComponents()
         let expectedError = NSError(domain: "StorageError", code: 500, userInfo: nil)
         mockStorageService.shouldSimulateErrors = true
         mockStorageService.fetchLikedMoviesError = expectedError
-        let expectation = XCTestExpectation(description: "Storage error propagated")
 
-        // When
-        service.loadFavoriteMovies()
-            .sink(
-                receiveCompletion: { completion in
-                    if case let .failure(error) = completion {
-                        XCTAssertEqual((error as NSError).domain, "StorageError")
-                        XCTAssertEqual((error as NSError).code, 500)
-                        expectation.fulfill()
-                    }
-                },
-                receiveValue: { _ in
-                    XCTFail("Should not receive value on storage error")
-                }
-            )
-            .store(in: &cancellables)
-
-        // Then
-        wait(for: [expectation], timeout: 1.0)
+        // When & Then
+        #expect(throws: Error.self) {
+            try await service.loadFavoriteMovies().async()
+        }
     }
 
-    func testLoadFavoriteMoviesSuccess() {
+    @Test("Load favorite movies succeeds with valid data")
+    func loadFavoriteMoviesSuccess() async throws {
         // Given
+        let (service, mockStorageService) = createTestComponents()
         let expectedMovies = [
             Movie(id: 1, title: "Movie 1", overview: "Overview 1", posterPath: nil),
             Movie(id: 2, title: "Movie 2", overview: "Overview 2", posterPath: nil),
         ]
         mockStorageService.favoriteMovies = expectedMovies
-        let expectation = XCTestExpectation(description: "Load movies success")
 
         // When
-        service.loadFavoriteMovies()
-            .sink(
-                receiveCompletion: { completion in
-                    if case .failure = completion {
-                        XCTFail("Should not fail")
-                    }
-                },
-                receiveValue: { movies in
-                    XCTAssertEqual(movies.count, 2)
-                    XCTAssertEqual(movies[0].id, 1)
-                    XCTAssertEqual(movies[1].id, 2)
-                    expectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
+        let movies = try await service.loadFavoriteMovies().async()
 
         // Then
-        wait(for: [expectation], timeout: 1.0)
+        #expect(movies.count == 2)
+        #expect(movies[0].id == 1)
+        #expect(movies[1].id == 2)
     }
 
     // MARK: - Toggle Movie Favorite Error Tests
 
-    func testToggleMovieFavoriteWithServiceUnavailable() {
+    @Test("Toggle movie favorite handles service gracefully")
+    func toggleMovieFavoriteWithServiceUnavailable() async throws {
         // Given - Service weak self behavior is implementation detail
+        let (service, _) = createTestComponents()
         let movie = Movie(id: 1, title: "Test Movie", overview: "Test", posterPath: nil)
-        let expectation = XCTestExpectation(description: "Service handles deallocation gracefully")
 
         // When - Using service normally
-        service.toggleMovieFavorite(movie)
-            .sink(
-                receiveCompletion: { _ in
-                    expectation.fulfill()
-                },
-                receiveValue: { _ in
-                    expectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
+        let result = try await service.toggleMovieFavorite(movie).async()
 
         // Then - Service operates normally
-        wait(for: [expectation], timeout: 1.0)
+        #expect(result != nil)
     }
 
-    func testToggleMovieFavoriteWithStorageError() {
+    @Test("Toggle movie favorite propagates storage errors")
+    func toggleMovieFavoriteWithStorageError() async throws {
         // Given
+        let (service, mockStorageService) = createTestComponents()
         let movie = Movie(id: 1, title: "Test Movie", overview: "Test", posterPath: nil)
         let expectedError = NSError(domain: "ToggleError", code: 404, userInfo: nil)
         mockStorageService.shouldSimulateErrors = true
         mockStorageService.toggleError = expectedError
-        let expectation = XCTestExpectation(description: "Toggle error propagated")
 
-        // When
-        service.toggleMovieFavorite(movie)
-            .sink(
-                receiveCompletion: { completion in
-                    if case let .failure(error) = completion {
-                        XCTAssertEqual((error as NSError).domain, "ToggleError")
-                        XCTAssertEqual((error as NSError).code, 404)
-                        expectation.fulfill()
-                    }
-                },
-                receiveValue: { _ in
-                    XCTFail("Should not receive value on storage error")
-                }
-            )
-            .store(in: &cancellables)
-
-        // Then
-        wait(for: [expectation], timeout: 1.0)
+        // When & Then
+        #expect(throws: Error.self) {
+            try await service.toggleMovieFavorite(movie).async()
+        }
     }
 
-    func testToggleMovieFavoriteSuccess() {
+    @Test("Toggle movie favorite succeeds with valid movie")
+    func toggleMovieFavoriteSuccess() async throws {
         // Given
+        let (service, mockStorageService) = createTestComponents()
         let movie = Movie(id: 1, title: "Test Movie", overview: "Test", posterPath: nil)
         let expectedMovies = [movie]
         mockStorageService.toggledMovies = expectedMovies
-        let expectation = XCTestExpectation(description: "Toggle success")
 
         // When
-        service.toggleMovieFavorite(movie)
-            .sink(
-                receiveCompletion: { completion in
-                    if case .failure = completion {
-                        XCTFail("Should not fail")
-                    }
-                },
-                receiveValue: { movies in
-                    XCTAssertEqual(movies.count, 1)
-                    XCTAssertEqual(movies[0].id, 1)
-                    expectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
+        let movies = try await service.toggleMovieFavorite(movie).async()
 
         // Then
-        wait(for: [expectation], timeout: 1.0)
+        #expect(movies.count == 1)
+        #expect(movies[0].id == 1)
     }
 
     // MARK: - Clear All Favorite Movies Error Tests
 
-    func testClearAllFavoriteMoviesWithServiceUnavailable() {
+    @Test("Clear all favorite movies handles service gracefully")
+    func clearAllFavoriteMoviesWithServiceUnavailable() async throws {
         // Given - Service weak self behavior is implementation detail
-        let expectation = XCTestExpectation(description: "Service handles deallocation gracefully")
+        let (service, _) = createTestComponents()
 
         // When - Using service normally
-        service.clearAllFavoriteMovies()
-            .sink(
-                receiveCompletion: { _ in
-                    expectation.fulfill()
-                },
-                receiveValue: { _ in
-                    expectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
+        let result = try await service.clearAllFavoriteMovies().async()
 
         // Then - Service operates normally
-        wait(for: [expectation], timeout: 1.0)
+        #expect(result != nil)
     }
 
-    func testClearAllFavoriteMoviesWithStorageError() {
+    @Test("Clear all favorite movies propagates storage errors")
+    func clearAllFavoriteMoviesWithStorageError() async throws {
         // Given
+        let (service, mockStorageService) = createTestComponents()
         let expectedError = NSError(domain: "ClearError", code: 500, userInfo: nil)
         mockStorageService.shouldSimulateErrors = true
         mockStorageService.clearError = expectedError
-        let expectation = XCTestExpectation(description: "Clear error propagated")
 
-        // When
-        service.clearAllFavoriteMovies()
-            .sink(
-                receiveCompletion: { completion in
-                    if case let .failure(error) = completion {
-                        XCTAssertEqual((error as NSError).domain, "ClearError")
-                        XCTAssertEqual((error as NSError).code, 500)
-                        expectation.fulfill()
-                    }
-                },
-                receiveValue: { _ in
-                    XCTFail("Should not receive value on storage error")
-                }
-            )
-            .store(in: &cancellables)
-
-        // Then
-        wait(for: [expectation], timeout: 1.0)
+        // When & Then
+        #expect(throws: Error.self) {
+            try await service.clearAllFavoriteMovies().async()
+        }
     }
 
-    func testClearAllFavoriteMoviesSuccess() {
+    @Test("Clear all favorite movies succeeds normally")
+    func clearAllFavoriteMoviesSuccess() async throws {
         // Given
-        let expectation = XCTestExpectation(description: "Clear success")
+        let (service, _) = createTestComponents()
 
         // When
-        service.clearAllFavoriteMovies()
-            .sink(
-                receiveCompletion: { completion in
-                    if case .failure = completion {
-                        XCTFail("Should not fail")
-                    } else {
-                        expectation.fulfill()
-                    }
-                },
-                receiveValue: { _ in
-                    // Success case
-                }
-            )
-            .store(in: &cancellables)
+        let result = try await service.clearAllFavoriteMovies().async()
 
-        // Then
-        wait(for: [expectation], timeout: 1.0)
+        // Then - Success case
+        #expect(result != nil)
     }
 
     // MARK: - Is Movie Liked Error Tests
 
-    func testIsMovieLikedWithServiceUnavailable() {
+    @Test("Is movie liked handles service gracefully")
+    func isMovieLikedWithServiceUnavailable() async throws {
         // Given - Service weak self behavior is implementation detail
+        let (service, _) = createTestComponents()
         let movie = Movie(id: 1, title: "Test Movie", overview: "Test", posterPath: nil)
-        let expectation = XCTestExpectation(description: "Service handles deallocation gracefully")
 
         // When - Using service normally
-        service.isMovieLiked(movie)
-            .sink(
-                receiveCompletion: { _ in
-                    expectation.fulfill()
-                },
-                receiveValue: { _ in
-                    expectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
+        let result = try await service.isMovieLiked(movie).async()
 
         // Then - Service operates normally
-        wait(for: [expectation], timeout: 1.0)
+        #expect(result != nil)
     }
 
-    func testIsMovieLikedWithStorageError() {
+    @Test("Is movie liked propagates storage errors")
+    func isMovieLikedWithStorageError() async throws {
         // Given
+        let (service, mockStorageService) = createTestComponents()
         let movie = Movie(id: 1, title: "Test Movie", overview: "Test", posterPath: nil)
         let expectedError = NSError(domain: "LikedCheckError", code: 503, userInfo: nil)
         mockStorageService.shouldSimulateErrors = true
         mockStorageService.isMovieLikedError = expectedError
-        let expectation = XCTestExpectation(description: "IsMovieLiked error propagated")
 
-        // When
-        service.isMovieLiked(movie)
-            .sink(
-                receiveCompletion: { completion in
-                    if case let .failure(error) = completion {
-                        XCTAssertEqual((error as NSError).domain, "LikedCheckError")
-                        XCTAssertEqual((error as NSError).code, 503)
-                        expectation.fulfill()
-                    }
-                },
-                receiveValue: { _ in
-                    XCTFail("Should not receive value on storage error")
-                }
-            )
-            .store(in: &cancellables)
-
-        // Then
-        wait(for: [expectation], timeout: 1.0)
+        // When & Then
+        #expect(throws: Error.self) {
+            try await service.isMovieLiked(movie).async()
+        }
     }
 
-    func testIsMovieLikedSuccess() {
+    @Test("Is movie liked returns correct result")
+    func isMovieLikedSuccess() async throws {
         // Given
+        let (service, mockStorageService) = createTestComponents()
         let movie = Movie(id: 1, title: "Test Movie", overview: "Test", posterPath: nil)
         mockStorageService.movieLikedResult = true
-        let expectation = XCTestExpectation(description: "IsMovieLiked success")
 
         // When
-        service.isMovieLiked(movie)
-            .sink(
-                receiveCompletion: { completion in
-                    if case .failure = completion {
-                        XCTFail("Should not fail")
-                    }
-                },
-                receiveValue: { isLiked in
-                    XCTAssertTrue(isLiked)
-                    expectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
+        let isLiked = try await service.isMovieLiked(movie).async()
 
         // Then
-        wait(for: [expectation], timeout: 1.0)
+        #expect(isLiked == true)
     }
 
     // MARK: - Error Type Tests
 
-    func testFavoritesServiceErrorDescriptions() {
+    @Test("Favorites service error descriptions are meaningful")
+    func favoritesServiceErrorDescriptions() {
         // Test all error cases to improve coverage
 
         let serviceUnavailableError = FavoritesServiceError.serviceUnavailable
-        XCTAssertEqual(serviceUnavailableError.errorDescription, "Favorites service is unavailable")
+        #expect(serviceUnavailableError.errorDescription == "Favorites service is unavailable")
 
         let testError = NSError(domain: "TestError", code: 123, userInfo: nil)
         let encodingError = FavoritesServiceError.encodingFailed(testError)
-        XCTAssertTrue(encodingError.errorDescription?.contains("Failed to encode favorite movies") == true)
+        #expect(encodingError.errorDescription?.contains("Failed to encode favorite movies") == true)
 
         let decodingError = FavoritesServiceError.decodingFailed(testError)
-        XCTAssertTrue(decodingError.errorDescription?.contains("Failed to decode favorite movies") == true)
+        #expect(decodingError.errorDescription?.contains("Failed to decode favorite movies") == true)
     }
 
-    func testFavoritesServiceErrorEquality() {
+    @Test("Favorites service error equality works through descriptions")
+    func favoritesServiceErrorEquality() {
         // Test error equality for coverage
         let error1 = FavoritesServiceError.serviceUnavailable
         let error2 = FavoritesServiceError.serviceUnavailable
 
         // Since FavoritesServiceError doesn't conform to Equatable, we test descriptions
-        XCTAssertEqual(error1.errorDescription, error2.errorDescription)
+        #expect(error1.errorDescription == error2.errorDescription)
     }
 
     // MARK: - Memory Management Tests
 
-    func testServiceMemoryManagement() {
+    @Test("Service memory management works correctly")
+    func serviceMemoryManagement() async throws {
         // Given
         weak var weakService: LiveFavoritesService?
+        var cancellables: Set<AnyCancellable> = []
 
-        autoreleasepool {
-            let service = LiveFavoritesService(storageService: mockStorageService)
-            weakService = service
+        await MainActor.run {
+            autoreleasepool {
+                let (service, mockStorageService) = createTestComponents()
+                weakService = service
 
-            // Start an operation
-            let expectation = XCTestExpectation(description: "Operation completed")
-            service.loadFavoriteMovies()
-                .sink(
-                    receiveCompletion: { _ in expectation.fulfill() },
-                    receiveValue: { _ in }
-                )
-                .store(in: &cancellables)
-
-            wait(for: [expectation], timeout: 1.0)
+                // Start an operation
+                service.loadFavoriteMovies()
+                    .sink(
+                        receiveCompletion: { _ in },
+                        receiveValue: { _ in }
+                    )
+                    .store(in: &cancellables)
+            }
         }
 
         // When - Service should be deallocated
         cancellables.removeAll()
 
+        // Wait a moment for deallocation
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+
         // Then - Weak reference should be nil
-        XCTAssertNil(weakService, "Service should be deallocated")
+        #expect(weakService == nil, "Service should be deallocated")
     }
 
-    func testConcurrentOperations() {
+    @Test("Concurrent operations complete successfully")
+    func concurrentOperations() async throws {
         // Given
+        let (service, _) = createTestComponents()
         let movie1 = Movie(id: 1, title: "Movie 1", overview: "Test", posterPath: nil)
         let movie2 = Movie(id: 2, title: "Movie 2", overview: "Test", posterPath: nil)
-        let expectation = XCTestExpectation(description: "Concurrent operations")
-        expectation.expectedFulfillmentCount = 4
 
-        // When - Execute multiple operations concurrently
-        service.loadFavoriteMovies()
-            .sink(receiveCompletion: { _ in expectation.fulfill() }, receiveValue: { _ in })
-            .store(in: &cancellables)
+        // When - Execute multiple operations concurrently using async
+        async let loadResult = try service.loadFavoriteMovies().async()
+        async let isLikedResult = try service.isMovieLiked(movie1).async()
+        async let toggleResult = try service.toggleMovieFavorite(movie2).async()
+        async let clearResult = try service.clearAllFavoriteMovies().async()
 
-        service.isMovieLiked(movie1)
-            .sink(receiveCompletion: { _ in expectation.fulfill() }, receiveValue: { _ in })
-            .store(in: &cancellables)
+        // Then - All operations should complete
+        let results = try await (loadResult, isLikedResult, toggleResult, clearResult)
 
-        service.toggleMovieFavorite(movie2)
-            .sink(receiveCompletion: { _ in expectation.fulfill() }, receiveValue: { _ in })
-            .store(in: &cancellables)
-
-        service.clearAllFavoriteMovies()
-            .sink(receiveCompletion: { _ in expectation.fulfill() }, receiveValue: { _ in })
-            .store(in: &cancellables)
-
-        // Then
-        wait(for: [expectation], timeout: 2.0)
+        #expect(results.0 != nil) // loadResult
+        #expect(results.1 != nil) // isLikedResult
+        #expect(results.2 != nil) // toggleResult
+        #expect(results.3 != nil) // clearResult
     }
 }

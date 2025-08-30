@@ -6,297 +6,324 @@
 //
 
 import Combine
-import UIKit
-import XCTest
-
 @testable import GitHubApp
+import Testing
+import UIKit
 
-/**
- * Unit tests for SettingsDomainInteractor.
- */
-@MainActor
-final class SettingsDomainInteractorTests: XCTestCase {
-    var mockSettingsService: MockSettingsService!
-    var domainInteractor: SettingsDomainInteractor!
-    var cancellables: Set<AnyCancellable> = []
-
-    override func setUp() {
-        super.setUp()
-        mockSettingsService = MockSettingsService()
-        // Initialize with a clean initial state and prevent auto-loading
+struct SettingsDomainInteractorTests {
+    private func createTestComponents() -> (SettingsDomainInteractor, MockSettingsService) {
+        let mockSettingsService = MockSettingsService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
-        domainInteractor = SettingsDomainInteractor(
+
+        let domainInteractor = SettingsDomainInteractor(
             serviceLocator: serviceLocator,
             initialState: SettingsDomainState.initial,
             shouldLoadInitialData: false
         )
-        cancellables = Set<AnyCancellable>()
-    }
 
-    override func tearDown() {
-        cancellables.removeAll()
-        mockSettingsService = nil
-        domainInteractor = nil
-        super.tearDown()
+        return (domainInteractor, mockSettingsService)
     }
 
     // MARK: - Initialization Tests
 
-    func testInitialization() {
+    @Test("Initial state is properly configured")
+    func initialization() async {
+        // Given
+        let (domainInteractor, _) = createTestComponents()
+
         // Then
-        XCTAssertEqual(domainInteractor.currentState, SettingsDomainState.initial)
+        await MainActor.run {
+            #expect(domainInteractor.currentState == SettingsDomainState.initial)
+        }
     }
 
     // MARK: - Load Settings Tests
 
-    func testLoadSettings() {
-        let expectation = XCTestExpectation(description: "Settings loaded")
-
+    @Test("Load settings updates state with service data")
+    func loadSettings() async throws {
         // Given
+        let (domainInteractor, mockSettingsService) = createTestComponents()
         mockSettingsService.mockAppVersion = "2.0.0"
         mockSettingsService.mockAppBuildNumber = "456"
         mockSettingsService.mockHasRatedApp = true
 
         // When
-        domainInteractor.$currentState
-            .dropFirst() // Skip initial state
-            .sink { state in
-                if !state.isLoading, state.error == nil {
-                    // Then
-                    XCTAssertEqual(state.appVersion, "2.0.0")
-                    XCTAssertEqual(state.appBuildNumber, "456")
-                    XCTAssertTrue(state.hasRatedApp)
-                    expectation.fulfill()
-                }
-            }
-            .store(in: &cancellables)
+        await MainActor.run {
+            domainInteractor.handleAction(.loadSettings)
+        }
 
-        domainInteractor.handleAction(.loadSettings)
+        // Wait for async operations
+        try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
 
-        wait(for: [expectation], timeout: 2.0)
+        // Then
+        await MainActor.run {
+            let state = domainInteractor.currentState
+            #expect(!state.isLoading)
+            #expect(state.error == nil)
+            #expect(state.appVersion == "2.0.0")
+            #expect(state.appBuildNumber == "456")
+            #expect(state.hasRatedApp)
 
-        // Verify service calls
-        XCTAssertEqual(mockSettingsService.loadProfileImageCallCount, 1)
-        XCTAssertEqual(mockSettingsService.hasRatedAppCallCount, 1)
-        XCTAssertEqual(mockSettingsService.getAppVersionInfoCallCount, 1)
+            // Verify service calls
+            #expect(mockSettingsService.loadProfileImageCallCount == 1)
+            #expect(mockSettingsService.hasRatedAppCallCount == 1)
+            #expect(mockSettingsService.getAppVersionInfoCallCount == 1)
+        }
     }
 
     // MARK: - Profile Image Tests
 
-    func testSaveProfileImage() {
-        let expectation = XCTestExpectation(description: "Profile image saved")
-
+    @Test("Save profile image updates state and calls service")
+    func saveProfileImage() async throws {
         // Given
+        let (domainInteractor, mockSettingsService) = createTestComponents()
         let testImage = UIImage(systemName: "person.fill")!
 
         // When
-        domainInteractor.$currentState
-            .dropFirst() // Skip initial state
-            .sink { state in
-                if state.profileImage != nil {
-                    expectation.fulfill()
-                }
-            }
-            .store(in: &cancellables)
+        await MainActor.run {
+            domainInteractor.handleAction(.saveProfileImage(testImage))
+        }
 
-        domainInteractor.handleAction(.saveProfileImage(testImage))
-
-        wait(for: [expectation], timeout: 2.0)
+        // Wait for async operations
+        try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
 
         // Then
-        XCTAssertEqual(mockSettingsService.saveProfileImageCallCount, 1)
-        XCTAssertNotNil(mockSettingsService.mockProfileImage)
+        await MainActor.run {
+            #expect(domainInteractor.currentState.profileImage != nil)
+            #expect(mockSettingsService.saveProfileImageCallCount == 1)
+            #expect(mockSettingsService.mockProfileImage != nil)
+        }
     }
 
-    func testClearProfileImage() {
+    @Test("Clear profile image removes image from state")
+    func clearProfileImage() async throws {
         // Given
+        let (domainInteractor, mockSettingsService) = createTestComponents()
         let testImage = UIImage(systemName: "person.fill")!
         let originalState = SettingsDomainState.initial.withProfileImage(testImage)
 
         // Test the new withProfileImage method
-        XCTAssertNotNil(originalState.profileImage)
+        #expect(originalState.profileImage != nil)
         let clearedState = originalState.withProfileImage(nil)
-        XCTAssertNil(clearedState.profileImage, "withProfileImage(nil) should clear profile image")
+        #expect(clearedState.profileImage == nil)
 
         // Set up interactor state
-        domainInteractor.currentState = originalState
-        XCTAssertNotNil(domainInteractor.currentState.profileImage)
-
-        // When
-        domainInteractor.handleAction(.clearProfileImage)
-
-        // Then - Check synchronously after a short delay to allow Combine chain to complete
-        let expectation = XCTestExpectation(description: "Profile image cleared")
-        let mockService = mockSettingsService! // Capture strong reference
-        let interactor = domainInteractor! // Capture strong reference
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertEqual(mockService.clearProfileImageCallCount, 1)
-            XCTAssertNil(interactor.currentState.profileImage)
-            expectation.fulfill()
+        await MainActor.run {
+            domainInteractor.currentState = originalState
+            #expect(domainInteractor.currentState.profileImage != nil)
         }
 
-        wait(for: [expectation], timeout: 1.0)
+        // When
+        await MainActor.run {
+            domainInteractor.handleAction(.clearProfileImage)
+        }
+
+        // Wait for async operations
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+
+        // Then
+        await MainActor.run {
+            #expect(mockSettingsService.clearProfileImageCallCount == 1)
+            #expect(domainInteractor.currentState.profileImage == nil)
+        }
     }
 
     // MARK: - App Rating Tests
 
-    func testRateApp() {
-        let expectation = XCTestExpectation(description: "App rated")
-
+    @Test("Rate app marks app as rated and shows thanks")
+    func rateApp() async throws {
         // Given
-        XCTAssertFalse(domainInteractor.currentState.hasRatedApp)
+        let (domainInteractor, mockSettingsService) = createTestComponents()
+
+        await MainActor.run {
+            #expect(!domainInteractor.currentState.hasRatedApp)
+        }
 
         // When
-        domainInteractor.$currentState
-            .dropFirst() // Skip initial state
-            .sink { state in
-                if state.hasRatedApp, state.showRateAppThanks {
-                    expectation.fulfill()
-                }
-            }
-            .store(in: &cancellables)
+        await MainActor.run {
+            domainInteractor.handleAction(.rateApp)
+        }
 
-        domainInteractor.handleAction(.rateApp)
-
-        wait(for: [expectation], timeout: 3.0) // Longer timeout for auto-hide delay
+        // Wait for async operations (longer timeout for auto-hide delay)
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
 
         // Then
-        XCTAssertEqual(mockSettingsService.markAppAsRatedCallCount, 1)
+        await MainActor.run {
+            let state = domainInteractor.currentState
+            #expect(state.hasRatedApp)
+            #expect(state.showRateAppThanks)
+            #expect(mockSettingsService.markAppAsRatedCallCount == 1)
+        }
     }
 
     // MARK: - Clear Favorite Movies Tests
 
-    func testClearAllFavoriteMovies() {
-        let expectation = XCTestExpectation(description: "Favorite movies cleared")
+    @Test("Clear all favorite movies shows alert and calls service")
+    func clearAllFavoriteMovies() async throws {
+        // Given
+        let (domainInteractor, mockSettingsService) = createTestComponents()
 
         // When
-        domainInteractor.$currentState
-            .dropFirst() // Skip initial state
-            .sink { state in
-                if state.showClearFavoriteMoviesAlert {
-                    expectation.fulfill()
-                }
-            }
-            .store(in: &cancellables)
+        await MainActor.run {
+            domainInteractor.handleAction(.clearAllFavoriteMovies)
+        }
 
-        domainInteractor.handleAction(.clearAllFavoriteMovies)
-
-        wait(for: [expectation], timeout: 2.0)
+        // Wait for async operations
+        try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
 
         // Then
-        XCTAssertEqual(mockSettingsService.clearAllFavoriteMoviesCallCount, 1)
+        await MainActor.run {
+            #expect(domainInteractor.currentState.showClearFavoriteMoviesAlert)
+            #expect(mockSettingsService.clearAllFavoriteMoviesCallCount == 1)
+        }
     }
 
     // MARK: - UI State Tests
 
-    func testShowPhotoPicker() {
-        // When
-        domainInteractor.handleAction(.showPhotoPicker)
-
-        // Then
-        XCTAssertTrue(domainInteractor.currentState.isPhotoPickerPresented)
-    }
-
-    func testHidePhotoPicker() {
+    @Test("Show photo picker updates presentation state")
+    func showPhotoPicker() async {
         // Given
-        domainInteractor.handleAction(.showPhotoPicker)
-        XCTAssertTrue(domainInteractor.currentState.isPhotoPickerPresented)
+        let (domainInteractor, _) = createTestComponents()
 
         // When
-        domainInteractor.handleAction(.hidePhotoPicker)
+        await MainActor.run {
+            domainInteractor.handleAction(.showPhotoPicker)
+        }
 
         // Then
-        XCTAssertFalse(domainInteractor.currentState.isPhotoPickerPresented)
+        await MainActor.run {
+            #expect(domainInteractor.currentState.isPhotoPickerPresented)
+        }
     }
 
-    func testShowClearFavoriteMoviesConfirmation() {
-        // When
-        domainInteractor.handleAction(.showClearFavoriteMoviesConfirmation)
-
-        // Then
-        XCTAssertTrue(domainInteractor.currentState.isClearFavoriteMoviesConfirmationPresented)
-    }
-
-    func testHideClearFavoriteMoviesConfirmation() {
+    @Test("Hide photo picker updates presentation state")
+    func hidePhotoPicker() async {
         // Given
-        domainInteractor.handleAction(.showClearFavoriteMoviesConfirmation)
-        XCTAssertTrue(domainInteractor.currentState.isClearFavoriteMoviesConfirmationPresented)
+        let (domainInteractor, _) = createTestComponents()
+
+        await MainActor.run {
+            domainInteractor.handleAction(.showPhotoPicker)
+            #expect(domainInteractor.currentState.isPhotoPickerPresented)
+        }
 
         // When
-        domainInteractor.handleAction(.hideClearFavoriteMoviesConfirmation)
+        await MainActor.run {
+            domainInteractor.handleAction(.hidePhotoPicker)
+        }
 
         // Then
-        XCTAssertFalse(domainInteractor.currentState.isClearFavoriteMoviesConfirmationPresented)
+        await MainActor.run {
+            #expect(!domainInteractor.currentState.isPhotoPickerPresented)
+        }
+    }
+
+    @Test("Show clear favorite movies confirmation updates state")
+    func showClearFavoriteMoviesConfirmation() async {
+        // Given
+        let (domainInteractor, _) = createTestComponents()
+
+        // When
+        await MainActor.run {
+            domainInteractor.handleAction(.showClearFavoriteMoviesConfirmation)
+        }
+
+        // Then
+        await MainActor.run {
+            #expect(domainInteractor.currentState.isClearFavoriteMoviesConfirmationPresented)
+        }
+    }
+
+    @Test("Hide clear favorite movies confirmation updates state")
+    func hideClearFavoriteMoviesConfirmation() async {
+        // Given
+        let (domainInteractor, _) = createTestComponents()
+
+        await MainActor.run {
+            domainInteractor.handleAction(.showClearFavoriteMoviesConfirmation)
+            #expect(domainInteractor.currentState.isClearFavoriteMoviesConfirmationPresented)
+        }
+
+        // When
+        await MainActor.run {
+            domainInteractor.handleAction(.hideClearFavoriteMoviesConfirmation)
+        }
+
+        // Then
+        await MainActor.run {
+            #expect(!domainInteractor.currentState.isClearFavoriteMoviesConfirmationPresented)
+        }
     }
 
     // MARK: - Error Handling Tests
 
-    func testSaveProfileImageError() {
-        let expectation = XCTestExpectation(description: "Save profile image error handled")
-
+    @Test("Save profile image error updates state with error message")
+    func saveProfileImageError() async throws {
         // Given
+        let (domainInteractor, mockSettingsService) = createTestComponents()
         mockSettingsService.shouldFailSaveProfileImage = true
         let testImage = UIImage(systemName: "person.fill")!
 
         // When
-        domainInteractor.$currentState
-            .dropFirst() // Skip initial state
-            .sink { state in
-                if let error = state.error, !error.isEmpty {
-                    expectation.fulfill()
-                }
-            }
-            .store(in: &cancellables)
+        await MainActor.run {
+            domainInteractor.handleAction(.saveProfileImage(testImage))
+        }
 
-        domainInteractor.handleAction(.saveProfileImage(testImage))
+        // Wait for async operations
+        try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
 
-        wait(for: [expectation], timeout: 2.0)
+        // Then
+        await MainActor.run {
+            let state = domainInteractor.currentState
+            #expect(state.error != nil)
+            #expect(!(state.error?.isEmpty ?? true))
+        }
     }
 
-    func testClearFavoriteMoviesError() {
-        let expectation = XCTestExpectation(description: "Clear favorite movies error handled")
-
+    @Test("Clear favorite movies error updates state with error message")
+    func clearFavoriteMoviesError() async throws {
         // Given
+        let (domainInteractor, mockSettingsService) = createTestComponents()
         mockSettingsService.shouldFailClearFavoriteMovies = true
 
         // When
-        domainInteractor.$currentState
-            .dropFirst() // Skip initial state
-            .sink { state in
-                if let error = state.error, !error.isEmpty {
-                    expectation.fulfill()
-                }
-            }
-            .store(in: &cancellables)
+        await MainActor.run {
+            domainInteractor.handleAction(.clearAllFavoriteMovies)
+        }
 
-        domainInteractor.handleAction(.clearAllFavoriteMovies)
+        // Wait for async operations
+        try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
 
-        wait(for: [expectation], timeout: 2.0)
+        // Then
+        await MainActor.run {
+            let state = domainInteractor.currentState
+            #expect(state.error != nil)
+            #expect(!(state.error?.isEmpty ?? true))
+        }
     }
 
     // MARK: - CombineInteractor Protocol Tests
 
-    func testInteractWithUpstream() {
+    @Test("Interact with upstream publisher processes actions correctly")
+    func interactWithUpstream() async throws {
         // Given
+        let (domainInteractor, _) = createTestComponents()
         let actions = [SettingsDomainAction.showPhotoPicker, SettingsDomainAction.hidePhotoPicker]
         let publisher = actions.publisher.eraseToAnyPublisher()
+        var cancellables: Set<AnyCancellable> = []
 
         // When
-        let statePublisher = domainInteractor.interact(upstream: publisher)
-
-        // Set up subscription
-        statePublisher.sink { _ in }.store(in: &cancellables)
-
-        // Wait for actions to process
-        let expectation = expectation(description: "Actions processed")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            expectation.fulfill()
+        await MainActor.run {
+            let statePublisher = domainInteractor.interact(upstream: publisher)
+            statePublisher.sink { _ in }.store(in: &cancellables)
         }
 
-        wait(for: [expectation], timeout: 1.0)
+        // Wait for actions to process
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
 
         // Then
-        XCTAssertFalse(domainInteractor.currentState.isPhotoPickerPresented)
+        await MainActor.run {
+            #expect(!domainInteractor.currentState.isPhotoPickerPresented)
+        }
     }
 }

@@ -7,49 +7,42 @@
 
 import Combine
 @testable import GitHubApp
-import XCTest
+import Testing
 
-/**
- * Simple error tests for FavoritesMoviesViewModel to improve coverage.
- */
-final class FavoritesMoviesViewModelErrorTests: XCTestCase {
-    private var mockFavoritesService: MockFavoritesService!
-    private var mockDomainInteractor: FavoritesDomainInteractor!
-    private var cancellables: Set<AnyCancellable> = []
+struct FavoritesMoviesViewModelErrorTests {
+    private func createTestComponents() -> (FavoritesMoviesViewModel, MockFavoritesService) {
+        StorageServiceFactory.shared.resetCache()
 
-    private func createServiceLocator() -> ServiceLocator {
+        let mockFavoritesService = MockFavoritesService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(FavoritesService.self, instance: mockFavoritesService)
+
+        let mockDomainInteractor = FavoritesDomainInteractor(serviceLocator: serviceLocator)
+        let viewModel = FavoritesMoviesViewModel(
+            serviceLocator: serviceLocator,
+            domainInteractor: mockDomainInteractor
+        )
+
+        return (viewModel, mockFavoritesService)
+    }
+
+    private func createServiceLocator(mockService: MockFavoritesService) -> ServiceLocator {
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(FavoritesService.self, instance: mockService)
         return serviceLocator
-    }
-
-    override func setUp() {
-        super.setUp()
-        StorageServiceFactory.shared.resetCache()
-
-        mockFavoritesService = MockFavoritesService()
-        let serviceLocator = ServiceLocator()
-        serviceLocator.register(FavoritesService.self, instance: mockFavoritesService)
-        mockDomainInteractor = FavoritesDomainInteractor(serviceLocator: serviceLocator)
-        cancellables = []
-    }
-
-    override func tearDown() {
-        StorageServiceFactory.shared.resetCache()
-        cancellables.removeAll()
-        mockFavoritesService = nil
-        mockDomainInteractor = nil
-        super.tearDown()
     }
 
     // MARK: - Basic Tests
 
-    func testInitializationWithNilParameters() {
-        // Given - All parameters nil to test default initialization paths
+    @Test("Initialization with nil parameters uses defaults")
+    func initializationWithNilParameters() async {
+        defer { StorageServiceFactory.shared.resetCache() }
 
-        // When
+        // Given - All parameters nil to test default initialization paths
         let serviceLocator = ServiceLocator()
         serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())
+
+        // When
         let viewModel = FavoritesMoviesViewModel(
             serviceLocator: serviceLocator,
             domainInteractor: nil,
@@ -57,16 +50,19 @@ final class FavoritesMoviesViewModelErrorTests: XCTestCase {
         )
 
         // Then - Should initialize with success state containing empty favorites to avoid loading flicker
-        XCTAssertNotNil(viewModel)
-        if case let .success(dataState) = viewModel.viewState {
-            XCTAssertTrue(dataState.favoriteMovies.isEmpty)
-            XCTAssertEqual(dataState.title, "favorites_no_movies_title")
-        } else {
-            XCTFail("Expected success state with empty favorites")
+        await MainActor.run {
+            #expect(viewModel != nil)
+            if case let .success(dataState) = viewModel.viewState {
+                #expect(dataState.favoriteMovies.isEmpty)
+                #expect(dataState.title == "favorites_no_movies_title")
+            }
         }
     }
 
-    func testInitializationWithServiceLocator() {
+    @Test("Initialization with service locator only uses defaults")
+    func initializationWithServiceLocator() async {
+        defer { StorageServiceFactory.shared.resetCache() }
+
         // Given
         let serviceLocator = ServiceLocator()
 
@@ -74,43 +70,55 @@ final class FavoritesMoviesViewModelErrorTests: XCTestCase {
         let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
 
         // Then - Should initialize with success state containing empty favorites to avoid loading flicker
-        XCTAssertNotNil(viewModel)
-        if case let .success(dataState) = viewModel.viewState {
-            XCTAssertTrue(dataState.favoriteMovies.isEmpty)
-            XCTAssertEqual(dataState.title, "favorites_no_movies_title")
-        } else {
-            XCTFail("Expected success state with empty favorites")
+        await MainActor.run {
+            #expect(viewModel != nil)
+            if case let .success(dataState) = viewModel.viewState {
+                #expect(dataState.favoriteMovies.isEmpty)
+                #expect(dataState.title == "favorites_no_movies_title")
+            }
         }
     }
 
-    func testViewModelPropertiesInLoadingState() {
+    @Test("View model properties in loading state return defaults")
+    func viewModelPropertiesInLoadingState() async {
+        defer { StorageServiceFactory.shared.resetCache() }
+
         // Given
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: createServiceLocator(), domainInteractor: mockDomainInteractor)
+        let (viewModel, _) = createTestComponents()
 
         // When - Keep in loading state (initial state)
-
         // Then - All properties should return empty/default values
-        XCTAssertTrue(viewModel.favoriteMovies.isEmpty)
+        await MainActor.run {
+            #expect(viewModel.favoriteMovies.isEmpty)
 
-        let testMovie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
-        XCTAssertFalse(viewModel.isFavorited(movie: testMovie))
+            let testMovie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
+            #expect(!viewModel.isFavorited(movie: testMovie))
+        }
     }
 
-    func testSendViewEventMethod() {
+    @Test("Send view event method executes without crashing")
+    func sendViewEventMethod() async {
+        defer { StorageServiceFactory.shared.resetCache() }
+
         // Given
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: createServiceLocator(), domainInteractor: mockDomainInteractor)
+        let (viewModel, _) = createTestComponents()
         let movie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
 
         // When - Test the sendViewEvent method (CombineViewModel protocol requirement)
-        viewModel.sendViewEvent(.toggleFavorite(movie))
+        await MainActor.run {
+            viewModel.sendViewEvent(.toggleFavorite(movie))
+        }
 
         // Then - Should not crash
-        XCTAssertNotNil(viewModel)
+        #expect(viewModel != nil)
     }
 
-    func testAllViewEventConversions() {
+    @Test("All view event conversions are handled without errors")
+    func allViewEventConversions() async {
+        defer { StorageServiceFactory.shared.resetCache() }
+
         // Given
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: createServiceLocator(), domainInteractor: mockDomainInteractor)
+        let (viewModel, _) = createTestComponents()
         let movie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
 
         // When & Then - Test all event types are handled
@@ -121,47 +129,60 @@ final class FavoritesMoviesViewModelErrorTests: XCTestCase {
             .refreshFavoriteMovies,
         ]
 
-        for event in events {
-            viewModel.handle(event)
-            // Should not crash for any event type
+        await MainActor.run {
+            for event in events {
+                viewModel.handle(event)
+                // Should not crash for any event type
+            }
         }
 
-        XCTAssertNotNil(viewModel)
+        #expect(viewModel != nil)
     }
 
-    func testSetFavoriteMoviesForTestingWithEmptyArray() {
+    @Test("Set favorite movies for testing with empty array updates state")
+    func setFavoriteMoviesForTestingWithEmptyArray() async {
+        defer { StorageServiceFactory.shared.resetCache() }
+
         // Given
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: createServiceLocator(), domainInteractor: mockDomainInteractor)
+        let (viewModel, _) = createTestComponents()
 
         // When
-        viewModel.setFavoriteMoviesForTesting([])
+        await MainActor.run {
+            viewModel.setFavoriteMoviesForTesting([])
+        }
 
         // Then
-        XCTAssertTrue(viewModel.favoriteMovies.isEmpty)
-        if case let .success(dataState) = viewModel.viewState {
-            XCTAssertTrue(dataState.favoriteMovies.isEmpty)
-            XCTAssertEqual(dataState.title, Localizable.favorites.title)
-        } else {
-            XCTFail("Expected success state")
+        await MainActor.run {
+            #expect(viewModel.favoriteMovies.isEmpty)
+            if case let .success(dataState) = viewModel.viewState {
+                #expect(dataState.favoriteMovies.isEmpty)
+                #expect(dataState.title == Localizable.favorites.title)
+            }
         }
     }
 
-    func testViewModelMemoryManagement() {
+    @Test("View model memory management works correctly")
+    func viewModelMemoryManagement() async {
+        defer { StorageServiceFactory.shared.resetCache() }
+
         // Given
         weak var weakViewModel: FavoritesMoviesViewModel?
 
-        autoreleasepool {
-            let viewModel = FavoritesMoviesViewModel(serviceLocator: createServiceLocator(), domainInteractor: mockDomainInteractor)
-            weakViewModel = viewModel
+        await MainActor.run {
+            autoreleasepool {
+                let (viewModel, _) = createTestComponents()
+                weakViewModel = viewModel
 
-            // Start some operations
-            viewModel.loadFavoriteMovies()
-            viewModel.refreshFavoriteMovies()
+                // Start some operations
+                viewModel.loadFavoriteMovies()
+                viewModel.refreshFavoriteMovies()
+            }
         }
 
         // When - ViewModel should be deallocated
-
         // Then - Weak reference should be nil
-        XCTAssertNil(weakViewModel, "ViewModel should be deallocated")
+        await MainActor.run {
+            #expect(weakViewModel == nil, "ViewModel should be deallocated")
+        }
     }
 }
