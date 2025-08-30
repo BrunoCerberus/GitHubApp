@@ -5,18 +5,19 @@
 //  Created by bruno on feature/settings-clean-architecture.
 //
 
+import Testing
 import UIKit
-import XCTest
 
 @testable import GitHubApp
 
 /**
  * Unit tests for SettingsDomainEventActionMap.
  */
-final class SettingsDomainEventActionMapTests: XCTestCase {
+struct SettingsDomainEventActionMapTests {
     // MARK: - View Event to Domain Action Mapping Tests
 
-    func testMapViewDidAppear() {
+    @Test("Map view did appear event")
+    func mapViewDidAppear() {
         // Given
         let event = SettingsViewEvent.viewDidAppear
 
@@ -24,10 +25,11 @@ final class SettingsDomainEventActionMapTests: XCTestCase {
         let action = SettingsDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, .loadSettings)
+        #expect(action == .loadSettings)
     }
 
-    func testMapProfileImageSelected() {
+    @Test("Map profile image selected event")
+    func mapProfileImageSelected() {
         // Given
         let testImage = UIImage(systemName: "person.fill")!
         let event = SettingsViewEvent.profileImageSelected(testImage)
@@ -36,10 +38,11 @@ final class SettingsDomainEventActionMapTests: XCTestCase {
         let action = SettingsDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, .saveProfileImage(testImage))
+        #expect(action == .saveProfileImage(testImage))
     }
 
-    func testMapClearProfileImageTapped() {
+    @Test("Map clear profile image tapped event")
+    func mapClearProfileImageTapped() {
         // Given
         let event = SettingsViewEvent.clearProfileImageTapped
 
@@ -47,10 +50,11 @@ final class SettingsDomainEventActionMapTests: XCTestCase {
         let action = SettingsDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, .clearProfileImage)
+        #expect(action == .clearProfileImage)
     }
 
-    func testMapRateAppTapped() {
+    @Test("Map rate app tapped event")
+    func mapRateAppTapped() {
         // Given
         let event = SettingsViewEvent.rateAppTapped
 
@@ -58,10 +62,11 @@ final class SettingsDomainEventActionMapTests: XCTestCase {
         let action = SettingsDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, .rateApp)
+        #expect(action == .rateApp)
     }
 
-    func testMapClearFavoriteMoviesTapped() {
+    @Test("Map clear favorite movies tapped event")
+    func mapClearFavoriteMoviesTapped() {
         // Given
         let event = SettingsViewEvent.clearFavoriteMoviesTapped
 
@@ -69,10 +74,11 @@ final class SettingsDomainEventActionMapTests: XCTestCase {
         let action = SettingsDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, .showClearFavoriteMoviesConfirmation)
+        #expect(action == .showClearFavoriteMoviesConfirmation)
     }
 
-    func testMapClearFavoriteMoviesConfirmed() {
+    @Test("Map clear favorite movies confirmed event")
+    func mapClearFavoriteMoviesConfirmed() {
         // Given
         let event = SettingsViewEvent.clearFavoriteMoviesConfirmed
 
@@ -80,10 +86,11 @@ final class SettingsDomainEventActionMapTests: XCTestCase {
         let action = SettingsDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, .clearAllFavoriteMovies)
+        #expect(action == .clearAllFavoriteMovies)
     }
 
-    func testMapShowPhotoPickerTapped() {
+    @Test("Map show photo picker tapped event")
+    func mapShowPhotoPickerTapped() {
         // Given
         let event = SettingsViewEvent.showPhotoPickerTapped
 
@@ -91,10 +98,11 @@ final class SettingsDomainEventActionMapTests: XCTestCase {
         let action = SettingsDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, .showPhotoPicker)
+        #expect(action == .showPhotoPicker)
     }
 
-    func testMapHidePhotoPicker() {
+    @Test("Map hide photo picker event")
+    func mapHidePhotoPicker() {
         // Given
         let event = SettingsViewEvent.hidePhotoPicker
 
@@ -102,10 +110,11 @@ final class SettingsDomainEventActionMapTests: XCTestCase {
         let action = SettingsDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, .hidePhotoPicker)
+        #expect(action == .hidePhotoPicker)
     }
 
-    func testMapShowClearFavoriteMoviesConfirmation() {
+    @Test("Map show clear favorite movies confirmation event")
+    func mapShowClearFavoriteMoviesConfirmation() {
         // Given
         let event = SettingsViewEvent.showClearFavoriteMoviesConfirmation
 
@@ -113,10 +122,11 @@ final class SettingsDomainEventActionMapTests: XCTestCase {
         let action = SettingsDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, .showClearFavoriteMoviesConfirmation)
+        #expect(action == .showClearFavoriteMoviesConfirmation)
     }
 
-    func testMapHideClearFavoriteMoviesConfirmation() {
+    @Test("Map hide clear favorite movies confirmation event")
+    func mapHideClearFavoriteMoviesConfirmation() {
         // Given
         let event = SettingsViewEvent.hideClearFavoriteMoviesConfirmation
 
@@ -124,12 +134,13 @@ final class SettingsDomainEventActionMapTests: XCTestCase {
         let action = SettingsDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action, .hideClearFavoriteMoviesConfirmation)
+        #expect(action == .hideClearFavoriteMoviesConfirmation)
     }
 
     // MARK: - Comprehensive Mapping Tests
 
-    func testAllViewEventsHaveCorrespondingActions() {
+    @Test("All view events have corresponding actions")
+    func allViewEventsHaveCorrespondingActions() {
         // This test ensures we don't miss any mappings when adding new events
 
         let testImage = UIImage(systemName: "person.fill")!
@@ -163,13 +174,14 @@ final class SettingsDomainEventActionMapTests: XCTestCase {
         // When & Then
         for (index, event) in viewEvents.enumerated() {
             let action = SettingsDomainEventActionMap.map(event)
-            XCTAssertEqual(action, expectedActions[index], "Event \(event) should map to action \(expectedActions[index])")
+            #expect(action == expectedActions[index], "Event \(event) should map to action \(expectedActions[index])")
         }
     }
 
     // MARK: - Edge Cases Tests
 
-    func testMappingWithDifferentImages() {
+    @Test("Mapping with different images")
+    func mappingWithDifferentImages() {
         // Given
         let image1 = UIImage(systemName: "person.fill")!
         let image2 = UIImage(systemName: "star.fill")!
@@ -185,17 +197,18 @@ final class SettingsDomainEventActionMapTests: XCTestCase {
         if case let .saveProfileImage(mappedImage1) = action1,
            case let .saveProfileImage(mappedImage2) = action2
         {
-            XCTAssertEqual(mappedImage1.pngData(), image1.pngData())
-            XCTAssertEqual(mappedImage2.pngData(), image2.pngData())
-            XCTAssertNotEqual(mappedImage1.pngData(), mappedImage2.pngData())
+            #expect(mappedImage1.pngData() == image1.pngData())
+            #expect(mappedImage2.pngData() == image2.pngData())
+            #expect(mappedImage1.pngData() != mappedImage2.pngData())
         } else {
-            XCTFail("Expected saveProfileImage actions")
+            Issue.record("Expected saveProfileImage actions")
         }
     }
 
     // MARK: - Mapper Consistency Tests
 
-    func testMapperIsStateless() {
+    @Test("Mapper is stateless")
+    func mapperIsStateless() {
         // Given
         let event = SettingsViewEvent.rateAppTapped
 
@@ -204,6 +217,6 @@ final class SettingsDomainEventActionMapTests: XCTestCase {
         let action2 = SettingsDomainEventActionMap.map(event)
 
         // Then
-        XCTAssertEqual(action1, action2, "Mapper should be stateless and return same result for same input")
+        #expect(action1 == action2, "Mapper should be stateless and return same result for same input")
     }
 }

@@ -6,61 +6,60 @@
 //
 
 import Combine
+import Foundation
 @testable import GitHubApp
-import XCTest
+import Testing
 
 /**
  * Simple error tests for HomeViewModel to improve coverage.
  */
-final class HomeViewModelErrorTests: XCTestCase {
-    private var cancellables: Set<AnyCancellable> = []
-    private var mockService: MockHomeService!
-    private var serviceLocator: ServiceLocator!
-
-    override func setUp() {
-        super.setUp()
+struct HomeViewModelErrorTests {
+    private func createTestComponents() -> (HomeViewModel, MockHomeService) {
         StorageServiceFactory.shared.resetCache()
-        mockService = MockHomeService()
-        serviceLocator = ServiceLocator()
+        let mockService = MockHomeService()
+        let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
-        cancellables = []
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
+
+        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+        return (viewModel, mockService)
     }
 
-    override func tearDown() {
+    private func cleanupTest() {
         StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.removeMovieAPIKey()
-        cancellables.removeAll()
-        mockService = nil
-        serviceLocator = nil
-        super.tearDown()
     }
 
     // MARK: - Basic Tests
 
-    func testInitializationWithServiceLocator() {
-        // Given - Test service resolution from ServiceLocator
+    @Test("Initialization with ServiceLocator")
+    func initializationWithServiceLocator() {
+        defer { cleanupTest() }
 
-        // When
-        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+        // Given - Test service resolution from ServiceLocator
+        let (viewModel, _) = createTestComponents()
 
         // Then - Should initialize with registered service
-        XCTAssertNotNil(viewModel)
-        XCTAssertEqual(viewModel.viewState, .loading)
+        #expect(viewModel.viewState == .loading)
     }
 
-    func testInitializationWithNilServiceLocator() {
+    @Test("Initialization with nil ServiceLocator")
+    func initializationWithNilServiceLocator() {
+        defer { cleanupTest() }
+
         // Given - Test fallback when serviceLocator is nil
 
         // When
         let viewModel = HomeViewModel(serviceLocator: ServiceLocator())
 
         // Then - Should use LiveHomeService fallback
-        XCTAssertNotNil(viewModel)
-        XCTAssertEqual(viewModel.viewState, .loading)
+        #expect(viewModel.viewState == .loading)
     }
 
-    func testInitializationWithServiceLocatorError() {
+    @Test("Initialization with ServiceLocator error")
+    func initializationWithServiceLocatorError() {
+        defer { cleanupTest() }
+
         // Given - ServiceLocator that doesn't have HomeService registered
         let emptyServiceLocator = ServiceLocator()
 
@@ -68,39 +67,47 @@ final class HomeViewModelErrorTests: XCTestCase {
         let viewModel = HomeViewModel(serviceLocator: emptyServiceLocator)
 
         // Then
-        XCTAssertNotNil(viewModel)
-        XCTAssertEqual(viewModel.viewState, .loading)
+        #expect(viewModel.viewState == .loading)
     }
 
-    func testViewModelPropertiesInLoadingState() {
+    @Test("ViewModel properties in loading state")
+    func viewModelPropertiesInLoadingState() {
+        defer { cleanupTest() }
+
         // Given
-        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+        let (viewModel, _) = createTestComponents()
 
         // When - Keep in loading state (initial state)
 
         // Then - All properties should return empty/default values
-        XCTAssertTrue(viewModel.movies.isEmpty)
-        XCTAssertTrue(viewModel.favoriteMovies.isEmpty)
-        XCTAssertNil(viewModel.error)
+        #expect(viewModel.movies.isEmpty)
+        #expect(viewModel.favoriteMovies.isEmpty)
+        #expect(viewModel.error == nil)
 
         let testMovie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
-        XCTAssertFalse(viewModel.isLiked(movie: testMovie))
+        #expect(!viewModel.isLiked(movie: testMovie))
     }
 
-    func testSearchWithEmptyQuery() {
+    @Test("Search with empty query")
+    func searchWithEmptyQuery() {
+        defer { cleanupTest() }
+
         // Given
-        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+        let (viewModel, _) = createTestComponents()
 
         // When
         viewModel.searchMovies(query: "")
 
         // Then - Should not crash
-        XCTAssertNotNil(viewModel)
+        // Test passes if no exception is thrown
     }
 
-    func testSearchWithSpecialCharacters() {
+    @Test("Search with special characters")
+    func searchWithSpecialCharacters() {
+        defer { cleanupTest() }
+
         // Given
-        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+        let (viewModel, _) = createTestComponents()
 
         // When
         let specialQueries = [
@@ -112,13 +119,16 @@ final class HomeViewModelErrorTests: XCTestCase {
         // Then
         for query in specialQueries {
             viewModel.searchMovies(query: query)
-            XCTAssertNotNil(viewModel, "Should handle special query: \(query)")
+            // Test passes if no exception is thrown for special query: \(query)
         }
     }
 
-    func testSendViewEventMethod() {
+    @Test("Send view event method")
+    func sendViewEventMethod() {
+        defer { cleanupTest() }
+
         // Given
-        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+        let (viewModel, _) = createTestComponents()
         let testMovie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
 
         // When - Test the sendViewEvent protocol method
@@ -128,12 +138,15 @@ final class HomeViewModelErrorTests: XCTestCase {
         viewModel.sendViewEvent(.loadFavoriteMovies)
 
         // Then - Should not crash
-        XCTAssertNotNil(viewModel)
+        // Test passes if no exception is thrown
     }
 
-    func testAllEventTypes() {
+    @Test("All event types")
+    func allEventTypes() {
+        defer { cleanupTest() }
+
         // Given
-        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+        let (viewModel, _) = createTestComponents()
         let testMovie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
 
         // When - Test all possible event types
@@ -150,15 +163,18 @@ final class HomeViewModelErrorTests: XCTestCase {
             viewModel.sendViewEvent(event)
         }
 
-        XCTAssertNotNil(viewModel)
+        // Test passes if no exception is thrown
     }
 
-    func testViewModelDeallocation() {
+    @Test("ViewModel deallocation")
+    func viewModelDeallocation() {
+        defer { cleanupTest() }
+
         // Given
         weak var weakViewModel: HomeViewModel?
 
         autoreleasepool {
-            let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+            let (viewModel, _) = createTestComponents()
             weakViewModel = viewModel
 
             // Trigger some operations
@@ -169,28 +185,30 @@ final class HomeViewModelErrorTests: XCTestCase {
         // When - ViewModel should be deallocated
 
         // Then - Weak reference should be nil
-        XCTAssertNil(weakViewModel, "ViewModel should be deallocated")
+        #expect(weakViewModel == nil, "ViewModel should be deallocated")
     }
 
-    func testServiceResolutionFallbackChain() {
+    @Test("Service resolution fallback chain")
+    func serviceResolutionFallbackChain() {
+        defer { cleanupTest() }
+
         // Given - Test all fallback scenarios
 
-        // 1. Direct service provided
-        let directService = MockHomeService()
-        let viewModel1 = HomeViewModel(serviceLocator: serviceLocator)
-        XCTAssertNotNil(viewModel1)
+        // 1. Service from service locator
+        let (viewModel1, _) = createTestComponents()
+        // Test passes if viewModel initializes
 
-        // 2. Service from service locator
-        let viewModel2 = HomeViewModel(serviceLocator: serviceLocator)
-        XCTAssertNotNil(viewModel2)
+        // 2. Service from service locator (second test)
+        let (viewModel2, _) = createTestComponents()
+        // Test passes if viewModel initializes
 
         // 3. Fallback to LiveHomeService
         let emptyServiceLocator = ServiceLocator()
         let viewModel3 = HomeViewModel(serviceLocator: emptyServiceLocator)
-        XCTAssertNotNil(viewModel3)
+        // Test passes if viewModel initializes
 
         // 4. Complete fallback
         let viewModel4 = HomeViewModel(serviceLocator: ServiceLocator())
-        XCTAssertNotNil(viewModel4)
+        // Test passes if viewModel initializes
     }
 }

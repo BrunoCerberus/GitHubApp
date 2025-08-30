@@ -8,7 +8,7 @@
 import Combine
 import SnapshotTesting
 import SwiftUI
-import XCTest
+import Testing
 
 @testable import GitHubApp
 
@@ -16,35 +16,27 @@ import XCTest
  * Snapshot tests for SettingsView to ensure visual regressions are detected.
  */
 @MainActor
-final class SettingsViewTests: XCTestCase {
-    var mockSettingsService: MockSettingsService!
-    var settingsViewModel: SettingsViewModel!
-    var view: SettingsView!
-
-    override func setUp() {
-        super.setUp()
-
+struct SettingsViewTests {
+    private func createTestComponents() -> (SettingsView, MockSettingsService) {
         // Clear UserDefaults for clean testing
         UserDefaults.standard.removeObject(forKey: "profileImageData")
         UserDefaults.standard.removeObject(forKey: "hasRatedApp")
         UserDefaults.standard.synchronize()
 
-        mockSettingsService = MockSettingsService()
+        let mockSettingsService = MockSettingsService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
-        settingsViewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        view = SettingsView(viewModel: settingsViewModel)
+        let settingsViewModel = SettingsViewModel(serviceLocator: serviceLocator)
+        let view = SettingsView(viewModel: settingsViewModel)
+
+        return (view, mockSettingsService)
     }
 
-    override func tearDown() {
-        mockSettingsService = nil
-        settingsViewModel = nil
-        view = nil
-        super.tearDown()
-    }
+    @Test("Snapshot of Settings view with default configuration")
+    func settingsView() async {
+        // Given
+        let (view, _) = createTestComponents()
 
-    /// Snapshot of Settings view with default configuration
-    func testSettingsView() async {
         // Wait a moment for the view to load data
         try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
 
@@ -60,68 +52,73 @@ final class SettingsViewTests: XCTestCase {
         assertSnapshot(of: view.wrappedViewController, as: .wait(for: 0.3, on: .image(on: iPhone16ProConfig)))
     }
 
-    /// Test Settings view button interactions for coverage
-    func testSettingsViewButtonInteractions() {
+    @Test("Settings view button interactions for coverage")
+    func settingsViewButtonInteractions() {
         // Given
+        let (view, _) = createTestComponents()
         let hostingController = UIHostingController(rootView: view)
 
         // When - Access view to trigger rendering and test closures
         _ = hostingController.view
 
         // Then - Verify view renders without issues
-        XCTAssertNotNil(hostingController)
+        #expect(hostingController != nil)
     }
 
-    /// Test Settings view clear favorites functionality
-    func testClearFavoritesCardRendering() {
+    @Test("Settings view clear favorites functionality")
+    func clearFavoritesCardRendering() {
         // Given
+        let (view, _) = createTestComponents()
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering
         _ = hostingController.view
 
         // Then - Should render clear favorites card
-        XCTAssertNotNil(view)
+        // Test passes if view renders without crashing
     }
 
-    /// Test Settings view rate app functionality
-    func testRateAppCardRendering() {
+    @Test("Settings view rate app functionality")
+    func rateAppCardRendering() {
         // Given
+        let (view, _) = createTestComponents()
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering
         _ = hostingController.view
 
         // Then - Should render rate app card
-        XCTAssertNotNil(view)
+        // Test passes if view renders without crashing
     }
 
-    /// Test profile header section rendering
-    func testProfileHeaderSectionRendering() {
+    @Test("Profile header section rendering")
+    func profileHeaderSectionRendering() {
         // Given
+        let (view, _) = createTestComponents()
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering to exercise private properties
         _ = hostingController.view
 
         // Then - Should render profile header
-        XCTAssertNotNil(view)
+        // Test passes if view renders without crashing
     }
 
-    /// Test app version card rendering
-    func testAppVersionCardRendering() {
+    @Test("App version card rendering")
+    func appVersionCardRendering() {
         // Given
+        let (view, _) = createTestComponents()
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering to exercise private properties
         _ = hostingController.view
 
         // Then - Should render app version card
-        XCTAssertNotNil(view)
+        // Test passes if view renders without crashing
     }
 
-    /// Test settings view initialization
-    func testSettingsViewInitialization() {
+    @Test("Settings view initialization")
+    func settingsViewInitialization() {
         // Given
         let customMockService = MockSettingsService()
         let customServiceLocator = ServiceLocator()
@@ -132,11 +129,11 @@ final class SettingsViewTests: XCTestCase {
         let customView = SettingsView(viewModel: customSettingsViewModel)
 
         // Then
-        XCTAssertNotNil(customView)
+        // Test passes if view initializes without crashing
     }
 
-    /// Test settings view with default initialization
-    func testSettingsViewDefaultInitialization() {
+    @Test("Settings view with default initialization")
+    func settingsViewDefaultInitialization() {
         // When - Create view with default service locator setup
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: MockSettingsService())
@@ -144,6 +141,6 @@ final class SettingsViewTests: XCTestCase {
         let defaultView = SettingsView(viewModel: defaultViewModel)
 
         // Then
-        XCTAssertNotNil(defaultView)
+        // Test passes if view initializes without crashing
     }
 }

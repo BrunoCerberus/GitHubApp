@@ -4,57 +4,73 @@
 //
 
 import Combine
+import Foundation
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class MovieDetailsViewModelTests: XCTestCase {
-    private var cancellables: Set<AnyCancellable> = .init()
-
-    override func setUp() {
-        super.setUp()
+struct MovieDetailsViewModelTests {
+    private func createTestComponents(with service: HomeService) -> MovieDetailsViewModel {
         try? APIKeysProvider.setMovieAPIKey("md-key")
-    }
-
-    override func tearDown() {
-        try? APIKeysProvider.removeMovieAPIKey()
-        cancellables.removeAll()
-        super.tearDown()
-    }
-
-    func testFetchDataSetsCreditsAndReviews() {
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: service)
         let movie = Movie(id: 999, title: "T", overview: "O", posterPath: nil)
-        let serviceLocator = ServiceLocator()
-        serviceLocator.register(HomeService.self, instance: MockHomeService())
-        let sut = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
-
-        let exp = expectation(description: "details")
-        sut.fetchData()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertFalse(sut.data.credits.isEmpty)
-            XCTAssertFalse(sut.data.reviews.isEmpty)
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1)
+        return MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
     }
 
-    func testErrorHandlingSetsError() {
+    private func cleanupTest() {
+        try? APIKeysProvider.removeMovieAPIKey()
+    }
+
+    @Test("Fetch data sets credits and reviews")
+    func fetchDataSetsCreditsAndReviews() async throws {
+        defer { cleanupTest() }
+
+        // Given
+        let sut = createTestComponents(with: MockHomeService())
+
+        // When
+        sut.fetchData()
+
+        // Wait for async operations
+        try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+
+        // Then
+        #expect(!sut.data.credits.isEmpty)
+        #expect(!sut.data.reviews.isEmpty)
+    }
+
+    @Test("Error handling sets error")
+    func errorHandlingSetsError() async throws {
+        defer { cleanupTest() }
+
+        // Given
         struct FailingService: HomeService {
-            func fetchMovies() -> AnyPublisher<MoviesResponse, Error> { Fail(error: NSError(domain: "e", code: 1)).eraseToAnyPublisher() }
-            func searchMovies(with _: String) -> AnyPublisher<MoviesResponse, Error> { Fail(error: NSError(domain: "e", code: 1)).eraseToAnyPublisher() }
-            func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> { Fail(error: NSError(domain: "e", code: 1)).eraseToAnyPublisher() }
-            func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> { Fail(error: NSError(domain: "e", code: 1)).eraseToAnyPublisher() }
+            func fetchMovies() -> AnyPublisher<MoviesResponse, Error> {
+                Fail(error: NSError(domain: "e", code: 1)).eraseToAnyPublisher()
+            }
+
+            func searchMovies(with _: String) -> AnyPublisher<MoviesResponse, Error> {
+                Fail(error: NSError(domain: "e", code: 1)).eraseToAnyPublisher()
+            }
+
+            func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
+                Fail(error: NSError(domain: "e", code: 1)).eraseToAnyPublisher()
+            }
+
+            func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
+                Fail(error: NSError(domain: "e", code: 1)).eraseToAnyPublisher()
+            }
         }
 
-        let movie = Movie(id: 1, title: "T", overview: "O", posterPath: nil)
-        let serviceLocator = ServiceLocator()
-        serviceLocator.register(HomeService.self, instance: FailingService())
-        let sut = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
-        let exp = expectation(description: "error")
+        let sut = createTestComponents(with: FailingService())
+
+        // When
         sut.fetchData()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertNotNil(sut.error)
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1)
+
+        // Wait for async operations
+        try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+
+        // Then
+        #expect(sut.error != nil)
     }
 }
