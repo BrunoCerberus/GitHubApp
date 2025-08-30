@@ -230,11 +230,8 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
     func testPreviewConfiguration() {
         // When - create preview view
-        let previewView = FavoritesMoviesView(
-            viewModel: FavoritesMoviesViewModel(
-                serviceLocator: createTestServiceLocator()
-            )
-        )
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+        let previewView = FavoritesMoviesView(viewModel: viewModel)
 
         // Then - verify that the preview view is created
         XCTAssertNotNil(previewView)

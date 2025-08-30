@@ -267,3 +267,23 @@ schemes:
     archive:
       config: Release
       environmentVariables: {}
+
+  GitHubAppTests:
+    build:
+      targets:
+        GitHubAppTests: all
+    test:
+      config: Debug
+      targets:
+        - GitHubAppTests
+      environmentVariables: {}
+
+  GitHubAppUITests:
+    build:
+      targets:
+        GitHubAppUITests: all
+    test:
+      config: Debug
+      targets:
+        - GitHubAppUITests
+      environmentVariables: {}
