@@ -7,101 +7,105 @@
 
 @testable import GitHubApp
 import SwiftUI
-import XCTest
+import Testing
 
 /**
  * Additional tests for HomeView components to improve coverage.
  */
 @MainActor
-final class HomeViewComponentTests: XCTestCase {
-    var router: HomeNavigationRouter!
-    var mockService: MockHomeService!
-    var viewModel: HomeViewModel!
-    var view: HomeView<HomeNavigationRouter>!
-
-    override func setUp() {
-        super.setUp()
+struct HomeViewComponentTests {
+    private func createTestComponents() -> (HomeNavigationRouter, MockHomeService, HomeViewModel, HomeView<HomeNavigationRouter>) {
         StorageServiceFactory.shared.resetCache()
 
-        router = HomeNavigationRouter()
-        mockService = MockHomeService()
+        let router = HomeNavigationRouter()
+        let mockService = MockHomeService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
-        viewModel = HomeViewModel(serviceLocator: serviceLocator)
-        view = HomeView(router: router, viewModel: viewModel)
+        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+        let view = HomeView(router: router, viewModel: viewModel)
+        return (router, mockService, viewModel, view)
     }
 
-    override func tearDown() {
+    private func cleanupTest() {
         StorageServiceFactory.shared.resetCache()
-        super.tearDown()
     }
 
-    func testHomeViewBodyWithLoadingState() {
+    @Test("Home view body with loading state")
+    func homeViewBodyWithLoadingState() {
+        defer { cleanupTest() }
+
         // Given
+        let (_, _, viewModel, view) = createTestComponents()
         viewModel.viewState = .loading
 
         // When - Create a hosting controller with the view to verify body creation
         let hostingController = UIHostingController(rootView: view)
 
         // Then
-        XCTAssertNotNil(hostingController)
+        #expect(hostingController != nil)
     }
 
-    func testHomeViewBodyWithErrorState() {
+    @Test("Home view body with error state")
+    func homeViewBodyWithErrorState() {
+        defer { cleanupTest() }
+
         // Given
+        let (_, _, viewModel, view) = createTestComponents()
         viewModel.viewState = .error("Test error")
 
         // When - Create a hosting controller with the view to verify body creation
         let hostingController = UIHostingController(rootView: view)
 
         // Then
-        XCTAssertNotNil(hostingController)
+        #expect(hostingController != nil)
     }
 
-    func testHomeViewWithRefreshAction() async {
+    @Test("Home view with refresh action")
+    func homeViewWithRefreshAction() async throws {
+        defer { cleanupTest() }
+
         // Given
-        let expectation = XCTestExpectation(description: "refresh")
+        let (_, _, viewModel, _) = createTestComponents()
 
         // When - Simulate refresh by calling fetchData
         viewModel.fetchData()
 
         // Give time for async operation
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            expectation.fulfill()
-        }
-
-        await fulfillment(of: [expectation], timeout: 1.0)
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
 
         // Then
-        XCTAssertNotNil(viewModel)
+        #expect(viewModel != nil)
     }
 
-    func testHomeViewSearchableConfiguration() {
+    @Test("Home view searchable configuration")
+    func homeViewSearchableConfiguration() {
+        defer { cleanupTest() }
+
         // Given
+        let (_, _, _, view) = createTestComponents()
         let hostingController = UIHostingController(rootView: view)
 
         // When - Access view to ensure searchable is configured
         _ = hostingController.view
 
         // Then
-        XCTAssertNotNil(view)
+        #expect(view != nil)
     }
 
-    func testHomeViewWithMovieList() async {
+    @Test("Home view with movie list")
+    func homeViewWithMovieList() async throws {
+        defer { cleanupTest() }
+
         // Given
-        let expectation = XCTestExpectation(description: "movies loaded")
+        let (_, _, viewModel, _) = createTestComponents()
 
         // When - Trigger data fetch
         viewModel.fetchData()
 
         // Wait for data to load
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            expectation.fulfill()
-        }
-
-        await fulfillment(of: [expectation], timeout: 2.0)
+        try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
 
         // Then
-        XCTAssertNotNil(viewModel.movies)
+        #expect(viewModel.movies != nil)
     }
 }

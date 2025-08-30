@@ -7,6 +7,7 @@
 import Testing
 import UIKit
 
+@MainActor
 struct DeeplinkRouterExtraTests {
     private func createTestComponents() -> (DeeplinkManager, DeeplinkRouter, MockCoordinator, UINavigationController) {
         let deeplinkManager = DeeplinkManager()

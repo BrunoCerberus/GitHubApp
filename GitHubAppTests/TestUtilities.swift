@@ -4,6 +4,7 @@
 //
 
 import Combine
+import SwiftUI
 
 extension Publisher {
     func async() async throws -> Output {
@@ -25,5 +26,11 @@ extension Publisher {
                     }
                 )
         }
+    }
+}
+
+extension View {
+    var wrappedViewController: UIViewController {
+        UIHostingController(rootView: self)
     }
 }

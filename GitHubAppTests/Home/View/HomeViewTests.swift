@@ -11,7 +11,7 @@
 import Combine
 import SnapshotTesting
 import SwiftUI
-import XCTest
+import Testing
 
 @testable import GitHubApp
 
@@ -19,57 +19,37 @@ import XCTest
  * Snapshot tests for HomeView to ensure visual regressions are detected.
  */
 @MainActor
-final class HomeViewTests: XCTestCase {
-    var router: HomeNavigationRouter!
-    var mockService: MockHomeService!
-    var viewModel: HomeViewModel!
-    var view: HomeView<HomeNavigationRouter>!
-
-    override func setUp() {
-        super.setUp()
-
+struct HomeViewTests {
+    private func createTestComponents() -> (HomeNavigationRouter, MockHomeService, HomeViewModel, HomeView<HomeNavigationRouter>) {
         // Reset storage service cache to ensure fresh instances
         StorageServiceFactory.shared.resetCache()
 
-        router = HomeNavigationRouter()
-        mockService = MockHomeService()
+        let router = HomeNavigationRouter()
+        let mockService = MockHomeService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
-        viewModel = HomeViewModel(serviceLocator: serviceLocator)
-        view = HomeView(router: router, viewModel: viewModel)
+        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+        let view = HomeView(router: router, viewModel: viewModel)
+        return (router, mockService, viewModel, view)
     }
 
-    override func tearDown() {
+    private func cleanupTest() {
         // Reset storage service cache for test isolation
         StorageServiceFactory.shared.resetCache()
-
-        super.tearDown()
     }
 
-    /// Snapshot of populated HomeView matches stored reference
-    func testHomeView() async throws {
+    @Test("Home view snapshot matches stored reference")
+    func homeView() async throws {
+        defer { cleanupTest() }
+
+        let (_, _, viewModel, view) = createTestComponents()
         _ = view.wrappedViewController
-
-        // Wait for the viewModel to load data using Clean Architecture
-        let expectation = XCTestExpectation(description: "viewState loaded")
-        var cancellables: Set<AnyCancellable> = []
-
-        viewModel.$viewState
-            .sink { viewState in
-                if case .success = viewState {
-                    expectation.fulfill()
-                }
-            }
-            .store(in: &cancellables)
 
         // Trigger data fetch
         viewModel.fetchData()
 
-        // Wait for async loading to complete
-        await fulfillment(of: [expectation], timeout: 3.0)
-
-        // Give the UI additional time to update after state change
-        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+        // Give time for async operations and UI updates
+        try await Task.sleep(nanoseconds: 3_500_000_000) // 3.5 seconds
 
         // Using iPhone SE configuration but with iPhone 16 Pro dimensions
         let iPhone16ProConfig = ViewImageConfig(
@@ -81,21 +61,19 @@ final class HomeViewTests: XCTestCase {
         assertSnapshot(of: view.wrappedViewController, as: .wait(for: 1.0, on: .image(on: iPhone16ProConfig)))
     }
 
-    /**
-     * Test search functionality and text change handling.
-     *
-     * This test verifies that the search functionality is properly
-     * configured in the view.
-     */
-    func testSearchFunctionality() {
+    @Test("Search functionality and text change handling")
+    func searchFunctionality() {
+        defer { cleanupTest() }
+
         // When - simulate search text change
         // This exercises the onChange closure and handleSearchQueryChange method
         // Note: We can't directly test the onChange closure since searchText is private,
         // but we can verify that the view is properly configured for search
+        let (_, _, _, view) = createTestComponents()
 
         // Then - verify the view is properly configured
         // The search functionality is tested through the view model integration
-        XCTAssertNotNil(view)
+        #expect(view != nil)
     }
 
     // DISABLED: This test uses the old MVVM architecture
@@ -137,39 +115,36 @@ final class HomeViewTests: XCTestCase {
      }
      */
 
-    /**
-     * Test movie tap gesture handling.
-     *
-     * This test verifies that tapping on a movie triggers
-     * the router navigation.
-     */
-    func testMovieTapGesture() {
+    @Test("Movie tap gesture handling")
+    func movieTapGesture() {
+        defer { cleanupTest() }
+
         // When - simulate movie tap (this exercises the onTapGesture closure)
         // Note: We can't directly test the onTapGesture closure, but we can verify
         // that the router is properly configured
-        XCTAssertNotNil(router)
+        let (router, _, _, _) = createTestComponents()
+        #expect(router != nil)
     }
 
-    /**
-     * Test HomeView initialization with and without ViewModel.
-     *
-     * This test verifies that the view can be initialized
-     * with or without a provided ViewModel.
-     */
-    func testHomeViewInitialization() {
+    @Test("Home view initialization with different view models")
+    func homeViewInitialization() {
+        defer { cleanupTest() }
+
+        let (router, mockService, _, _) = createTestComponents()
+
         // Test initialization with provided ViewModel
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
         let customViewModel = HomeViewModel(serviceLocator: serviceLocator)
         let viewWithViewModel = HomeView(router: router, viewModel: customViewModel)
-        XCTAssertNotNil(viewWithViewModel)
+        #expect(viewWithViewModel != nil)
 
         // Test initialization with default ViewModel setup
         let defaultServiceLocator = ServiceLocator()
         defaultServiceLocator.register(HomeService.self, instance: MockHomeService())
         let defaultViewModel = HomeViewModel(serviceLocator: defaultServiceLocator)
         let viewWithDefaultViewModel = HomeView(router: router, viewModel: defaultViewModel)
-        XCTAssertNotNil(viewWithDefaultViewModel)
+        #expect(viewWithDefaultViewModel != nil)
     }
 
     // DISABLED: These tests use the old MVVM architecture
@@ -236,32 +211,30 @@ final class HomeViewTests: XCTestCase {
      }
      */
 
-    /**
-     * Test searchable modifier configuration.
-     *
-     * This test verifies that the searchable modifier is properly
-     * configured with the searchText binding.
-     */
-    func testSearchableModifierConfiguration() {
+    @Test("Searchable modifier configuration")
+    func searchableModifierConfiguration() {
+        defer { cleanupTest() }
+
+        let (_, _, _, view) = createTestComponents()
+
         // Trigger view update to configure searchable modifier
         _ = view.wrappedViewController
 
         // Verify that the view is properly configured
-        XCTAssertNotNil(view)
+        #expect(view != nil)
     }
 
-    /**
-     * Test onChange modifier configuration.
-     *
-     * This test verifies that the onChange modifier is properly
-     * configured for search text changes.
-     */
-    func testOnChangeModifierConfiguration() {
+    @Test("OnChange modifier configuration")
+    func onChangeModifierConfiguration() {
+        defer { cleanupTest() }
+
+        let (_, _, _, view) = createTestComponents()
+
         // Trigger view update to configure onChange modifier
         _ = view.wrappedViewController
 
         // Verify that the view is properly configured
-        XCTAssertNotNil(view)
+        #expect(view != nil)
     }
 
     // DISABLED: This test uses the old MVVM architecture

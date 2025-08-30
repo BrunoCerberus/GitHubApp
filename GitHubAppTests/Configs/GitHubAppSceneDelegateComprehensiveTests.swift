@@ -12,6 +12,7 @@ import UIKit
 /**
  * Simple tests for GitHubAppSceneDelegate to improve coverage.
  */
+@MainActor
 struct GitHubAppSceneDelegateComprehensiveTests {
     private func createSceneDelegate() -> GitHubAppSceneDelegate {
         GitHubAppSceneDelegate()

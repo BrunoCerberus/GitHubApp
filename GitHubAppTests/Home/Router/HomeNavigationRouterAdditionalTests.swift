@@ -4,10 +4,11 @@
 //
 
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class HomeNavigationRouterAdditionalTests: XCTestCase {
-    func testRouteUsesCoordinatorWhenAvailable() {
+struct HomeNavigationRouterAdditionalTests {
+    @Test("Route uses coordinator when available")
+    func routeUsesCoordinatorWhenAvailable() {
         let serviceLocator = ServiceLocator()
         // Avoid real network dependency in HomeView when coordinator builds
         try? APIKeysProvider.setMovieAPIKey("router-key")
@@ -17,6 +18,6 @@ final class HomeNavigationRouterAdditionalTests: XCTestCase {
 
         router.route(navigationEvent: .detail(movie))
         // Ensure the path appended a detail page
-        XCTAssertFalse(coordinator.path.isEmpty)
+        #expect(!coordinator.path.isEmpty)
     }
 }
