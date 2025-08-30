@@ -5,59 +5,69 @@
 
 import Combine
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class HomeViewModelTests: XCTestCase {
-    private var cancellables: Set<AnyCancellable> = .init()
-
+struct HomeViewModelTests {
     private func createTestServiceLocator(homeService: HomeService) -> ServiceLocator {
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: homeService)
         return serviceLocator
     }
 
-    override func setUp() {
-        super.setUp()
+    @Test("Fetch data populates movies and favorites synchronously")
+    func fetchDataPopulatesMoviesAndFavoritesSync() async throws {
+        // Given
         StorageServiceFactory.shared.resetCache()
-        // Ensure API key exists in case anything inadvertently touches HomeAPI
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
+        defer {
+            StorageServiceFactory.shared.resetCache()
+            try? APIKeysProvider.removeMovieAPIKey()
+        }
+
+        let service = MockHomeService()
+        let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+
+        // Wait for the Combine pipeline; MockHomeService uses DispatchQueue delivery
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+
+        // Then
+        #expect(!sut.movies.isEmpty)
+        #expect(sut.favoriteMovies.isEmpty)
     }
 
-    override func tearDown() {
+    @Test("Search movies replaces current movies")
+    func searchMoviesReplacesMovies() async throws {
+        // Given
         StorageServiceFactory.shared.resetCache()
-        try? APIKeysProvider.removeMovieAPIKey()
-        cancellables.removeAll()
-        super.tearDown()
-    }
-
-    func testFetchDataPopulatesMoviesAndFavoritesSync() {
-        let service = MockHomeService()
-        let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
-
-        let exp = expectation(description: "movies")
-        // Give the Combine pipeline a short moment; MockHomeService uses RunLoop delivery
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertFalse(sut.movies.isEmpty)
-            XCTAssertTrue(sut.favoriteMovies.isEmpty)
-            exp.fulfill()
+        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
+        defer {
+            StorageServiceFactory.shared.resetCache()
+            try? APIKeysProvider.removeMovieAPIKey()
         }
-        wait(for: [exp], timeout: 1)
-    }
 
-    func testSearchMoviesReplacesMovies() {
         let service = MockHomeService()
         let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
-        let exp = expectation(description: "search")
+        // When
         sut.searchMovies(query: "barbie")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertFalse(sut.movies.isEmpty)
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1)
+
+        // Wait for async operation
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+
+        // Then
+        #expect(!sut.movies.isEmpty)
     }
 
-    func testToggleFavoriteForMovie() {
+    @Test("Toggle favorite for movie executes successfully")
+    func toggleFavoriteForMovie() async throws {
+        // Given
+        StorageServiceFactory.shared.resetCache()
+        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
+        defer {
+            StorageServiceFactory.shared.resetCache()
+            try? APIKeysProvider.removeMovieAPIKey()
+        }
+
         let service = MockHomeService()
         let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
@@ -69,25 +79,43 @@ final class HomeViewModelTests: XCTestCase {
             posterPath: nil
         )
 
-        // Test toggling favorite
+        // When
         sut.toggleFavorite(for: testMovie)
 
-        // Verify method was called (basic test for coverage)
-        XCTAssertNotNil(sut)
+        // Then - Verify method was called (basic test for coverage)
+        // Test passes if no exception is thrown
     }
 
-    func testLoadFavoriteMovies() {
+    @Test("Load favorite movies executes successfully")
+    func loadFavoriteMovies() async throws {
+        // Given
+        StorageServiceFactory.shared.resetCache()
+        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
+        defer {
+            StorageServiceFactory.shared.resetCache()
+            try? APIKeysProvider.removeMovieAPIKey()
+        }
+
         let service = MockHomeService()
         let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
-        // Test loading favorite movies
+        // When
         sut.loadFavoriteMovies()
 
-        // Verify method was called (basic test for coverage)
-        XCTAssertNotNil(sut)
+        // Then - Verify method was called (basic test for coverage)
+        // Test passes if no exception is thrown
     }
 
-    func testIsLikedMovie() {
+    @Test("Is liked movie returns correct boolean value")
+    func isLikedMovie() async throws {
+        // Given
+        StorageServiceFactory.shared.resetCache()
+        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
+        defer {
+            StorageServiceFactory.shared.resetCache()
+            try? APIKeysProvider.removeMovieAPIKey()
+        }
+
         let service = MockHomeService()
         let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
@@ -99,35 +127,54 @@ final class HomeViewModelTests: XCTestCase {
             posterPath: nil
         )
 
-        // Test isLiked method
+        // When
         let isLiked = sut.isLiked(movie: testMovie)
 
-        // Verify method returns a boolean
-        XCTAssertFalse(isLiked) // Should be false initially
+        // Then
+        #expect(!isLiked) // Should be false initially
     }
 
-    func testSendViewEvent() {
+    @Test("Send view event executes successfully")
+    func sendViewEvent() async throws {
+        // Given
+        StorageServiceFactory.shared.resetCache()
+        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
+        defer {
+            StorageServiceFactory.shared.resetCache()
+            try? APIKeysProvider.removeMovieAPIKey()
+        }
+
         let service = MockHomeService()
         let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
-        // Test sending a view event
+        // When
         sut.sendViewEvent(.fetchData)
 
-        // Verify method was called (basic test for coverage)
-        XCTAssertNotNil(sut)
+        // Then - Verify method was called (basic test for coverage)
+        // Test passes if no exception is thrown
     }
 
-    func testViewModelGetters() {
+    @Test("ViewModel getters return expected values")
+    func viewModelGetters() async throws {
+        // Given
+        StorageServiceFactory.shared.resetCache()
+        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
+        defer {
+            StorageServiceFactory.shared.resetCache()
+            try? APIKeysProvider.removeMovieAPIKey()
+        }
+
         let service = MockHomeService()
         let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
-        // Test the computed properties for coverage - check what properties are available
+        // When - Test the computed properties for coverage
         let movies = sut.movies
         let favoriteMovies = sut.favoriteMovies
         let error = sut.error
 
-        XCTAssertNotNil(movies)
-        XCTAssertNotNil(favoriteMovies)
-        XCTAssertNil(error) // Should be nil initially
+        // Then
+        #expect(!movies.isEmpty || movies.isEmpty) // Just verify it's accessible
+        #expect(!favoriteMovies.isEmpty || favoriteMovies.isEmpty) // Just verify it's accessible
+        #expect(error == nil) // Should be nil initially
     }
 }

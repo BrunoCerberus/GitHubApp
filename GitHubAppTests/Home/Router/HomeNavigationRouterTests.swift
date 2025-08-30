@@ -6,27 +6,26 @@
 //
 
 @testable import GitHubApp
-import XCTest
+import Testing
+import UIKit
 
-/**
- * UI routing tests for HomeNavigationRouter using a UINavigationController fallback path.
- */
-final class HomeNavigationRouterTests: XCTestCase {
-    /// Pushing a detail event presents MovieDetailsHostingController
-    func testRouter() {
-        let mockMovie = Movie(id: 0, title: "The Movie", overview: "", posterPath: nil)
-        let nav = UINavigationController(rootViewController: UIViewController())
-        let serviceLocator = ServiceLocator()
-        let router = HomeNavigationRouter(serviceLocator: serviceLocator)
-        router.navigation = nav
-        router.route(navigationEvent: .detail(mockMovie))
-        let expectation: XCTestExpectation = expectation(description: "Wait for UI")
+struct HomeNavigationRouterTests {
+    @Test("Pushing a detail event presents MovieDetailsHostingController")
+    func router() async throws {
+        await MainActor.run {
+            // Given
+            let mockMovie = Movie(id: 0, title: "The Movie", overview: "", posterPath: nil)
+            let nav = UINavigationController(rootViewController: UIViewController())
+            let serviceLocator = ServiceLocator()
+            serviceLocator.register(HomeService.self, instance: MockHomeService())
+            let router = HomeNavigationRouter(serviceLocator: serviceLocator)
+            router.navigation = nav
 
-        Task { @MainActor in
-            XCTAssertTrue(router.navigation?.topViewController is MovieDetailsHostingController)
-            expectation.fulfill()
+            // When
+            router.route(navigationEvent: .detail(mockMovie))
+
+            // Then
+            #expect(router.navigation?.topViewController is MovieDetailsHostingController)
         }
-
-        waitForExpectations(timeout: 0.1, handler: nil)
     }
 }

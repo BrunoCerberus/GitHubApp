@@ -5,171 +5,185 @@
 //  Created by bruno on 06/08/23.
 //
 
+import Foundation
 @testable import GitHubApp
-import XCTest
+import Testing
 
-/**
- * Unit tests for `KeychainManager` covering CRUD, existence checks,
- * service isolation, and edge cases.
- */
-final class KeychainManagerTests: XCTestCase {
-    // MARK: - Properties
-
-    private var keychainManager: KeychainManager!
+struct KeychainManagerTests {
     private let testService: String = "com.bruno.GitHubApp.TestKeychain"
     private let testKey: String = "testKey"
     private let testValue: String = "testValue"
 
-    // MARK: - Setup and Teardown
-
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        keychainManager = KeychainManager(service: testService)
-
+    private func createKeychainManager() -> KeychainManager {
+        let manager = KeychainManager(service: testService)
         // Clean up any existing test data
-        try? keychainManager.delete(for: testKey)
-    }
-
-    override func tearDownWithError() throws {
-        // Clean up test data
-        try? keychainManager.delete(for: testKey)
-        keychainManager = nil
-        try super.tearDownWithError()
+        try? manager.delete(for: testKey)
+        return manager
     }
 
     // MARK: - Save Tests
 
-    /// Saving a normal value stores and retrieves successfully
-    func testSaveValue() throws {
+    @Test("Saving a normal value stores and retrieves successfully")
+    func saveValue() throws {
+        // Given
+        let keychainManager = createKeychainManager()
+        defer { try? keychainManager.delete(for: testKey) }
+
         // When
         try keychainManager.save(testValue, for: testKey)
 
         // Then
-        XCTAssertTrue(keychainManager.exists(for: testKey))
+        #expect(keychainManager.exists(for: testKey))
         let retrievedValue: String = try keychainManager.retrieve(for: testKey)
-        XCTAssertEqual(retrievedValue, testValue)
+        #expect(retrievedValue == testValue)
     }
 
-    /// Saving an empty string is allowed and retrievable
-    func testSaveEmptyValue() throws {
+    @Test("Saving an empty string is allowed and retrievable")
+    func saveEmptyValue() throws {
+        // Given
+        let keychainManager = createKeychainManager()
+        defer { try? keychainManager.delete(for: testKey) }
+
         // When
         try keychainManager.save("", for: testKey)
 
         // Then
-        XCTAssertTrue(keychainManager.exists(for: testKey))
+        #expect(keychainManager.exists(for: testKey))
         let retrievedValue: String = try keychainManager.retrieve(for: testKey)
-        XCTAssertEqual(retrievedValue, "")
+        #expect(retrievedValue == "")
     }
 
-    /// Values with special characters round-trip correctly
-    func testSaveSpecialCharacters() throws {
+    @Test("Values with special characters round-trip correctly")
+    func saveSpecialCharacters() throws {
         // Given
+        let keychainManager = createKeychainManager()
         let specialValue = "!@#$%^&*()_+-=[]{}|;':\",./<>?"
+        defer { try? keychainManager.delete(for: testKey) }
 
         // When
         try keychainManager.save(specialValue, for: testKey)
 
         // Then
         let retrievedValue: String = try keychainManager.retrieve(for: testKey)
-        XCTAssertEqual(retrievedValue, specialValue)
+        #expect(retrievedValue == specialValue)
     }
 
-    /// Values with unicode characters round-trip correctly
-    func testSaveUnicodeCharacters() throws {
+    @Test("Values with unicode characters round-trip correctly")
+    func saveUnicodeCharacters() throws {
         // Given
+        let keychainManager = createKeychainManager()
         let unicodeValue = "Hello 世界 🌍 🚀"
+        defer { try? keychainManager.delete(for: testKey) }
 
         // When
         try keychainManager.save(unicodeValue, for: testKey)
 
         // Then
         let retrievedValue: String = try keychainManager.retrieve(for: testKey)
-        XCTAssertEqual(retrievedValue, unicodeValue)
+        #expect(retrievedValue == unicodeValue)
     }
 
     // MARK: - Retrieve Tests
 
-    /// Retrieving a missing key throws a keychain error
-    func testRetrieveNonExistentKey() {
+    @Test("Retrieving a missing key throws a keychain error")
+    func retrieveNonExistentKey() {
+        // Given
+        let keychainManager = createKeychainManager()
+
         // When & Then
-        XCTAssertThrowsError(try keychainManager.retrieve(for: "nonExistentKey")) { error in
-            XCTAssertTrue(error is KeychainManager.KeychainError)
+        #expect(throws: KeychainManager.KeychainError.self) {
+            try keychainManager.retrieve(for: "nonExistentKey") as String
         }
     }
 
-    /// After deletion, item no longer exists and retrieval fails
-    func testRetrieveAfterDelete() throws {
+    @Test("After deletion, item no longer exists and retrieval fails")
+    func retrieveAfterDelete() throws {
         // Given
+        let keychainManager = createKeychainManager()
         try keychainManager.save(testValue, for: testKey)
-        XCTAssertTrue(keychainManager.exists(for: testKey))
+        #expect(keychainManager.exists(for: testKey))
 
         // When
         try keychainManager.delete(for: testKey)
 
         // Then
-        XCTAssertFalse(keychainManager.exists(for: testKey))
-        XCTAssertThrowsError(try keychainManager.retrieve(for: testKey))
+        #expect(!keychainManager.exists(for: testKey))
+        #expect(throws: KeychainManager.KeychainError.self) {
+            try keychainManager.retrieve(for: testKey) as String
+        }
     }
 
     // MARK: - Update Tests
 
-    /// Saving again with the same key updates the stored value
-    func testUpdateExistingValue() throws {
+    @Test("Saving again with the same key updates the stored value")
+    func updateExistingValue() throws {
         // Given
-        try keychainManager.save(testValue, for: testKey)
+        let keychainManager = createKeychainManager()
         let newValue = "updatedValue"
+        defer { try? keychainManager.delete(for: testKey) }
+        try keychainManager.save(testValue, for: testKey)
 
         // When
         try keychainManager.save(newValue, for: testKey)
 
         // Then
         let retrievedValue: String = try keychainManager.retrieve(for: testKey)
-        XCTAssertEqual(retrievedValue, newValue)
+        #expect(retrievedValue == newValue)
     }
 
     // MARK: - Delete Tests
 
-    /// Deleting a non-existent key should not throw
-    func testDeleteNonExistentKey() throws {
+    @Test("Deleting a non-existent key should not throw")
+    func deleteNonExistentKey() throws {
+        // Given
+        let keychainManager = createKeychainManager()
+
         // When & Then - Should not throw error
         try keychainManager.delete(for: "nonExistentKey")
     }
 
-    /// Deleting an existing key removes it from keychain
-    func testDeleteExistingKey() throws {
+    @Test("Deleting an existing key removes it from keychain")
+    func deleteExistingKey() throws {
         // Given
+        let keychainManager = createKeychainManager()
         try keychainManager.save(testValue, for: testKey)
-        XCTAssertTrue(keychainManager.exists(for: testKey))
+        #expect(keychainManager.exists(for: testKey))
 
         // When
         try keychainManager.delete(for: testKey)
 
         // Then
-        XCTAssertFalse(keychainManager.exists(for: testKey))
+        #expect(!keychainManager.exists(for: testKey))
     }
 
     // MARK: - Exists Tests
 
-    /// Existence check returns false for missing items
-    func testExistsForNonExistentKey() {
+    @Test("Existence check returns false for missing items")
+    func existsForNonExistentKey() {
+        // Given
+        let keychainManager = createKeychainManager()
+
         // When & Then
-        XCTAssertFalse(keychainManager.exists(for: "nonExistentKey"))
+        #expect(!keychainManager.exists(for: "nonExistentKey"))
     }
 
-    /// Existence check returns true for stored items
-    func testExistsForExistingKey() throws {
+    @Test("Existence check returns true for stored items")
+    func existsForExistingKey() throws {
         // Given
+        let keychainManager = createKeychainManager()
+        defer { try? keychainManager.delete(for: testKey) }
         try keychainManager.save(testValue, for: testKey)
 
         // When & Then
-        XCTAssertTrue(keychainManager.exists(for: testKey))
+        #expect(keychainManager.exists(for: testKey))
     }
 
     // MARK: - Multiple Keys Tests
 
-    /// Different services and keys do not collide
-    func testMultipleKeys() throws {
+    @Test("Different services and keys do not collide")
+    func multipleKeys() throws {
         // Given
+        let keychainManager = createKeychainManager()
         let key1 = "key1"
         let key2 = "key2"
         let value1 = "value1"
@@ -178,26 +192,26 @@ final class KeychainManagerTests: XCTestCase {
         // When
         try keychainManager.save(value1, for: key1)
         try keychainManager.save(value2, for: key2)
+        defer {
+            try? keychainManager.delete(for: key1)
+            try? keychainManager.delete(for: key2)
+        }
 
         // Then
-        XCTAssertTrue(keychainManager.exists(for: key1))
-        XCTAssertTrue(keychainManager.exists(for: key2))
+        #expect(keychainManager.exists(for: key1))
+        #expect(keychainManager.exists(for: key2))
 
         let retrievedValue1: String = try keychainManager.retrieve(for: key1)
         let retrievedValue2: String = try keychainManager.retrieve(for: key2)
 
-        XCTAssertEqual(retrievedValue1, value1)
-        XCTAssertEqual(retrievedValue2, value2)
-
-        // Clean up
-        try keychainManager.delete(for: key1)
-        try keychainManager.delete(for: key2)
+        #expect(retrievedValue1 == value1)
+        #expect(retrievedValue2 == value2)
     }
 
     // MARK: - Service Isolation Tests
 
-    /// Items are isolated by service attribute
-    func testServiceIsolation() throws {
+    @Test("Items are isolated by service attribute")
+    func serviceIsolation() throws {
         // Given
         let manager1 = KeychainManager(service: "service1")
         let manager2 = KeychainManager(service: "service2")
@@ -208,163 +222,131 @@ final class KeychainManagerTests: XCTestCase {
         // When
         try manager1.save(value1, for: testKey)
         try manager2.save(value2, for: testKey)
+        defer {
+            try? manager1.delete(for: testKey)
+            try? manager2.delete(for: testKey)
+        }
 
         // Then
         let retrievedValue1: String = try manager1.retrieve(for: testKey)
         let retrievedValue2: String = try manager2.retrieve(for: testKey)
 
-        XCTAssertEqual(retrievedValue1, value1)
-        XCTAssertEqual(retrievedValue2, value2)
-
-        // Clean up
-        try manager1.delete(for: testKey)
-        try manager2.delete(for: testKey)
+        #expect(retrievedValue1 == value1)
+        #expect(retrievedValue2 == value2)
     }
 
     // MARK: - Error Description Tests
 
-    /**
-     * Test that all KeychainError cases provide meaningful error descriptions.
-     *
-     * These tests ensure that error messages are user-friendly and
-     * provide enough information for debugging.
-     */
-    func testKeychainErrorDescriptions() {
+    @Test("All KeychainError cases provide meaningful error descriptions")
+    func keychainErrorDescriptions() {
         // Test duplicateEntry error
         let duplicateError = KeychainManager.KeychainError.duplicateEntry
-        XCTAssertNotNil(duplicateError.errorDescription)
-        XCTAssertTrue(duplicateError.errorDescription?.contains("Duplicate entry") == true)
+        #expect(duplicateError.errorDescription != nil)
+        #expect(duplicateError.errorDescription?.contains("Duplicate entry") == true)
 
         // Test unknown error
         let unknownError = KeychainManager.KeychainError.unknown(12345)
-        XCTAssertNotNil(unknownError.errorDescription)
-        XCTAssertTrue(unknownError.errorDescription?.contains("Unknown keychain error: 12345") == true)
+        #expect(unknownError.errorDescription != nil)
+        #expect(unknownError.errorDescription?.contains("Unknown keychain error: 12345") == true)
 
         // Test itemNotFound error
         let itemNotFoundError = KeychainManager.KeychainError.itemNotFound
-        XCTAssertNotNil(itemNotFoundError.errorDescription)
-        XCTAssertTrue(itemNotFoundError.errorDescription?.contains("Item not found") == true)
+        #expect(itemNotFoundError.errorDescription != nil)
+        #expect(itemNotFoundError.errorDescription?.contains("Item not found") == true)
 
         // Test invalidItemFormat error
         let invalidFormatError = KeychainManager.KeychainError.invalidItemFormat
-        XCTAssertNotNil(invalidFormatError.errorDescription)
-        XCTAssertTrue(invalidFormatError.errorDescription?.contains("Invalid item format") == true)
+        #expect(invalidFormatError.errorDescription != nil)
+        #expect(invalidFormatError.errorDescription?.contains("Invalid item format") == true)
 
         // Test unhandledError error
         let unhandledError = KeychainManager.KeychainError.unhandledError(status: 67890)
-        XCTAssertNotNil(unhandledError.errorDescription)
-        XCTAssertTrue(unhandledError.errorDescription?.contains("Unhandled keychain error: 67890") == true)
+        #expect(unhandledError.errorDescription != nil)
+        #expect(unhandledError.errorDescription?.contains("Unhandled keychain error: 67890") == true)
     }
 
-    /**
-     * Test that KeychainError conforms to LocalizedError protocol.
-     *
-     * This ensures that the error can be used in UI contexts
-     * where localized error descriptions are expected.
-     */
-    func testKeychainErrorLocalizedErrorConformance() {
+    @Test("KeychainError conforms to LocalizedError protocol")
+    func keychainErrorLocalizedErrorConformance() {
         let error = KeychainManager.KeychainError.itemNotFound
 
         // Test that errorDescription is accessible through LocalizedError
         let localizedError = error as LocalizedError
-        XCTAssertNotNil(localizedError.errorDescription)
-        XCTAssertEqual(error.errorDescription, localizedError.errorDescription)
+        #expect(localizedError.errorDescription != nil)
+        #expect(error.errorDescription == localizedError.errorDescription)
     }
 
-    /**
-     * Test KeychainManager initialization with access group.
-     *
-     * This test verifies that the KeychainManager can be initialized
-     * with an optional access group parameter.
-     */
-    func testKeychainManagerInitializationWithAccessGroup() {
+    @Test("KeychainManager initialization with access group")
+    func keychainManagerInitializationWithAccessGroup() {
         let accessGroup = "com.bruno.GitHubApp.SharedKeychain"
         let manager = KeychainManager(service: testService, accessGroup: accessGroup)
 
-        XCTAssertNotNil(manager)
         // Note: We can't directly test the private accessGroup property,
         // but we can verify the instance is created successfully
+        // Test passes if no exception is thrown during initialization
     }
 
-    /**
-     * Test KeychainManager initialization without access group.
-     *
-     * This test verifies that the KeychainManager can be initialized
-     * without an access group parameter.
-     */
-    func testKeychainManagerInitializationWithoutAccessGroup() {
+    @Test("KeychainManager initialization without access group")
+    func keychainManagerInitializationWithoutAccessGroup() {
         let manager = KeychainManager(service: testService)
 
-        XCTAssertNotNil(manager)
         // Note: We can't directly test the private accessGroup property,
         // but we can verify the instance is created successfully
+        // Test passes if no exception is thrown during initialization
     }
 
-    /**
-     * Test saving and retrieving very long strings.
-     *
-     * This test verifies that the KeychainManager can handle
-     * very long string values correctly.
-     */
-    func testSaveAndRetrieveVeryLongString() throws {
+    @Test("Saving and retrieving very long strings")
+    func saveAndRetrieveVeryLongString() throws {
         // Given
+        let keychainManager = createKeychainManager()
         let longString = String(repeating: "This is a very long string for testing purposes. ", count: 100)
+        defer { try? keychainManager.delete(for: testKey) }
 
         // When
         try keychainManager.save(longString, for: testKey)
 
         // Then
         let retrievedValue: String = try keychainManager.retrieve(for: testKey)
-        XCTAssertEqual(retrievedValue, longString)
+        #expect(retrievedValue == longString)
     }
 
-    /**
-     * Test saving and retrieving strings with newlines and tabs.
-     *
-     * This test verifies that the KeychainManager can handle
-     * strings with whitespace characters correctly.
-     */
-    func testSaveAndRetrieveStringWithWhitespace() throws {
+    @Test("Saving and retrieving strings with newlines and tabs")
+    func saveAndRetrieveStringWithWhitespace() throws {
         // Given
+        let keychainManager = createKeychainManager()
         let whitespaceString = "Line 1\nLine 2\tTabbed content\r\nLine 3"
+        defer { try? keychainManager.delete(for: testKey) }
 
         // When
         try keychainManager.save(whitespaceString, for: testKey)
 
         // Then
         let retrievedValue: String = try keychainManager.retrieve(for: testKey)
-        XCTAssertEqual(retrievedValue, whitespaceString)
+        #expect(retrievedValue == whitespaceString)
     }
 
-    /**
-     * Test saving and retrieving strings with null bytes.
-     *
-     * This test verifies that the KeychainManager can handle
-     * strings with null bytes correctly.
-     */
-    func testSaveAndRetrieveStringWithNullBytes() throws {
+    @Test("Saving and retrieving strings with null bytes")
+    func saveAndRetrieveStringWithNullBytes() throws {
         // Given
+        let keychainManager = createKeychainManager()
         let nullByteString = "String with \0 null bytes \0 embedded"
+        defer { try? keychainManager.delete(for: testKey) }
 
         // When
         try keychainManager.save(nullByteString, for: testKey)
 
         // Then
         let retrievedValue: String = try keychainManager.retrieve(for: testKey)
-        XCTAssertEqual(retrievedValue, nullByteString)
+        #expect(retrievedValue == nullByteString)
     }
 
-    /**
-     * Test multiple save operations on the same key.
-     *
-     * This test verifies that the KeychainManager properly handles
-     * updating existing keychain items.
-     */
-    func testMultipleSaveOperationsOnSameKey() throws {
+    @Test("Multiple save operations on the same key")
+    func multipleSaveOperationsOnSameKey() throws {
         // Given
+        let keychainManager = createKeychainManager()
         let initialValue = "initial value"
         let updatedValue = "updated value"
         let finalValue = "final value"
+        defer { try? keychainManager.delete(for: testKey) }
 
         // When - save multiple times
         try keychainManager.save(initialValue, for: testKey)
@@ -373,75 +355,57 @@ final class KeychainManagerTests: XCTestCase {
 
         // Then - should get the last saved value
         let retrievedValue: String = try keychainManager.retrieve(for: testKey)
-        XCTAssertEqual(retrievedValue, finalValue)
+        #expect(retrievedValue == finalValue)
 
         // Verify only one item exists
-        XCTAssertTrue(keychainManager.exists(for: testKey))
+        #expect(keychainManager.exists(for: testKey))
     }
 
-    /**
-     * Test saving and retrieving with very long keys.
-     *
-     * This test verifies that the KeychainManager can handle
-     * very long key names correctly.
-     */
-    func testSaveAndRetrieveWithVeryLongKey() throws {
+    @Test("Saving and retrieving with very long keys")
+    func saveAndRetrieveWithVeryLongKey() throws {
         // Given
+        let keychainManager = createKeychainManager()
         let longKey = String(repeating: "very_long_key_name_for_testing_purposes_", count: 20)
         let testValue = "test value"
 
         // When
         try keychainManager.save(testValue, for: longKey)
+        defer { try? keychainManager.delete(for: longKey) }
 
         // Then
         let retrievedValue: String = try keychainManager.retrieve(for: longKey)
-        XCTAssertEqual(retrievedValue, testValue)
-
-        // Clean up
-        try keychainManager.delete(for: longKey)
+        #expect(retrievedValue == testValue)
     }
 
-    /**
-     * Test saving and retrieving with empty key.
-     *
-     * This test verifies that the KeychainManager can handle
-     * empty key names correctly.
-     */
-    func testSaveAndRetrieveWithEmptyKey() throws {
+    @Test("Saving and retrieving with empty key")
+    func saveAndRetrieveWithEmptyKey() throws {
         // Given
+        let keychainManager = createKeychainManager()
         let emptyKey = ""
         let testValue = "test value"
 
         // When
         try keychainManager.save(testValue, for: emptyKey)
+        defer { try? keychainManager.delete(for: emptyKey) }
 
         // Then
         let retrievedValue: String = try keychainManager.retrieve(for: emptyKey)
-        XCTAssertEqual(retrievedValue, testValue)
-
-        // Clean up
-        try keychainManager.delete(for: emptyKey)
+        #expect(retrievedValue == testValue)
     }
 
-    /**
-     * Test saving and retrieving with special characters in key.
-     *
-     * This test verifies that the KeychainManager can handle
-     * special characters in key names correctly.
-     */
-    func testSaveAndRetrieveWithSpecialCharactersInKey() throws {
+    @Test("Saving and retrieving with special characters in key")
+    func saveAndRetrieveWithSpecialCharactersInKey() throws {
         // Given
+        let keychainManager = createKeychainManager()
         let specialKey = "key!@#$%^&*()_+-=[]{}|;':\",./<>?"
         let testValue = "test value"
 
         // When
         try keychainManager.save(testValue, for: specialKey)
+        defer { try? keychainManager.delete(for: specialKey) }
 
         // Then
         let retrievedValue: String = try keychainManager.retrieve(for: specialKey)
-        XCTAssertEqual(retrievedValue, testValue)
-
-        // Clean up
-        try keychainManager.delete(for: specialKey)
+        #expect(retrievedValue == testValue)
     }
 }
