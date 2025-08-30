@@ -9,13 +9,6 @@ import Foundation
 import UIKit
 
 /**
- * Protocol for coordinator-like objects that can handle navigation.
- */
-protocol CoordinatorProtocol: AnyObject {
-    func push(page: Page)
-}
-
-/**
  * Routes deeplinks to appropriate navigation actions.
  *
  * This class takes parsed deeplinks and converts them to navigation

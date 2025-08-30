@@ -8,12 +8,6 @@ import SwiftUI
 import XCTest
 
 final class FavoritesMoviesViewTests: XCTestCase {
-    private func createTestServiceLocator() -> ServiceLocator {
-        let serviceLocator = ServiceLocator()
-        serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())
-        return serviceLocator
-    }
-
     override func setUp() {
         super.setUp()
         StorageServiceFactory.shared.resetCache()
@@ -236,7 +230,11 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
     func testPreviewConfiguration() {
         // When - create preview view
-        let previewView = FavoritesMoviesView(viewModel: FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator()))
+        let previewView = FavoritesMoviesView(
+            viewModel: FavoritesMoviesViewModel(
+                serviceLocator: createTestServiceLocator()
+            )
+        )
 
         // Then - verify that the preview view is created
         XCTAssertNotNil(previewView)
@@ -387,6 +385,12 @@ final class FavoritesMoviesViewTests: XCTestCase {
         // Test that ProgressView placeholder is properly configured
         _ = view.wrappedViewController
         XCTAssertNotNil(view)
+    }
+
+    private func createTestServiceLocator() -> ServiceLocator {
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())
+        return serviceLocator
     }
 }
 

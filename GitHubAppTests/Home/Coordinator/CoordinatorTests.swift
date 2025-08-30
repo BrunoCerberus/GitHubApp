@@ -39,4 +39,38 @@ final class CoordinatorTests: XCTestCase {
         let detailHost = UIHostingController(rootView: AnyView(detailView))
         XCTAssertNotNil(detailHost.view)
     }
+
+    func testCoordinatorProtocolConformance() {
+        let serviceLocator = ServiceLocator()
+        let sut = Coordinator(serviceLocator: serviceLocator)
+
+        // Test protocol method through protocol reference
+        let coordinatorProtocol: CoordinatorProtocol = sut
+        coordinatorProtocol.push(page: .home)
+        XCTAssertFalse(sut.path.isEmpty)
+    }
+
+    func testMultiplePushOperations() {
+        let serviceLocator = ServiceLocator()
+        let sut = Coordinator(serviceLocator: serviceLocator)
+        let movie = Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: nil)
+
+        XCTAssertEqual(sut.path.count, 0)
+
+        sut.push(page: .home)
+        XCTAssertEqual(sut.path.count, 1)
+
+        sut.push(page: .detail(movie))
+        XCTAssertEqual(sut.path.count, 2)
+    }
+
+    func testLazyViewModelInitialization() {
+        let serviceLocator = ServiceLocator()
+        let sut = Coordinator(serviceLocator: serviceLocator)
+
+        // ViewModels should be created lazily
+        XCTAssertNotNil(sut.homeViewModel)
+        XCTAssertNotNil(sut.favoriteMoviesViewModel)
+        XCTAssertNotNil(sut.settingsViewModel)
+    }
 }

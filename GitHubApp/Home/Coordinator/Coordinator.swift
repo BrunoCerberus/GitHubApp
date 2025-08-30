@@ -8,6 +8,13 @@
 import SwiftUI
 
 /**
+ * Protocol for coordinator-like objects that can handle navigation.
+ */
+protocol CoordinatorProtocol: AnyObject {
+    func push(page: Page)
+}
+
+/**
  * Represents navigable destinations in the app.
  */
 public enum Page: Hashable {
