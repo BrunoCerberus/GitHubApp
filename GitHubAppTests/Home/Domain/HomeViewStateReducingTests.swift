@@ -4,23 +4,13 @@
 //
 
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class HomeViewStateReducingTests: XCTestCase {
-    private var sut: HomeViewStateReducer!
-
-    override func setUp() {
-        super.setUp()
-        sut = HomeViewStateReducer()
-    }
-
-    override func tearDown() {
-        sut = nil
-        super.tearDown()
-    }
-
-    func testReduceErrorState() {
+struct HomeViewStateReducingTests {
+    @Test("Reducer converts domain error state to view error state")
+    func reduceErrorState() {
         // Given
+        let sut = HomeViewStateReducer()
         let errorMessage = "Network error occurred"
         let domainState = HomeDomainState(
             movies: [],
@@ -35,14 +25,16 @@ final class HomeViewStateReducingTests: XCTestCase {
 
         // Then
         if case let .error(message) = viewState {
-            XCTAssertEqual(message, errorMessage)
+            #expect(message == errorMessage)
         } else {
-            XCTFail("Expected error state but got: \(viewState)")
+            Issue.record("Expected error state but got: \(viewState)")
         }
     }
 
-    func testReduceLoadingState() {
+    @Test("Reducer converts domain loading state to view loading state")
+    func reduceLoadingState() {
         // Given
+        let sut = HomeViewStateReducer()
         let domainState = HomeDomainState(
             movies: [],
             favoriteMovies: [],
@@ -58,12 +50,14 @@ final class HomeViewStateReducingTests: XCTestCase {
         if case .loading = viewState {
             // Success - loading state correctly reduced
         } else {
-            XCTFail("Expected loading state but got: \(viewState)")
+            Issue.record("Expected loading state but got: \(viewState)")
         }
     }
 
-    func testReduceSuccessStateWithoutSearchQuery() {
+    @Test("Reducer converts success state without search query to upcoming movies view")
+    func reduceSuccessStateWithoutSearchQuery() {
         // Given
+        let sut = HomeViewStateReducer()
         let movie1 = createMockMovie(id: 1, title: "Movie 1")
         let movie2 = createMockMovie(id: 2, title: "Movie 2")
         let likedMovie = createMockMovie(id: 3, title: "Liked Movie")
@@ -81,19 +75,21 @@ final class HomeViewStateReducingTests: XCTestCase {
 
         // Then
         if case let .success(dataViewState) = viewState {
-            XCTAssertEqual(dataViewState.title, "Upcoming Movies")
-            XCTAssertEqual(dataViewState.movies.count, 2)
-            XCTAssertEqual(dataViewState.favoriteMovies.count, 1)
-            XCTAssertNil(dataViewState.searchQuery)
-            XCTAssertEqual(dataViewState.movies.first?.title, "Movie 1")
-            XCTAssertEqual(dataViewState.favoriteMovies.first?.title, "Liked Movie")
+            #expect(dataViewState.title == "Upcoming Movies")
+            #expect(dataViewState.movies.count == 2)
+            #expect(dataViewState.favoriteMovies.count == 1)
+            #expect(dataViewState.searchQuery == nil)
+            #expect(dataViewState.movies.first?.title == "Movie 1")
+            #expect(dataViewState.favoriteMovies.first?.title == "Liked Movie")
         } else {
-            XCTFail("Expected success state but got: \(viewState)")
+            Issue.record("Expected success state but got: \(viewState)")
         }
     }
 
-    func testReduceSuccessStateWithSearchQuery() {
+    @Test("Reducer converts success state with search query to search results view")
+    func reduceSuccessStateWithSearchQuery() {
         // Given
+        let sut = HomeViewStateReducer()
         let movie1 = createMockMovie(id: 1, title: "Search Result 1")
         let movie2 = createMockMovie(id: 2, title: "Search Result 2")
         let searchQuery = "test query"
@@ -111,18 +107,20 @@ final class HomeViewStateReducingTests: XCTestCase {
 
         // Then
         if case let .success(dataViewState) = viewState {
-            XCTAssertEqual(dataViewState.title, "Search Results")
-            XCTAssertEqual(dataViewState.movies.count, 2)
-            XCTAssertTrue(dataViewState.favoriteMovies.isEmpty)
-            XCTAssertEqual(dataViewState.searchQuery, searchQuery)
-            XCTAssertEqual(dataViewState.movies.first?.title, "Search Result 1")
+            #expect(dataViewState.title == "Search Results")
+            #expect(dataViewState.movies.count == 2)
+            #expect(dataViewState.favoriteMovies.isEmpty)
+            #expect(dataViewState.searchQuery == searchQuery)
+            #expect(dataViewState.movies.first?.title == "Search Result 1")
         } else {
-            XCTFail("Expected success state but got: \(viewState)")
+            Issue.record("Expected success state but got: \(viewState)")
         }
     }
 
-    func testReduceErrorStatePrioritizedOverLoading() {
+    @Test("Error state is prioritized over loading state")
+    func reduceErrorStatePrioritizedOverLoading() {
         // Given - State with both error and loading
+        let sut = HomeViewStateReducer()
         let domainState = HomeDomainState(
             movies: [],
             favoriteMovies: [],
@@ -136,14 +134,16 @@ final class HomeViewStateReducingTests: XCTestCase {
 
         // Then - Error should be prioritized over loading
         if case let .error(message) = viewState {
-            XCTAssertEqual(message, "Error message")
+            #expect(message == "Error message")
         } else {
-            XCTFail("Expected error state to be prioritized but got: \(viewState)")
+            Issue.record("Expected error state to be prioritized but got: \(viewState)")
         }
     }
 
-    func testReduceEmptySuccessState() {
+    @Test("Reducer handles empty success state correctly")
+    func reduceEmptySuccessState() {
         // Given
+        let sut = HomeViewStateReducer()
         let domainState = HomeDomainState(
             movies: [],
             favoriteMovies: [],
@@ -157,12 +157,12 @@ final class HomeViewStateReducingTests: XCTestCase {
 
         // Then
         if case let .success(dataViewState) = viewState {
-            XCTAssertEqual(dataViewState.title, "Upcoming Movies")
-            XCTAssertTrue(dataViewState.movies.isEmpty)
-            XCTAssertTrue(dataViewState.favoriteMovies.isEmpty)
-            XCTAssertNil(dataViewState.searchQuery)
+            #expect(dataViewState.title == "Upcoming Movies")
+            #expect(dataViewState.movies.isEmpty)
+            #expect(dataViewState.favoriteMovies.isEmpty)
+            #expect(dataViewState.searchQuery == nil)
         } else {
-            XCTFail("Expected success state but got: \(viewState)")
+            Issue.record("Expected success state but got: \(viewState)")
         }
     }
 

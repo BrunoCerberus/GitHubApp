@@ -5,60 +5,38 @@
 
 import Combine
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class MockHomeServiceTests: XCTestCase {
-    private var cancellables: Set<AnyCancellable> = .init()
-
-    func testFetchMoviesEmitsResults() {
+struct MockHomeServiceTests {
+    @Test("Mock home service fetch movies emits non-empty results")
+    func fetchMoviesEmitsResults() async throws {
         let sut = MockHomeService()
 
-        let exp = expectation(description: "movies")
-        sut.fetchMovies()
-            .sink(receiveCompletion: { _ in }, receiveValue: { response in
-                XCTAssertFalse(response.results.isEmpty)
-                exp.fulfill()
-            })
-            .store(in: &cancellables)
-        wait(for: [exp], timeout: 1)
+        let response = try await sut.fetchMovies().async()
+        #expect(!response.results.isEmpty)
     }
 
-    func testSearchMoviesEmitsResults() {
+    @Test("Mock home service search movies emits non-empty results")
+    func searchMoviesEmitsResults() async throws {
         let sut = MockHomeService()
 
-        let exp = expectation(description: "search")
-        sut.searchMovies(with: "query")
-            .sink(receiveCompletion: { _ in }, receiveValue: { response in
-                XCTAssertFalse(response.results.isEmpty)
-                exp.fulfill()
-            })
-            .store(in: &cancellables)
-        wait(for: [exp], timeout: 1)
+        let response = try await sut.searchMovies(with: "query").async()
+        #expect(!response.results.isEmpty)
     }
 
-    func testFetchCreditsEmitsCast() {
+    @Test("Mock home service fetch credits emits non-empty cast")
+    func fetchCreditsEmitsCast() async throws {
         let sut = MockHomeService()
 
-        let exp = expectation(description: "credits")
-        sut.fetchCredits(with: 1)
-            .sink(receiveCompletion: { _ in }, receiveValue: { response in
-                XCTAssertFalse(response.cast.isEmpty)
-                exp.fulfill()
-            })
-            .store(in: &cancellables)
-        wait(for: [exp], timeout: 1)
+        let response = try await sut.fetchCredits(with: 1).async()
+        #expect(!response.cast.isEmpty)
     }
 
-    func testFetchReviewsEmitsReviews() {
+    @Test("Mock home service fetch reviews emits non-empty reviews")
+    func fetchReviewsEmitsReviews() async throws {
         let sut = MockHomeService()
 
-        let exp = expectation(description: "reviews")
-        sut.fetchReviews(with: 1)
-            .sink(receiveCompletion: { _ in }, receiveValue: { response in
-                XCTAssertFalse(response.results.isEmpty)
-                exp.fulfill()
-            })
-            .store(in: &cancellables)
-        wait(for: [exp], timeout: 1)
+        let response = try await sut.fetchReviews(with: 1).async()
+        #expect(!response.results.isEmpty)
     }
 }

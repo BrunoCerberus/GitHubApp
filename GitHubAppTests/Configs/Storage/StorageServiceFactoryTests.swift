@@ -6,42 +6,44 @@
 //
 
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class StorageServiceFactoryTests: XCTestCase {
-    private var factory: StorageServiceFactory!
+struct StorageServiceFactoryTests {
+    @Test("Get storage service returns same cached instance")
+    func getStorageServiceReturnsSameInstance() throws {
+        // Given
+        let factory = StorageServiceFactory.shared
+        defer { factory.resetCache() }
+        factory.resetCache() // Ensure clean state
 
-    override func setUp() {
-        super.setUp()
-        factory = StorageServiceFactory.shared
-        factory.resetCache() // Ensure clean state for each test
-    }
-
-    override func tearDown() {
-        factory.resetCache()
-        super.tearDown()
-    }
-
-    func testGetStorageServiceReturnsSameInstance() throws {
         // When
         let service1 = try factory.getStorageService()
         let service2 = try factory.getStorageService()
 
         // Then
-        XCTAssertTrue(service1 === service2, "Should return the same cached instance")
+        #expect(service1 === service2)
     }
 
-    func testCreateTestStorageServiceReturnsNewInstance() throws {
+    @Test("Create test storage service returns new instances for testing")
+    func createTestStorageServiceReturnsNewInstance() throws {
+        // Given
+        let factory = StorageServiceFactory.shared
+        defer { factory.resetCache() }
+
         // When
         let service1 = try factory.createTestStorageService()
         let service2 = try factory.createTestStorageService()
 
         // Then
-        XCTAssertFalse(service1 === service2, "Should return new instances for testing")
+        #expect(service1 !== service2)
     }
 
-    func testResetCacheCreatesNewInstance() throws {
+    @Test("Reset cache creates new storage service instance")
+    func resetCacheCreatesNewInstance() throws {
         // Given
+        let factory = StorageServiceFactory.shared
+        defer { factory.resetCache() }
+        factory.resetCache() // Ensure clean state
         let service1 = try factory.getStorageService()
 
         // When
@@ -49,11 +51,15 @@ final class StorageServiceFactoryTests: XCTestCase {
         let service2 = try factory.getStorageService()
 
         // Then
-        XCTAssertFalse(service1 === service2, "Should return new instance after cache reset")
+        #expect(service1 !== service2)
     }
 
-    func testUpdateConfigurationResetsCache() throws {
+    @Test("Update configuration resets cache and creates new instance")
+    func updateConfigurationResetsCache() throws {
         // Given
+        let factory = StorageServiceFactory.shared
+        defer { factory.resetCache() }
+        factory.resetCache() // Ensure clean state
         let service1 = try factory.getStorageService()
         let newConfiguration = StorageConfiguration.testing
 
@@ -62,24 +68,26 @@ final class StorageServiceFactoryTests: XCTestCase {
         let service2 = try factory.getStorageService()
 
         // Then
-        XCTAssertFalse(service1 === service2, "Should return new instance after configuration update")
+        #expect(service1 !== service2)
     }
 
-    func testStorageConfigurationProduction() {
+    @Test("Storage configuration production has correct settings")
+    func storageConfigurationProduction() {
         // When
         let config = StorageConfiguration.production
 
         // Then
-        XCTAssertEqual(config.type, .swiftData)
-        XCTAssertFalse(config.isInMemory)
+        #expect(config.type == .swiftData)
+        #expect(!config.isInMemory)
     }
 
-    func testStorageConfigurationTesting() {
+    @Test("Storage configuration testing has correct settings")
+    func storageConfigurationTesting() {
         // When
         let config = StorageConfiguration.testing
 
         // Then
-        XCTAssertEqual(config.type, .swiftData)
-        XCTAssertTrue(config.isInMemory)
+        #expect(config.type == .swiftData)
+        #expect(config.isInMemory)
     }
 }

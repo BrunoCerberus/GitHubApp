@@ -110,13 +110,13 @@ final class MockHomeService: HomeService {
         if shouldFail {
             let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock fetch error"])
             return Fail(error: error)
-                .receive(on: RunLoop.current)
+                .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
         }
 
         return Just(mockMoviesResponse)
             .setFailureType(to: Error.self)
-            .receive(on: RunLoop.current)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 
@@ -125,13 +125,13 @@ final class MockHomeService: HomeService {
         if shouldFail {
             let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock search error"])
             return Fail(error: error)
-                .receive(on: RunLoop.current)
+                .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
         }
 
         return Just(mockMoviesResponse)
             .setFailureType(to: Error.self)
-            .receive(on: RunLoop.current)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 
@@ -140,13 +140,13 @@ final class MockHomeService: HomeService {
         if shouldFail {
             let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock credits error"])
             return Fail(error: error)
-                .receive(on: RunLoop.current)
+                .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
         }
 
         return Just(mockMovieCreditsResponse)
             .setFailureType(to: Error.self)
-            .receive(on: RunLoop.current)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 
@@ -155,13 +155,13 @@ final class MockHomeService: HomeService {
         if shouldFail {
             let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock reviews error"])
             return Fail(error: error)
-                .receive(on: RunLoop.current)
+                .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
         }
 
         return Just(mockMovieReviewsResponse)
             .setFailureType(to: Error.self)
-            .receive(on: RunLoop.current)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }

@@ -4,222 +4,162 @@
 //
 
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class HomeAPITests: XCTestCase {
-    override class func setUp() {
-        super.setUp()
+struct HomeAPITests {
+    init() {
         // Ensure API key is present so HomeAPI can build URLs
-        // This must be done at class level before any tests run
         try? APIKeysProvider.setMovieAPIKey("api-key-for-tests")
     }
 
-    override func setUp() {
-        super.setUp()
-        // No need to set API key here as it's already set at class level
+    @Test("API paths contain correct endpoints and API key parameters")
+    func pathsContainApiKeyAndEndpoint() {
+        defer { try? APIKeysProvider.removeMovieAPIKey() }
+
+        #expect(HomeAPI.fetchMovies.path.contains("/movie/upcoming"))
+        #expect(HomeAPI.fetchMovies.path.contains("api_key="))
+
+        #expect(HomeAPI.searchMovies("matrix").path.contains("/search/movie"))
+        #expect(HomeAPI.searchMovies("matrix").path.contains("query=matrix"))
+        #expect(HomeAPI.searchMovies("matrix").path.contains("api_key="))
+
+        #expect(HomeAPI.fetchCredits(10).path.contains("/movie/10/credits"))
+        #expect(HomeAPI.fetchCredits(10).path.contains("api_key="))
+
+        #expect(HomeAPI.fetchReviews(10).path.contains("/movie/10/reviews"))
+        #expect(HomeAPI.fetchReviews(10).path.contains("api_key="))
     }
 
-    override func tearDown() {
-        try? APIKeysProvider.removeMovieAPIKey()
-        super.tearDown()
-    }
-
-    func testPathsContainApiKeyAndEndpoint() {
-        XCTAssertTrue(HomeAPI.fetchMovies.path.contains("/movie/upcoming"))
-        XCTAssertTrue(HomeAPI.fetchMovies.path.contains("api_key="))
-
-        XCTAssertTrue(HomeAPI.searchMovies("matrix").path.contains("/search/movie"))
-        XCTAssertTrue(HomeAPI.searchMovies("matrix").path.contains("query=matrix"))
-        XCTAssertTrue(HomeAPI.searchMovies("matrix").path.contains("api_key="))
-
-        XCTAssertTrue(HomeAPI.fetchCredits(10).path.contains("/movie/10/credits"))
-        XCTAssertTrue(HomeAPI.fetchCredits(10).path.contains("api_key="))
-
-        XCTAssertTrue(HomeAPI.fetchReviews(10).path.contains("/movie/10/reviews"))
-        XCTAssertTrue(HomeAPI.fetchReviews(10).path.contains("api_key="))
-    }
-
-    func testAPIErrorDescriptions() {
+    @Test("API error descriptions contain expected text")
+    func apiErrorDescriptions() {
         let invalid = APIError.invalidBaseURL("bad://url")
-        XCTAssertTrue(invalid.localizedDescription.contains("Invalid base URL"))
+        #expect(invalid.localizedDescription.contains("Invalid base URL"))
 
         let failed = APIError.urlConstructionFailed
-        XCTAssertTrue(failed.localizedDescription.contains("Failed to construct URL"))
+        #expect(failed.localizedDescription.contains("Failed to construct URL"))
     }
 
-    /**
-     * Test HTTP method configuration.
-     *
-     * This test verifies that all API endpoints use GET method.
-     */
-    func testHTTPMethodConfiguration() {
-        XCTAssertEqual(HomeAPI.fetchMovies.method, .GET)
-        XCTAssertEqual(HomeAPI.searchMovies("test").method, .GET)
-        XCTAssertEqual(HomeAPI.fetchCredits(1).method, .GET)
-        XCTAssertEqual(HomeAPI.fetchReviews(1).method, .GET)
+    @Test("All API endpoints use GET HTTP method")
+    func httpMethodConfiguration() {
+        #expect(HomeAPI.fetchMovies.method == .GET)
+        #expect(HomeAPI.searchMovies("test").method == .GET)
+        #expect(HomeAPI.fetchCredits(1).method == .GET)
+        #expect(HomeAPI.fetchReviews(1).method == .GET)
     }
 
-    /**
-     * Test request body configuration.
-     *
-     * This test verifies that all API endpoints have no request body
-     * since they are GET requests.
-     */
-    func testRequestBodyConfiguration() {
-        XCTAssertNil(HomeAPI.fetchMovies.task)
-        XCTAssertNil(HomeAPI.searchMovies("test").task)
-        XCTAssertNil(HomeAPI.fetchCredits(1).task)
-        XCTAssertNil(HomeAPI.fetchReviews(1).task)
+    @Test("All API endpoints have no request body for GET requests")
+    func requestBodyConfiguration() {
+        #expect(HomeAPI.fetchMovies.task == nil)
+        #expect(HomeAPI.searchMovies("test").task == nil)
+        #expect(HomeAPI.fetchCredits(1).task == nil)
+        #expect(HomeAPI.fetchReviews(1).task == nil)
     }
 
-    /**
-     * Test custom headers configuration.
-     *
-     * This test verifies that no custom headers are required
-     * for The Movie Database API.
-     */
-    func testCustomHeadersConfiguration() {
-        XCTAssertNil(HomeAPI.fetchMovies.header)
-        XCTAssertNil(HomeAPI.searchMovies("test").header)
-        XCTAssertNil(HomeAPI.fetchCredits(1).header)
-        XCTAssertNil(HomeAPI.fetchReviews(1).header)
+    @Test("No custom headers are required for The Movie Database API")
+    func customHeadersConfiguration() {
+        #expect(HomeAPI.fetchMovies.header == nil)
+        #expect(HomeAPI.searchMovies("test").header == nil)
+        #expect(HomeAPI.fetchCredits(1).header == nil)
+        #expect(HomeAPI.fetchReviews(1).header == nil)
     }
 
-    /**
-     * Test debug logging configuration.
-     *
-     * This test verifies that debug logging is enabled
-     * in development builds.
-     */
-    func testDebugLoggingConfiguration() {
+    @Test("Debug logging is configured correctly for build type")
+    func debugLoggingConfiguration() {
         #if DEBUG
-            XCTAssertTrue(HomeAPI.fetchMovies.debug)
-            XCTAssertTrue(HomeAPI.searchMovies("test").debug)
-            XCTAssertTrue(HomeAPI.fetchCredits(1).debug)
-            XCTAssertTrue(HomeAPI.fetchReviews(1).debug)
+            #expect(HomeAPI.fetchMovies.debug)
+            #expect(HomeAPI.searchMovies("test").debug)
+            #expect(HomeAPI.fetchCredits(1).debug)
+            #expect(HomeAPI.fetchReviews(1).debug)
         #else
-            XCTAssertFalse(HomeAPI.fetchMovies.debug)
-            XCTAssertFalse(HomeAPI.searchMovies("test").debug)
-            XCTAssertFalse(HomeAPI.fetchCredits(1).debug)
-            XCTAssertFalse(HomeAPI.fetchReviews(1).debug)
+            #expect(!HomeAPI.fetchMovies.debug)
+            #expect(!HomeAPI.searchMovies("test").debug)
+            #expect(!HomeAPI.fetchCredits(1).debug)
+            #expect(!HomeAPI.fetchReviews(1).debug)
         #endif
     }
 
-    /**
-     * Test URL construction with special characters in search query.
-     *
-     * This test verifies that search queries with special characters
-     * are properly URL-encoded.
-     */
-    func testURLConstructionWithSpecialCharacters() {
+    @Test("URL construction handles special characters in search query")
+    func urlConstructionWithSpecialCharacters() {
         let query = "movie & film: test"
         let searchPath = HomeAPI.searchMovies(query).path
 
-        XCTAssertTrue(searchPath.contains("/search/movie"))
-        XCTAssertTrue(searchPath.contains("api_key="))
+        #expect(searchPath.contains("/search/movie"))
+        #expect(searchPath.contains("api_key="))
         // The query should be properly URL-encoded
-        XCTAssertTrue(searchPath.contains("query="))
+        #expect(searchPath.contains("query="))
     }
 
-    /**
-     * Test URL construction with empty search query.
-     *
-     * This test verifies that empty search queries are handled
-     * correctly.
-     */
-    func testURLConstructionWithEmptySearchQuery() {
+    @Test("URL construction handles empty search query correctly")
+    func urlConstructionWithEmptySearchQuery() {
         let searchPath = HomeAPI.searchMovies("").path
 
-        XCTAssertTrue(searchPath.contains("/search/movie"))
-        XCTAssertTrue(searchPath.contains("api_key="))
-        XCTAssertTrue(searchPath.contains("query="))
+        #expect(searchPath.contains("/search/movie"))
+        #expect(searchPath.contains("api_key="))
+        #expect(searchPath.contains("query="))
     }
 
-    /**
-     * Test URL construction with numeric movie IDs.
-     *
-     * This test verifies that movie IDs are properly interpolated
-     * into the URL path.
-     */
-    func testURLConstructionWithNumericMovieIDs() {
+    @Test("URL construction properly interpolates numeric movie IDs")
+    func urlConstructionWithNumericMovieIDs() {
         let creditsPath = HomeAPI.fetchCredits(12345).path
         let reviewsPath = HomeAPI.fetchReviews(67890).path
 
-        XCTAssertTrue(creditsPath.contains("/movie/12345/credits"))
-        XCTAssertTrue(reviewsPath.contains("/movie/67890/reviews"))
-        XCTAssertTrue(creditsPath.contains("api_key="))
-        XCTAssertTrue(reviewsPath.contains("api_key="))
+        #expect(creditsPath.contains("/movie/12345/credits"))
+        #expect(reviewsPath.contains("/movie/67890/reviews"))
+        #expect(creditsPath.contains("api_key="))
+        #expect(reviewsPath.contains("api_key="))
     }
 
-    /**
-     * Test URL construction with zero movie ID.
-     *
-     * This test verifies that movie ID 0 is handled correctly.
-     */
-    func testURLConstructionWithZeroMovieID() {
+    @Test("URL construction handles movie ID zero correctly")
+    func urlConstructionWithZeroMovieID() {
         let creditsPath = HomeAPI.fetchCredits(0).path
         let reviewsPath = HomeAPI.fetchReviews(0).path
 
-        XCTAssertTrue(creditsPath.contains("/movie/0/credits"))
-        XCTAssertTrue(reviewsPath.contains("/movie/0/reviews"))
-        XCTAssertTrue(creditsPath.contains("api_key="))
-        XCTAssertTrue(reviewsPath.contains("api_key="))
+        #expect(creditsPath.contains("/movie/0/credits"))
+        #expect(reviewsPath.contains("/movie/0/reviews"))
+        #expect(creditsPath.contains("api_key="))
+        #expect(reviewsPath.contains("api_key="))
     }
 
-    /**
-     * Test URL construction with negative movie ID.
-     *
-     * This test verifies that negative movie IDs are handled correctly.
-     */
-    func testURLConstructionWithNegativeMovieID() {
+    @Test("URL construction handles negative movie IDs correctly")
+    func urlConstructionWithNegativeMovieID() {
         let creditsPath = HomeAPI.fetchCredits(-1).path
         let reviewsPath = HomeAPI.fetchReviews(-999).path
 
-        XCTAssertTrue(creditsPath.contains("/movie/-1/credits"))
-        XCTAssertTrue(reviewsPath.contains("/movie/-999/reviews"))
-        XCTAssertTrue(creditsPath.contains("api_key="))
-        XCTAssertTrue(reviewsPath.contains("api_key="))
+        #expect(creditsPath.contains("/movie/-1/credits"))
+        #expect(reviewsPath.contains("/movie/-999/reviews"))
+        #expect(creditsPath.contains("api_key="))
+        #expect(reviewsPath.contains("api_key="))
     }
 
-    /**
-     * Test that API key is injected into all endpoint URLs.
-     *
-     * This test verifies that all API endpoints include the API key
-     * as a query parameter for authentication.
-     */
-    func testAPIKeyInjectionInAllEndpoints() {
+    @Test("API key is injected into all endpoint URLs for authentication")
+    func apiKeyInjectionInAllEndpoints() {
         // Get the actual API key being used
         let actualAPIKey = APIKeysProvider.theMovieAPIKey
 
         // Verify that all endpoints contain the API key
-        XCTAssertTrue(HomeAPI.fetchMovies.path.contains("api_key="))
-        XCTAssertTrue(HomeAPI.searchMovies("test").path.contains("api_key="))
-        XCTAssertTrue(HomeAPI.fetchCredits(1).path.contains("api_key="))
-        XCTAssertTrue(HomeAPI.fetchReviews(1).path.contains("api_key="))
+        #expect(HomeAPI.fetchMovies.path.contains("api_key="))
+        #expect(HomeAPI.searchMovies("test").path.contains("api_key="))
+        #expect(HomeAPI.fetchCredits(1).path.contains("api_key="))
+        #expect(HomeAPI.fetchReviews(1).path.contains("api_key="))
 
         // Verify that the API key value is actually present in the URL
-        XCTAssertTrue(HomeAPI.fetchMovies.path.contains(actualAPIKey))
-        XCTAssertTrue(HomeAPI.searchMovies("test").path.contains(actualAPIKey))
-        XCTAssertTrue(HomeAPI.fetchCredits(1).path.contains(actualAPIKey))
-        XCTAssertTrue(HomeAPI.fetchReviews(1).path.contains(actualAPIKey))
+        #expect(HomeAPI.fetchMovies.path.contains(actualAPIKey))
+        #expect(HomeAPI.searchMovies("test").path.contains(actualAPIKey))
+        #expect(HomeAPI.fetchCredits(1).path.contains(actualAPIKey))
+        #expect(HomeAPI.fetchReviews(1).path.contains(actualAPIKey))
     }
 
-    /**
-     * Test base URL configuration.
-     *
-     * This test verifies that the base URL is properly configured
-     * for all endpoints.
-     */
-    func testBaseURLConfiguration() {
+    @Test("Base URL is properly configured for all endpoints")
+    func baseURLConfiguration() {
         let fetchPath = HomeAPI.fetchMovies.path
         let searchPath = HomeAPI.searchMovies("test").path
         let creditsPath = HomeAPI.fetchCredits(1).path
         let reviewsPath = HomeAPI.fetchReviews(1).path
 
         // All paths should start with the base URL
-        XCTAssertTrue(fetchPath.hasPrefix("https://"))
-        XCTAssertTrue(searchPath.hasPrefix("https://"))
-        XCTAssertTrue(creditsPath.hasPrefix("https://"))
-        XCTAssertTrue(reviewsPath.hasPrefix("https://"))
+        #expect(fetchPath.hasPrefix("https://"))
+        #expect(searchPath.hasPrefix("https://"))
+        #expect(creditsPath.hasPrefix("https://"))
+        #expect(reviewsPath.hasPrefix("https://"))
     }
 }

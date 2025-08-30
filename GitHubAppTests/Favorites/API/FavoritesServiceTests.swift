@@ -7,220 +7,104 @@
 
 import Combine
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class FavoritesServiceTests: XCTestCase {
-    private var sut: FavoritesService!
-    private var mockFavoritesService: MockFavoritesService!
-    private var cancellables: Set<AnyCancellable>!
-
-    override func setUp() {
-        super.setUp()
-        mockFavoritesService = MockFavoritesService()
-        sut = mockFavoritesService
-        cancellables = Set<AnyCancellable>()
-    }
-
-    override func tearDown() {
-        mockFavoritesService = nil
-        sut = nil
-        cancellables = nil
-        super.tearDown()
-    }
-
-    func testLoadLikedMoviesEmpty() {
+struct FavoritesServiceTests {
+    @Test("Loading favorite movies returns empty list when no movies are saved")
+    func loadLikedMoviesEmpty() async throws {
         // Given
-        let expectation = XCTestExpectation(description: "Load empty favorite movies")
-        var result: [Movie]?
+        let mockFavoritesService = MockFavoritesService()
+        let sut: FavoritesService = mockFavoritesService
 
         // Clear pre-populated mock data
         mockFavoritesService.setMockLikedMovies([])
 
         // When
-        sut.loadFavoriteMovies()
-            .sink(
-                receiveCompletion: { completion in
-                    if case .failure = completion {
-                        XCTFail("Expected success but got failure")
-                    }
-                },
-                receiveValue: { movies in
-                    result = movies
-                    expectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
+        let result = try await sut.loadFavoriteMovies().async()
 
         // Then
-        wait(for: [expectation], timeout: 1.0)
-        XCTAssertNotNil(result)
-        XCTAssertTrue(result?.isEmpty ?? false)
+        #expect(result.isEmpty)
     }
 
-    func testToggleMovieLikeAddMovie() {
+    @Test("Toggle movie favorite adds movie to favorites when not already liked")
+    func toggleMovieLikeAddMovie() async throws {
         // Given
         let movie = Movie(id: 999, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
-        let expectation = XCTestExpectation(description: "Toggle movie like - add")
-        var result: [Movie]?
+        let mockFavoritesService = MockFavoritesService()
+        let sut: FavoritesService = mockFavoritesService
 
         // Clear pre-populated mock data to start fresh
         mockFavoritesService.setMockLikedMovies([])
 
         // When
-        sut.toggleMovieFavorite(movie)
-            .sink(
-                receiveCompletion: { completion in
-                    if case .failure = completion {
-                        XCTFail("Expected success but got failure")
-                    }
-                },
-                receiveValue: { movies in
-                    result = movies
-                    expectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
+        let result = try await sut.toggleMovieFavorite(movie).async()
 
         // Then
-        wait(for: [expectation], timeout: 1.0)
-        XCTAssertEqual(result?.count, 1)
-        XCTAssertEqual(result?.first, movie)
+        #expect(result.count == 1)
+        #expect(result.first == movie)
     }
 
-    func testToggleMovieLikeRemoveMovie() {
+    @Test("Toggle movie favorite removes movie from favorites when already liked")
+    func toggleMovieLikeRemoveMovie() async throws {
         // Given
         let movie = Movie(id: 998, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
-        let addExpectation = XCTestExpectation(description: "Add movie")
-        let removeExpectation = XCTestExpectation(description: "Remove movie")
-        var addResult: [Movie]?
-        var removeResult: [Movie]?
+        let mockFavoritesService = MockFavoritesService()
+        let sut: FavoritesService = mockFavoritesService
 
         // Clear pre-populated mock data to start fresh
         mockFavoritesService.setMockLikedMovies([])
 
         // When - First add the movie
-        sut.toggleMovieFavorite(movie)
-            .sink(
-                receiveCompletion: { _ in },
-                receiveValue: { movies in
-                    addResult = movies
-                    addExpectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
+        let addResult = try await sut.toggleMovieFavorite(movie).async()
 
-        wait(for: [addExpectation], timeout: 1.0)
-
-        // Then add again to remove
-        sut.toggleMovieFavorite(movie)
-            .sink(
-                receiveCompletion: { _ in },
-                receiveValue: { movies in
-                    removeResult = movies
-                    removeExpectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
-
-        wait(for: [removeExpectation], timeout: 1.0)
+        // Then toggle again to remove
+        let removeResult = try await sut.toggleMovieFavorite(movie).async()
 
         // Then
-        XCTAssertEqual(addResult?.count, 1)
-        XCTAssertTrue(removeResult?.isEmpty ?? false)
+        #expect(addResult.count == 1)
+        #expect(removeResult.isEmpty)
     }
 
-    func testClearAllLikedMovies() {
+    @Test("Clear all favorite movies removes all saved favorites")
+    func clearAllLikedMovies() async throws {
         // Given
         let movie = Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
-        let addExpectation = XCTestExpectation(description: "Add movie")
-        let clearExpectation = XCTestExpectation(description: "Clear all movies")
-        let loadExpectation = XCTestExpectation(description: "Load after clear")
-        var loadResult: [Movie]?
+        let mockFavoritesService = MockFavoritesService()
+        let sut: FavoritesService = mockFavoritesService
 
         // When - First add a movie
-        sut.toggleMovieFavorite(movie)
-            .sink(
-                receiveCompletion: { _ in },
-                receiveValue: { _ in
-                    addExpectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
-
-        wait(for: [addExpectation], timeout: 1.0)
+        _ = try await sut.toggleMovieFavorite(movie).async()
 
         // Then clear all
-        sut.clearAllFavoriteMovies()
-            .sink(
-                receiveCompletion: { _ in },
-                receiveValue: { _ in
-                    clearExpectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
-
-        wait(for: [clearExpectation], timeout: 1.0)
+        _ = try await sut.clearAllFavoriteMovies().async()
 
         // Then load to verify
-        sut.loadFavoriteMovies()
-            .sink(
-                receiveCompletion: { _ in },
-                receiveValue: { movies in
-                    loadResult = movies
-                    loadExpectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
-
-        wait(for: [loadExpectation], timeout: 1.0)
+        let loadResult = try await sut.loadFavoriteMovies().async()
 
         // Then
-        XCTAssertTrue(loadResult?.isEmpty ?? false)
+        #expect(loadResult.isEmpty)
     }
 
-    func testIsMovieLiked() {
+    @Test("Is movie liked correctly identifies liked and not liked movies")
+    func isMovieLiked() async throws {
         // Given
         let movie1 = Movie(id: 997, title: "Test Movie 1", overview: "Test Overview 1", posterPath: "/test1.jpg")
         let movie2 = Movie(id: 996, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg")
-        let addExpectation = XCTestExpectation(description: "Add movie")
-        let checkExpectation = XCTestExpectation(description: "Check movie liked")
-        var isMovie1Liked: Bool?
-        var isMovie2Liked: Bool?
+        let mockFavoritesService = MockFavoritesService()
+        let sut: FavoritesService = mockFavoritesService
 
         // Clear pre-populated mock data to start fresh
         mockFavoritesService.setMockLikedMovies([])
 
         // When - Add movie1
-        sut.toggleMovieFavorite(movie1)
-            .sink(
-                receiveCompletion: { _ in },
-                receiveValue: { _ in
-                    addExpectation.fulfill()
-                }
-            )
-            .store(in: &cancellables)
-
-        wait(for: [addExpectation], timeout: 1.0)
+        _ = try await sut.toggleMovieFavorite(movie1).async()
 
         // Then check if movies are liked
-        Publishers.Zip(
-            sut.isMovieLiked(movie1),
-            sut.isMovieLiked(movie2)
-        )
-        .sink(
-            receiveCompletion: { _ in },
-            receiveValue: { movie1Liked, movie2Liked in
-                isMovie1Liked = movie1Liked
-                isMovie2Liked = movie2Liked
-                checkExpectation.fulfill()
-            }
-        )
-        .store(in: &cancellables)
-
-        wait(for: [checkExpectation], timeout: 1.0)
+        let isMovie1Liked = try await sut.isMovieLiked(movie1).async()
+        let isMovie2Liked = try await sut.isMovieLiked(movie2).async()
 
         // Then
-        XCTAssertTrue(isMovie1Liked ?? false)
-        XCTAssertFalse(isMovie2Liked ?? true)
+        #expect(isMovie1Liked)
+        #expect(!isMovie2Liked)
     }
 }
