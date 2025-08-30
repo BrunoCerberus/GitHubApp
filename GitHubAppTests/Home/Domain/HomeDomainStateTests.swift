@@ -4,22 +4,24 @@
 //
 
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class HomeDomainStateTests: XCTestCase {
-    func testInitialState() {
+struct HomeDomainStateTests {
+    @Test("Initial state has empty collections and default values")
+    func initialState() {
         // Given/When
         let state = HomeDomainState.initial
 
         // Then
-        XCTAssertTrue(state.movies.isEmpty)
-        XCTAssertTrue(state.favoriteMovies.isEmpty)
-        XCTAssertFalse(state.isLoading)
-        XCTAssertNil(state.error)
-        XCTAssertNil(state.searchQuery)
+        #expect(state.movies.isEmpty)
+        #expect(state.favoriteMovies.isEmpty)
+        #expect(!state.isLoading)
+        #expect(state.error == nil)
+        #expect(state.searchQuery == nil)
     }
 
-    func testStateEquality() {
+    @Test("State equality comparison works correctly")
+    func stateEquality() {
         // Given
         let movie1 = createMockMovie(id: 1, title: "Movie 1")
         let movie2 = createMockMovie(id: 2, title: "Movie 2")
@@ -49,12 +51,13 @@ final class HomeDomainStateTests: XCTestCase {
         )
 
         // Then
-        XCTAssertEqual(state1, state2)
-        XCTAssertNotEqual(state1, state3)
-        XCTAssertNotEqual(state1, HomeDomainState.initial)
+        #expect(state1 == state2)
+        #expect(state1 != state3)
+        #expect(state1 != HomeDomainState.initial)
     }
 
-    func testStateWithDifferentProperties() {
+    @Test("State properties work correctly with different values")
+    func stateWithDifferentProperties() {
         // Given
         let movie = createMockMovie(id: 1, title: "Test Movie")
 
@@ -91,17 +94,17 @@ final class HomeDomainStateTests: XCTestCase {
         )
 
         // Then
-        XCTAssertTrue(loadingState.isLoading)
-        XCTAssertNil(loadingState.error)
+        #expect(loadingState.isLoading)
+        #expect(loadingState.error == nil)
 
-        XCTAssertFalse(errorState.isLoading)
-        XCTAssertEqual(errorState.error, "Network error")
+        #expect(!errorState.isLoading)
+        #expect(errorState.error == "Network error")
 
-        XCTAssertEqual(successState.movies.count, 1)
-        XCTAssertEqual(successState.movies.first?.title, "Test Movie")
+        #expect(successState.movies.count == 1)
+        #expect(successState.movies.first?.title == "Test Movie")
 
-        XCTAssertEqual(searchState.searchQuery, "test query")
-        XCTAssertEqual(searchState.movies.count, 1)
+        #expect(searchState.searchQuery == "test query")
+        #expect(searchState.movies.count == 1)
     }
 
     // MARK: - Helper Methods

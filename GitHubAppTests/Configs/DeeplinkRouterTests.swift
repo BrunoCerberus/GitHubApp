@@ -5,59 +5,58 @@
 //  Created by bruno on 29/05/23.
 //
 
+import Foundation
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class DeeplinkRouterTests: XCTestCase {
-    var deeplinkManager: DeeplinkManager!
-    var deeplinkRouter: DeeplinkRouter!
-
-    override func setUp() {
-        super.setUp()
-        deeplinkManager = DeeplinkManager()
-        deeplinkRouter = DeeplinkRouter(deeplinkManager: deeplinkManager)
-    }
-
-    override func tearDown() {
-        deeplinkRouter = nil
-        deeplinkManager = nil
-        super.tearDown()
-    }
-
+struct DeeplinkRouterTests {
     // MARK: - Initialization Tests
 
-    func testInitializationWithoutCoordinator() {
+    @Test("Router can be initialized without coordinator")
+    func initializationWithoutCoordinator() {
+        let deeplinkManager = DeeplinkManager()
         let router = DeeplinkRouter(deeplinkManager: deeplinkManager)
-        XCTAssertNotNil(router)
+        #expect(router != nil)
     }
 
     // MARK: - URL Processing Tests
 
-    func testProcessInvalidURL() {
+    @Test("Processing invalid URL returns false")
+    func processInvalidURL() {
+        let deeplinkManager = DeeplinkManager()
+        let deeplinkRouter = DeeplinkRouter(deeplinkManager: deeplinkManager)
         let url = URL(string: "githubapp://invalid/123")!
         let result = deeplinkRouter.process(url: url)
 
-        XCTAssertFalse(result)
+        #expect(!result)
     }
 
-    func testProcessExternalURL() {
+    @Test("Processing external URL returns false")
+    func processExternalURL() {
+        let deeplinkManager = DeeplinkManager()
+        let deeplinkRouter = DeeplinkRouter(deeplinkManager: deeplinkManager)
         let url = URL(string: "https://example.com")!
         let result = deeplinkRouter.process(url: url)
 
-        XCTAssertFalse(result)
+        #expect(!result)
     }
 
-    func testProcessURLWithoutCoordinator() {
+    @Test("Processing URL without coordinator returns false")
+    func processURLWithoutCoordinator() {
+        let deeplinkManager = DeeplinkManager()
         let router = DeeplinkRouter(deeplinkManager: deeplinkManager)
         let url = URL(string: "githubapp://movie/123")!
         let result = router.process(url: url)
 
-        XCTAssertFalse(result)
+        #expect(!result)
     }
 
     // MARK: - Edge Cases
 
-    func testProcessMultipleURLs() {
+    @Test("Processing multiple URLs without coordinator all return false")
+    func processMultipleURLs() {
+        let deeplinkManager = DeeplinkManager()
+        let deeplinkRouter = DeeplinkRouter(deeplinkManager: deeplinkManager)
         let urls = [
             URL(string: "githubapp://movie/123")!,
             URL(string: "githubapp://movie/456")!,
@@ -66,15 +65,18 @@ final class DeeplinkRouterTests: XCTestCase {
 
         for url in urls {
             let result = deeplinkRouter.process(url: url)
-            XCTAssertFalse(result) // Should fail without coordinator
+            #expect(!result) // Should fail without coordinator
         }
     }
 
-    func testProcessURLWithLargeMovieID() {
+    @Test("Processing URL with large movie ID returns false without coordinator")
+    func processURLWithLargeMovieID() {
+        let deeplinkManager = DeeplinkManager()
+        let deeplinkRouter = DeeplinkRouter(deeplinkManager: deeplinkManager)
         let largeID = Int.max
         let url = URL(string: "githubapp://movie/\(largeID)")!
         let result = deeplinkRouter.process(url: url)
 
-        XCTAssertFalse(result) // Should fail without coordinator
+        #expect(!result) // Should fail without coordinator
     }
 }

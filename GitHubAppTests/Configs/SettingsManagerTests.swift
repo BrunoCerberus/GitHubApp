@@ -5,119 +5,134 @@
 //  Created by bruno on settings functionality.
 //
 
-import UIKit
-import XCTest
-
 @testable import GitHubApp
+import Testing
+import UIKit
 
-/**
- * Unit tests for SettingsManager functionality.
- */
-final class SettingsManagerTests: XCTestCase {
-    var settingsManager: SettingsManager!
-
-    override func setUp() {
-        super.setUp()
-
-        // Clear specific UserDefaults keys for clean testing
-        UserDefaults.standard.removeObject(forKey: "profileImageData")
-        UserDefaults.standard.removeObject(forKey: "hasRatedApp")
-        UserDefaults.standard.synchronize()
-
-        settingsManager = SettingsManager()
-    }
-
-    override func tearDown() {
-        // Clear specific UserDefaults keys after each test
-        UserDefaults.standard.removeObject(forKey: "profileImageData")
-        UserDefaults.standard.removeObject(forKey: "hasRatedApp")
-        UserDefaults.standard.synchronize()
-
-        settingsManager = nil
-        super.tearDown()
-    }
-
+struct SettingsManagerTests {
     // MARK: - Profile Image Tests
 
-    func testSaveAndLoadProfileImage() {
+    @Test("Profile image can be saved and loaded from settings")
+    func saveAndLoadProfileImage() {
+        defer { cleanup() }
+
         // Given
+        let settingsManager = createSettingsManager()
         let testImage = UIImage(systemName: "person.fill") ?? UIImage()
 
         // When
         settingsManager.saveProfileImage(testImage)
 
         // Then
-        XCTAssertNotNil(settingsManager.profileImage)
+        #expect(settingsManager.profileImage != nil)
     }
 
-    func testClearProfileImage() {
+    @Test("Profile image can be cleared from settings")
+    func clearProfileImage() {
+        defer { cleanup() }
+
         // Given
+        let settingsManager = createSettingsManager()
         let testImage = UIImage(systemName: "person.fill") ?? UIImage()
         settingsManager.saveProfileImage(testImage)
-        XCTAssertNotNil(settingsManager.profileImage)
+        #expect(settingsManager.profileImage != nil)
 
         // When
         settingsManager.clearProfileImage()
 
         // Then
-        XCTAssertNil(settingsManager.profileImage)
+        #expect(settingsManager.profileImage == nil)
     }
 
-    func testProfileImagePersistence() {
+    @Test("Profile image persists across SettingsManager instances")
+    func profileImagePersistence() {
+        defer { cleanup() }
+
         // Given
+        let settingsManager = createSettingsManager()
         let testImage = UIImage(systemName: "person.fill") ?? UIImage()
         settingsManager.saveProfileImage(testImage)
-        XCTAssertNotNil(settingsManager.profileImage)
+        #expect(settingsManager.profileImage != nil)
 
         // When
         let newSettingsManager = SettingsManager()
 
         // Then
-        XCTAssertNotNil(newSettingsManager.profileImage)
+        #expect(newSettingsManager.profileImage != nil)
     }
 
     // MARK: - App Rating Tests
 
-    func testMarkAppAsRated() {
+    @Test("App can be marked as rated in settings")
+    func markAppAsRated() {
+        defer { cleanup() }
+
         // Given
-        XCTAssertFalse(settingsManager.hasRatedApp)
+        let settingsManager = createSettingsManager()
+        #expect(!settingsManager.hasRatedApp)
 
         // When
         settingsManager.markAppAsRated()
 
         // Then
-        XCTAssertTrue(settingsManager.hasRatedApp)
+        #expect(settingsManager.hasRatedApp)
     }
 
-    func testAppRatingPersistence() {
+    @Test("App rating status persists across SettingsManager instances")
+    func appRatingPersistence() {
+        defer { cleanup() }
+
         // Given
+        let settingsManager = createSettingsManager()
         settingsManager.markAppAsRated()
-        XCTAssertTrue(settingsManager.hasRatedApp)
+        #expect(settingsManager.hasRatedApp)
 
         // When
         let newSettingsManager = SettingsManager()
 
         // Then
-        XCTAssertTrue(newSettingsManager.hasRatedApp)
+        #expect(newSettingsManager.hasRatedApp)
     }
 
     // MARK: - Clear All Settings Tests
 
-    func testClearAllSettings() {
+    @Test("Clear all settings removes all stored data")
+    func clearAllSettings() {
+        defer { cleanup() }
+
         // Given
+        let settingsManager = createSettingsManager()
         let testImage = UIImage(systemName: "person.fill") ?? UIImage()
         settingsManager.saveProfileImage(testImage)
         settingsManager.markAppAsRated()
 
         // Verify settings are set
-        XCTAssertNotNil(settingsManager.profileImage)
-        XCTAssertTrue(settingsManager.hasRatedApp)
+        #expect(settingsManager.profileImage != nil)
+        #expect(settingsManager.hasRatedApp)
 
         // When
         settingsManager.clearAllSettings()
 
         // Then
-        XCTAssertNil(settingsManager.profileImage)
-        XCTAssertFalse(settingsManager.hasRatedApp)
+        #expect(settingsManager.profileImage == nil)
+        #expect(!settingsManager.hasRatedApp)
+    }
+
+    // MARK: - Helper Methods
+
+    private func createSettingsManager() -> SettingsManager {
+        // Clear specific UserDefaults keys for clean testing
+        UserDefaults.standard.removeObject(forKey: "profileImageData")
+        UserDefaults.standard.removeObject(forKey: "hasRatedApp")
+        UserDefaults.standard.synchronize()
+
+        return SettingsManager()
+    }
+
+    private func cleanup() {
+        // Clear specific UserDefaults keys after each test
+        UserDefaults.standard.removeObject(forKey: "profileImageData")
+        UserDefaults.standard.removeObject(forKey: "hasRatedApp")
+        UserDefaults.standard.synchronize()
     }
 }
