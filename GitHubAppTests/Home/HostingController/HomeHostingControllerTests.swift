@@ -4,25 +4,34 @@
 //
 
 @testable import GitHubApp
+import Testing
 import UIKit
-import XCTest
 
-final class HomeHostingControllerTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
+@MainActor
+struct HomeHostingControllerTests {
+    private func createTestComponents() -> ServiceLocator {
+        StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.testing)
         // Ensure API key is available to avoid fatalError in HomeAPI
         try? APIKeysProvider.setMovieAPIKey("test-key")
-    }
 
-    override func tearDown() {
-        try? APIKeysProvider.removeMovieAPIKey()
-        super.tearDown()
-    }
-
-    func testViewDidLoadSetsTitleAndLargeTitlesAndRouterNav() {
-        let router = HomeNavigationRouter()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: MockHomeService())
+        return serviceLocator
+    }
+
+    private func cleanupTest() {
+        StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.production)
+        try? APIKeysProvider.removeMovieAPIKey()
+    }
+
+    @Test("ViewDidLoad sets title and large titles and router nav")
+    func viewDidLoadSetsTitleAndLargeTitlesAndRouterNav() {
+        defer { cleanupTest() }
+
+        let router = HomeNavigationRouter()
+        let serviceLocator = createTestComponents()
         let sut = HomeHostingController<HomeNavigationRouter>(navigationRouter: router, serviceLocator: serviceLocator)
         let nav = UINavigationController(rootViewController: sut)
 
@@ -30,25 +39,29 @@ final class HomeHostingControllerTests: XCTestCase {
         _ = sut.view
         sut.viewDidLoad()
 
-        XCTAssertEqual(sut.title, "Upcoming Movies")
-        XCTAssertTrue(nav.navigationBar.prefersLargeTitles)
-        XCTAssertTrue(router.navigation === nav)
+        #expect(sut.title == "Upcoming Movies")
+        #expect(nav.navigationBar.prefersLargeTitles)
+        #expect(router.navigation === nav)
     }
 
-    func testInitialization() {
+    @Test("Initialization")
+    func initialization() {
+        defer { cleanupTest() }
+
         let router = HomeNavigationRouter()
-        let serviceLocator = ServiceLocator()
-        serviceLocator.register(HomeService.self, instance: MockHomeService())
+        let serviceLocator = createTestComponents()
         let sut = HomeHostingController<HomeNavigationRouter>(navigationRouter: router, serviceLocator: serviceLocator)
 
-        XCTAssertTrue(sut.router === router)
-        XCTAssertNotNil(sut.view)
+        #expect(sut.router === router)
+        #expect(sut.view != nil)
     }
 
-    @MainActor
-    func testInitWithCoderReturnsNil() {
+    @Test("Init with coder returns nil")
+    func initWithCoderReturnsNil() {
+        defer { cleanupTest() }
+
         let sut = HomeHostingController<HomeNavigationRouter>(coder: NSCoder())
 
-        XCTAssertNil(sut)
+        #expect(sut == nil)
     }
 }

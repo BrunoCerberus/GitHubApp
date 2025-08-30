@@ -5,52 +5,74 @@
 
 @testable import GitHubApp
 import SwiftUI
-import XCTest
+import Testing
 
-final class FavoritesMoviesViewTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
+@MainActor
+struct FavoritesMoviesViewTests {
+    private func createTestComponents() -> (ServiceLocator, MockFavoritesService) {
         StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.testing)
         try? APIKeysProvider.setMovieAPIKey("ui-key")
+
+        let mockService = MockFavoritesService()
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(FavoritesService.self, instance: mockService)
+        return (serviceLocator, mockService)
     }
 
-    override func tearDown() {
+    private func cleanupTest() {
         StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.production)
         try? APIKeysProvider.removeMovieAPIKey()
-        super.tearDown()
     }
 
-    func testEmptyStateRenders() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Empty state renders")
+    func emptyStateRenders() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         let view = FavoritesMoviesView(viewModel: vm)
         let host = UIHostingController(rootView: view)
-        XCTAssertNotNil(host.view)
+        #expect(host.view != nil)
     }
 
-    func testLikedMoviesListRenders() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Liked movies list renders")
+    func likedMoviesListRenders() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
         let view = FavoritesMoviesView(viewModel: vm)
         let host = UIHostingController(rootView: view)
-        XCTAssertNotNil(host.view)
+        #expect(host.view != nil)
     }
 
-    func testMultipleLikedMoviesListRenders() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Multiple liked movies list renders")
+    func multipleLikedMoviesListRenders() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie 1", overview: "Test Overview 1", posterPath: "/test1.jpg"),
             Movie(id: 2, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg"),
         ])
         let view = FavoritesMoviesView(viewModel: vm)
         let host = UIHostingController(rootView: view)
-        XCTAssertNotNil(host.view)
+        #expect(host.view != nil)
     }
 
-    func testNavigationDestinationConfiguration() {
+    @Test("Navigation destination configuration")
+    func navigationDestinationConfiguration() {
+        defer { cleanupTest() }
+
         // Given
-        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+        let (serviceLocator, _) = createTestComponents()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -61,13 +83,17 @@ final class FavoritesMoviesViewTests: XCTestCase {
         _ = testView.wrappedViewController
 
         // Then - verify that the view is properly configured
-        XCTAssertNotNil(testView)
-        XCTAssertEqual(testViewModel.favoriteMovies.count, 1)
+        #expect(testView != nil)
+        #expect(testViewModel.favoriteMovies.count == 1)
     }
 
-    func testOnAppearBehavior() {
+    @Test("On appear behavior")
+    func onAppearBehavior() {
+        defer { cleanupTest() }
+
         // Given
-        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+        let (serviceLocator, _) = createTestComponents()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -78,12 +104,16 @@ final class FavoritesMoviesViewTests: XCTestCase {
         _ = testView.wrappedViewController
 
         // Then - verify that the view is properly configured
-        XCTAssertNotNil(testView)
-        XCTAssertEqual(testViewModel.favoriteMovies.count, 1)
+        #expect(testView != nil)
+        #expect(testViewModel.favoriteMovies.count == 1)
     }
 
-    func testAsyncImageViewerRendering() {
-        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Async image viewer rendering")
+    func asyncImageViewerRendering() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -94,12 +124,16 @@ final class FavoritesMoviesViewTests: XCTestCase {
         _ = testView.wrappedViewController
 
         // Verify that the view is properly configured
-        XCTAssertNotNil(testView)
-        XCTAssertEqual(testViewModel.favoriteMovies.count, 1)
+        #expect(testView != nil)
+        #expect(testViewModel.favoriteMovies.count == 1)
     }
 
-    func testButtonStylingConfiguration() {
-        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Button styling configuration")
+    func buttonStylingConfiguration() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -110,12 +144,16 @@ final class FavoritesMoviesViewTests: XCTestCase {
         _ = testView.wrappedViewController
 
         // Verify that the view is properly configured
-        XCTAssertNotNil(testView)
-        XCTAssertEqual(testViewModel.favoriteMovies.count, 1)
+        #expect(testView != nil)
+        #expect(testViewModel.favoriteMovies.count == 1)
     }
 
-    func testScrollIndicatorsHiddenConfiguration() {
-        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Scroll indicators hidden configuration")
+    func scrollIndicatorsHiddenConfiguration() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
             Movie(id: 2, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg"),
@@ -127,12 +165,16 @@ final class FavoritesMoviesViewTests: XCTestCase {
         _ = testView.wrappedViewController
 
         // Verify that the view is properly configured
-        XCTAssertNotNil(testView)
-        XCTAssertEqual(testViewModel.favoriteMovies.count, 2)
+        #expect(testView != nil)
+        #expect(testViewModel.favoriteMovies.count == 2)
     }
 
-    func testTextStylingAndConfiguration() {
-        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Text styling and configuration")
+    func textStylingAndConfiguration() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -143,12 +185,16 @@ final class FavoritesMoviesViewTests: XCTestCase {
         _ = testView.wrappedViewController
 
         // Verify that the view is properly configured
-        XCTAssertNotNil(testView)
-        XCTAssertEqual(testViewModel.favoriteMovies.count, 1)
+        #expect(testView != nil)
+        #expect(testViewModel.favoriteMovies.count == 1)
     }
 
-    func testVStackAlignmentConfiguration() {
-        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("VStack alignment configuration")
+    func vstackAlignmentConfiguration() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -159,12 +205,16 @@ final class FavoritesMoviesViewTests: XCTestCase {
         _ = testView.wrappedViewController
 
         // Verify that the view is properly configured
-        XCTAssertNotNil(testView)
-        XCTAssertEqual(testViewModel.favoriteMovies.count, 1)
+        #expect(testView != nil)
+        #expect(testViewModel.favoriteMovies.count == 1)
     }
 
-    func testHStackLayoutConfiguration() {
-        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("HStack layout configuration")
+    func hstackLayoutConfiguration() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -175,12 +225,16 @@ final class FavoritesMoviesViewTests: XCTestCase {
         _ = testView.wrappedViewController
 
         // Verify that the view is properly configured
-        XCTAssertNotNil(testView)
-        XCTAssertEqual(testViewModel.favoriteMovies.count, 1)
+        #expect(testView != nil)
+        #expect(testViewModel.favoriteMovies.count == 1)
     }
 
-    func testFrameConfigurationForAsyncImageViewer() {
-        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Frame configuration for async image viewer")
+    func frameConfigurationForAsyncImageViewer() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -191,13 +245,17 @@ final class FavoritesMoviesViewTests: XCTestCase {
         _ = testView.wrappedViewController
 
         // Verify that the view is properly configured
-        XCTAssertNotNil(testView)
-        XCTAssertEqual(testViewModel.favoriteMovies.count, 1)
+        #expect(testView != nil)
+        #expect(testViewModel.favoriteMovies.count == 1)
     }
 
-    func testLineLimitConfigurationForOverviewText() {
+    @Test("Line limit configuration for overview text")
+    func lineLimitConfigurationForOverviewText() {
+        defer { cleanupTest() }
+
         // Given
-        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+        let (serviceLocator, _) = createTestComponents()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -208,12 +266,16 @@ final class FavoritesMoviesViewTests: XCTestCase {
         _ = testView.wrappedViewController
 
         // Then - verify that the view is properly configured
-        XCTAssertNotNil(testView)
-        XCTAssertEqual(testViewModel.favoriteMovies.count, 1)
+        #expect(testView != nil)
+        #expect(testViewModel.favoriteMovies.count == 1)
     }
 
-    func testSpacerConfiguration() {
-        let testViewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Spacer configuration")
+    func spacerConfiguration() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let testViewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         testViewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -224,35 +286,47 @@ final class FavoritesMoviesViewTests: XCTestCase {
         _ = testView.wrappedViewController
 
         // Verify that the view is properly configured
-        XCTAssertNotNil(testView)
-        XCTAssertEqual(testViewModel.favoriteMovies.count, 1)
+        #expect(testView != nil)
+        #expect(testViewModel.favoriteMovies.count == 1)
     }
 
-    func testPreviewConfiguration() {
+    @Test("Preview configuration")
+    func previewConfiguration() {
+        defer { cleanupTest() }
+
         // When - create preview view
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+        let (serviceLocator, _) = createTestComponents()
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         let previewView = FavoritesMoviesView(viewModel: viewModel)
 
         // Then - verify that the preview view is created
-        XCTAssertNotNil(previewView)
+        #expect(previewView != nil)
     }
 
     // MARK: - Enhanced Coverage Tests
 
-    func testEmptyStateTextElements() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Empty state text elements")
+    func emptyStateTextElements() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         let view = FavoritesMoviesView(viewModel: vm)
 
         // Test that empty state text elements are properly configured
         let host = UIHostingController(rootView: view)
-        XCTAssertNotNil(host.view)
+        #expect(host.view != nil)
 
         // Verify empty state is shown when no movies
-        XCTAssertTrue(vm.favoriteMovies.isEmpty)
+        #expect(vm.favoriteMovies.isEmpty)
     }
 
-    func testMovieListButtonConfiguration() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Movie list button configuration")
+    func movieListButtonConfiguration() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -261,12 +335,16 @@ final class FavoritesMoviesViewTests: XCTestCase {
         let host = UIHostingController(rootView: view)
 
         // Test that movie list buttons are properly configured
-        XCTAssertNotNil(host.view)
-        XCTAssertEqual(vm.favoriteMovies.count, 1)
+        #expect(host.view != nil)
+        #expect(vm.favoriteMovies.count == 1)
     }
 
-    func testMovieDetailsNavigationSetup() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Movie details navigation setup")
+    func movieDetailsNavigationSetup() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -275,11 +353,15 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
         // Test that navigation destination is properly configured
         _ = view.wrappedViewController
-        XCTAssertNotNil(view)
+        #expect(view != nil)
     }
 
-    func testLikeButtonConfiguration() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Like button configuration")
+    func likeButtonConfiguration() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -288,12 +370,16 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
         // Test that like button is properly configured
         _ = view.wrappedViewController
-        XCTAssertNotNil(view)
-        XCTAssertTrue(vm.isFavorited(movie: vm.favoriteMovies[0]))
+        #expect(view != nil)
+        #expect(vm.isFavorited(movie: vm.favoriteMovies[0]))
     }
 
-    func testMovieTitleAndOverviewDisplay() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Movie title and overview display")
+    func movieTitleAndOverviewDisplay() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         let testMovie = Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
         vm.setFavoriteMoviesForTesting([testMovie])
 
@@ -301,13 +387,17 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
         // Test that movie title and overview are properly displayed
         _ = view.wrappedViewController
-        XCTAssertNotNil(view)
-        XCTAssertEqual(vm.favoriteMovies[0].title, "Test Movie")
-        XCTAssertEqual(vm.favoriteMovies[0].overview, "Test Overview")
+        #expect(view != nil)
+        #expect(vm.favoriteMovies[0].title == "Test Movie")
+        #expect(vm.favoriteMovies[0].overview == "Test Overview")
     }
 
-    func testPosterURLConfiguration() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Poster URL configuration")
+    func posterURLConfiguration() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         let testMovie = Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
         vm.setFavoriteMoviesForTesting([testMovie])
 
@@ -315,21 +405,29 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
         // Test that poster URL is properly configured
         _ = view.wrappedViewController
-        XCTAssertNotNil(view)
-        XCTAssertNotNil(testMovie.posterURL)
+        #expect(view != nil)
+        #expect(testMovie.posterURL != nil)
     }
 
-    func testNavigationStackConfiguration() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Navigation stack configuration")
+    func navigationStackConfiguration() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         let view = FavoritesMoviesView(viewModel: vm)
 
         // Test that NavigationStack is properly configured
         _ = view.wrappedViewController
-        XCTAssertNotNil(view)
+        #expect(view != nil)
     }
 
-    func testListConfigurationWithMultipleMovies() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("List configuration with multiple movies")
+    func listConfigurationWithMultipleMovies() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie 1", overview: "Test Overview 1", posterPath: "/test1.jpg"),
             Movie(id: 2, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg"),
@@ -340,12 +438,16 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
         // Test that list handles multiple movies properly
         _ = view.wrappedViewController
-        XCTAssertNotNil(view)
-        XCTAssertEqual(vm.favoriteMovies.count, 3)
+        #expect(view != nil)
+        #expect(vm.favoriteMovies.count == 3)
     }
 
-    func testPlainButtonStyleConfiguration() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Plain button style configuration")
+    func plainButtonStyleConfiguration() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -354,11 +456,15 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
         // Test that PlainButtonStyle is properly configured
         _ = view.wrappedViewController
-        XCTAssertNotNil(view)
+        #expect(view != nil)
     }
 
-    func testHeartIconConfiguration() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Heart icon configuration")
+    func heartIconConfiguration() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -367,12 +473,16 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
         // Test that heart icon is properly configured
         _ = view.wrappedViewController
-        XCTAssertNotNil(view)
-        XCTAssertTrue(vm.isFavorited(movie: vm.favoriteMovies[0]))
+        #expect(view != nil)
+        #expect(vm.isFavorited(movie: vm.favoriteMovies[0]))
     }
 
-    func testProgressViewPlaceholder() {
-        let vm = FavoritesMoviesViewModel(serviceLocator: createTestServiceLocator())
+    @Test("Progress view placeholder")
+    func progressViewPlaceholder() {
+        defer { cleanupTest() }
+
+        let (serviceLocator, _) = createTestComponents()
+        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         vm.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
@@ -381,13 +491,7 @@ final class FavoritesMoviesViewTests: XCTestCase {
 
         // Test that ProgressView placeholder is properly configured
         _ = view.wrappedViewController
-        XCTAssertNotNil(view)
-    }
-
-    private func createTestServiceLocator() -> ServiceLocator {
-        let serviceLocator = ServiceLocator()
-        serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())
-        return serviceLocator
+        #expect(view != nil)
     }
 }
 

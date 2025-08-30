@@ -7,39 +7,37 @@
 
 @testable import GitHubApp
 import SwiftUI
-import XCTest
+import Testing
 
 /**
  * Tests specifically targeting HomeView.handleSearchQueryChange method with 0% coverage.
  */
 @MainActor
-final class HomeViewSearchExecutionTests: XCTestCase {
-    var router: HomeNavigationRouter!
-    var mockService: MockHomeService!
-    var viewModel: HomeViewModel!
+struct HomeViewSearchExecutionTests {
+    private func createTestComponents() -> (HomeNavigationRouter, MockHomeService, HomeViewModel) {
+        StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.testing)
 
-    private func createServiceLocator() -> ServiceLocator {
+        let router = HomeNavigationRouter()
+        let mockService = MockHomeService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
-        return serviceLocator
+        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+
+        return (router, mockService, viewModel)
     }
 
-    override func setUp() {
-        super.setUp()
+    private func cleanupTest() {
         StorageServiceFactory.shared.resetCache()
-
-        router = HomeNavigationRouter()
-        mockService = MockHomeService()
-        viewModel = HomeViewModel(serviceLocator: createServiceLocator())
+        StorageServiceFactory.shared.updateConfiguration(.production)
     }
 
-    override func tearDown() {
-        StorageServiceFactory.shared.resetCache()
-        super.tearDown()
-    }
+    @Test("Home view search query change with empty string")
+    func homeViewSearchQueryChangeWithEmptyString() {
+        defer { cleanupTest() }
 
-    func testHomeViewSearchQueryChangeWithEmptyString() {
         // Given
+        let (router, _, viewModel) = createTestComponents()
         let view = HomeView(router: router, viewModel: viewModel)
 
         // When - Create a mirror to access private method indirectly
@@ -53,11 +51,15 @@ final class HomeViewSearchExecutionTests: XCTestCase {
         // This will exercise the search handling logic
 
         // Then - The method should execute without error
-        XCTAssertNotNil(view)
+        #expect(view != nil)
     }
 
-    func testHomeViewSearchQueryChangeWithNonEmptyString() {
+    @Test("Home view search query change with non-empty string")
+    func homeViewSearchQueryChangeWithNonEmptyString() {
+        defer { cleanupTest() }
+
         // Given
+        let (router, _, viewModel) = createTestComponents()
         let view = HomeView(router: router, viewModel: viewModel)
         let hostingController = UIHostingController(rootView: view)
 
@@ -68,11 +70,15 @@ final class HomeViewSearchExecutionTests: XCTestCase {
         // The actual search change happens through SwiftUI's onChange modifier
 
         // Then - The method should execute without error
-        XCTAssertNotNil(view)
+        #expect(view != nil)
     }
 
-    func testHomeViewOnChangeModifier() async {
+    @Test("Home view onChange modifier")
+    func homeViewOnChangeModifier() async throws {
+        defer { cleanupTest() }
+
         // Given
+        let (router, _, viewModel) = createTestComponents()
         let view = HomeView(router: router, viewModel: viewModel)
         let hostingController = UIHostingController(rootView: view)
 
@@ -81,14 +87,18 @@ final class HomeViewSearchExecutionTests: XCTestCase {
 
         // The onChange modifier should be configured on the view
         // Wait for any async operations to complete
-        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
 
         // Then - View should be properly configured
-        XCTAssertNotNil(view)
+        #expect(view != nil)
     }
 
-    func testHomeViewSearchDebouncing() async {
+    @Test("Home view search debouncing")
+    func homeViewSearchDebouncing() async throws {
+        defer { cleanupTest() }
+
         // Given
+        let (router, _, viewModel) = createTestComponents()
         let view = HomeView(router: router, viewModel: viewModel)
         let hostingController = UIHostingController(rootView: view)
 
@@ -99,14 +109,18 @@ final class HomeViewSearchExecutionTests: XCTestCase {
         // The handleSearchQueryChange method uses DispatchQueue.main.asyncAfter for debouncing
 
         // Wait for debouncing delay
-        try? await Task.sleep(nanoseconds: 400_000_000) // 0.4 seconds (longer than 0.3s debounce)
+        try await Task.sleep(nanoseconds: 400_000_000) // 0.4 seconds (longer than 0.3s debounce)
 
         // Then - Search should be handled properly
-        XCTAssertNotNil(view)
+        #expect(view != nil)
     }
 
-    func testHomeViewSearchWorkItemCancellation() {
+    @Test("Home view search work item cancellation")
+    func homeViewSearchWorkItemCancellation() {
+        defer { cleanupTest() }
+
         // Given
+        let (router, _, viewModel) = createTestComponents()
         let view = HomeView(router: router, viewModel: viewModel)
         let hostingController = UIHostingController(rootView: view)
 
@@ -117,6 +131,6 @@ final class HomeViewSearchExecutionTests: XCTestCase {
         // This exercises the searchWorkItem?.cancel() logic
 
         // Then - Should handle cancellation properly
-        XCTAssertNotNil(view)
+        #expect(view != nil)
     }
 }

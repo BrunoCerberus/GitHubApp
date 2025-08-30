@@ -7,84 +7,105 @@
 
 @testable import GitHubApp
 import SwiftUI
-import XCTest
+import Testing
 
 /**
  * Tests for HomeView search functionality that was previously uncovered.
  */
 @MainActor
-final class HomeViewSearchTests: XCTestCase {
-    var router: HomeNavigationRouter!
-    var mockService: MockHomeService!
-    var viewModel: HomeViewModel!
-
-    override func setUp() {
-        super.setUp()
+struct HomeViewSearchTests {
+    private func createTestComponents() -> (HomeNavigationRouter, MockHomeService, HomeViewModel) {
         StorageServiceFactory.shared.resetCache()
+        StorageServiceFactory.shared.updateConfiguration(.testing)
 
-        router = HomeNavigationRouter()
-        mockService = MockHomeService()
+        let router = HomeNavigationRouter()
+        let mockService = MockHomeService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
-        viewModel = HomeViewModel(serviceLocator: serviceLocator)
+        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+
+        return (router, mockService, viewModel)
     }
 
-    override func tearDown() {
+    private func cleanupTest() {
         StorageServiceFactory.shared.resetCache()
-        super.tearDown()
+        StorageServiceFactory.shared.updateConfiguration(.production)
     }
 
-    func testHomeViewWithSearchText() {
+    @Test("Home view with search text")
+    func homeViewWithSearchText() {
+        defer { cleanupTest() }
+
         // Given
+        let (router, _, viewModel) = createTestComponents()
         let view = HomeView(router: router, viewModel: viewModel)
 
         // When - Create the view to test initialization
         let hostingController = UIHostingController(rootView: view)
 
         // Then - Verify view was created successfully
-        XCTAssertNotNil(hostingController)
-        XCTAssertNotNil(hostingController.rootView)
+        #expect(hostingController != nil)
+        #expect(hostingController.rootView != nil)
     }
 
-    func testHomeViewInitializationWithDefaultViewModel() {
+    @Test("Home view initialization with default view model")
+    func homeViewInitializationWithDefaultViewModel() {
+        defer { cleanupTest() }
+
         // Given - Initialize without providing a viewModel
+        StorageServiceFactory.shared.updateConfiguration(.testing)
         let defaultServiceLocator = ServiceLocator()
         defaultServiceLocator.register(HomeService.self, instance: MockHomeService())
         let defaultViewModel = HomeViewModel(serviceLocator: defaultServiceLocator)
+        let router = HomeNavigationRouter()
         let view = HomeView(router: router, viewModel: defaultViewModel)
 
         // When - Create hosting controller
         let hostingController = UIHostingController(rootView: view)
 
         // Then - Should create successfully with default viewModel
-        XCTAssertNotNil(hostingController)
+        #expect(hostingController != nil)
     }
 
-    func testHomeViewBodyRendersCorrectly() {
+    @Test("Home view body renders correctly")
+    func homeViewBodyRendersCorrectly() {
+        defer { cleanupTest() }
+
         // Given
+        let (router, _, viewModel) = createTestComponents()
         let view = HomeView(router: router, viewModel: viewModel)
+
         // When - Embed the view in a UIHostingController to ensure proper SwiftUI View lifecycle
         let hostingController = UIHostingController(rootView: view)
         // Trigger view appearance
         _ = hostingController.view
+
         // Then - Verify the hosting controller and its root view exist
-        XCTAssertNotNil(hostingController)
-        XCTAssertNotNil(hostingController.rootView)
+        #expect(hostingController != nil)
+        #expect(hostingController.rootView != nil)
     }
 
-    func testHomeViewWithLoadingState() {
+    @Test("Home view with loading state")
+    func homeViewWithLoadingState() {
+        defer { cleanupTest() }
+
         // Given
+        let (router, _, viewModel) = createTestComponents()
         let view = HomeView(router: router, viewModel: viewModel)
 
         // When - Force loading state by creating hosting controller
         let hostingController = UIHostingController(rootView: view)
 
         // Then - Should handle loading state properly
-        XCTAssertNotNil(hostingController)
+        #expect(hostingController != nil)
     }
 
-    func testHomeViewWithErrorState() async {
+    @Test("Home view with error state")
+    func homeViewWithErrorState() async {
+        defer { cleanupTest() }
+
         // Given
+        let (router, _, viewModel) = createTestComponents()
         let view = HomeView(router: router, viewModel: viewModel)
         let hostingController = UIHostingController(rootView: view)
 
@@ -95,11 +116,15 @@ final class HomeViewSearchTests: XCTestCase {
         }
 
         // Then - Should handle error states properly
-        XCTAssertNotNil(hostingController)
+        #expect(hostingController != nil)
     }
 
-    func testHomeViewWithSuccessState() async {
+    @Test("Home view with success state")
+    func homeViewWithSuccessState() async throws {
+        defer { cleanupTest() }
+
         // Given
+        let (router, _, viewModel) = createTestComponents()
         let view = HomeView(router: router, viewModel: viewModel)
         let hostingController = UIHostingController(rootView: view)
 
@@ -107,9 +132,9 @@ final class HomeViewSearchTests: XCTestCase {
         viewModel.fetchData()
 
         // Wait for state to settle
-        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
 
         // Then - Should handle success state
-        XCTAssertNotNil(hostingController)
+        #expect(hostingController != nil)
     }
 }
