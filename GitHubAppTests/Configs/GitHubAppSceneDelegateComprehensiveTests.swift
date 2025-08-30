@@ -6,63 +6,60 @@
 //
 
 @testable import GitHubApp
+import Testing
 import UIKit
-import XCTest
 
 /**
  * Simple tests for GitHubAppSceneDelegate to improve coverage.
  */
-final class GitHubAppSceneDelegateComprehensiveTests: XCTestCase {
-    var sceneDelegate: GitHubAppSceneDelegate!
-
-    override func setUp() {
-        super.setUp()
-        sceneDelegate = GitHubAppSceneDelegate()
-    }
-
-    override func tearDown() {
-        sceneDelegate = nil
-        super.tearDown()
+struct GitHubAppSceneDelegateComprehensiveTests {
+    private func createSceneDelegate() -> GitHubAppSceneDelegate {
+        GitHubAppSceneDelegate()
     }
 
     // MARK: - Basic Tests
 
-    func testSceneDelegateInitialization() {
+    @Test("Scene delegate initialization")
+    func sceneDelegateInitialization() {
         // Given
         let newSceneDelegate = GitHubAppSceneDelegate()
 
         // When & Then - Should initialize successfully
-        XCTAssertNotNil(newSceneDelegate)
-        XCTAssertNil(newSceneDelegate.window)
+        #expect(newSceneDelegate != nil)
+        #expect(newSceneDelegate.window == nil)
     }
 
-    func testSceneDelegateHasURLHandlingMethods() {
+    @Test("Scene delegate has URL handling methods")
+    func sceneDelegateHasURLHandlingMethods() {
         // Given - SceneDelegate should respond to URL handling methods
+        let sceneDelegate = createSceneDelegate()
 
         // When - Check if methods exist and can be called
         let respondsToOpenURL = sceneDelegate.responds(to: #selector(UIWindowSceneDelegate.scene(_:openURLContexts:)))
         let respondsToContinue = sceneDelegate.responds(to: #selector(UISceneDelegate.scene(_:continue:)))
 
         // Then - Methods should exist
-        XCTAssertTrue(respondsToOpenURL)
-        XCTAssertTrue(respondsToContinue)
+        #expect(respondsToOpenURL == true)
+        #expect(respondsToContinue == true)
     }
 
-    func testWindowPropertyManagement() {
+    @Test("Window property management")
+    func windowPropertyManagement() {
         // Given
         let newSceneDelegate = GitHubAppSceneDelegate()
 
         // When - Initially window should be nil
-        XCTAssertNil(newSceneDelegate.window)
+        #expect(newSceneDelegate.window == nil)
 
         // Then - Should be able to set window
         let window = UIWindow()
         newSceneDelegate.window = window
-        XCTAssertNotNil(newSceneDelegate.window)
-        XCTAssertEqual(newSceneDelegate.window, window)
+        #expect(newSceneDelegate.window != nil)
+        #expect(newSceneDelegate.window == window)
     }
 
-    func testSceneDelegateWithMultipleInitializations() {
+    @Test("Scene delegate with multiple initializations")
+    func sceneDelegateWithMultipleInitializations() {
         // Given - Test multiple scene delegate instances
         let delegates = [
             GitHubAppSceneDelegate(),
@@ -72,50 +69,54 @@ final class GitHubAppSceneDelegateComprehensiveTests: XCTestCase {
 
         // When & Then - All should initialize properly
         for delegate in delegates {
-            XCTAssertNotNil(delegate)
-            XCTAssertNil(delegate.window)
+            #expect(delegate != nil)
+            #expect(delegate.window == nil)
         }
     }
 
-    func testDeeplinkManagerValidation() {
+    @Test("Deeplink manager validation")
+    func deeplinkManagerValidation() {
         // Given
         let deeplinkManager = DeeplinkManager()
         let validURL = URL(string: "githubapp://movie/123")!
         let invalidURL = URL(string: "https://google.com")!
 
         // When & Then
-        XCTAssertTrue(deeplinkManager.isValidDeeplink(url: validURL))
-        XCTAssertFalse(deeplinkManager.isValidDeeplink(url: invalidURL))
+        #expect(deeplinkManager.isValidDeeplink(url: validURL) == true)
+        #expect(deeplinkManager.isValidDeeplink(url: invalidURL) == false)
     }
 
-    func testServiceLocatorInitialization() {
+    @Test("Service locator initialization")
+    func serviceLocatorInitialization() {
         // Given - SceneDelegate should initialize with a service locator
         let newSceneDelegate = GitHubAppSceneDelegate()
 
         // When & Then - Should initialize successfully
-        XCTAssertNotNil(newSceneDelegate)
+        #expect(newSceneDelegate != nil)
     }
 
-    func testUserActivityCreation() {
+    @Test("User activity creation")
+    func userActivityCreation() {
         // Given
         let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
         userActivity.webpageURL = URL(string: "https://movieapp.com/movie/789")
 
         // When
-        XCTAssertNotNil(userActivity)
+        #expect(userActivity != nil)
 
         // Then - Should create user activity properly
-        XCTAssertEqual(userActivity.activityType, NSUserActivityTypeBrowsingWeb)
-        XCTAssertNotNil(userActivity.webpageURL)
+        #expect(userActivity.activityType == NSUserActivityTypeBrowsingWeb)
+        #expect(userActivity.webpageURL != nil)
     }
 
-    func testUserActivityWithNonBrowsingType() {
+    @Test("User activity with non-browsing type")
+    func userActivityWithNonBrowsingType() {
         // Given
         let userActivity = NSUserActivity(activityType: "com.custom.activity")
         userActivity.webpageURL = URL(string: "https://movieapp.com/movie/123")
 
         // When & Then
-        XCTAssertNotEqual(userActivity.activityType, NSUserActivityTypeBrowsingWeb)
-        XCTAssertNotNil(userActivity.webpageURL)
+        #expect(userActivity.activityType != NSUserActivityTypeBrowsingWeb)
+        #expect(userActivity.webpageURL != nil)
     }
 }

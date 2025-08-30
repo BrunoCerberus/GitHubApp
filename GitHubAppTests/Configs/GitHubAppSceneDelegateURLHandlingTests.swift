@@ -6,104 +6,104 @@
 //
 
 @testable import GitHubApp
+import Testing
 import UIKit
-import XCTest
 
 /**
  * Tests for GitHubAppSceneDelegate URL handling methods to improve test coverage.
  * These tests focus on verifying the methods exist and basic functionality.
  */
-final class GitHubAppSceneDelegateURLHandlingTests: XCTestCase {
-    var sceneDelegate: GitHubAppSceneDelegate!
-
-    override func setUp() {
-        super.setUp()
-        sceneDelegate = GitHubAppSceneDelegate()
-    }
-
-    override func tearDown() {
-        sceneDelegate = nil
-        super.tearDown()
+struct GitHubAppSceneDelegateURLHandlingTests {
+    private func createSceneDelegate() -> GitHubAppSceneDelegate {
+        GitHubAppSceneDelegate()
     }
 
     // MARK: - URL Context Tests
 
-    func testSceneDelegateHasURLHandlingMethods() {
+    @Test("Scene delegate has URL handling methods")
+    func sceneDelegateHasURLHandlingMethods() {
         // Given - SceneDelegate should respond to URL handling methods
+        let sceneDelegate = createSceneDelegate()
 
         // When - Check if methods exist and can be called
         let respondsToOpenURL = sceneDelegate.responds(to: #selector(UIWindowSceneDelegate.scene(_:openURLContexts:)))
         let respondsToContinue = sceneDelegate.responds(to: #selector(UISceneDelegate.scene(_:continue:)))
 
         // Then - Methods should exist
-        XCTAssertTrue(respondsToOpenURL)
-        XCTAssertTrue(respondsToContinue)
+        #expect(respondsToOpenURL == true)
+        #expect(respondsToContinue == true)
     }
 
-    func testSceneDelegateInitialization() {
+    @Test("Scene delegate initialization")
+    func sceneDelegateInitialization() {
         // Given
         let newSceneDelegate = GitHubAppSceneDelegate()
 
         // When - Initialize
-        XCTAssertNotNil(newSceneDelegate)
+        #expect(newSceneDelegate != nil)
 
         // Then - Should have proper initial state
-        XCTAssertNil(newSceneDelegate.window)
+        #expect(newSceneDelegate.window == nil)
     }
 
     // MARK: - URL Activity Tests
 
-    func testUserActivityCreation() {
+    @Test("User activity creation")
+    func userActivityCreation() {
         // Given
         let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
         userActivity.webpageURL = URL(string: "https://movieapp.com/movie/789")
 
         // When
-        XCTAssertNotNil(userActivity)
+        #expect(userActivity != nil)
 
         // Then - Should create user activity properly
-        XCTAssertEqual(userActivity.activityType, NSUserActivityTypeBrowsingWeb)
-        XCTAssertNotNil(userActivity.webpageURL)
+        #expect(userActivity.activityType == NSUserActivityTypeBrowsingWeb)
+        #expect(userActivity.webpageURL != nil)
     }
 
-    func testUserActivityWithNonBrowsingType() {
+    @Test("User activity with non-browsing type")
+    func userActivityWithNonBrowsingType() {
         // Given
         let userActivity = NSUserActivity(activityType: "com.custom.activity")
         userActivity.webpageURL = URL(string: "https://movieapp.com/movie/123")
 
         // When & Then
-        XCTAssertNotEqual(userActivity.activityType, NSUserActivityTypeBrowsingWeb)
-        XCTAssertNotNil(userActivity.webpageURL)
+        #expect(userActivity.activityType != NSUserActivityTypeBrowsingWeb)
+        #expect(userActivity.webpageURL != nil)
     }
 
-    func testUserActivityWithNilURL() {
+    @Test("User activity with nil URL")
+    func userActivityWithNilURL() {
         // Given
         let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
         userActivity.webpageURL = nil
 
         // When & Then
-        XCTAssertEqual(userActivity.activityType, NSUserActivityTypeBrowsingWeb)
-        XCTAssertNil(userActivity.webpageURL)
+        #expect(userActivity.activityType == NSUserActivityTypeBrowsingWeb)
+        #expect(userActivity.webpageURL == nil)
     }
 
     // MARK: - DeeplinkManager Integration Tests
 
-    func testDeeplinkManagerValidation() {
+    @Test("Deeplink manager validation")
+    func deeplinkManagerValidation() {
         // Given
         let deeplinkManager = DeeplinkManager()
         let validURL = URL(string: "githubapp://movie/123")!
         let invalidURL = URL(string: "https://google.com")!
 
         // When & Then
-        XCTAssertTrue(deeplinkManager.isValidDeeplink(url: validURL))
-        XCTAssertFalse(deeplinkManager.isValidDeeplink(url: invalidURL))
+        #expect(deeplinkManager.isValidDeeplink(url: validURL) == true)
+        #expect(deeplinkManager.isValidDeeplink(url: invalidURL) == false)
     }
 
-    func testSceneDelegateHasDeeplinkManager() {
+    @Test("Scene delegate has deeplink manager")
+    func sceneDelegateHasDeeplinkManager() {
         // Given
         let newSceneDelegate = GitHubAppSceneDelegate()
 
         // When & Then - Should initialize without crashing
-        XCTAssertNotNil(newSceneDelegate)
+        #expect(newSceneDelegate != nil)
     }
 }

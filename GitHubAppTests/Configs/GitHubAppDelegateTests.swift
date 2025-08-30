@@ -4,41 +4,34 @@
 //
 
 @testable import GitHubApp
+import Testing
 import UIKit
-import XCTest
 
-final class GitHubAppDelegateTests: XCTestCase {
-    // MARK: - Properties
-
-    private var appDelegate: AppDelegate!
-    private var application: UIApplication!
-
-    // MARK: - Setup and Teardown
-
-    override func setUp() {
-        super.setUp()
-        appDelegate = AppDelegate()
-        application = UIApplication.shared
-    }
-
-    override func tearDown() {
-        appDelegate = nil
-        application = nil
-        super.tearDown()
+struct GitHubAppDelegateTests {
+    private func createTestComponents() -> (AppDelegate, UIApplication) {
+        let appDelegate = AppDelegate()
+        let application = UIApplication.shared
+        return (appDelegate, application)
     }
 
     // MARK: - Application Lifecycle Tests
 
-    func testApplicationDidFinishLaunchingWithOptions() {
+    @Test("Application did finish launching with options")
+    func applicationDidFinishLaunchingWithOptions() {
+        // Given
+        let (appDelegate, application) = createTestComponents()
+
         // When
         let result = appDelegate.application(application, didFinishLaunchingWithOptions: nil)
 
         // Then
-        XCTAssertTrue(result)
+        #expect(result == true)
     }
 
-    func testApplicationDidFinishLaunchingWithLaunchOptions() {
+    @Test("Application did finish launching with launch options")
+    func applicationDidFinishLaunchingWithLaunchOptions() {
         // Given
+        let (appDelegate, application) = createTestComponents()
         let launchOptions: [UIApplication.LaunchOptionsKey: Any] = [
             .url: URL(string: "githubapp://test")!,
         ]
@@ -47,35 +40,41 @@ final class GitHubAppDelegateTests: XCTestCase {
         let result = appDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
 
         // Then
-        XCTAssertTrue(result)
+        #expect(result == true)
     }
 
     // MARK: - URL Handling Tests
 
-    func testApplicationOpenValidDeeplinkURL() {
+    @Test("Application open valid deeplink URL")
+    func applicationOpenValidDeeplinkURL() {
         // Given
+        let (appDelegate, application) = createTestComponents()
         let url = URL(string: "githubapp://movie/123")!
 
         // When
         let result = appDelegate.application(application, open: url, options: [:])
 
         // Then
-        XCTAssertTrue(result)
+        #expect(result == true)
     }
 
-    func testApplicationOpenInvalidURL() {
+    @Test("Application open invalid URL")
+    func applicationOpenInvalidURL() {
         // Given
+        let (appDelegate, application) = createTestComponents()
         let url = URL(string: "invalid://url")!
 
         // When
         let result = appDelegate.application(application, open: url, options: [:])
 
         // Then
-        XCTAssertFalse(result)
+        #expect(result == false)
     }
 
-    func testApplicationOpenURLWithOptions() {
+    @Test("Application open URL with options")
+    func applicationOpenURLWithOptions() {
         // Given
+        let (appDelegate, application) = createTestComponents()
         let url = URL(string: "githubapp://movie/456")!
         let options: [UIApplication.OpenURLOptionsKey: Any] = [
             .sourceApplication: "com.test.app",
@@ -85,12 +84,13 @@ final class GitHubAppDelegateTests: XCTestCase {
         let result = appDelegate.application(application, open: url, options: options)
 
         // Then
-        XCTAssertTrue(result)
+        #expect(result == true)
     }
 
     // MARK: - Scene Configuration Tests
 
-    func testApplicationConfigurationForConnectingSceneSession() {
+    @Test("Application configuration for connecting scene session")
+    func applicationConfigurationForConnectingSceneSession() {
         // We'll test this differently since UISceneSession is complex to mock
         // Let's test that the method returns a valid configuration
 
@@ -100,7 +100,7 @@ final class GitHubAppDelegateTests: XCTestCase {
         let configuration = UISceneConfiguration(name: "Default Configuration", sessionRole: sessionRole)
 
         // Then
-        XCTAssertEqual(configuration.name, "Default Configuration")
-        XCTAssertEqual(configuration.role, sessionRole)
+        #expect(configuration.name == "Default Configuration")
+        #expect(configuration.role == sessionRole)
     }
 }

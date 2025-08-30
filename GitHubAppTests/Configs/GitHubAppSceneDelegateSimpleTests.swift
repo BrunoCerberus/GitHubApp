@@ -6,57 +6,58 @@
 //
 
 @testable import GitHubApp
+import Testing
 import UIKit
-import XCTest
 
-final class GitHubAppSceneDelegateSimpleTests: XCTestCase {
-    var sceneDelegate: GitHubAppSceneDelegate!
-
-    override func setUp() {
-        super.setUp()
-        sceneDelegate = GitHubAppSceneDelegate()
+struct GitHubAppSceneDelegateSimpleTests {
+    private func createSceneDelegate() -> GitHubAppSceneDelegate {
+        GitHubAppSceneDelegate()
     }
 
-    override func tearDown() {
-        sceneDelegate = nil
-        super.tearDown()
-    }
-
-    func testSceneDelegateInitialization() {
+    @Test("Scene delegate initialization")
+    func sceneDelegateInitialization() {
         // When
         let delegate = GitHubAppSceneDelegate()
 
         // Then
-        XCTAssertNotNil(delegate)
+        #expect(delegate != nil)
     }
 
-    func testSceneDelegateHasWindowProperty() {
+    @Test("Scene delegate has window property")
+    func sceneDelegateHasWindowProperty() {
+        // Given
+        let sceneDelegate = createSceneDelegate()
+
         // When
         let window = sceneDelegate.window
 
         // Then - Initially should be nil
-        XCTAssertNil(window)
+        #expect(window == nil)
     }
 
-    func testSceneDelegateCanHandleURLContexts() {
+    @Test("Scene delegate can handle URL contexts")
+    func sceneDelegateCanHandleURLContexts() {
         // Given - Test basic functionality without creating complex mocks
+        let sceneDelegate = createSceneDelegate()
         let emptyURLContexts: Set<UIOpenURLContext> = []
 
         // When - Test that the scene delegate exists and has the method
         // We can't easily create UIScene or UIOpenURLContext for testing
 
         // Then - Should not crash during basic operations
-        XCTAssertNotNil(sceneDelegate, "Scene delegate should exist")
+        #expect(sceneDelegate != nil, "Scene delegate should exist")
     }
 
-    func testSceneDelegateCanHandleUserActivity() {
+    @Test("Scene delegate can handle user activity")
+    func sceneDelegateCanHandleUserActivity() {
         // Given
+        let sceneDelegate = createSceneDelegate()
         let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
 
         // When - Test basic functionality
-        XCTAssertNotNil(userActivity, "User activity should be created")
+        #expect(userActivity != nil, "User activity should be created")
 
         // Then - Should execute without crashing
-        XCTAssertTrue(true, "Scene delegate should handle user activity")
+        #expect(sceneDelegate != nil, "Scene delegate should handle user activity")
     }
 }

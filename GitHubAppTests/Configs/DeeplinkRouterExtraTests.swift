@@ -4,43 +4,28 @@
 //
 
 @testable import GitHubApp
+import Testing
 import UIKit
-import XCTest
 
-final class DeeplinkRouterExtraTests: XCTestCase {
-    // MARK: - Properties
+struct DeeplinkRouterExtraTests {
+    private func createTestComponents() -> (DeeplinkManager, DeeplinkRouter, MockCoordinator, UINavigationController) {
+        let deeplinkManager = DeeplinkManager()
+        let mockCoordinator = MockCoordinator()
+        let navigationController = UINavigationController()
 
-    private var deeplinkManager: DeeplinkManager!
-    private var deeplinkRouter: DeeplinkRouter!
-    private var mockCoordinator: MockCoordinator!
-    private var navigationController: UINavigationController!
-
-    // MARK: - Setup and Teardown
-
-    override func setUp() {
-        super.setUp()
-        deeplinkManager = DeeplinkManager()
-        mockCoordinator = MockCoordinator()
-        navigationController = UINavigationController()
-
-        deeplinkRouter = DeeplinkRouter(
+        let deeplinkRouter = DeeplinkRouter(
             deeplinkManager: deeplinkManager,
             coordinator: mockCoordinator,
             navigationController: navigationController
         )
-    }
 
-    override func tearDown() {
-        deeplinkManager = nil
-        deeplinkRouter = nil
-        mockCoordinator = nil
-        navigationController = nil
-        super.tearDown()
+        return (deeplinkManager, deeplinkRouter, mockCoordinator, navigationController)
     }
 
     // MARK: - Initialization Tests
 
-    func testDeeplinkRouterInitializationWithAllParameters() {
+    @Test("Deeplink router initialization with all parameters")
+    func deeplinkRouterInitializationWithAllParameters() {
         // Given
         let manager = DeeplinkManager()
         let coordinator = MockCoordinator()
@@ -54,10 +39,11 @@ final class DeeplinkRouterExtraTests: XCTestCase {
         )
 
         // Then
-        XCTAssertNotNil(router)
+        #expect(router != nil)
     }
 
-    func testDeeplinkRouterInitializationWithMinimalParameters() {
+    @Test("Deeplink router initialization with minimal parameters")
+    func deeplinkRouterInitializationWithMinimalParameters() {
         // Given
         let manager = DeeplinkManager()
 
@@ -65,55 +51,63 @@ final class DeeplinkRouterExtraTests: XCTestCase {
         let router = DeeplinkRouter(deeplinkManager: manager)
 
         // Then
-        XCTAssertNotNil(router)
+        #expect(router != nil)
     }
 
     // MARK: - Process URL Tests
 
-    func testProcessValidMovieDetailsURL() {
+    @Test("Process valid movie details URL")
+    func processValidMovieDetailsURL() {
         // Given
+        let (_, deeplinkRouter, mockCoordinator, _) = createTestComponents()
         let url = URL(string: "githubapp://movie/123")!
 
         // When
         let result = deeplinkRouter.process(url: url)
 
         // Then
-        XCTAssertTrue(result)
-        XCTAssertEqual(mockCoordinator.pushedPages.count, 1)
+        #expect(result == true)
+        #expect(mockCoordinator.pushedPages.count == 1)
 
         if case let .detail(movie) = mockCoordinator.pushedPages.first {
-            XCTAssertEqual(movie.id, 123)
+            #expect(movie.id == 123)
         } else {
-            XCTFail("Expected detail page with movie")
+            Issue.record("Expected detail page with movie")
         }
     }
 
-    func testProcessInvalidURL() {
+    @Test("Process invalid URL")
+    func processInvalidURL() {
         // Given
+        let (_, deeplinkRouter, mockCoordinator, _) = createTestComponents()
         let url = URL(string: "invalid://url")!
 
         // When
         let result = deeplinkRouter.process(url: url)
 
         // Then
-        XCTAssertFalse(result)
-        XCTAssertTrue(mockCoordinator.pushedPages.isEmpty)
+        #expect(result == false)
+        #expect(mockCoordinator.pushedPages.isEmpty)
     }
 
-    func testProcessUnknownDeeplink() {
+    @Test("Process unknown deeplink")
+    func processUnknownDeeplink() {
         // Given
+        let (_, deeplinkRouter, mockCoordinator, _) = createTestComponents()
         let url = URL(string: "githubapp://unknown/path")!
 
         // When
         let result = deeplinkRouter.process(url: url)
 
         // Then
-        XCTAssertFalse(result)
-        XCTAssertTrue(mockCoordinator.pushedPages.isEmpty)
+        #expect(result == false)
+        #expect(mockCoordinator.pushedPages.isEmpty)
     }
 
-    func testProcessDeeplinkWithoutCoordinator() {
+    @Test("Process deeplink without coordinator")
+    func processDeeplinkWithoutCoordinator() {
         // Given
+        let (deeplinkManager, _, _, navigationController) = createTestComponents()
         let routerWithoutCoordinator = DeeplinkRouter(
             deeplinkManager: deeplinkManager,
             coordinator: nil,
@@ -125,11 +119,13 @@ final class DeeplinkRouterExtraTests: XCTestCase {
         let result = routerWithoutCoordinator.process(url: url)
 
         // Then
-        XCTAssertFalse(result)
+        #expect(result == false)
     }
 
-    func testProcessDeeplinkWithoutNavigationController() {
+    @Test("Process deeplink without navigation controller")
+    func processDeeplinkWithoutNavigationController() {
         // Given
+        let (deeplinkManager, _, _, _) = createTestComponents()
         let routerWithoutNavController = DeeplinkRouter(
             deeplinkManager: deeplinkManager,
             coordinator: nil,
@@ -141,13 +137,15 @@ final class DeeplinkRouterExtraTests: XCTestCase {
         let result = routerWithoutNavController.process(url: url)
 
         // Then
-        XCTAssertFalse(result)
+        #expect(result == false)
     }
 
     // MARK: - Navigation Tests
 
-    func testNavigateToMovieDetailsWithCoordinator() {
+    @Test("Navigate to movie details with coordinator")
+    func navigateToMovieDetailsWithCoordinator() {
         // Given
+        let (_, deeplinkRouter, mockCoordinator, _) = createTestComponents()
         let movieId = 987
         let url = URL(string: "githubapp://movie/\(movieId)")!
 
@@ -155,21 +153,23 @@ final class DeeplinkRouterExtraTests: XCTestCase {
         let result = deeplinkRouter.process(url: url)
 
         // Then
-        XCTAssertTrue(result)
-        XCTAssertEqual(mockCoordinator.pushedPages.count, 1)
+        #expect(result == true)
+        #expect(mockCoordinator.pushedPages.count == 1)
 
         if case let .detail(movie) = mockCoordinator.pushedPages.first {
-            XCTAssertEqual(movie.id, movieId)
-            XCTAssertEqual(movie.title, "") // Minimal movie object
-            XCTAssertEqual(movie.overview, "")
-            XCTAssertNil(movie.posterPath)
+            #expect(movie.id == movieId)
+            #expect(movie.title == "") // Minimal movie object
+            #expect(movie.overview == "")
+            #expect(movie.posterPath == nil)
         } else {
-            XCTFail("Expected detail page with movie")
+            Issue.record("Expected detail page with movie")
         }
     }
 
-    func testNavigateToMovieDetailsMultipleTimes() {
+    @Test("Navigate to movie details multiple times")
+    func navigateToMovieDetailsMultipleTimes() {
         // Given
+        let (_, deeplinkRouter, mockCoordinator, _) = createTestComponents()
         let url1 = URL(string: "githubapp://movie/111")!
         let url2 = URL(string: "githubapp://movie/222")!
 
@@ -178,15 +178,17 @@ final class DeeplinkRouterExtraTests: XCTestCase {
         let result2 = deeplinkRouter.process(url: url2)
 
         // Then
-        XCTAssertTrue(result1)
-        XCTAssertTrue(result2)
-        XCTAssertEqual(mockCoordinator.pushedPages.count, 2)
+        #expect(result1 == true)
+        #expect(result2 == true)
+        #expect(mockCoordinator.pushedPages.count == 2)
     }
 
     // MARK: - Coordinator Update Tests
 
-    func testUpdateCoordinator() {
+    @Test("Update coordinator")
+    func updateCoordinator() {
         // Given
+        let (_, deeplinkRouter, mockCoordinator, _) = createTestComponents()
         let newCoordinator = MockCoordinator()
         let url = URL(string: "githubapp://movie/555")!
 
@@ -195,13 +197,15 @@ final class DeeplinkRouterExtraTests: XCTestCase {
         let result = deeplinkRouter.process(url: url)
 
         // Then
-        XCTAssertTrue(result)
-        XCTAssertTrue(mockCoordinator.pushedPages.isEmpty) // Old coordinator not used
-        XCTAssertEqual(newCoordinator.pushedPages.count, 1) // New coordinator used
+        #expect(result == true)
+        #expect(mockCoordinator.pushedPages.isEmpty) // Old coordinator not used
+        #expect(newCoordinator.pushedPages.count == 1) // New coordinator used
     }
 
-    func testUpdateNavigationController() {
+    @Test("Update navigation controller")
+    func updateNavigationController() {
         // Given
+        let (_, deeplinkRouter, _, _) = createTestComponents()
         let newNavController = UINavigationController()
 
         // When
@@ -209,42 +213,46 @@ final class DeeplinkRouterExtraTests: XCTestCase {
 
         // Then
         // No assertion needed - just testing that the method doesn't crash
-        XCTAssertNotNil(deeplinkRouter)
+        #expect(deeplinkRouter != nil)
     }
 
     // MARK: - Edge Cases
 
-    func testProcessURLWithZeroMovieId() {
+    @Test("Process URL with zero movie ID")
+    func processURLWithZeroMovieId() {
         // Given
+        let (_, deeplinkRouter, mockCoordinator, _) = createTestComponents()
         let url = URL(string: "githubapp://movie/0")!
 
         // When
         let result = deeplinkRouter.process(url: url)
 
         // Then
-        XCTAssertTrue(result)
+        #expect(result == true)
 
         if case let .detail(movie) = mockCoordinator.pushedPages.first {
-            XCTAssertEqual(movie.id, 0)
+            #expect(movie.id == 0)
         } else {
-            XCTFail("Expected detail page with movie")
+            Issue.record("Expected detail page with movie")
         }
     }
 
-    func testProcessURLWithNegativeMovieId() {
+    @Test("Process URL with negative movie ID")
+    func processURLWithNegativeMovieId() {
         // Given
+        let (_, deeplinkRouter, mockCoordinator, _) = createTestComponents()
         let url = URL(string: "githubapp://movie/-1")!
 
         // When
         let result = deeplinkRouter.process(url: url)
 
         // Then
-        XCTAssertTrue(result)
+        #expect(result == true)
 
         if case let .detail(movie) = mockCoordinator.pushedPages.first {
-            XCTAssertEqual(movie.id, -1)
+            #expect(movie.id == -1)
         } else {
-            XCTFail("Expected detail page with movie")
+            Issue.record("Expected detail page with movie")
         }
     }
 }
