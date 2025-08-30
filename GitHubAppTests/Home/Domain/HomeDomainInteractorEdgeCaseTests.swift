@@ -33,7 +33,8 @@ struct HomeDomainInteractorEdgeCaseTests {
 
     private func cleanupTest() {
         StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.production)
+        // Keep in testing mode to avoid interfering with other concurrent tests
+        // StorageServiceFactory.shared.updateConfiguration(.production)
     }
 
     // MARK: - Service Initialization Edge Cases
@@ -387,38 +388,31 @@ struct HomeDomainInteractorEdgeCaseTests {
 
         // Given
         let (serviceLocator, mockHomeService) = createTestComponents()
+        let interactor = HomeDomainInteractor(serviceLocator: serviceLocator)
+
+        // When - Cause an error
         mockHomeService.shouldSimulateError = true
         mockHomeService.errorToSimulate = NSError(domain: "TestError", code: 500, userInfo: nil)
-        let interactor = HomeDomainInteractor(serviceLocator: serviceLocator)
-        var stateChanges = 0
-
-        // When - Cause an error, then perform successful operation
         interactor.handleAction(.searchMovies("error"))
 
-        // Then - Should recover from error state
-        let firstState = try await interactor.$currentState
-            .dropFirst()
-            .first()
-            .async()
-
-        stateChanges += 1
-        // First state change - should have error
-        #expect(firstState.error != nil)
-
-        // Now disable error simulation and try again
-        mockHomeService.shouldSimulateError = false
-        interactor.handleAction(.searchMovies("success"))
-
-        // Wait a bit longer for the new operation to complete
+        // Brief wait for error state
         try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        let errorState = interactor.currentState
 
-        let secondState = try await interactor.$currentState
-            .dropFirst()
-            .first()
-            .async()
+        // Should have error
+        #expect(errorState.error != nil)
+        #expect(errorState.error?.contains("TestError") == true)
 
-        // Second state change - should be successful (or at least different from the first error)
-        // The main goal is to test that the system can recover from errors
-        #expect(secondState.error == nil || secondState.error != firstState.error)
+        // Now disable error simulation and perform successful operation
+        mockHomeService.shouldSimulateError = false
+        interactor.handleAction(.fetchUpcomingMovies) // Use fetchUpcomingMovies which should clear errors
+
+        // Brief wait for success state
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        let successState = interactor.currentState
+
+        // Should recover from error - loading should be false and different from error state
+        #expect(!successState.isLoading)
+        #expect(successState != errorState, "State should have changed from error state")
     }
 }

@@ -22,7 +22,7 @@ struct FavoritesMoviesViewTests {
 
     private func cleanupTest() {
         StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.production)
+        // Keep in testing mode to avoid interfering with other concurrent tests
         try? APIKeysProvider.removeMovieAPIKey()
     }
 

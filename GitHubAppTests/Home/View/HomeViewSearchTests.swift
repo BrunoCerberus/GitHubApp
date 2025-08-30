@@ -29,7 +29,7 @@ struct HomeViewSearchTests {
 
     private func cleanupTest() {
         StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.production)
+        // Keep in testing mode to avoid interfering with other concurrent tests
     }
 
     @Test("Home view with search text")

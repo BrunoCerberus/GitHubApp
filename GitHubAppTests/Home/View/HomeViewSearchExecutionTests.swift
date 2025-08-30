@@ -29,7 +29,7 @@ struct HomeViewSearchExecutionTests {
 
     private func cleanupTest() {
         StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.production)
+        // Keep in testing mode to avoid interfering with other concurrent tests
     }
 
     @Test("Home view search query change with empty string")
