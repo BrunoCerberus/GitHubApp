@@ -4,16 +4,18 @@
 //
 
 @testable import GitHubApp
-import XCTest
+import Testing
 
-final class MovieCreditsTests: XCTestCase {
-    func testDisplayNameFallback() {
+struct MovieCreditsTests {
+    @Test("Display name falls back to 'Unknown' when name is empty")
+    func displayNameFallback() {
         let cast = MovieCastMember(id: 1, name: "", character: "Char")
-        XCTAssertEqual(cast.displayName, "Unknown")
+        #expect(cast.displayName == "Unknown")
     }
 
-    func testDisplayCharacterFallback() {
+    @Test("Display character falls back to 'Unknown Character' when character is empty")
+    func displayCharacterFallback() {
         let cast = MovieCastMember(id: 1, name: "Name", character: "")
-        XCTAssertEqual(cast.displayCharacter, "Unknown Character")
+        #expect(cast.displayCharacter == "Unknown Character")
     }
 }
