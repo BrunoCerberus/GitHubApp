@@ -34,6 +34,8 @@ This project includes comprehensive GitHub Actions workflows for continuous inte
 - **XcodeGen Integration**: Automatically generates the Xcode project from `project.yml`
 - **Multi-Scheme Testing**: Tests GitHubAppDev, GitHubAppProd, and dedicated test schemes (GitHubAppTests, GitHubAppUITests)
 - **Code Coverage**: Enables code coverage reporting for unit tests
+- **Swift Testing**: Uses modern Swift Testing framework for enhanced test performance
+- **SwiftData Integration**: Tests data persistence layer with in-memory configurations
 - **Artifact Management**: Preserves test results and build artifacts
 - **Matrix Builds**: Tests multiple configurations simultaneously
 - **Quality Gates**: Checks for code quality issues before deployment
@@ -240,6 +242,8 @@ The Clean Architecture implementation follows these key principles:
 - **Separation of Concerns**: Each layer has a specific responsibility
 - **Dependency Inversion**: Higher-level modules don't depend on lower-level modules
 - **Reactive Programming**: Uses Combine for reactive data flow
+- **Data Persistence**: SwiftData for modern, efficient data storage
+- **Testing Framework**: Swift Testing for enhanced test syntax and performance
 - **Single Source of Truth**: ViewModels maintain a single published state
 - **Testability**: Each component can be tested in isolation
 
@@ -413,10 +417,11 @@ SYMBOLS LEGEND:
 
 The architecture enables comprehensive testing at every layer:
 
-- **View Tests**: Test UI rendering and user interactions
-- **ViewModel Tests**: Test state transformations and event handling  
-- **Domain Tests**: Test business logic and state management
+- **View Tests**: Test UI rendering and user interactions with Swift Testing
+- **ViewModel Tests**: Test state transformations and event handling using Swift Testing framework
+- **Domain Tests**: Test business logic and state management with enhanced test syntax
 - **Service Tests**: Test API integrations and data mapping
+- **Storage Tests**: Test SwiftData persistence with in-memory configurations
 - **Integration Tests**: Test complete data flow end-to-end
 
 ### Implementation Reference

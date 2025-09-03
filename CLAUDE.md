@@ -14,6 +14,8 @@ This is a SwiftUI iOS application implementing Clean Architecture patterns with 
 ## Key Technologies
 - **SwiftUI**: Primary UI framework
 - **Combine**: Reactive programming and state management
+- **SwiftData**: Modern data persistence and storage layer
+- **Swift Testing**: Native testing framework (migrated from XCTest)
 - **XcodeGen**: Project generation from `project.yml`
 - **EntropyCore**: Custom framework dependency
 - **SnapshotTesting**: UI snapshot testing framework
@@ -135,6 +137,8 @@ private func createTestServiceLocator() -> ServiceLocator {
 - Domain logic tested independently of UI
 - StorageServiceFactory configured for testing with in-memory storage
 - Automatic test environment detection and service injection
+- **Swift Testing Framework**: Modern testing approach with enhanced syntax and performance
+- **SwiftData Testing**: In-memory storage configurations for isolated unit tests
 
 ## Development Guidelines
 
