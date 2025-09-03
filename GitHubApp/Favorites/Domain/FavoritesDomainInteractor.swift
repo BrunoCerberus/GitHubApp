@@ -142,6 +142,12 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
                 receiveValue: { [weak self] movies in
                     self?.currentState.favoriteMovies = movies
                     self?.currentState.isLoading = false
+
+                    // Notify other components that favorites have been updated
+                    NotificationCenter.default.post(
+                        name: .favoriteMoviesDidUpdate,
+                        object: movies
+                    )
                 }
             )
             .store(in: &cancellables)
@@ -165,6 +171,12 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
                 },
                 receiveValue: { [weak self] movies in
                     self?.currentState.favoriteMovies = movies
+
+                    // Notify other components that favorites have been updated
+                    NotificationCenter.default.post(
+                        name: .favoriteMoviesDidUpdate,
+                        object: movies
+                    )
                 }
             )
             .store(in: &cancellables)
@@ -186,6 +198,12 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
                 },
                 receiveValue: { [weak self] _ in
                     self?.currentState.favoriteMovies = []
+
+                    // Notify other components that favorites have been updated
+                    NotificationCenter.default.post(
+                        name: .favoriteMoviesDidUpdate,
+                        object: []
+                    )
                 }
             )
             .store(in: &cancellables)

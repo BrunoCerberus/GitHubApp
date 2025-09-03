@@ -75,6 +75,9 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
         }
 
         currentState = initialState
+
+        // Listen for favorite movies updates from other features
+        setupFavoritesNotificationObserver()
     }
 
     // MARK: - CombineInteractor Implementation
@@ -116,6 +119,29 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
             handleToggleMovieFavorite(movie: movie)
         case .loadPersistedFavoriteMovies:
             handleLoadPersistedFavoriteMovies()
+        }
+    }
+
+    // MARK: - Private Setup Methods
+
+    /**
+     * Setup notification observer for favorite movies updates from other features.
+     */
+    private func setupFavoritesNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(favoriteMoviesDidUpdate(_:)),
+            name: .favoriteMoviesDidUpdate,
+            object: nil
+        )
+    }
+
+    /**
+     * Handle favorite movies update notifications from other features.
+     */
+    @objc private func favoriteMoviesDidUpdate(_: Notification) {
+        Task {
+            await handleLoadPersistedFavoriteMoviesAsync()
         }
     }
 
@@ -234,16 +260,23 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
      */
     private func handleLoadPersistedFavoriteMovies() {
         Task {
-            do {
-                let persistedLikedMovies = try await storageService.fetchLikedMovies()
-                let filteredLikedMovies = filterLikedMovies(from: currentState.movies, persistedLikedMovies: persistedLikedMovies)
+            await handleLoadPersistedFavoriteMoviesAsync()
+        }
+    }
 
-                await MainActor.run {
-                    currentState = currentState.copy(favoriteMovies: filteredLikedMovies)
-                }
-            } catch {
-                print("⚠️ Failed to load persisted favorite movies: \(error)")
+    /**
+     * Handle loading persisted favorite movies asynchronously.
+     */
+    private func handleLoadPersistedFavoriteMoviesAsync() async {
+        do {
+            let persistedLikedMovies = try await storageService.fetchLikedMovies()
+            let filteredLikedMovies = filterLikedMovies(from: currentState.movies, persistedLikedMovies: persistedLikedMovies)
+
+            await MainActor.run {
+                currentState = currentState.copy(favoriteMovies: filteredLikedMovies)
             }
+        } catch {
+            print("⚠️ Failed to load persisted favorite movies: \(error)")
         }
     }
 
@@ -292,6 +325,18 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
             print("⚠️ Failed to load favorite movies: \(error)")
             return []
         }
+    }
+
+    // MARK: - Deinit
+
+    /**
+     * Cleanup method called when the interactor is deallocated.
+     */
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+        #if DEBUG
+            print("HomeDomainInteractor deallocated")
+        #endif
     }
 }
 

@@ -1,1 +1,1 @@
-Stage all changes, create a commit, and push to the current branch. This will add all modified files, commit them with a message, and push to the remote repository.
+First run `mint run swiftformat .` and then stage all changes, create a commit, and push to the current branch. This will add all modified files, commit them with a message, and push to the remote repository.

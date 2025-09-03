@@ -16,4 +16,6 @@ import Foundation
 extension Notification.Name {
     /// Posted when the coordinator becomes available for deeplink routing
     static let coordinatorDidBecomeAvailable = Notification.Name("coordinatorDidBecomeAvailable")
+    /// Posted when favorite movies are updated
+    static let favoriteMoviesDidUpdate = Notification.Name("favoriteMoviesDidUpdate")
 }
