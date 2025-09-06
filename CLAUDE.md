@@ -130,6 +130,53 @@ private func createTestServiceLocator() -> ServiceLocator {
 - Separate Live implementations for production usage
 - All services accessed through ServiceLocator dependency resolution
 
+### Network Layer (EntropyCore Framework)
+The app uses a sophisticated network layer built on **APIFetcher** and **APIRequest** protocols from EntropyCore:
+
+#### APIFetcher Protocol
+Defines endpoint configuration for API calls:
+```swift
+enum HomeAPI: APIFetcher {
+    case fetchMovies
+    case searchMovies(String)
+    case fetchCredits(Int)
+    case fetchReviews(Int)
+    
+    var path: String { /* URL construction with BaseURLs + APIKeysProvider */ }
+    var method: HTTPMethod { .GET }
+    var task: Codable? { nil }     // Request body (nil for GET)
+    var header: Codable? { nil }   // Custom headers
+    var debug: Bool { /* Debug logging in DEBUG builds */ }
+}
+```
+
+#### APIRequest Protocol  
+Provides network execution capabilities:
+```swift
+final class LiveHomeService: APIRequest, HomeService {
+    func fetchMovies() -> AnyPublisher<MoviesResponse, Error> {
+        fetchRequest(target: HomeAPI.fetchMovies, dataType: MoviesResponse.self)
+            .receive(on: DispatchQueue.main)  // UI thread delivery
+            .eraseToAnyPublisher()
+    }
+}
+```
+
+#### Key Network Features
+- **Type Safety**: Generic `fetchRequest<T: Codable>()` method with compile-time validation
+- **Reactive Integration**: Returns Combine publishers for seamless data flow
+- **Main Thread Delivery**: Automatic UI thread scheduling with `.receive(on: DispatchQueue.main)`
+- **Secure API Keys**: Hierarchical fallback system (Secrets.plist → Environment → Keychain → Default)
+- **URL Construction**: Automatic query parameter encoding and BaseURLs integration
+- **Debug Logging**: Automatic request/response logging in development builds
+- **Error Handling**: Structured APIError types with localized descriptions
+
+#### API Configuration Components
+- **APIKeysProvider**: Secure credential management with multiple fallback sources
+- **BaseURLs**: Centralized URL configuration (BaseURLs.theMovie, BaseURLs.image)
+- **HTTPMethod**: Standard HTTP verbs (GET, POST, PUT, DELETE, etc.)
+- **Generic Response Handling**: Type-safe Codable response parsing
+
 ### Testing Strategy
 - Comprehensive unit tests for all layers (465 tests, 0 failures)
 - UI tests with snapshot testing
@@ -145,11 +192,20 @@ private func createTestServiceLocator() -> ServiceLocator {
 ### When Adding New Features
 1. Follow the Home feature as reference implementation
 2. Create Domain models first (Action, State, Interactor)
-3. Implement Service layer with protocol
-4. Register service in GitHubAppSceneDelegate.swift (Live + Mock implementations)
-5. Build ViewModel using CombineViewModel with ServiceLocator injection
-6. Create SwiftUI View with @StateObject
-7. Add comprehensive unit tests for each layer using ServiceLocator pattern
+3. **Implement Network Layer** (if API calls required):
+   - Create API enum conforming to `APIFetcher` (e.g., `UserAPI: APIFetcher`)
+   - Define endpoint cases with associated values for parameters
+   - Implement `path`, `method`, `task`, `header`, and `debug` properties
+   - Use `BaseURLs` for URL construction and `APIKeysProvider` for authentication
+4. Implement Service layer with protocol
+   - Create service protocol defining business operations
+   - Implement Live service conforming to `APIRequest` + service protocol
+   - Use `fetchRequest(target:dataType:)` for network calls with main thread delivery
+   - Create comprehensive Mock service for testing
+5. Register service in GitHubAppSceneDelegate.swift (Live + Mock implementations)
+6. Build ViewModel using CombineViewModel with ServiceLocator injection
+7. Create SwiftUI View with @StateObject
+8. Add comprehensive unit tests for each layer using ServiceLocator pattern
 
 ### Code Style
 - Follow existing patterns and naming conventions
@@ -205,6 +261,15 @@ make clean             # Clean generated files
 - **Storage Service Issues**: Configure `StorageServiceFactory.shared.updateConfiguration(.testing)` for unit tests
 - **Mock Service Injection**: Verify MockServices are available in main bundle for test environment detection
 - **Dependency Resolution Errors**: Check service protocols match registered implementations
+
+### Network Layer Issues
+- **API Key Problems**: Check API key fallback hierarchy (Secrets.plist → Environment → Keychain → Default)
+- **URL Construction Failures**: Verify `BaseURLs` configuration and query parameter encoding
+- **Network Request Errors**: Enable debug logging by setting `debug: true` in APIFetcher implementation
+- **Main Thread Issues**: Ensure all network calls use `.receive(on: DispatchQueue.main)` for UI updates
+- **Type Safety Errors**: Verify Codable model structure matches API response format
+- **APIFetcher Protocol**: Ensure enum conforms to APIFetcher and implements all required properties
+- **APIRequest Protocol**: Verify service class conforms to both APIRequest and service protocol
 
 ## Continuous Integration
 - GitHub Actions workflows for CI/CD

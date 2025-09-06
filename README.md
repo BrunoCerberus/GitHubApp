@@ -343,6 +343,43 @@ The Clean Architecture implementation follows these key principles:
 │    │ • Error Handling│                        │                 │               │
 │    └─────────────────┘                        └─────────────────┘               │
 └─────────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                NETWORK LAYER                                    │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│    ┌─────────────────┐                        ┌─────────────────┐               │
+│    │  APIRequest     │                        │   APIFetcher    │               │
+│    │                 │                        │                 │               │
+│    │ • Protocol from │                        │ • Protocol from │               │
+│    │   EntropyCore   │                        │   EntropyCore   │               │
+│    │ • Provides      │                        │ • Endpoint      │               │
+│    │   fetchRequest()│                        │   Configuration │               │
+│    │ • Main Thread   │                        │ • URL Building  │               │
+│    │   Scheduling    │                        │ • HTTP Methods  │               │
+│    │ • Generic Types │                        │ • Headers/Body  │               │
+│    └─────────────────┘                        │ • Debug Config  │               │
+│            │                                  └─────────────────┘               │
+│            │ fetchRequest(target:dataType:)            ▲                        │
+│            ▼                                           │ conforms to            │
+│    ┌─────────────────┐                                 │                        │
+│    │ LiveHomeService │─────────────────────────────────┘                        │
+│    │                 │          HomeAPI                                         │
+│    │ • APIRequest    │                                                          │
+│    │   + HomeService │          ┌─────────────────┐                             │
+│    │ • Network Calls │          │    HomeAPI      │                             │
+│    │ • Main Thread   │          │                 │                             │
+│    │   Delivery      │          │ • APIFetcher    │                             │
+│    │ • Type Safety   │          │   Enum          │                             │
+│    └─────────────────┘          │ • Endpoints:    │                             │
+│                                 │   - fetchMovies │                             │
+│                                 │   - searchMovies│                             │
+│                                 │   - fetchCredits│                             │
+│                                 │   - fetchReviews│                             │
+│                                 │ • URL Building  │                             │
+│                                 │ • API Key       │                             │
+│                                 │   Injection     │                             │
+│                                 └─────────────────┘                             │
+└─────────────────────────────────────────────────────────────────────────────────┘
 
 COMMUNICATION FLOW:
 ═════════════════
@@ -477,3 +514,187 @@ mint run swiftformat .
 ```
 
 Then stage the changes and commit again.
+
+## Network Layer Architecture
+
+The app implements a robust network layer using the EntropyCore framework with a clean separation between API configuration and network execution. The network layer is built on top of two key protocols: **APIFetcher** and **APIRequest**.
+
+### Core Components
+
+#### APIFetcher Protocol (from EntropyCore)
+Defines the structure and configuration for API endpoints:
+
+- **`path: String`** - Complete URL for the API request, including query parameters
+- **`method: HTTPMethod`** - HTTP method (GET, POST, PUT, DELETE, etc.)
+- **`task: Codable?`** - Request body for POST/PUT requests (nil for GET requests)
+- **`header: Codable?`** - Custom headers for the request (nil if not needed)
+- **`debug: Bool`** - Enables debug logging for development builds
+
+#### APIRequest Protocol (from EntropyCore)  
+Provides the network execution capabilities:
+
+- **`fetchRequest(target: APIFetcher, dataType: T.Type)`** - Generic method to execute network requests
+- **Type Safety** - Returns strongly-typed responses using Codable models
+- **Reactive** - Returns `AnyPublisher<T, Error>` for Combine integration
+- **Main Thread Delivery** - Automatically schedules responses on the main thread
+
+### Implementation Pattern
+
+#### 1. API Endpoint Definition
+```swift
+enum HomeAPI: APIFetcher {
+    case fetchMovies
+    case searchMovies(String)
+    case fetchCredits(Int)
+    case fetchReviews(Int)
+    
+    var path: String {
+        // URL construction with BaseURLs and query parameters
+        // Automatic API key injection via APIKeysProvider
+    }
+    
+    var method: HTTPMethod { .GET }
+    var task: Codable? { nil }
+    var header: Codable? { nil }
+    var debug: Bool { 
+        #if DEBUG
+            return true
+        #else
+            return false
+        #endif
+    }
+}
+```
+
+#### 2. Service Implementation
+```swift
+final class LiveHomeService: APIRequest, HomeService {
+    func fetchMovies() -> AnyPublisher<MoviesResponse, Error> {
+        fetchRequest(target: HomeAPI.fetchMovies, dataType: MoviesResponse.self)
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+}
+```
+
+### API Configuration System
+
+#### Secure API Key Management
+The network layer uses **APIKeysProvider** for secure credential management:
+
+1. **Primary Source**: `Secrets.plist` (gitignored for security)
+2. **Fallback 1**: Environment variables (`API_KEY`)
+3. **Fallback 2**: iOS Keychain storage
+4. **Development**: Default fallback for testing
+
+```swift
+enum APIKeysProvider {
+    static let theMovieAPIKey: String = {
+        // Hierarchical fallback system
+        // 1. Secrets.plist → 2. Environment → 3. Keychain → 4. Default
+    }()
+}
+```
+
+#### Base URL Configuration
+Uses `BaseURLs` enum from EntropyCore for centralized URL management:
+
+- **`BaseURLs.theMovie`** - The Movie Database API base URL
+- **`BaseURLs.image`** - Image CDN base URL for movie posters
+- **Environment Specific** - Different URLs for dev/staging/production
+
+### Network Features
+
+#### 🔒 Security
+- **No Hardcoded Keys**: All API keys managed through secure fallback system
+- **Keychain Storage**: Sensitive data stored in iOS Keychain
+- **Environment Separation**: Different configurations per build environment
+
+#### ⚡ Performance  
+- **Type Safety**: Compile-time validation of request/response models
+- **Generic Implementation**: Reusable network methods with strong typing
+- **Main Thread Optimization**: Automatic UI thread scheduling
+- **Memory Efficient**: Uses Combine publishers for reactive data flow
+
+#### 🛠️ Developer Experience
+- **Debug Logging**: Automatic request/response logging in debug builds
+- **URL Construction**: Automatic query parameter encoding and URL building
+- **Error Handling**: Structured error types with localized descriptions
+- **Testing Support**: Easy mocking through protocol conformance
+
+### Error Handling
+
+```swift
+enum APIError: Error, LocalizedError {
+    case invalidBaseURL(String)
+    case urlConstructionFailed
+    
+    var errorDescription: String? {
+        // Localized error messages
+    }
+}
+```
+
+### Usage Examples
+
+#### Basic API Call
+```swift
+// In Service Layer
+func fetchMovies() -> AnyPublisher<MoviesResponse, Error> {
+    fetchRequest(target: HomeAPI.fetchMovies, dataType: MoviesResponse.self)
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+}
+```
+
+#### Search with Parameters
+```swift
+// Dynamic endpoint with query parameters
+func searchMovies(with query: String) -> AnyPublisher<MoviesResponse, Error> {
+    fetchRequest(target: HomeAPI.searchMovies(query), dataType: MoviesResponse.self)
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+}
+```
+
+#### Movie Details with ID
+```swift
+// RESTful endpoint with path parameters
+func fetchCredits(with id: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
+    fetchRequest(target: HomeAPI.fetchCredits(id), dataType: MovieCreditsResponse.self)
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+}
+```
+
+### Testing Strategy
+
+The network layer is fully testable through protocol conformance and dependency injection:
+
+#### Mock Implementation
+```swift
+// Services registered through ServiceLocator
+serviceLocator.register(HomeService.self, instance: MockHomeService())
+
+// Automatic mock injection in test environments
+class MockHomeService: HomeService {
+    func fetchMovies() -> AnyPublisher<MoviesResponse, Error> {
+        // Return mock data for testing
+    }
+}
+```
+
+#### Edge Case Testing
+- **URL Construction**: Tests with various query parameters and encoding scenarios
+- **Error Handling**: Tests for network failures and invalid responses  
+- **API Key Management**: Tests for different credential scenarios
+- **Large Data**: Performance tests with extensive API responses
+
+### Integration with Clean Architecture
+
+The network layer seamlessly integrates with the Clean Architecture pattern:
+
+1. **Domain Layer**: Business logic calls service protocols (not network directly)
+2. **Service Layer**: Implements protocols using APIRequest + APIFetcher
+3. **Dependency Injection**: Services registered via ServiceLocator
+4. **Testing**: Mock services injected automatically in test environments
