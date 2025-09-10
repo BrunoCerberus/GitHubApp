@@ -177,6 +177,37 @@ final class LiveHomeService: APIRequest, HomeService {
 - **HTTPMethod**: Standard HTTP verbs (GET, POST, PUT, DELETE, etc.)
 - **Generic Response Handling**: Type-safe Codable response parsing
 
+### Clean Architecture Data Flow
+
+```
+COMMUNICATION FLOW:
+═════════════════
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            DATA FLOW DIRECTION                                  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│                                                                                 │
+│ +----------------+       +------------------------+       +-------------------+ │
+│ | View           | ----> | ViewModel              | ----> | Interactor        | │
+│ |                |       |                        |       |                   | │
+│ |    ViewEvents  | <---- |  ViewState   DomainMap | <---- |   DomainState     | │
+│ +----------------+       +------------------------+       +-------------------+ │
+│                           ^         |                                           │
+│                           |         v                                           │
+│                           |    +---------------------------+                    │
+│                           +----| ViewStateReducing         |                    │
+│                                +---------------------------+                    │
+│                                                                                 │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+SYMBOLS LEGEND:
+══════════════
+──►  Synchronous Call/Data Pass    │  Dependency/Call Direction
+◄──  Reactive State Flow           ▼  Asynchronous Operation  
+◄──► Bidirectional Communication   ▲  State Observation/Update
+```
+
 ### Testing Strategy
 - Comprehensive unit tests for all layers (465 tests, 0 failures)
 - UI tests with snapshot testing
