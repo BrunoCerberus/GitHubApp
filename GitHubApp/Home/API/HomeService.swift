@@ -21,17 +21,19 @@ protocol HomeService {
     /**
      * Fetch upcoming movies from The Movie Database API.
      *
+     * - Parameter page: Page number to fetch (defaults to 1)
      * - Returns: Publisher that emits MoviesResponse or Error
      */
-    func fetchMovies() -> AnyPublisher<MoviesResponse, Error>
+    func fetchMovies(page: Int) -> AnyPublisher<MoviesResponse, Error>
 
     /**
      * Search for movies by title query.
      *
      * - Parameter query: Search term to find movies
+     * - Parameter page: Page number to fetch (defaults to 1)
      * - Returns: Publisher that emits MoviesResponse or Error
      */
-    func searchMovies(with query: String) -> AnyPublisher<MoviesResponse, Error>
+    func searchMovies(with query: String, page: Int) -> AnyPublisher<MoviesResponse, Error>
 
     /**
      * Fetch cast and crew credits for a specific movie.

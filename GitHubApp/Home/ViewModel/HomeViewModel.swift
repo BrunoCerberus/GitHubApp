@@ -145,6 +145,15 @@ final class HomeViewModel: CombineViewModel {
     }
 
     /**
+     * Load more movies for pagination (infinite scroll).
+     *
+     * Delegates to domain interactor through view event handling.
+     */
+    func loadMoreMovies() {
+        handle(.loadMoreMovies)
+    }
+
+    /**
      * Check if a movie is currently liked by the user.
      *
      * - Parameter movie: The movie to check

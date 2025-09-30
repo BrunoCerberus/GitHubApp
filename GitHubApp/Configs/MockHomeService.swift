@@ -15,7 +15,7 @@ import Foundation
  * to avoid real network requests during testing.
  */
 struct MockHomeService: HomeService {
-    private let mockMoviesResponse = MoviesResponse(results: [
+    private let mockMovies = [
         Movie(id: 346_698,
               title: "Barbie",
               overview: "Barbie and Ken are having the time of their lives in the colorful " +
@@ -36,7 +36,7 @@ struct MockHomeService: HomeService {
                   "when she becomes Ladybug. Bestowed with magical powers of creation, Ladybug " +
                   "must unite with her opposite, Cat Noir, to save Paris as a new villain unleashes chaos unto the city.",
               posterPath: ""),
-    ])
+    ]
 
     private let mockMovieCreditsResponse = MovieCreditsResponse(cast: [
         MovieCastMember(
@@ -96,15 +96,27 @@ struct MockHomeService: HomeService {
         ),
     ])
 
-    func fetchMovies() -> AnyPublisher<MoviesResponse, Error> {
-        Just(mockMoviesResponse)
+    func fetchMovies(page: Int = 1) -> AnyPublisher<MoviesResponse, Error> {
+        let response = MoviesResponse(
+            results: mockMovies,
+            page: page,
+            totalPages: 10,
+            totalResults: mockMovies.count * 10
+        )
+        return Just(response)
             .setFailureType(to: Error.self)
             .receive(on: RunLoop.current)
             .eraseToAnyPublisher()
     }
 
-    func searchMovies(with _: String) -> AnyPublisher<MoviesResponse, Error> {
-        Just(mockMoviesResponse)
+    func searchMovies(with _: String, page: Int = 1) -> AnyPublisher<MoviesResponse, Error> {
+        let response = MoviesResponse(
+            results: mockMovies,
+            page: page,
+            totalPages: 5,
+            totalResults: mockMovies.count * 5
+        )
+        return Just(response)
             .setFailureType(to: Error.self)
             .receive(on: RunLoop.current)
             .eraseToAnyPublisher()

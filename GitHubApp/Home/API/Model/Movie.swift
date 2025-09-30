@@ -19,6 +19,40 @@ import Foundation
 struct MoviesResponse: Codable {
     /// Array of movie objects returned by the API
     let results: [Movie]
+
+    /// Current page number (defaults to 1 if not provided)
+    let page: Int
+
+    /// Total number of pages available (defaults to 1 if not provided)
+    let totalPages: Int
+
+    /// Total number of results available (defaults to results count if not provided)
+    let totalResults: Int
+
+    /// Coding keys for API response mapping
+    enum CodingKeys: String, CodingKey {
+        case results
+        case page
+        case totalPages = "total_pages"
+        case totalResults = "total_results"
+    }
+
+    /// Custom decoder to handle missing pagination fields
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        results = try container.decode([Movie].self, forKey: .results)
+        page = try container.decodeIfPresent(Int.self, forKey: .page) ?? 1
+        totalPages = try container.decodeIfPresent(Int.self, forKey: .totalPages) ?? 1
+        totalResults = try container.decodeIfPresent(Int.self, forKey: .totalResults) ?? results.count
+    }
+
+    /// Standard initializer
+    init(results: [Movie], page: Int, totalPages: Int, totalResults: Int) {
+        self.results = results
+        self.page = page
+        self.totalPages = totalPages
+        self.totalResults = totalResults
+    }
 }
 
 /**

@@ -119,6 +119,8 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
             handleToggleMovieFavorite(movie: movie)
         case .loadPersistedFavoriteMovies:
             handleLoadPersistedFavoriteMovies()
+        case .loadMoreMovies:
+            handleLoadMoreMovies()
         }
     }
 
@@ -151,11 +153,16 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
      * Handle fetching upcoming movies from the API.
      */
     private func handleFetchUpcomingMovies() {
-        // Set loading state
-        currentState = currentState.copy(isLoading: true, error: nil, searchQuery: nil)
+        // Set loading state and reset pagination
+        currentState = currentState.copy(
+            isLoading: true,
+            error: nil,
+            searchQuery: nil,
+            currentPage: 0,
+            totalPages: 0
+        )
 
-        homeService.fetchMovies()
-            .map(\.results)
+        homeService.fetchMovies(page: 1)
             .sink(
                 receiveCompletion: { [weak self] completion in
                     if case let .failure(error) = completion {
@@ -165,25 +172,27 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
                         ) ?? HomeDomainState.initial
                     }
                 },
-                receiveValue: { [weak self] movies in
+                receiveValue: { [weak self] response in
                     guard let self else { return }
-                    let updatedLikedMovies = filterLikedMovies(from: movies)
+                    let updatedLikedMovies = filterLikedMovies(from: response.results)
 
                     // Save movies to widget shared storage
-                    WidgetDataManager.shared.saveUpcomingMovies(movies)
+                    WidgetDataManager.shared.saveUpcomingMovies(response.results)
 
                     // Post notification for widget data manager
                     NotificationCenter.default.post(
                         name: .moviesDidUpdate,
-                        object: movies
+                        object: response.results
                     )
 
                     currentState = currentState.copy(
-                        movies: movies,
+                        movies: response.results,
                         favoriteMovies: updatedLikedMovies,
                         isLoading: false,
                         error: nil,
-                        searchQuery: nil
+                        searchQuery: nil,
+                        currentPage: response.page,
+                        totalPages: response.totalPages
                     )
                 }
             )
@@ -199,11 +208,16 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
             return
         }
 
-        // Set loading state with search query
-        currentState = currentState.copy(isLoading: true, error: nil, searchQuery: query)
+        // Set loading state with search query and reset pagination
+        currentState = currentState.copy(
+            isLoading: true,
+            error: nil,
+            searchQuery: query,
+            currentPage: 0,
+            totalPages: 0
+        )
 
-        homeService.searchMovies(with: query)
-            .map(\.results)
+        homeService.searchMovies(with: query, page: 1)
             .sink(
                 receiveCompletion: { [weak self] completion in
                     if case let .failure(error) = completion {
@@ -214,16 +228,18 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
                         ) ?? HomeDomainState.initial
                     }
                 },
-                receiveValue: { [weak self] movies in
+                receiveValue: { [weak self] response in
                     guard let self else { return }
-                    let updatedLikedMovies = filterLikedMovies(from: movies)
+                    let updatedLikedMovies = filterLikedMovies(from: response.results)
 
                     currentState = currentState.copy(
-                        movies: movies,
+                        movies: response.results,
                         favoriteMovies: updatedLikedMovies,
                         isLoading: false,
                         error: nil,
-                        searchQuery: query
+                        searchQuery: query,
+                        currentPage: response.page,
+                        totalPages: response.totalPages
                     )
                 }
             )
@@ -262,6 +278,60 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
         Task {
             await handleLoadPersistedFavoriteMoviesAsync()
         }
+    }
+
+    /**
+     * Handle loading more movies for pagination (infinite scroll).
+     */
+    private func handleLoadMoreMovies() {
+        // Don't load if already loading or no more pages available
+        guard !currentState.isLoadingMore,
+              !currentState.isLoading,
+              currentState.hasMorePages
+        else {
+            return
+        }
+
+        let nextPage = currentState.currentPage + 1
+
+        // Set loading more state
+        currentState = currentState.copy(isLoadingMore: true)
+
+        // Determine if we're searching or fetching upcoming movies
+        let publisher: AnyPublisher<MoviesResponse, Error> = if let searchQuery = currentState.searchQuery, !searchQuery.isEmpty {
+            homeService.searchMovies(with: searchQuery, page: nextPage)
+        } else {
+            homeService.fetchMovies(page: nextPage)
+        }
+
+        publisher
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    if case let .failure(error) = completion {
+                        self?.currentState = self?.currentState.copy(
+                            error: error.localizedDescription,
+                            isLoadingMore: false
+                        ) ?? HomeDomainState.initial
+                    }
+                },
+                receiveValue: { [weak self] response in
+                    guard let self else { return }
+
+                    // Append new movies to existing ones
+                    let allMovies = currentState.movies + response.results
+                    let updatedLikedMovies = filterLikedMovies(from: allMovies)
+
+                    currentState = currentState.copy(
+                        movies: allMovies,
+                        favoriteMovies: updatedLikedMovies,
+                        error: nil,
+                        currentPage: response.page,
+                        totalPages: response.totalPages,
+                        isLoadingMore: false
+                    )
+                }
+            )
+            .store(in: &cancellables)
     }
 
     /**
@@ -351,14 +421,20 @@ private extension HomeDomainState {
         favoriteMovies: [Movie]? = nil,
         isLoading: Bool? = nil,
         error: String?? = nil,
-        searchQuery: String?? = nil
+        searchQuery: String?? = nil,
+        currentPage: Int? = nil,
+        totalPages: Int? = nil,
+        isLoadingMore: Bool? = nil
     ) -> HomeDomainState {
         HomeDomainState(
             movies: movies ?? self.movies,
             favoriteMovies: favoriteMovies ?? self.favoriteMovies,
             isLoading: isLoading ?? self.isLoading,
             error: error ?? self.error,
-            searchQuery: searchQuery ?? self.searchQuery
+            searchQuery: searchQuery ?? self.searchQuery,
+            currentPage: currentPage ?? self.currentPage,
+            totalPages: totalPages ?? self.totalPages,
+            isLoadingMore: isLoadingMore ?? self.isLoadingMore
         )
     }
 }

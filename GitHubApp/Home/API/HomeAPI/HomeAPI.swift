@@ -41,10 +41,10 @@ enum APIError: Error, LocalizedError {
  */
 enum HomeAPI: APIFetcher {
     /// Fetch upcoming movies from The Movie Database
-    case fetchMovies
+    case fetchMovies(page: Int)
 
     /// Search for movies by query string
-    case searchMovies(String)
+    case searchMovies(query: String, page: Int)
 
     /// Fetch cast and crew credits for a specific movie
     case fetchCredits(Int)
@@ -89,14 +89,16 @@ enum HomeAPI: APIFetcher {
         var queryItems: [URLQueryItem] = []
 
         switch self {
-        case .fetchMovies:
+        case let .fetchMovies(page):
             // Endpoint: /movie/upcoming - Get upcoming movies
             components.path += "/movie/upcoming"
+            queryItems.append(URLQueryItem(name: "page", value: "\(page)"))
 
-        case let .searchMovies(query):
+        case let .searchMovies(query, page):
             // Endpoint: /search/movie - Search movies by title
             components.path += "/search/movie"
             queryItems.append(URLQueryItem(name: "query", value: query))
+            queryItems.append(URLQueryItem(name: "page", value: "\(page)"))
 
         case let .fetchCredits(id):
             // Endpoint: /movie/{id}/credits - Get cast and crew

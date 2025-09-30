@@ -28,10 +28,11 @@ final class LiveHomeService: APIRequest, HomeService {
      * Makes a network request to the upcoming movies endpoint and
      * delivers the response on the main thread for UI updates.
      *
+     * - Parameter page: Page number to fetch (defaults to 1)
      * - Returns: Publisher that emits MoviesResponse or Error
      */
-    func fetchMovies() -> AnyPublisher<MoviesResponse, Error> {
-        fetchRequest(target: HomeAPI.fetchMovies, dataType: MoviesResponse.self)
+    func fetchMovies(page: Int = 1) -> AnyPublisher<MoviesResponse, Error> {
+        fetchRequest(target: HomeAPI.fetchMovies(page: page), dataType: MoviesResponse.self)
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
@@ -43,10 +44,11 @@ final class LiveHomeService: APIRequest, HomeService {
      * and delivers the response on the main thread for UI updates.
      *
      * - Parameter query: Search term to find movies
+     * - Parameter page: Page number to fetch (defaults to 1)
      * - Returns: Publisher that emits MoviesResponse or Error
      */
-    func searchMovies(with query: String) -> AnyPublisher<MoviesResponse, Error> {
-        fetchRequest(target: HomeAPI.searchMovies(query), dataType: MoviesResponse.self)
+    func searchMovies(with query: String, page: Int = 1) -> AnyPublisher<MoviesResponse, Error> {
+        fetchRequest(target: HomeAPI.searchMovies(query: query, page: page), dataType: MoviesResponse.self)
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }

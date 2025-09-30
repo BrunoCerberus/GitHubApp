@@ -24,7 +24,7 @@ final class MockHomeService: HomeService {
 
     /// Custom error to simulate (defaults to generic mock error)
     var errorToSimulate: Error?
-    private let mockMoviesResponse = MoviesResponse(results: [
+    private let mockMovies = [
         Movie(id: 346_698,
               title: "Barbie",
               overview: "Barbie and Ken are having the time of their lives in the colorful " +
@@ -45,7 +45,7 @@ final class MockHomeService: HomeService {
                   "when she becomes Ladybug. Bestowed with magical powers of creation, Ladybug " +
                   "must unite with her opposite, Cat Noir, to save Paris as a new villain unleashes chaos unto the city.",
               posterPath: ""),
-    ])
+    ]
 
     private let mockMovieCreditsResponse = MovieCreditsResponse(cast: [
         MovieCastMember(
@@ -106,7 +106,7 @@ final class MockHomeService: HomeService {
     ])
 
     /// Returns a pre-baked list of movies
-    func fetchMovies() -> AnyPublisher<MoviesResponse, Error> {
+    func fetchMovies(page: Int = 1) -> AnyPublisher<MoviesResponse, Error> {
         if shouldFail {
             let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock fetch error"])
             return Fail(error: error)
@@ -114,14 +114,20 @@ final class MockHomeService: HomeService {
                 .eraseToAnyPublisher()
         }
 
-        return Just(mockMoviesResponse)
+        let response = MoviesResponse(
+            results: mockMovies,
+            page: page,
+            totalPages: 10,
+            totalResults: mockMovies.count * 10
+        )
+        return Just(response)
             .setFailureType(to: Error.self)
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 
     /// Ignores the query and returns the same mock list
-    func searchMovies(with _: String) -> AnyPublisher<MoviesResponse, Error> {
+    func searchMovies(with _: String, page: Int = 1) -> AnyPublisher<MoviesResponse, Error> {
         if shouldFail {
             let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock search error"])
             return Fail(error: error)
@@ -129,7 +135,13 @@ final class MockHomeService: HomeService {
                 .eraseToAnyPublisher()
         }
 
-        return Just(mockMoviesResponse)
+        let response = MoviesResponse(
+            results: mockMovies,
+            page: page,
+            totalPages: 5,
+            totalResults: mockMovies.count * 5
+        )
+        return Just(response)
             .setFailureType(to: Error.self)
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()

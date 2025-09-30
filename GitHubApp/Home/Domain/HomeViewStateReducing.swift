@@ -42,22 +42,23 @@ struct HomeViewStateReducer: HomeViewStateReducing {
      * - Returns: The corresponding view state
      */
     func reduce(_ domainState: HomeDomainState) -> HomeViewState {
-        // Handle error state first
-        if let error = domainState.error {
+        // Handle error state first (but only if not loading more)
+        if let error = domainState.error, !domainState.isLoadingMore {
             return .error(error)
         }
 
-        // Handle loading state
+        // Handle initial loading state (not loading more)
         if domainState.isLoading {
             return .loading
         }
 
-        // Handle success state with data
+        // Handle success state with data (including while loading more)
         let dataViewState = HomeDataViewState(
             title: domainState.searchQuery != nil ? "Search Results" : "Upcoming Movies",
             movies: domainState.movies,
             favoriteMovies: domainState.favoriteMovies,
-            searchQuery: domainState.searchQuery
+            searchQuery: domainState.searchQuery,
+            isLoadingMore: domainState.isLoadingMore
         )
         return .success(dataViewState)
     }

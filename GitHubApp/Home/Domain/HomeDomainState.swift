@@ -29,12 +29,29 @@ struct HomeDomainState: Equatable {
     /// Current search query
     var searchQuery: String?
 
+    /// Current page number for pagination
+    var currentPage: Int
+
+    /// Total number of pages available
+    var totalPages: Int
+
+    /// Flag indicating if more pages can be loaded
+    var hasMorePages: Bool {
+        currentPage < totalPages
+    }
+
+    /// Flag indicating if pagination is in progress
+    var isLoadingMore: Bool
+
     /// Default initial state
     static let initial = HomeDomainState(
         movies: [],
         favoriteMovies: [],
         isLoading: false,
         error: nil,
-        searchQuery: nil
+        searchQuery: nil,
+        currentPage: 0,
+        totalPages: 0,
+        isLoadingMore: false
     )
 }
