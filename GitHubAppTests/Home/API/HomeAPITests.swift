@@ -16,12 +16,12 @@ struct HomeAPITests {
     func pathsContainApiKeyAndEndpoint() {
         defer { try? APIKeysProvider.removeMovieAPIKey() }
 
-        #expect(HomeAPI.fetchMovies.path.contains("/movie/upcoming"))
-        #expect(HomeAPI.fetchMovies.path.contains("api_key="))
+        #expect(HomeAPI.fetchMovies(page: 1).path.contains("/movie/upcoming"))
+        #expect(HomeAPI.fetchMovies(page: 1).path.contains("api_key="))
 
-        #expect(HomeAPI.searchMovies("matrix").path.contains("/search/movie"))
-        #expect(HomeAPI.searchMovies("matrix").path.contains("query=matrix"))
-        #expect(HomeAPI.searchMovies("matrix").path.contains("api_key="))
+        #expect(HomeAPI.searchMovies(query: "matrix", page: 1).path.contains("/search/movie"))
+        #expect(HomeAPI.searchMovies(query: "matrix", page: 1).path.contains("query=matrix"))
+        #expect(HomeAPI.searchMovies(query: "matrix", page: 1).path.contains("api_key="))
 
         #expect(HomeAPI.fetchCredits(10).path.contains("/movie/10/credits"))
         #expect(HomeAPI.fetchCredits(10).path.contains("api_key="))
@@ -41,24 +41,24 @@ struct HomeAPITests {
 
     @Test("All API endpoints use GET HTTP method")
     func httpMethodConfiguration() {
-        #expect(HomeAPI.fetchMovies.method == .GET)
-        #expect(HomeAPI.searchMovies("test").method == .GET)
+        #expect(HomeAPI.fetchMovies(page: 1).method == .GET)
+        #expect(HomeAPI.searchMovies(query: "test", page: 1).method == .GET)
         #expect(HomeAPI.fetchCredits(1).method == .GET)
         #expect(HomeAPI.fetchReviews(1).method == .GET)
     }
 
     @Test("All API endpoints have no request body for GET requests")
     func requestBodyConfiguration() {
-        #expect(HomeAPI.fetchMovies.task == nil)
-        #expect(HomeAPI.searchMovies("test").task == nil)
+        #expect(HomeAPI.fetchMovies(page: 1).task == nil)
+        #expect(HomeAPI.searchMovies(query: "test", page: 1).task == nil)
         #expect(HomeAPI.fetchCredits(1).task == nil)
         #expect(HomeAPI.fetchReviews(1).task == nil)
     }
 
     @Test("No custom headers are required for The Movie Database API")
     func customHeadersConfiguration() {
-        #expect(HomeAPI.fetchMovies.header == nil)
-        #expect(HomeAPI.searchMovies("test").header == nil)
+        #expect(HomeAPI.fetchMovies(page: 1).header == nil)
+        #expect(HomeAPI.searchMovies(query: "test", page: 1).header == nil)
         #expect(HomeAPI.fetchCredits(1).header == nil)
         #expect(HomeAPI.fetchReviews(1).header == nil)
     }
@@ -66,13 +66,13 @@ struct HomeAPITests {
     @Test("Debug logging is configured correctly for build type")
     func debugLoggingConfiguration() {
         #if DEBUG
-            #expect(HomeAPI.fetchMovies.debug)
-            #expect(HomeAPI.searchMovies("test").debug)
+            #expect(HomeAPI.fetchMovies(page: 1).debug)
+            #expect(HomeAPI.searchMovies(query: "test", page: 1).debug)
             #expect(HomeAPI.fetchCredits(1).debug)
             #expect(HomeAPI.fetchReviews(1).debug)
         #else
-            #expect(!HomeAPI.fetchMovies.debug)
-            #expect(!HomeAPI.searchMovies("test").debug)
+            #expect(!HomeAPI.fetchMovies(page: 1).debug)
+            #expect(!HomeAPI.searchMovies(query: "test", page: 1).debug)
             #expect(!HomeAPI.fetchCredits(1).debug)
             #expect(!HomeAPI.fetchReviews(1).debug)
         #endif
@@ -81,7 +81,7 @@ struct HomeAPITests {
     @Test("URL construction handles special characters in search query")
     func urlConstructionWithSpecialCharacters() {
         let query = "movie & film: test"
-        let searchPath = HomeAPI.searchMovies(query).path
+        let searchPath = HomeAPI.searchMovies(query: query, page: 1).path
 
         #expect(searchPath.contains("/search/movie"))
         #expect(searchPath.contains("api_key="))
@@ -91,7 +91,7 @@ struct HomeAPITests {
 
     @Test("URL construction handles empty search query correctly")
     func urlConstructionWithEmptySearchQuery() {
-        let searchPath = HomeAPI.searchMovies("").path
+        let searchPath = HomeAPI.searchMovies(query: "", page: 1).path
 
         #expect(searchPath.contains("/search/movie"))
         #expect(searchPath.contains("api_key="))
@@ -137,22 +137,22 @@ struct HomeAPITests {
         let actualAPIKey = APIKeysProvider.theMovieAPIKey
 
         // Verify that all endpoints contain the API key
-        #expect(HomeAPI.fetchMovies.path.contains("api_key="))
-        #expect(HomeAPI.searchMovies("test").path.contains("api_key="))
+        #expect(HomeAPI.fetchMovies(page: 1).path.contains("api_key="))
+        #expect(HomeAPI.searchMovies(query: "test", page: 1).path.contains("api_key="))
         #expect(HomeAPI.fetchCredits(1).path.contains("api_key="))
         #expect(HomeAPI.fetchReviews(1).path.contains("api_key="))
 
         // Verify that the API key value is actually present in the URL
-        #expect(HomeAPI.fetchMovies.path.contains(actualAPIKey))
-        #expect(HomeAPI.searchMovies("test").path.contains(actualAPIKey))
+        #expect(HomeAPI.fetchMovies(page: 1).path.contains(actualAPIKey))
+        #expect(HomeAPI.searchMovies(query: "test", page: 1).path.contains(actualAPIKey))
         #expect(HomeAPI.fetchCredits(1).path.contains(actualAPIKey))
         #expect(HomeAPI.fetchReviews(1).path.contains(actualAPIKey))
     }
 
     @Test("Base URL is properly configured for all endpoints")
     func baseURLConfiguration() {
-        let fetchPath = HomeAPI.fetchMovies.path
-        let searchPath = HomeAPI.searchMovies("test").path
+        let fetchPath = HomeAPI.fetchMovies(page: 1).path
+        let searchPath = HomeAPI.searchMovies(query: "test", page: 1).path
         let creditsPath = HomeAPI.fetchCredits(1).path
         let reviewsPath = HomeAPI.fetchReviews(1).path
 

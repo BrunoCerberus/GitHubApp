@@ -29,7 +29,7 @@ struct HomeAPIEdgeCasesTests {
         let longQuery = String(repeating: "a", count: 1000)
 
         // When
-        let searchAPI = HomeAPI.searchMovies(longQuery)
+        let searchAPI = HomeAPI.searchMovies(query: longQuery, page: 1)
         let path = searchAPI.path
 
         // Then - Should handle long queries without crashing
@@ -44,7 +44,7 @@ struct HomeAPIEdgeCasesTests {
         let unicodeQuery = "🎬 Movie with émojis and àccénts"
 
         // When
-        let searchAPI = HomeAPI.searchMovies(unicodeQuery)
+        let searchAPI = HomeAPI.searchMovies(query: unicodeQuery, page: 1)
         let path = searchAPI.path
 
         // Then - Should properly handle Unicode characters
@@ -59,7 +59,7 @@ struct HomeAPIEdgeCasesTests {
         let whitespaceQuery = "   \t\n  "
 
         // When
-        let searchAPI = HomeAPI.searchMovies(whitespaceQuery)
+        let searchAPI = HomeAPI.searchMovies(query: whitespaceQuery, page: 1)
         let path = searchAPI.path
 
         // Then - Should handle whitespace-only queries
@@ -74,7 +74,7 @@ struct HomeAPIEdgeCasesTests {
         let unsafeQuery = "movie?query=test&param=value#fragment"
 
         // When
-        let searchAPI = HomeAPI.searchMovies(unsafeQuery)
+        let searchAPI = HomeAPI.searchMovies(query: unsafeQuery, page: 1)
         let path = searchAPI.path
 
         // Then - Should properly encode unsafe characters
@@ -147,8 +147,8 @@ struct HomeAPIEdgeCasesTests {
     func allEndpointsHaveCorrectHTTPMethod() {
         // Given - All possible API endpoints
         let endpoints: [HomeAPI] = [
-            .fetchMovies,
-            .searchMovies("test"),
+            .fetchMovies(page: 1),
+            .searchMovies(query: "test", page: 1),
             .fetchCredits(1),
             .fetchReviews(1),
         ]
@@ -163,8 +163,8 @@ struct HomeAPIEdgeCasesTests {
     func allEndpointsHaveNilTask() {
         // Given - All possible API endpoints
         let endpoints: [HomeAPI] = [
-            .fetchMovies,
-            .searchMovies("test"),
+            .fetchMovies(page: 1),
+            .searchMovies(query: "test", page: 1),
             .fetchCredits(1),
             .fetchReviews(1),
         ]
@@ -179,8 +179,8 @@ struct HomeAPIEdgeCasesTests {
     func allEndpointsHaveNilHeader() {
         // Given - All possible API endpoints
         let endpoints: [HomeAPI] = [
-            .fetchMovies,
-            .searchMovies("test"),
+            .fetchMovies(page: 1),
+            .searchMovies(query: "test", page: 1),
             .fetchCredits(1),
             .fetchReviews(1),
         ]
@@ -195,8 +195,8 @@ struct HomeAPIEdgeCasesTests {
     func debugConfigurationConsistency() {
         // Given - All possible API endpoints
         let endpoints: [HomeAPI] = [
-            .fetchMovies,
-            .searchMovies("debug_test"),
+            .fetchMovies(page: 1),
+            .searchMovies(query: "debug_test", page: 1),
             .fetchCredits(999),
             .fetchReviews(888),
         ]
@@ -221,8 +221,8 @@ struct HomeAPIEdgeCasesTests {
     func urlConstructionWithManyQueryParameters() {
         // Given - Multiple endpoints that would create complex URLs
         let endpoints: [(HomeAPI, String)] = [
-            (.fetchMovies, "fetchMovies"),
-            (.searchMovies("complex query with spaces"), "searchMovies"),
+            (.fetchMovies(page: 1), "fetchMovies"),
+            (.searchMovies(query: "complex query with spaces", page: 1), "searchMovies"),
             (.fetchCredits(12345), "fetchCredits"),
             (.fetchReviews(67890), "fetchReviews"),
         ]
@@ -264,7 +264,7 @@ struct HomeAPIEdgeCasesTests {
     func searchMoviesURLStructure() {
         // Given
         let query = "action movie"
-        let searchAPI = HomeAPI.searchMovies(query)
+        let searchAPI = HomeAPI.searchMovies(query: query, page: 1)
 
         // When
         let path = searchAPI.path
@@ -289,7 +289,7 @@ struct HomeAPIEdgeCasesTests {
     @Test("API fetcher protocol compliance")
     func apiFetcherProtocolCompliance() {
         // Given - HomeAPI should conform to APIFetcher protocol
-        let api: any APIFetcher = HomeAPI.fetchMovies
+        let api: any APIFetcher = HomeAPI.fetchMovies(page: 1)
 
         // When & Then - Should have all required properties
         #expect(!api.path.isEmpty)

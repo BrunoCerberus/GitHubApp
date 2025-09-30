@@ -49,11 +49,11 @@ struct MovieDetailsViewModelTests {
 
         // Given
         struct FailingService: HomeService {
-            func fetchMovies() -> AnyPublisher<MoviesResponse, Error> {
+            func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
                 Fail(error: NSError(domain: "e", code: 1)).eraseToAnyPublisher()
             }
 
-            func searchMovies(with _: String) -> AnyPublisher<MoviesResponse, Error> {
+            func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
                 Fail(error: NSError(domain: "e", code: 1)).eraseToAnyPublisher()
             }
 
