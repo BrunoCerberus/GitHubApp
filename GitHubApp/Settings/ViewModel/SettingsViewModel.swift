@@ -323,7 +323,7 @@ final class SettingsViewModel: CombineViewModel {
      */
     deinit {
         #if DEBUG
-            LogManager.shared.debug("SettingsViewModel deallocated", category: "ViewModel")
+            LogManager.shared.viewModel("SettingsViewModel deallocated", level: .debug)
         #endif
     }
 }

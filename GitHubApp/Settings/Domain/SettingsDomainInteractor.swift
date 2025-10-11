@@ -63,7 +63,7 @@ final class SettingsDomainInteractor: ObservableObject, CombineInteractor {
         do {
             settingsService = try serviceLocator.retrieve(SettingsService.self)
         } catch {
-            LogManager.shared.warning("Failed to retrieve SettingsService from ServiceLocator: \(error)", category: "Service")
+            LogManager.shared.service("Failed to retrieve SettingsService from ServiceLocator: \(error)", level: .warning)
             settingsService = LiveSettingsService()
         }
 
@@ -200,7 +200,7 @@ final class SettingsDomainInteractor: ObservableObject, CombineInteractor {
             if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
                 // Only request review in production builds, not in test environments
                 #if DEBUG
-                    LogManager.shared.debug("Skipping app review request in debug/test build", category: "Domain")
+                    LogManager.shared.domain("Skipping app review request in debug/test build", level: .debug)
                 #else
                     SKStoreReviewController.requestReview(in: scene)
                 #endif

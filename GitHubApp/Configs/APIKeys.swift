@@ -62,7 +62,7 @@ enum APIKeysProvider {
             return try getMovieAPIKey()
         } catch {
             // If keychain also fails, provide a helpful error message
-            LogManager.shared.error("""
+            LogManager.shared.service("""
             API_KEY not found in Secrets.plist, environment variables, or keychain.
 
             To fix this:
@@ -71,7 +71,7 @@ enum APIKeysProvider {
             3. Call APIKeysProvider.setMovieAPIKey("your_api_key") before accessing theMovieAPIKey
 
             Current environment: \(ProcessInfo.processInfo.environment.keys.filter { $0.contains("API") })
-            """, category: "Service")
+            """, level: .error)
             return "123456"
         }
     }()
@@ -167,7 +167,7 @@ enum APIKeysProvider {
             return try getMovieAPIKey()
         } catch {
             // If keychain also fails, provide a helpful error message
-            LogManager.shared.error("""
+            LogManager.shared.service("""
             API_KEY not found in Secrets.plist, environment variables, or keychain.
 
             To fix this:
@@ -176,7 +176,7 @@ enum APIKeysProvider {
             3. Call APIKeysProvider.setMovieAPIKey("your_api_key") before accessing theMovieAPIKey
 
             Current environment: \(ProcessInfo.processInfo.environment.keys.filter { $0.contains("API") })
-            """, category: "Service")
+            """, level: .error)
             return "123456"
         }
     }
