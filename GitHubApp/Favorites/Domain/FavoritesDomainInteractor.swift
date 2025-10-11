@@ -55,7 +55,7 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
         do {
             favoritesService = try serviceLocator.retrieve(FavoritesService.self)
         } catch {
-            LogManager.shared.service("Failed to retrieve FavoritesService from ServiceLocator: \(error)", level: .warning)
+            Logger.shared.service("Failed to retrieve FavoritesService from ServiceLocator: \(error)", level: .warning)
             favoritesService = LiveFavoritesService()
         }
 

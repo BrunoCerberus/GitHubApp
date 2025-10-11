@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,7 +14,6 @@
 		07B8683AA28848D076B1241E /* GitHubAppSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA91AD85F1369ECD0568C0BF /* GitHubAppSceneDelegate.swift */; };
 		0B3117F99566CFC2941B0940 /* SettingsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5F666A782CFB26CC0F5BED /* SettingsViewTests.swift */; };
 		0C265682DFECC2E6F91174CA /* FavoritesMoviesViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5784C3EFDAD8663BA080218C /* FavoritesMoviesViewTests.swift */; };
-		0D663E55B150AB9F13EB1DDC /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1BF8C0D64FB324F1DBB5A2 /* LogManager.swift */; };
 		0E2B4B5147800C7420C5F936 /* HomeHostingControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E2528E00AABACE50601D15 /* HomeHostingControllerTests.swift */; };
 		125C49A2F52462E159BCBB8D /* HomeDomainActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAA6374B2E8497C9243DABDF /* HomeDomainActionTests.swift */; };
 		13CF917B3191A1DA922CA54A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48AAA2AA801A58CA02F663DA /* XCTest.framework */; };
@@ -118,6 +117,7 @@
 		AEDB02D4F0C2AE94BF26DB4D /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 93EED303D215260E0B5B8DEA /* .swiftlint.yml */; };
 		AEF58A94CBA1B5E9E40415F9 /* HomeServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7C6699A1613305CEB3F9F0 /* HomeServiceTests.swift */; };
 		B04307741F7A19E242A6E731 /* TestUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F2DF8D4BE804634E50A851 /* TestUtilities.swift */; };
+		B42308488D0206D2697D8648 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4838CD143468122202B395 /* Logger.swift */; };
 		B4741F28A2BFD26EC65C26E7 /* HomeViewSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59422D88030A330A8675DB96 /* HomeViewSearchTests.swift */; };
 		B51B4C4E47A7B98C85B9F4A3 /* SharedDataManagerMainAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718327EA716036CFEF1F24EA /* SharedDataManagerMainAppTests.swift */; };
 		B6A2E26CA6B4DA9688019DD7 /* HomeAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E564A900D383DE26F7A09AA /* HomeAPITests.swift */; };
@@ -148,6 +148,7 @@
 		DB8C9DE94D239D5018E71816 /* HomeDomainAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54DCAF3C7D80D6202A83A73 /* HomeDomainAction.swift */; };
 		E192458EF369A44C764DBEBE /* MovieTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E242688A312E9F404C35A19 /* MovieTests.swift */; };
 		E2D5111070AA8E60C94387ED /* APIKeysProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DF4B4B200B51A5113A88BE0 /* APIKeysProviderTests.swift */; };
+		E2FC12AC859248C2C5559ED0 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12483AF4834A63B94DBBEBF /* Logger.swift */; };
 		E3A1C16A2E594F1FE5F77CC3 /* HomeViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619FFC962D3225E694B48752 /* HomeViewTests.swift */; };
 		E3BF868B3BDD41D6CA6CC462 /* FavoritesDomainAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFED35262E1EE6CEA9E8CA3 /* FavoritesDomainAction.swift */; };
 		E71A10F137FEA5D84037D321 /* MockHomeServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6280CDB0A6FD7929C61CD56 /* MockHomeServiceTests.swift */; };
@@ -299,15 +300,16 @@
 		9916DDEE0A7446A88D121A93 /* LiveSettingsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveSettingsService.swift; sourceTree = "<group>"; };
 		9DBB228EF6877BFFC76275C4 /* SharedMovie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedMovie.swift; sourceTree = "<group>"; };
 		9E564A900D383DE26F7A09AA /* HomeAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAPITests.swift; sourceTree = "<group>"; };
+		9F4838CD143468122202B395 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		9FEC59DF6588F4395BE51CA9 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A04AC244236D488E88A84794 /* FavoritesMoviesViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesMoviesViewModelTests.swift; sourceTree = "<group>"; };
 		A9AA2FAFA3D17AFCE6928DD2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A9F04848080CDACCBA09466D /* MovieReviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieReviews.swift; sourceTree = "<group>"; };
-		AB1BF8C0D64FB324F1DBB5A2 /* LogManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
 		AB5B798085AC661D464742E9 /* ServiceLocatorExampleFactoryExecutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceLocatorExampleFactoryExecutionTests.swift; sourceTree = "<group>"; };
 		AE733C4DDA1D18C7837F0C7F /* HomeDomainStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDomainStateTests.swift; sourceTree = "<group>"; };
 		B027BE9F7D60B8A726FF2DA5 /* SettingsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModelTests.swift; sourceTree = "<group>"; };
 		B0343510FC2EB9FD2F219C09 /* APIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
+		B12483AF4834A63B94DBBEBF /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		B14EC200005D7ADD667F6C28 /* SettingsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsService.swift; sourceTree = "<group>"; };
 		B2100EC98FA49C80FC82A94B /* SettingsDomainAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDomainAction.swift; sourceTree = "<group>"; };
 		B5BD52A20498847CA266B716 /* FavoritesViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewState.swift; sourceTree = "<group>"; };
@@ -422,6 +424,7 @@
 			children = (
 				E2CED821A08D13AA5E4424BC /* GitHubAppWidgetExtension.entitlements */,
 				D506864A1E567660B7FB87D6 /* Info.plist */,
+				9F4838CD143468122202B395 /* Logger.swift */,
 				49A8397C193C8C3B9B52D297 /* SharedDataManager.swift */,
 				9DBB228EF6877BFFC76275C4 /* SharedMovie.swift */,
 				266318109FD58879572779B3 /* UpcomingMoviesWidget.swift */,
@@ -986,7 +989,7 @@
 				47DB3288F0D2A4BB300FC538 /* DeeplinkRouter.swift */,
 				75DF9594E63D25F26535BA3C /* KeychainManager.swift */,
 				4A912895E593DA800E14EA14 /* Localizable.swift */,
-				AB1BF8C0D64FB324F1DBB5A2 /* LogManager.swift */,
+				B12483AF4834A63B94DBBEBF /* Logger.swift */,
 				65D2AF3B4BD0958184EA96D2 /* MockFavoritesService.swift */,
 				79E4BEE7C534ED372977F623 /* MockHomeService.swift */,
 				131D9444F11EAC634B986FC9 /* MockSettingsService.swift */,
@@ -1244,6 +1247,7 @@
 				78F35B873C2A9D4E00B83653 /* XCRemoteSwiftPackageReference "EntropyCore" */,
 				99658432FF459DF4CD447AAB /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 			);
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -1421,7 +1425,7 @@
 				C57AF494C1BEDF0A097FDFC8 /* LiveHomeService.swift in Sources */,
 				0740EB3903A9034101B9DD42 /* LiveSettingsService.swift in Sources */,
 				D72ED2AB0CB08875B29B0562 /* Localizable.swift in Sources */,
-				0D663E55B150AB9F13EB1DDC /* LogManager.swift in Sources */,
+				E2FC12AC859248C2C5559ED0 /* Logger.swift in Sources */,
 				A0E75AB1961C46D4D2798A22 /* MockFavoritesService.swift in Sources */,
 				7356CA0C872B3D688C587109 /* MockHomeService.swift in Sources */,
 				2C26F22B4122035D4A480DEA /* MockSettingsService.swift in Sources */,
@@ -1470,6 +1474,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B42308488D0206D2697D8648 /* Logger.swift in Sources */,
 				D9B135911E1BF49881CB64B2 /* SharedDataManager.swift in Sources */,
 				20ECAE84B7211235B5BD49AF /* SharedMovie.swift in Sources */,
 				BE204C8FDE5046B965B89E66 /* UpcomingMoviesWidget.swift in Sources */,

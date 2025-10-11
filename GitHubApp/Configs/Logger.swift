@@ -1,5 +1,5 @@
 //
-//  LogManager.swift
+//  Logger.swift
 //  GitHubApp
 //
 //  Created on 2025-10-11.
@@ -10,8 +10,8 @@ import os.log
 
 /// Centralized logging manager that wraps os.log with severity levels
 /// Logs are only active in DEBUG builds and automatically excluded from production
-final class LogManager {
-    static let shared = LogManager()
+final class Logger {
+    static let shared = Logger()
 
     private let subsystem = Bundle.main.bundleIdentifier ?? "com.githubapp.app"
 
@@ -86,23 +86,23 @@ final class LogManager {
 
     private func log(_ message: String, level: OSLogType, category: String, file: String = #file, function: String = #function, line: Int = #line) {
         #if DEBUG
-            let logger = Logger(subsystem: subsystem, category: category)
+            let osLogger = os.Logger(subsystem: subsystem, category: category)
             let fileName = (file as NSString).lastPathComponent
             let formattedMessage = "[\(fileName):\(line)] \(function) - \(message)"
 
             switch level {
             case .debug:
-                logger.debug("\(formattedMessage)")
+                osLogger.debug("\(formattedMessage)")
             case .info:
-                logger.info("\(formattedMessage)")
+                osLogger.info("\(formattedMessage)")
             case .default:
-                logger.warning("\(formattedMessage)")
+                osLogger.warning("\(formattedMessage)")
             case .error:
-                logger.error("\(formattedMessage)")
+                osLogger.error("\(formattedMessage)")
             case .fault:
-                logger.critical("\(formattedMessage)")
+                osLogger.critical("\(formattedMessage)")
             default:
-                logger.log("\(formattedMessage)")
+                osLogger.log("\(formattedMessage)")
             }
         #endif
     }
@@ -133,18 +133,18 @@ enum LogLevel {
 #if DEBUG
     /// Global convenience function for quick debug logging
     func logDebug(_ message: String, category: String = "General") {
-        LogManager.shared.debug(message, category: category)
+        Logger.shared.debug(message, category: category)
     }
 
     func logInfo(_ message: String, category: String = "General") {
-        LogManager.shared.info(message, category: category)
+        Logger.shared.info(message, category: category)
     }
 
     func logWarning(_ message: String, category: String = "General") {
-        LogManager.shared.warning(message, category: category)
+        Logger.shared.warning(message, category: category)
     }
 
     func logError(_ message: String, category: String = "General") {
-        LogManager.shared.error(message, category: category)
+        Logger.shared.error(message, category: category)
     }
 #endif

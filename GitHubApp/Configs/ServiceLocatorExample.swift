@@ -27,9 +27,9 @@ enum ServiceLocatorExample {
         // Retrieve a service
         do {
             let homeService = try serviceLocator.retrieve(HomeService.self)
-            LogManager.shared.service("Successfully retrieved HomeService")
+            Logger.shared.service("Successfully retrieved HomeService")
         } catch {
-            LogManager.shared.service("Failed to retrieve HomeService: \(error)", level: .error)
+            Logger.shared.service("Failed to retrieve HomeService: \(error)", level: .error)
         }
     }
 
@@ -45,9 +45,9 @@ enum ServiceLocatorExample {
         // Retrieve a service (this is what ViewModels do automatically)
         do {
             let homeService = try serviceLocator.retrieve(HomeService.self)
-            LogManager.shared.service("Successfully retrieved HomeService")
+            Logger.shared.service("Successfully retrieved HomeService")
         } catch {
-            LogManager.shared.service("Failed to retrieve HomeService: \(error)", level: .error)
+            Logger.shared.service("Failed to retrieve HomeService: \(error)", level: .error)
         }
     }
 
@@ -59,9 +59,9 @@ enum ServiceLocatorExample {
 
         // Safe retrieval that returns nil if service is not registered
         if let homeService = serviceLocator.safeRetrieve(HomeService.self) {
-            LogManager.shared.service("Successfully retrieved HomeService safely")
+            Logger.shared.service("Successfully retrieved HomeService safely")
         } else {
-            LogManager.shared.service("HomeService not registered in ServiceLocator", level: .warning)
+            Logger.shared.service("HomeService not registered in ServiceLocator", level: .warning)
         }
     }
 
@@ -73,9 +73,9 @@ enum ServiceLocatorExample {
 
         // Check if a service is registered before trying to retrieve it
         if serviceLocator.isRegistered(HomeService.self) {
-            LogManager.shared.service("HomeService is registered in ServiceLocator")
+            Logger.shared.service("HomeService is registered in ServiceLocator")
         } else {
-            LogManager.shared.service("HomeService is not registered in ServiceLocator", level: .warning)
+            Logger.shared.service("HomeService is not registered in ServiceLocator", level: .warning)
         }
     }
 
@@ -87,11 +87,11 @@ enum ServiceLocatorExample {
 
         // Register a custom service instance
         serviceLocator.register(HomeService.self, instance: MockHomeService())
-        LogManager.shared.service("Registered MockService for HomeService")
+        Logger.shared.service("Registered MockService for HomeService")
 
         // Verify it's registered
         if serviceLocator.isRegistered(HomeService.self) {
-            LogManager.shared.service("Service registration confirmed")
+            Logger.shared.service("Service registration confirmed")
         }
     }
 
@@ -106,7 +106,7 @@ enum ServiceLocatorExample {
             // This closure will be called each time the service is retrieved
             LiveHomeService()
         }
-        LogManager.shared.service("Registered HomeService factory")
+        Logger.shared.service("Registered HomeService factory")
     }
 
     /**
@@ -117,7 +117,7 @@ enum ServiceLocatorExample {
 
         // Clear all registered services (useful for testing)
         serviceLocator.clear()
-        LogManager.shared.service("Cleared all registered services")
+        Logger.shared.service("Cleared all registered services")
     }
 }
 

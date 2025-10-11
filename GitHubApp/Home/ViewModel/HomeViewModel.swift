@@ -237,7 +237,7 @@ final class HomeViewModel: CombineViewModel {
      */
     deinit {
         #if DEBUG
-            LogManager.shared.viewModel("HomeViewModel deallocated", level: .debug)
+            Logger.shared.viewModel("HomeViewModel deallocated", level: .debug)
         #endif
     }
 }

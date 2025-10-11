@@ -62,7 +62,7 @@ enum APIKeysProvider {
             return try getMovieAPIKey()
         } catch {
             // If keychain also fails, provide a helpful error message
-            LogManager.shared.service("""
+            Logger.shared.service("""
             API_KEY not found in Secrets.plist, environment variables, or keychain.
 
             To fix this:
@@ -167,7 +167,7 @@ enum APIKeysProvider {
             return try getMovieAPIKey()
         } catch {
             // If keychain also fails, provide a helpful error message
-            LogManager.shared.service("""
+            Logger.shared.service("""
             API_KEY not found in Secrets.plist, environment variables, or keychain.
 
             To fix this:
