@@ -45,14 +45,14 @@ struct SettingsViewTests {
 
         _ = view.wrappedViewController
 
-        // Using iPhone SE configuration but with iPhone 16 Pro dimensions
-        let iPhone16ProConfig = ViewImageConfig(
+        // Using iPhone Air (iOS 26) dimensions
+        let iPhoneAirConfig = ViewImageConfig(
             safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
             size: CGSize(width: 393, height: 852),
             traits: UITraitCollection()
         )
 
-        assertSnapshot(of: view.wrappedViewController, as: .wait(for: 0.3, on: .image(on: iPhone16ProConfig)))
+        assertSnapshot(of: view.wrappedViewController, as: .wait(for: 0.3, on: .image(on: iPhoneAirConfig)))
     }
 
     @Test("Settings view button interactions for coverage")

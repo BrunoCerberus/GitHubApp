@@ -38,21 +38,24 @@ struct MovieDetailsViewTests {
 
     @Test("Movie details view snapshot matches stored reference")
     func movieDetailsView() async throws {
-        // Ensure we're on the main thread for UIKit operations
+        let (_, viewModel, view) = createTestComponents()
+        let controller: UIViewController = view.wrappedViewController
+
+        // Trigger data fetch
+        viewModel.fetchData()
+
+        // Give time for async operations and UI updates (credits and reviews to load)
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+
+        // Using iPhone Air (iOS 26) dimensions
+        let iPhoneAirConfig = ViewImageConfig(
+            safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
+            size: CGSize(width: 393, height: 852),
+            traits: UITraitCollection()
+        )
+
         await MainActor.run {
-            let (_, viewModel, view) = createTestComponents()
-            let controller: UIViewController = view.wrappedViewController
-
-            viewModel.fetchData()
-
-            // Using iPhone 16 Pro dimensions
-            let iPhone16ProConfig = ViewImageConfig(
-                safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
-                size: CGSize(width: 393, height: 852),
-                traits: UITraitCollection()
-            )
-
-            assertSnapshot(of: controller, as: .wait(for: 0.8, on: .image(on: iPhone16ProConfig)))
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
         }
     }
 }

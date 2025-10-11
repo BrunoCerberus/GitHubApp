@@ -51,14 +51,14 @@ struct HomeViewTests {
         // Give time for async operations and UI updates
         try await Task.sleep(nanoseconds: 3_500_000_000) // 3.5 seconds
 
-        // Using iPhone SE configuration but with iPhone 16 Pro dimensions
-        let iPhone16ProConfig = ViewImageConfig(
+        // Using iPhone Air (iOS 26) dimensions
+        let iPhoneAirConfig = ViewImageConfig(
             safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
             size: CGSize(width: 393, height: 852),
             traits: UITraitCollection()
         )
 
-        assertSnapshot(of: view.wrappedViewController, as: .wait(for: 1.0, on: .image(on: iPhone16ProConfig)))
+        assertSnapshot(of: view.wrappedViewController, as: .wait(for: 1.0, on: .image(on: iPhoneAirConfig)))
     }
 
     @Test("Search functionality and text change handling")
