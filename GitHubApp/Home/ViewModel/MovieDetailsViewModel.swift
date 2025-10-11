@@ -64,7 +64,7 @@ final class MovieDetailsViewModel {
         do {
             service = try serviceLocator.retrieve(HomeService.self)
         } catch {
-            print("⚠️ Failed to retrieve HomeService from ServiceLocator: \(error)")
+            LogManager.shared.warning("Failed to retrieve HomeService from ServiceLocator: \(error)", category: "Service")
             service = LiveHomeService()
         }
     }
@@ -122,7 +122,7 @@ final class MovieDetailsViewModel {
         self.error = "Failed to load data: \(error.localizedDescription)"
         #if DEBUG
             // Only log in debug builds to avoid exposing internal details in production
-            debugPrint("MovieDetailsViewModel error: \(error)")
+            LogManager.shared.error("MovieDetailsViewModel error: \(error)", category: "ViewModel")
         #endif
     }
 
@@ -133,7 +133,7 @@ final class MovieDetailsViewModel {
      */
     deinit {
         #if DEBUG
-            print("MovieDetailsViewModel deallocated")
+            LogManager.shared.debug("MovieDetailsViewModel deallocated", category: "ViewModel")
         #endif
     }
 }

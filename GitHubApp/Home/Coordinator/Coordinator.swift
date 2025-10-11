@@ -51,7 +51,7 @@ final class Coordinator: ObservableObject, CoordinatorProtocol {
     deinit {
         // Ensure proper cleanup
         #if DEBUG
-            print("Coordinator deallocated")
+            LogManager.shared.debug("Coordinator deallocated", category: "UI")
         #endif
     }
 

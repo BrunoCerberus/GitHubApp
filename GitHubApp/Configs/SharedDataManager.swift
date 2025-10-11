@@ -35,7 +35,7 @@ class SharedDataManager {
             userDefaults.set(data, forKey: moviesKey)
             userDefaults.set(Date(), forKey: lastUpdateKey)
         } catch {
-            print("Failed to save upcoming movies: \(error)")
+            LogManager.shared.error("Failed to save upcoming movies: \(error)", category: "Database")
         }
     }
 
@@ -53,7 +53,7 @@ class SharedDataManager {
             let movies = try JSONDecoder().decode([SharedMovie].self, from: data)
             return movies
         } catch {
-            print("Failed to decode upcoming movies: \(error)")
+            LogManager.shared.error("Failed to decode upcoming movies: \(error)", category: "Database")
             return []
         }
     }

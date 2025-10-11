@@ -63,7 +63,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
         do {
             homeService = try serviceLocator.retrieve(HomeService.self)
         } catch {
-            print("⚠️ Failed to retrieve HomeService from ServiceLocator: \(error)")
+            LogManager.shared.warning("Failed to retrieve HomeService from ServiceLocator: \(error)", category: "Service")
             homeService = LiveHomeService()
         }
 
@@ -263,7 +263,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
                     currentState = currentState.copy(favoriteMovies: filteredLikedMovies)
                 }
             } catch {
-                print("⚠️ Failed to toggle movie like: \(error)")
+                LogManager.shared.error("Failed to toggle movie like: \(error)", category: "Domain")
                 await MainActor.run {
                     currentState = currentState.copy(error: "Failed to update favorite status")
                 }
@@ -346,7 +346,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
                 currentState = currentState.copy(favoriteMovies: filteredLikedMovies)
             }
         } catch {
-            print("⚠️ Failed to load persisted favorite movies: \(error)")
+            LogManager.shared.error("Failed to load persisted favorite movies: \(error)", category: "Domain")
         }
     }
 
@@ -370,7 +370,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
             do {
                 try await storageService.save(movies, context: StorageContext.favoriteMovies)
             } catch {
-                print("⚠️ Failed to save favorite movies: \(error)")
+                LogManager.shared.error("Failed to save favorite movies: \(error)", category: "Domain")
             }
         }
     }
@@ -392,7 +392,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
         do {
             return try await storageService.fetchLikedMovies()
         } catch {
-            print("⚠️ Failed to load favorite movies: \(error)")
+            LogManager.shared.error("Failed to load favorite movies: \(error)", category: "Domain")
             return []
         }
     }
@@ -405,7 +405,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     deinit {
         NotificationCenter.default.removeObserver(self)
         #if DEBUG
-            print("HomeDomainInteractor deallocated")
+            LogManager.shared.debug("HomeDomainInteractor deallocated", category: "Domain")
         #endif
     }
 }
