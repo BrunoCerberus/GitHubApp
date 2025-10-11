@@ -6,7 +6,7 @@ help:
 	@echo "  init              - Setup Mint and SwiftFormat"
 	@echo "  install-xcodegen  - Install XcodeGen using Homebrew"
 	@echo "  generate          - Generate Xcode project from project.yml"
-	@echo "  test              - Run all unit tests on iOS 18.2 iPhone 16 Pro"
+	@echo "  test              - Run all unit tests on iOS 26.0 iPhone Air"
 	@echo "  test-unit         - Run only unit tests"
 	@echo "  test-ui           - Run only UI tests"
 	@echo "  test-debug        - Run tests with full verbose output for debugging"
@@ -57,9 +57,9 @@ clean-packages:
 
 # Run all unit tests
 test:
-	@echo "Running all tests on iOS 18.2 iPhone 16 Pro..."
+	@echo "Running all tests on iOS 26.0 iPhone Air..."
 	@make clean-packages
-	@if xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' 2>&1 | tee /tmp/test_output.log; then \
+	@if xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' 2>&1 | tee /tmp/test_output.log; then \
 		echo "✅ All tests completed successfully!"; \
 		grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -2; \
 	else \
@@ -73,9 +73,9 @@ test:
 
 # Run tests with coverage and print app target percent
 coverage:
-	@echo "Running tests with coverage on iOS 18.2 iPhone 16 Pro..."
+	@echo "Running tests with coverage on iOS 26.0 iPhone Air..."
 	@rm -rf build/TestResults.xcresult
-	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' -enableCodeCoverage YES -resultBundlePath build/TestResults.xcresult >/dev/null
+	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' -enableCodeCoverage YES -resultBundlePath build/TestResults.xcresult >/dev/null
 	@echo "\nCoverage summary (GitHubApp.app):"
 	@xcrun xccov view --report --only-targets build/TestResults.xcresult | awk '/GitHubApp.app/{print $$0}'
 	@echo "\nUse 'make coverage-report' for details."
@@ -92,9 +92,9 @@ coverage-badge:
 
 # Run only unit tests
 test-unit:
-	@echo "Running unit tests on iOS 18.2 iPhone 16 Pro..."
+	@echo "Running unit tests on iOS 26.0 iPhone Air..."
 	@make clean-packages
-	@if xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -only-testing:GitHubAppTests -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' 2>&1 | tee /tmp/test_output.log; then \
+	@if xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -only-testing:GitHubAppTests -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' 2>&1 | tee /tmp/test_output.log; then \
 		echo "✅ Unit tests completed successfully!"; \
 		grep -E "(✔|✘|Test.*passed|Test.*failed|Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -5; \
 	else \
@@ -108,9 +108,9 @@ test-unit:
 
 # Run only UI tests
 test-ui:
-	@echo "Running UI tests on iOS 18.2 iPhone 16 Pro..."
+	@echo "Running UI tests on iOS 26.0 iPhone Air..."
 	@make clean-packages
-	@if xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -only-testing:GitHubAppUITests -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' 2>&1 | tee /tmp/test_output.log; then \
+	@if xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -only-testing:GitHubAppUITests -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' 2>&1 | tee /tmp/test_output.log; then \
 		echo "✅ UI tests completed successfully!"; \
 		grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -1; \
 	else \
@@ -127,7 +127,7 @@ test-debug:
 	@echo "Running unit tests with full verbose output for debugging..."
 	@echo "📝 This will show all test output including passing tests"
 	@make clean-packages
-	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -only-testing:GitHubAppTests -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' 2>&1 | tee /tmp/test_debug.log
+	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -only-testing:GitHubAppTests -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' 2>&1 | tee /tmp/test_debug.log
 	@echo ""
 	@echo "📝 Full debug output saved to /tmp/test_debug.log"
 
@@ -141,7 +141,7 @@ clean:
 deeplink-test:
 	@echo "Testing deeplink functionality..."
 	@make clean-packages
-	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -only-testing:GitHubAppTests/DeeplinkManagerTests -only-testing:GitHubAppTests/DeeplinkRouterTests -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2'
+	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -only-testing:GitHubAppTests/DeeplinkManagerTests -only-testing:GitHubAppTests/DeeplinkRouterTests -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0'
 	@echo "✅ Deeplink tests completed!"
 
 # Install and generate in one command
