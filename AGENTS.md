@@ -12,9 +12,10 @@ This guide helps contributors work consistently across this iOS Swift project. K
 ## Build, Test, and Development Commands
 - `make setup` – Install XcodeGen and generate the project.
 - `make generate` – Regenerate `GitHubApp.xcodeproj` from `project.yml`.
-- `make test` | `make test-unit` | `make test-ui` – Run tests on iOS Simulator (iPhone 16 Pro, iOS 18.2).
+- `make test` | `make test-unit` | `make test-ui` – Run tests on iOS Simulator (iPhone Air, iOS 26.0).
 - `make coverage` | `make coverage-badge` – Show coverage and update `badges/coverage.svg`.
 - `make clean` | `make clean-packages` – Remove generated project/SPM artifacts.
+- Requires Xcode 26.0.1+.
 Open in Xcode with: `open GitHubApp.xcodeproj`. Use schemes: `GitHubAppDev` (dev), `GitHubAppProd` (release).
 
 ## Coding Style & Naming Conventions

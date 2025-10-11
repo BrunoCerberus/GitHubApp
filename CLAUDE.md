@@ -39,7 +39,7 @@ GitHubApp/
 ## Development Workflow
 
 ### Testing
-- **Command**: `make test` (runs on iOS 18.2 iPhone 16 Pro simulator)
+- **Command**: `make test` (runs on iOS 26.0 iPhone Air simulator)
 - **Coverage**: `make coverage` (shows coverage percentage)
 - **Unit Tests**: `make test-unit`
 - **UI Tests**: `make test-ui`
@@ -282,7 +282,7 @@ make clean             # Clean generated files
 ## Debugging & Troubleshooting
 - Check project.yml for configuration issues
 - Regenerate project if build issues occur
-- Ensure iOS 18.2 simulator is available for tests
+- Ensure iOS 26.0 simulator is available for tests
 - Verify `Secrets.plist` exists with valid API_KEY, or set API_KEY environment variable
 - Run `make clean-packages` if Swift Package issues occur
 
@@ -315,7 +315,7 @@ This project includes custom slash commands for Claude Code to streamline develo
 ### Available Commands
 
 #### `/test` - Run Full Test Suite
-- **Description**: Executes all tests (unit + UI) on iOS 18.2 iPhone 16 Pro simulator
+- **Description**: Executes all tests (unit + UI) on iOS 26.0 iPhone Air simulator
 - **Usage**: `/test`
 - **Timeout**: 300 seconds (extensive test suite)
 - **Equivalent**: `make test`
@@ -343,10 +343,10 @@ This project includes custom slash commands for Claude Code to streamline develo
 - **Equivalent**: `make coverage-badge`
 
 #### `/run` - Run App in Simulator
-- **Description**: Builds and launches the app in iOS 18.2 iPhone 16 Pro simulator
+- **Description**: Builds and launches the app in iOS 26.0 iPhone Air simulator
 - **Usage**: `/run`
 - **Target**: GitHubAppDev scheme
-- **Simulator**: iPhone 16 Pro (iOS 18.2)
+- **Simulator**: iPhone Air (iOS 26.0)
 
 #### `/push` - Stage, Commit & Push
 - **Description**: Stages all changes, creates a commit, and pushes to the current branch
