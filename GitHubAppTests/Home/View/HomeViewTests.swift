@@ -69,11 +69,10 @@ struct HomeViewTests {
         // This exercises the onChange closure and handleSearchQueryChange method
         // Note: We can't directly test the onChange closure since searchText is private,
         // but we can verify that the view is properly configured for search
-        let (_, _, _, view) = createTestComponents()
+        _ = createTestComponents()
 
-        // Then - verify the view is properly configured
+        // Then - test passes if view initializes without crashing
         // The search functionality is tested through the view model integration
-        #expect(view != nil)
     }
 
     // DISABLED: This test uses the old MVVM architecture
@@ -122,8 +121,9 @@ struct HomeViewTests {
         // When - simulate movie tap (this exercises the onTapGesture closure)
         // Note: We can't directly test the onTapGesture closure, but we can verify
         // that the router is properly configured
-        let (router, _, _, _) = createTestComponents()
-        #expect(router != nil)
+        _ = createTestComponents()
+
+        // Then - test passes if components initialize without crashing
     }
 
     @Test("Home view initialization with different view models")
@@ -136,15 +136,15 @@ struct HomeViewTests {
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
         let customViewModel = HomeViewModel(serviceLocator: serviceLocator)
-        let viewWithViewModel = HomeView(router: router, viewModel: customViewModel)
-        #expect(viewWithViewModel != nil)
+        _ = HomeView(router: router, viewModel: customViewModel)
 
         // Test initialization with default ViewModel setup
         let defaultServiceLocator = ServiceLocator()
         defaultServiceLocator.register(HomeService.self, instance: MockHomeService())
         let defaultViewModel = HomeViewModel(serviceLocator: defaultServiceLocator)
-        let viewWithDefaultViewModel = HomeView(router: router, viewModel: defaultViewModel)
-        #expect(viewWithDefaultViewModel != nil)
+        _ = HomeView(router: router, viewModel: defaultViewModel)
+
+        // Test passes if both views initialize without crashing
     }
 
     // DISABLED: These tests use the old MVVM architecture
@@ -220,8 +220,7 @@ struct HomeViewTests {
         // Trigger view update to configure searchable modifier
         _ = view.wrappedViewController
 
-        // Verify that the view is properly configured
-        #expect(view != nil)
+        // Test passes if view renders without crashing
     }
 
     @Test("OnChange modifier configuration")
@@ -233,8 +232,7 @@ struct HomeViewTests {
         // Trigger view update to configure onChange modifier
         _ = view.wrappedViewController
 
-        // Verify that the view is properly configured
-        #expect(view != nil)
+        // Test passes if view renders without crashing
     }
 
     // DISABLED: This test uses the old MVVM architecture

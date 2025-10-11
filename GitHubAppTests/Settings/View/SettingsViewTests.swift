@@ -64,8 +64,7 @@ struct SettingsViewTests {
         // When - Access view to trigger rendering and test closures
         _ = hostingController.view
 
-        // Then - Verify view renders without issues
-        #expect(hostingController != nil)
+        // Then - Test passes if view renders without crashing
     }
 
     @Test("Settings view clear favorites functionality")
@@ -129,7 +128,7 @@ struct SettingsViewTests {
         let customSettingsViewModel = SettingsViewModel(serviceLocator: customServiceLocator)
 
         // When
-        let customView = SettingsView(viewModel: customSettingsViewModel)
+        _ = SettingsView(viewModel: customSettingsViewModel)
 
         // Then
         // Test passes if view initializes without crashing
@@ -141,7 +140,7 @@ struct SettingsViewTests {
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: MockSettingsService())
         let defaultViewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        let defaultView = SettingsView(viewModel: defaultViewModel)
+        _ = SettingsView(viewModel: defaultViewModel)
 
         // Then
         // Test passes if view initializes without crashing
