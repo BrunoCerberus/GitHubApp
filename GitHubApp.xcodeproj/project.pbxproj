@@ -135,6 +135,7 @@
 		C69BA76A9BB3D0016F20D09A /* LocalizableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0086930BB9EB25C1E9DAD4FC /* LocalizableTests.swift */; };
 		C78B479044F98402D0338143 /* FavoritesDomainStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699C54EB119251AC4117B43F /* FavoritesDomainStateTests.swift */; };
 		CF646F28EC734D91B3D505F9 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1A4E17536733E9E9B87592A /* WidgetKit.framework */; };
+		D2B9F6C8D5DEDF069C05C117 /* GitHubAppWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BF4EC8F557939293F4555669 /* GitHubAppWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D414E5A5DDFE8C0A501C68D9 /* SharedDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A605D3E98DFEE8CDC3D349C /* SharedDataManager.swift */; };
 		D5155110D3E5AD770C46F100 /* SettingsDomainInteractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0012F7BCEE6306A69289BB /* SettingsDomainInteractorTests.swift */; };
 		D51F41A6A0F58FFF38A47540 /* HomeHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8365D23EB991839890A94BFF /* HomeHostingController.swift */; };
@@ -175,6 +176,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		AAC96E30BE1FE75E0B325E36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 31B4023AC5DE3B9293D134B8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 979363D5E9689C23BA2B2C20;
+			remoteInfo = GitHubAppWidgetExtension;
+		};
 		C11A572D76F16C2D074A4052 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 31B4023AC5DE3B9293D134B8 /* Project object */;
@@ -190,6 +198,20 @@
 			remoteInfo = GitHubApp;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DF002AB20E9AC03623C5CDCE /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				D2B9F6C8D5DEDF069C05C117 /* GitHubAppWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0086930BB9EB25C1E9DAD4FC /* LocalizableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizableTests.swift; sourceTree = "<group>"; };
@@ -1150,10 +1172,12 @@
 				4081220EED047BF18686D11F /* Sources */,
 				77857547CFE78C792C7CB98D /* Resources */,
 				2570DD72BCAB8D9E1A54F500 /* Frameworks */,
+				DF002AB20E9AC03623C5CDCE /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				493F92FE3821F5166F361646 /* PBXTargetDependency */,
 			);
 			name = GitHubApp;
 			packageProductDependencies = (
@@ -1485,6 +1509,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		493F92FE3821F5166F361646 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 979363D5E9689C23BA2B2C20 /* GitHubAppWidgetExtension */;
+			targetProxy = AAC96E30BE1FE75E0B325E36 /* PBXContainerItemProxy */;
+		};
 		CED3905F05B239C977CCBA48 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C3288A93B8EF05F1F3ABCE68 /* GitHubApp */;

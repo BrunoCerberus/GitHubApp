@@ -18,12 +18,8 @@
 	<string>XPC!</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0.0</string>
-	<key>CFBundleSupportedPlatforms</key>
-	<string>iPhoneOS</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
-	<key>MinimumOSVersion</key>
-	<real>18</real>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionPointIdentifier</key>

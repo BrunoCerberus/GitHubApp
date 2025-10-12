@@ -115,6 +115,8 @@ targets:
       - sdk: UIKit.framework
       - sdk: Combine.framework
       - package: EntropyCore
+      - target: GitHubAppWidgetExtension
+        embed: true
     preBuildScripts:
       - name: Generate Project
         script: |
@@ -216,8 +218,6 @@ targets:
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
         NSSupportsLiveActivities: false
-        CFBundleSupportedPlatforms: iPhoneOS
-        MinimumOSVersion: 18.0
 
 schemes:
   GitHubAppDev:
