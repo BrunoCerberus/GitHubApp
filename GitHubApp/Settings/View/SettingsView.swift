@@ -43,12 +43,16 @@ struct SettingsView: View {
             matching: .images
         )
         .onChange(of: photoPickerItem) {
-            Task {
-                if let data = try? await photoPickerItem?.loadTransferable(type: Data.self),
-                   let image = UIImage(data: data)
-                {
-                    await MainActor.run {
-                        viewModel.handleProfileImageSelection(image)
+            Task.detached(priority: .userInitiated) {
+                if let data = try? await photoPickerItem?.loadTransferable(type: Data.self) {
+                    let image = await Task.detached {
+                        UIImage(data: data)
+                    }.value
+
+                    if let image {
+                        await MainActor.run {
+                            viewModel.handleProfileImageSelection(image)
+                        }
                     }
                 }
             }
