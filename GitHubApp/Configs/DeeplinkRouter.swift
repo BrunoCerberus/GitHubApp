@@ -75,16 +75,8 @@ final class DeeplinkRouter {
         }
 
         // Fallback to UIKit navigation if coordinator is not available
-        if let navigationController {
-            // Create a minimal Movie object and hosting controller
-            let movie = Movie(
-                id: movieId,
-                title: "",
-                overview: "",
-                posterPath: nil
-            )
-
-            // Note: This would need a ServiceLocator instance
+        if navigationController != nil {
+            // Note: UIKit navigation would need a ServiceLocator instance
             // For now, we'll return false to indicate we need the coordinator
             return false
         }

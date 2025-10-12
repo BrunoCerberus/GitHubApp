@@ -42,9 +42,9 @@ struct SettingsView: View {
             selection: $photoPickerItem,
             matching: .images
         )
-        .onChange(of: photoPickerItem) { newItem in
+        .onChange(of: photoPickerItem) {
             Task {
-                if let data = try? await newItem?.loadTransferable(type: Data.self),
+                if let data = try? await photoPickerItem?.loadTransferable(type: Data.self),
                    let image = UIImage(data: data)
                 {
                     await MainActor.run {

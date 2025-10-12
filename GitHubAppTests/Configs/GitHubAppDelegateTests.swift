@@ -52,7 +52,7 @@ struct GitHubAppDelegateTests {
         let url = URL(string: "githubapp://movie/123")!
 
         // When
-        let result = appDelegate.application(application, open: url, options: [:])
+        let result = appDelegate.application(application, open: url)
 
         // Then
         #expect(result == true)
@@ -65,23 +65,20 @@ struct GitHubAppDelegateTests {
         let url = URL(string: "invalid://url")!
 
         // When
-        let result = appDelegate.application(application, open: url, options: [:])
+        let result = appDelegate.application(application, open: url)
 
         // Then
         #expect(result == false)
     }
 
-    @Test("Application open URL with options")
-    func applicationOpenURLWithOptions() {
+    @Test("Application open URL without options")
+    func applicationOpenURLWithoutOptions() {
         // Given
         let (appDelegate, application) = createTestComponents()
         let url = URL(string: "githubapp://movie/456")!
-        let options: [UIApplication.OpenURLOptionsKey: Any] = [
-            .sourceApplication: "com.test.app",
-        ]
 
         // When
-        let result = appDelegate.application(application, open: url, options: options)
+        let result = appDelegate.application(application, open: url)
 
         // Then
         #expect(result == true)

@@ -26,7 +26,7 @@ enum ServiceLocatorExample {
 
         // Retrieve a service
         do {
-            let homeService = try serviceLocator.retrieve(HomeService.self)
+            _ = try serviceLocator.retrieve(HomeService.self)
             Logger.shared.service("Successfully retrieved HomeService")
         } catch {
             Logger.shared.service("Failed to retrieve HomeService: \(error)", level: .error)
@@ -44,7 +44,7 @@ enum ServiceLocatorExample {
 
         // Retrieve a service (this is what ViewModels do automatically)
         do {
-            let homeService = try serviceLocator.retrieve(HomeService.self)
+            _ = try serviceLocator.retrieve(HomeService.self)
             Logger.shared.service("Successfully retrieved HomeService")
         } catch {
             Logger.shared.service("Failed to retrieve HomeService: \(error)", level: .error)
@@ -58,7 +58,7 @@ enum ServiceLocatorExample {
         let serviceLocator = ServiceLocator()
 
         // Safe retrieval that returns nil if service is not registered
-        if let homeService = serviceLocator.safeRetrieve(HomeService.self) {
+        if serviceLocator.safeRetrieve(HomeService.self) != nil {
             Logger.shared.service("Successfully retrieved HomeService safely")
         } else {
             Logger.shared.service("HomeService not registered in ServiceLocator", level: .warning)

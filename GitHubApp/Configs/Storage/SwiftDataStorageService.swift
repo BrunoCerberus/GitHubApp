@@ -88,30 +88,33 @@ final class SwiftDataStorageService: StorageServiceProtocol {
         }
     }
 
-    @MainActor
-    func fetch<T: Codable & Identifiable>(_ type: T.Type, context: String?) async throws -> [T] {
-        do {
-            if type == Movie.self {
-                let movies = try await fetchMovies(context: context ?? StorageContext.favoriteMovies)
-                return movies as! [T]
-            } else {
-                // For other types, fetch from UserSetting
-                let category = context ?? "generic"
-                let predicate = UserSetting.categoryPredicate(category)
-                let descriptor = FetchDescriptor<UserSetting>(predicate: predicate)
-                let settings = try self.context.fetch(descriptor)
+    nonisolated func fetch<T: Codable & Identifiable>(_ type: T.Type, context: String?) async throws -> [T] {
+        try await withCheckedThrowingContinuation { continuation in
+            Task { @MainActor in
+                do {
+                    if type == Movie.self {
+                        let movies = try await self.fetchMovies(context: context ?? StorageContext.favoriteMovies)
+                        continuation.resume(returning: movies as! [T])
+                    } else {
+                        // For other types, fetch from UserSetting
+                        let category = context ?? "generic"
+                        let predicate = UserSetting.categoryPredicate(category)
+                        let descriptor = FetchDescriptor<UserSetting>(predicate: predicate)
+                        let settings = try self.context.fetch(descriptor)
 
-                return try settings.compactMap { setting in
-                    try? setting.getValue(as: type)
+                        let result = settings.compactMap { setting in
+                            try? setting.getValue(as: type)
+                        }
+                        continuation.resume(returning: result)
+                    }
+                } catch {
+                    continuation.resume(throwing: StorageError.fetchFailure("Failed to fetch \(type): \(error.localizedDescription)"))
                 }
             }
-        } catch {
-            throw StorageError.fetchFailure("Failed to fetch \(type): \(error.localizedDescription)")
         }
     }
 
-    @MainActor
-    func fetch<T: Codable & Identifiable>(_ type: T.Type, id: T.ID, context: String?) async throws -> T? {
+    nonisolated func fetch<T: Codable & Identifiable>(_ type: T.Type, id: T.ID, context: String?) async throws -> T? {
         let objects = try await fetch(type, context: context)
         return objects.first { $0.id == id }
     }
@@ -145,25 +148,30 @@ final class SwiftDataStorageService: StorageServiceProtocol {
         }
     }
 
-    @MainActor
-    func deleteAll(_ type: (some Codable & Identifiable).Type, context: String?) async throws {
-        do {
-            if type == Movie.self {
-                try await clearMovies(context: context ?? StorageContext.favoriteMovies)
-            } else {
-                // For other types, delete all from category
-                let category = context ?? "generic"
-                let predicate = UserSetting.categoryPredicate(category)
-                let descriptor = FetchDescriptor<UserSetting>(predicate: predicate)
-                let settings = try self.context.fetch(descriptor)
+    nonisolated func deleteAll(_ type: (some Codable & Identifiable).Type, context: String?) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            Task { @MainActor in
+                do {
+                    if type == Movie.self {
+                        try await self.clearMovies(context: context ?? StorageContext.favoriteMovies)
+                        continuation.resume()
+                    } else {
+                        // For other types, delete all from category
+                        let category = context ?? "generic"
+                        let predicate = UserSetting.categoryPredicate(category)
+                        let descriptor = FetchDescriptor<UserSetting>(predicate: predicate)
+                        let settings = try self.context.fetch(descriptor)
 
-                for setting in settings {
-                    self.context.delete(setting)
+                        for setting in settings {
+                            self.context.delete(setting)
+                        }
+                        try self.context.save()
+                        continuation.resume()
+                    }
+                } catch {
+                    continuation.resume(throwing: StorageError.deleteFailure("Failed to delete all \(type): \(error.localizedDescription)"))
                 }
-                try self.context.save()
             }
-        } catch {
-            throw StorageError.deleteFailure("Failed to delete all \(type): \(error.localizedDescription)")
         }
     }
 

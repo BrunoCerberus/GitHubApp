@@ -131,11 +131,9 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
      * - Parameter rootView: The root hosting controller
      */
     private func setupDeeplinkRouterAfterViewAppears(rootView: UIHostingController<CoordinatorView>) {
-        // Extract the coordinator from the view hierarchy
-        if let coordinatorView = rootView.rootView as? CoordinatorView {
-            // The coordinator will be available after the view appears
-            // We'll set it up in the coordinator view
-        }
+        // The coordinator will be available after the view appears
+        // We'll set it up in the coordinator view via notification
+        _ = rootView
     }
 
     /**

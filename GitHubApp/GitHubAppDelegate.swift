@@ -43,15 +43,16 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
      * This method is called when the app is opened via a custom URL scheme.
      * For iOS 13+, this is handled by the scene delegate.
      *
+     * Note: This method is deprecated in iOS 26.0. URL handling should be done
+     * in the scene delegate using UIScene.ConnectionOptions instead.
+     *
      * - Parameter application: The singleton app object
      * - Parameter url: The URL that was opened
-     * - Parameter options: Additional options for the URL opening
      * - Returns: True if the URL was handled successfully
      */
     func application(
         _: UIApplication,
-        open url: URL,
-        options _: [UIApplication.OpenURLOptionsKey: Any] = [:]
+        open url: URL
     ) -> Bool {
         // For iOS 13+, this is handled by the scene delegate
         // This method is kept for backward compatibility
