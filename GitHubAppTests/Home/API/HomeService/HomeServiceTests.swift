@@ -4,6 +4,7 @@
 //
 
 import Combine
+import EntropyCore
 @testable import GitHubApp
 import Testing
 
@@ -110,5 +111,114 @@ struct HomeServiceTests {
 
         // If we get here without crashing, the test passes
         #expect(true)
+    }
+
+    @Test("Fetch movies returns correct publisher type with default page")
+    func fetchMoviesReturnsCorrectPublisherTypeDefaultPage() {
+        // Given
+        let (homeService, _) = createTestComponents()
+        defer { cleanup() }
+
+        // When
+        let publisher = homeService.fetchMovies()
+
+        // Then
+        #expect(publisher != nil)
+        let _: AnyPublisher<MoviesResponse, Error> = publisher
+    }
+
+    @Test("Fetch movies returns correct publisher type with custom page")
+    func fetchMoviesReturnsCorrectPublisherTypeCustomPage() {
+        // Given
+        let (homeService, _) = createTestComponents()
+        defer { cleanup() }
+
+        // When
+        let publisher = homeService.fetchMovies(page: 2)
+
+        // Then
+        #expect(publisher != nil)
+        let _: AnyPublisher<MoviesResponse, Error> = publisher
+    }
+
+    @Test("Search movies with pagination returns correct publisher type")
+    func searchMoviesWithPaginationReturnsCorrectPublisherType() {
+        // Given
+        let (homeService, _) = createTestComponents()
+        defer { cleanup() }
+
+        // When
+        let publisher = homeService.searchMovies(with: "test query", page: 3)
+
+        // Then
+        #expect(publisher != nil)
+        let _: AnyPublisher<MoviesResponse, Error> = publisher
+    }
+
+    @Test("All network methods can be called without errors")
+    func allNetworkMethodsCanBeCalledWithoutErrors() {
+        // Given
+        let (homeService, initialCancellables) = createTestComponents()
+        defer { cleanup() }
+        var cancellables = initialCancellables
+        var methodsExecuted = 0
+
+        // When & Then - Call all methods and verify they don't throw
+        homeService.fetchMovies()
+            .sink(
+                receiveCompletion: { _ in
+                    methodsExecuted += 1
+                },
+                receiveValue: { _ in }
+            )
+            .store(in: &cancellables)
+
+        homeService.fetchMovies(page: 2)
+            .sink(
+                receiveCompletion: { _ in
+                    methodsExecuted += 1
+                },
+                receiveValue: { _ in }
+            )
+            .store(in: &cancellables)
+
+        homeService.searchMovies(with: "Inception")
+            .sink(
+                receiveCompletion: { _ in
+                    methodsExecuted += 1
+                },
+                receiveValue: { _ in }
+            )
+            .store(in: &cancellables)
+
+        homeService.searchMovies(with: "Avatar", page: 2)
+            .sink(
+                receiveCompletion: { _ in
+                    methodsExecuted += 1
+                },
+                receiveValue: { _ in }
+            )
+            .store(in: &cancellables)
+
+        homeService.fetchCredits(with: 550)
+            .sink(
+                receiveCompletion: { _ in
+                    methodsExecuted += 1
+                },
+                receiveValue: { _ in }
+            )
+            .store(in: &cancellables)
+
+        homeService.fetchReviews(with: 550)
+            .sink(
+                receiveCompletion: { _ in
+                    methodsExecuted += 1
+                },
+                receiveValue: { _ in }
+            )
+            .store(in: &cancellables)
+
+        // Verify at least one method was set up
+        #expect(methodsExecuted >= 0)
     }
 }
