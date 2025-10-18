@@ -1,7 +1,7 @@
 # run
 
-Run the GitHubApp in iOS 18.2 iPhone 16 Pro simulator
+Run the GitHubApp in iOS 26.0 iPhone Air simulator
 
 ```bash
-xcodebuild -project GitHubApp.xcodeproj -scheme GitHubAppDev -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' build && xcrun simctl install booted /Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/Build/Products/Debug-iphonesimulator/GitHubApp.app && xcrun simctl launch booted com.bruno.GitHubApp
+xcodebuild -project GitHubApp.xcodeproj -scheme GitHubAppDev -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' build && xcrun simctl install booted /Users/bruno/Library/Developer/Xcode/DerivedData/GitHubApp-cqndxxnbtzrmsygiygwczywuynjt/Build/Products/Debug-iphonesimulator/GitHubApp.app && xcrun simctl launch booted com.bruno.GitHubApp
 ```

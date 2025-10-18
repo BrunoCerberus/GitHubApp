@@ -1,1 +1,1 @@
-Run only the UI tests for the GitHubApp project using the `make test-ui` command with an extended timeout since this command take some time, consider at least 300 seconds. This executes UI tests including snapshot testing while excluding unit tests.
+Run only the UI tests for the GitHubApp project using the `make test-ui` command with an extended timeout since this command take some time, consider at least 300 seconds. This executes UI tests on the iOS 26.0 iPhone Air simulator including snapshot testing while excluding unit tests.
