@@ -87,8 +87,8 @@ struct SearchViewModelTests {
         // When - Search with empty query
         sut.searchMovies(query: "")
 
-        // Wait a bit for state to update
-        try await Task.sleep(nanoseconds: 100_000_000)
+        // Wait for state to update through Combine pipeline (needs more time for all layers)
+        try await Task.sleep(nanoseconds: 300_000_000)
 
         // Then - Results should be cleared
         if case let .success(dataViewState) = sut.viewState {

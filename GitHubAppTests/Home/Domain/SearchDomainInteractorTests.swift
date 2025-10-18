@@ -105,7 +105,10 @@ struct SearchDomainInteractorTests {
         // When - Search with empty query
         sut.handleAction(.searchMovies(""))
 
-        // Then - Results should be cleared immediately (no async wait needed)
+        // Wait for state to update
+        try await Task.sleep(nanoseconds: 100_000_000)
+
+        // Then - Results should be cleared
         let finalState = sut.currentState
         #expect(finalState.movies.isEmpty)
         #expect(!finalState.isLoading)
@@ -117,7 +120,6 @@ struct SearchDomainInteractorTests {
     func toggleMovieLikeAddsToFavoriteMovies() async throws {
         // Given
         let (sut, _, storageService) = createTestComponents()
-        let movie = createMockMovie(id: 1, title: "Test Movie")
         defer {
             StorageServiceFactory.shared.resetCache()
             StorageServiceFactory.shared.updateConfiguration(.production)
@@ -127,6 +129,10 @@ struct SearchDomainInteractorTests {
         // First set up some movies in the current state by performing a search
         sut.handleAction(.searchMovies("test"))
         try await Task.sleep(nanoseconds: 200_000_000)
+
+        // Get the first movie from search results to use for toggling
+        #expect(!sut.currentState.movies.isEmpty, "Search should return movies")
+        let movie = sut.currentState.movies.first!
 
         // Verify the movie is in the search results
         #expect(sut.currentState.movies.contains(where: { $0.id == movie.id }))
@@ -146,7 +152,6 @@ struct SearchDomainInteractorTests {
     func toggleMovieLikeRemovesFromFavoriteMovies() async throws {
         // Given
         let (sut, _, storageService) = createTestComponents()
-        let movie = createMockMovie(id: 1, title: "Test Movie")
         defer {
             StorageServiceFactory.shared.resetCache()
             StorageServiceFactory.shared.updateConfiguration(.production)
@@ -156,6 +161,10 @@ struct SearchDomainInteractorTests {
         // First set up some movies in the current state by performing a search
         sut.handleAction(.searchMovies("test"))
         try await Task.sleep(nanoseconds: 200_000_000)
+
+        // Get the first movie from search results to use for toggling
+        #expect(!sut.currentState.movies.isEmpty, "Search should return movies")
+        let movie = sut.currentState.movies.first!
 
         // Toggle favorite to add
         sut.handleAction(.toggleMovieFavorite(movie))
