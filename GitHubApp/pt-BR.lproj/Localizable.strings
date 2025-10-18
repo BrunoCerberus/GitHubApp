@@ -35,3 +35,11 @@
 // MARK: - API Errors
 "api_error.invalid_base_url" = "URL base inválida: %@";
 "api_error.url_construction_failed" = "Falha ao construir URL a partir dos componentes";
+
+// MARK: - Widget
+"widget.upcoming_movies.title" = "Próximos Filmes";
+"widget.upcoming_movies.description" = "Mostra os próximos filmes do The Movie Database";
+"widget.loading_movies" = "Carregando filmes...";
+
+// MARK: - Home View
+"home.loading_movies" = "Carregando filmes...";

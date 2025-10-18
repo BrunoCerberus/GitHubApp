@@ -126,6 +126,34 @@ struct Localizable {
         static let urlConstructionFailed = NSLocalizedString("api_error.url_construction_failed", comment: "URL construction failed error")
     }
 
+    // MARK: - Widget
+
+    /// Widget related localized strings
+    struct Widget {
+        /// Private initializer to prevent instantiation
+        private init() {}
+
+        /// "Upcoming Movies" widget title
+        static let upcomingMoviesTitle = NSLocalizedString("widget.upcoming_movies.title", comment: "Upcoming Movies widget title")
+
+        /// "Shows upcoming movies from The Movie Database" widget description
+        static let upcomingMoviesDescription = NSLocalizedString("widget.upcoming_movies.description", comment: "Widget description")
+
+        /// "Loading movies..." loading state message
+        static let loadingMovies = NSLocalizedString("widget.loading_movies", comment: "Loading movies message")
+    }
+
+    // MARK: - Home
+
+    /// Home screen related localized strings
+    struct Home {
+        /// Private initializer to prevent instantiation
+        private init() {}
+
+        /// "Loading movies..." loading state message
+        static let loadingMovies = NSLocalizedString("home.loading_movies", comment: "Loading movies message")
+    }
+
     // MARK: - Convenience Access
 
     /// Convenience access to movie details strings
@@ -139,4 +167,10 @@ struct Localizable {
 
     /// Convenience access to API error strings
     static let apiErrors = APIErrors.self
+
+    /// Convenience access to widget strings
+    static let widget = Widget.self
+
+    /// Convenience access to home strings
+    static let home = Home.self
 }

@@ -8,8 +8,8 @@ struct UpcomingMoviesWidget: Widget {
         StaticConfiguration(kind: kind, provider: UpcomingMoviesTimelineProvider()) { entry in
             UpcomingMoviesWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Upcoming Movies")
-        .description("Shows upcoming movies from The Movie Database")
+        .configurationDisplayName(Localizable.widget.upcomingMoviesTitle)
+        .description(Localizable.widget.upcomingMoviesDescription)
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }
@@ -23,7 +23,7 @@ struct UpcomingMoviesWidgetEntryView: View {
             HStack(spacing: 4) {
                 Text("🎬")
                     .font(entry.family == .systemSmall ? .caption : .body)
-                Text("Upcoming Movies")
+                Text(Localizable.widget.upcomingMoviesTitle)
                     .font(entry.family == .systemSmall ? .caption2 : .caption)
                     .fontWeight(.semibold)
                     .foregroundColor(.secondary)
@@ -45,7 +45,7 @@ struct UpcomingMoviesWidgetEntryView: View {
                         Spacer()
                         VStack(spacing: 8) {
                             ProgressView()
-                            Text("Loading movies...")
+                            Text(Localizable.widget.loadingMovies)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }

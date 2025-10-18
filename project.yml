@@ -201,6 +201,10 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
     sources:
       - path: GitHubAppWidgetExtension
+      - path: GitHubApp/Configs/Localizable.swift
+      - path: GitHubApp/en.lproj/Localizable.strings
+      - path: GitHubApp/es.lproj/Localizable.strings
+      - path: GitHubApp/pt-BR.lproj/Localizable.strings
     dependencies:
       - sdk: Foundation.framework
       - sdk: UIKit.framework

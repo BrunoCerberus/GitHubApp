@@ -41,7 +41,7 @@ struct HomeView<R: HomeNavigationRouter>: View {
         Group {
             switch viewModel.viewState {
             case .loading:
-                ProgressView("Loading movies...")
+                ProgressView(Localizable.home.loadingMovies)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             case let .error(errorMessage):
