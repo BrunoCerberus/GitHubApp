@@ -156,8 +156,8 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
             currentState = currentState.copy(
                 movies: [],
                 isLoading: false,
-                error: nil,
-                searchQuery: nil,
+                error: .some(nil),
+                searchQuery: .some(nil),
                 currentPage: 0,
                 totalPages: 0
             )
