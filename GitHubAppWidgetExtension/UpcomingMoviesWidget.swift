@@ -18,31 +18,84 @@ struct UpcomingMoviesWidgetEntryView: View {
     let entry: UpcomingMoviesTimelineEntry
 
     var body: some View {
-        VStack(spacing: 8) {
-            HStack {
+        VStack(alignment: .leading, spacing: headerSpacing) {
+            // Header
+            HStack(spacing: 4) {
                 Text("🎬")
-                    .font(.title2)
+                    .font(entry.family == .systemSmall ? .caption : .body)
                 Text("Upcoming Movies")
-                    .font(.caption)
+                    .font(entry.family == .systemSmall ? .caption2 : .caption)
                     .fontWeight(.semibold)
                     .foregroundColor(.secondary)
                 Spacer()
             }
+            .padding(.bottom, 2)
 
+            // Content
             if let movies = entry.movies, !movies.isEmpty {
-                ForEach(Array(movies.prefix(entry.family == .systemSmall ? 1 : 3)), id: \.id) { movie in
-                    MovieRowView(movie: movie, family: entry.family)
+                VStack(spacing: contentSpacing) {
+                    ForEach(Array(movies.prefix(movieLimit(for: entry.family))), id: \.id) { movie in
+                        MovieRowView(movie: movie, family: entry.family)
+                    }
                 }
             } else {
-                Text("Loading movies...")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        VStack(spacing: 8) {
+                            ProgressView()
+                            Text("Loading movies...")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                    }
+                    Spacer()
+                }
             }
 
-            Spacer()
+            Spacer(minLength: 0)
         }
-        .padding()
+        .padding(paddingSize)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(Color(uiColor: .systemBackground))
+    }
+
+    /// Spacing between header and content
+    private var headerSpacing: CGFloat {
+        entry.family == .systemSmall ? 6 : 8
+    }
+
+    /// Spacing between movie rows
+    private var contentSpacing: CGFloat {
+        entry.family == .systemSmall ? 8 : 10
+    }
+
+    /// Widget padding
+    private var paddingSize: CGFloat {
+        switch entry.family {
+        case .systemSmall:
+            14
+        case .systemMedium:
+            16
+        default:
+            16
+        }
+    }
+
+    /// Determine the number of movies to show based on widget size
+    private func movieLimit(for family: WidgetFamily) -> Int {
+        switch family {
+        case .systemSmall:
+            1
+        case .systemMedium:
+            2
+        case .systemLarge:
+            3
+        default:
+            2
+        }
     }
 }
 
@@ -51,39 +104,59 @@ struct MovieRowView: View {
     let family: WidgetFamily
 
     var body: some View {
-        HStack(spacing: 8) {
-            if let posterURL = movie.posterURL {
-                AsyncImage(url: posterURL) { image in
-                    image
+        HStack(alignment: .center, spacing: 10) {
+            // Movie poster - load from cache or show placeholder
+            Group {
+                if let cachedImage = ImageCacheManager.shared.getCachedImage(movieId: movie.id) {
+                    cachedImage
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                } placeholder: {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: family == .systemSmall ? 45 : 50, height: family == .systemSmall ? 67 : 75)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                } else {
+                    // Fallback placeholder
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color.gray.opacity(0.4), Color.gray.opacity(0.2)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+
+                        VStack(spacing: 4) {
+                            Image(systemName: "film.stack")
+                                .font(.system(size: 20, weight: .light))
+                                .foregroundColor(.white.opacity(0.8))
+
+                            Text("🎬")
+                                .font(.caption2)
+                        }
+                    }
+                    .frame(width: family == .systemSmall ? 45 : 50, height: family == .systemSmall ? 67 : 75)
                 }
-                .frame(width: 40, height: 60)
-                .cornerRadius(6)
-            } else {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(width: 40, height: 60)
-                    .cornerRadius(6)
             }
 
-            VStack(alignment: .leading, spacing: 2) {
+            // Movie details
+            VStack(alignment: .leading, spacing: 3) {
                 Text(movie.displayTitle)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .lineLimit(family == .systemSmall ? 1 : 2)
+                    .font(.system(size: family == .systemSmall ? 11 : 12, weight: .semibold))
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
 
-                Text(movie.displayOverview)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                    .lineLimit(family == .systemSmall ? 1 : 2)
+                if family != .systemSmall {
+                    Text(movie.displayOverview)
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.9)
+                }
             }
-
-            Spacer()
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity)
+        .frame(height: family == .systemSmall ? 67 : 75)
     }
 }
 

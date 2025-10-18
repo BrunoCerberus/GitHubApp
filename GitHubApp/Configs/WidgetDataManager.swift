@@ -48,6 +48,11 @@ class WidgetDataManager {
         }
 
         sharedDataManager.saveUpcomingMovies(sharedMovies)
+
+        // Cache images for widget access
+        Task {
+            await ImageCacheManager.shared.cacheImages(for: movies)
+        }
     }
 
     /**

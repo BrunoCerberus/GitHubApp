@@ -57,6 +57,7 @@
 		4A491189F396C9063AD24B66 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = F4610898CD12B886BF91A770 /* SnapshotTesting */; };
 		4D0EC02CCD160710282A5E9E /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0845436BA3A2DF39B56B83D8 /* Coordinator.swift */; };
 		4D3876D917F8FDF612851833 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F205178CAC64F3F467AABF89 /* Foundation.framework */; };
+		519452966680EA9374EA0D66 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2D634F47AA86A3C380BAC2 /* ImageCacheManager.swift */; };
 		525FDA6F02EFE569731C8BCF /* ServiceLocatorExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 887C2B95EECFAFCCB1E306F9 /* ServiceLocatorExampleTests.swift */; };
 		5481E23782AD422B5441212C /* FavoritesMoviesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0F6A69E389705B13446680 /* FavoritesMoviesViewModel.swift */; };
 		5B1215F1921511991F793F1F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6225CEEB8842834DF359CD86 /* UIKit.framework */; };
@@ -156,6 +157,7 @@
 		E71A10F137FEA5D84037D321 /* MockHomeServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6280CDB0A6FD7929C61CD56 /* MockHomeServiceTests.swift */; };
 		E7899472783D3482442308B9 /* GitHubAppSceneDelegateSimpleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656F36F3DCEE5C3E62754E73 /* GitHubAppSceneDelegateSimpleTests.swift */; };
 		E93FBBF2175412E260846160 /* SharedMovieMainAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5436AECC1C7D29B3415149 /* SharedMovieMainAppTests.swift */; };
+		EA9ABCBFDA3DCBC19872163F /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6585DDBC684F49E97BFEDCC5 /* ImageCacheManager.swift */; };
 		EAD45482696D348AFFAE76B3 /* ServiceLocator.md in Resources */ = {isa = PBXBuildFile; fileRef = C901B85F6B1F8FBE0D43643C /* ServiceLocator.md */; };
 		EC6C75F01157D79D0AC687A6 /* MockSettingsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1D6F38C146EB511E601092 /* MockSettingsService.swift */; };
 		EC8BBB720806291578877B3B /* SwiftDataStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A67E0D4524994E37D99AE96 /* SwiftDataStorageService.swift */; };
@@ -254,6 +256,7 @@
 		3ADDB77F49CCCCB9B96CE859 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		3B6131835FEB700F76AA83B2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		3D1BF5172327432833522363 /* FavoritesViewStateReducing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewStateReducing.swift; sourceTree = "<group>"; };
+		3D2D634F47AA86A3C380BAC2 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
 		3DF4B4B200B51A5113A88BE0 /* APIKeysProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeysProviderTests.swift; sourceTree = "<group>"; };
 		3DFED35262E1EE6CEA9E8CA3 /* FavoritesDomainAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesDomainAction.swift; sourceTree = "<group>"; };
 		3E242688A312E9F404C35A19 /* MovieTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieTests.swift; sourceTree = "<group>"; };
@@ -296,6 +299,7 @@
 		624EC63541D626BC1AC4570B /* SettingsViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewState.swift; sourceTree = "<group>"; };
 		637C08398DD365FA9B1E65AB /* LiveFavoritesServiceErrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveFavoritesServiceErrorTests.swift; sourceTree = "<group>"; };
 		656F36F3DCEE5C3E62754E73 /* GitHubAppSceneDelegateSimpleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAppSceneDelegateSimpleTests.swift; sourceTree = "<group>"; };
+		6585DDBC684F49E97BFEDCC5 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
 		65D2AF3B4BD0958184EA96D2 /* MockFavoritesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFavoritesService.swift; sourceTree = "<group>"; };
 		6721AA55FF2E0E8A09FDB7FF /* HomeViewSearchExecutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewSearchExecutionTests.swift; sourceTree = "<group>"; };
 		6738CAD9A7500C08919ED551 /* homeView.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = homeView.1.png; sourceTree = "<group>"; };
@@ -449,6 +453,7 @@
 			isa = PBXGroup;
 			children = (
 				E2CED821A08D13AA5E4424BC /* GitHubAppWidgetExtension.entitlements */,
+				3D2D634F47AA86A3C380BAC2 /* ImageCacheManager.swift */,
 				D506864A1E567660B7FB87D6 /* Info.plist */,
 				9F4838CD143468122202B395 /* Logger.swift */,
 				49A8397C193C8C3B9B52D297 /* SharedDataManager.swift */,
@@ -1015,6 +1020,7 @@
 				B0343510FC2EB9FD2F219C09 /* APIKeys.swift */,
 				DBA58622171280CDB8C78C6F /* DeeplinkManager.swift */,
 				47DB3288F0D2A4BB300FC538 /* DeeplinkRouter.swift */,
+				6585DDBC684F49E97BFEDCC5 /* ImageCacheManager.swift */,
 				75DF9594E63D25F26535BA3C /* KeychainManager.swift */,
 				4A912895E593DA800E14EA14 /* Localizable.swift */,
 				B12483AF4834A63B94DBBEBF /* Logger.swift */,
@@ -1452,6 +1458,7 @@
 				B9E8E28DDFD81C74A23832D6 /* HomeViewModel.swift in Sources */,
 				2FF46CF8B792475A4C5FE6B8 /* HomeViewState.swift in Sources */,
 				8C052B4337299557DF0CAA36 /* HomeViewStateReducing.swift in Sources */,
+				EA9ABCBFDA3DCBC19872163F /* ImageCacheManager.swift in Sources */,
 				2DEA3D9D60C9142B778F9B97 /* KeychainManager.swift in Sources */,
 				7DDA40E1D4F5E63BBE0263BE /* LiveFavoritesService.swift in Sources */,
 				C57AF494C1BEDF0A097FDFC8 /* LiveHomeService.swift in Sources */,
@@ -1506,6 +1513,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				519452966680EA9374EA0D66 /* ImageCacheManager.swift in Sources */,
 				B42308488D0206D2697D8648 /* Logger.swift in Sources */,
 				D9B135911E1BF49881CB64B2 /* SharedDataManager.swift in Sources */,
 				20ECAE84B7211235B5BD49AF /* SharedMovie.swift in Sources */,
