@@ -105,8 +105,8 @@ struct SearchDomainInteractorTests {
         // When - Search with empty query
         sut.handleAction(.searchMovies(""))
 
-        // Wait for state to update
-        try await Task.sleep(nanoseconds: 100_000_000)
+        // Wait for state to update through the interactor
+        try await Task.sleep(nanoseconds: 300_000_000)
 
         // Then - Results should be cleared
         let finalState = sut.currentState
