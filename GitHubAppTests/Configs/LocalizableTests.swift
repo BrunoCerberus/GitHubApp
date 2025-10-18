@@ -90,6 +90,42 @@ struct LocalizableTests {
         #expect(errorMessage != "api_error.url_construction_failed", "String should be localized, not showing the key")
     }
 
+    // MARK: - Widget Tests
+
+    @Test("Widget upcoming movies title is properly localized")
+    func widgetUpcomingMoviesTitle() {
+        let title = Localizable.widget.upcomingMoviesTitle
+
+        #expect(!title.isEmpty, "Widget upcoming movies title should not be empty")
+        #expect(title != "widget.upcoming_movies.title", "String should be localized, not showing the key")
+    }
+
+    @Test("Widget upcoming movies description is properly localized")
+    func widgetUpcomingMoviesDescription() {
+        let description = Localizable.widget.upcomingMoviesDescription
+
+        #expect(!description.isEmpty, "Widget description should not be empty")
+        #expect(description != "widget.upcoming_movies.description", "String should be localized, not showing the key")
+    }
+
+    @Test("Widget loading movies message is properly localized")
+    func widgetLoadingMovies() {
+        let loadingMessage = Localizable.widget.loadingMovies
+
+        #expect(!loadingMessage.isEmpty, "Widget loading message should not be empty")
+        #expect(loadingMessage != "widget.loading_movies", "String should be localized, not showing the key")
+    }
+
+    // MARK: - Home Tests
+
+    @Test("Home loading movies message is properly localized")
+    func homeLoadingMovies() {
+        let loadingMessage = Localizable.home.loadingMovies
+
+        #expect(!loadingMessage.isEmpty, "Home loading message should not be empty")
+        #expect(loadingMessage != "home.loading_movies", "String should be localized, not showing the key")
+    }
+
     // MARK: - Convenience Access Tests
 
     @Test("Convenience access to movie details works correctly")
@@ -108,6 +144,18 @@ struct LocalizableTests {
     func apiErrorsConvenience() {
         #expect(!Localizable.apiErrors.urlConstructionFailed.isEmpty, "API errors should be accessible")
         #expect(Localizable.apiErrors.urlConstructionFailed == Localizable.apiErrors.urlConstructionFailed, "Convenience access should be consistent")
+    }
+
+    @Test("Convenience access to widget strings works correctly")
+    func widgetConvenience() {
+        #expect(!Localizable.widget.upcomingMoviesTitle.isEmpty, "Widget strings should be accessible")
+        #expect(Localizable.widget.upcomingMoviesTitle == Localizable.widget.upcomingMoviesTitle, "Convenience access should be consistent")
+    }
+
+    @Test("Convenience access to home strings works correctly")
+    func homeConvenience() {
+        #expect(!Localizable.home.loadingMovies.isEmpty, "Home strings should be accessible")
+        #expect(Localizable.home.loadingMovies == Localizable.home.loadingMovies, "Convenience access should be consistent")
     }
 
     // MARK: - Edge Cases Tests
@@ -140,11 +188,15 @@ struct LocalizableTests {
             Localizable.favorites.title,
             Localizable.favorites.emptyState,
             Localizable.apiErrors.urlConstructionFailed,
+            Localizable.widget.upcomingMoviesTitle,
+            Localizable.widget.upcomingMoviesDescription,
+            Localizable.widget.loadingMovies,
+            Localizable.home.loadingMovies,
         ]
 
         for string in strings {
             #expect(!string.isEmpty, "Localized string should not be empty: \(string)")
-            #expect(!(string.hasPrefix("movie_details.") || string.hasPrefix("favorites.") || string.hasPrefix("api_error.")),
+            #expect(!(string.hasPrefix("movie_details.") || string.hasPrefix("favorites.") || string.hasPrefix("api_error.") || string.hasPrefix("widget.") || string.hasPrefix("home.")),
                     "String should be localized, not showing the key: \(string)")
         }
     }
