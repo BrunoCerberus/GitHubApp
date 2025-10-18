@@ -189,7 +189,7 @@ struct SearchView: View {
 
     /// Build a movie row view
     @ViewBuilder
-    private func movieRow(movie: Movie, dataViewState: HomeDataViewState) -> some View {
+    private func movieRow(movie: Movie, dataViewState: SearchDataViewState) -> some View {
         NavigationLink(value: movie) {
             HStack {
                 AsyncImageViewer(

@@ -16,7 +16,7 @@ import SwiftUI
  * This ViewModel is dedicated to search functionality and follows Clean Architecture by:
  * - Using CombineViewModel from EntropyCore
  * - Having a single source of truth through viewState
- * - Delegating business logic to HomeDomainInteractor (reused for movie search)
+ * - Delegating business logic to SearchDomainInteractor
  * - Converting view events to domain actions
  * - Converting domain state to view state
  *
@@ -24,23 +24,23 @@ import SwiftUI
  */
 final class SearchViewModel: CombineViewModel {
     /// Single source of truth for the view state
-    @Published var viewState: HomeViewState = .loading
+    @Published var viewState: SearchViewState = .loading
 
     // MARK: - CombineViewModel Requirements
 
     /// Type alias for the view event type
-    typealias ViewEventType = HomeViewEvent
+    typealias ViewEventType = SearchViewEvent
 
     /// Type alias for the view state type
-    typealias ViewStateType = HomeViewState
+    typealias ViewStateType = SearchViewState
 
     // MARK: - Dependencies
 
-    /// Domain interactor handling business logic (reused from Home domain)
-    private let domainInteractor: HomeDomainInteractor
+    /// Domain interactor handling business logic for search
+    private let domainInteractor: SearchDomainInteractor
 
     /// Reducer for converting domain state to view state
-    private let viewStateReducer: HomeViewStateReducing
+    private let viewStateReducer: SearchViewStateReducing
 
     /// Service locator for dependency management
     let serviceLocator: ServiceLocator
@@ -56,19 +56,19 @@ final class SearchViewModel: CombineViewModel {
      */
     init(
         serviceLocator: ServiceLocator,
-        domainInteractor: HomeDomainInteractor? = nil,
-        viewStateReducer: HomeViewStateReducing? = nil
+        domainInteractor: SearchDomainInteractor? = nil,
+        viewStateReducer: SearchViewStateReducing? = nil
     ) {
         // Store serviceLocator for dependency resolution
         self.serviceLocator = serviceLocator
 
         // Initialize domain interactor
-        self.domainInteractor = domainInteractor ?? HomeDomainInteractor(
+        self.domainInteractor = domainInteractor ?? SearchDomainInteractor(
             serviceLocator: serviceLocator
         )
 
         // Initialize view state reducer
-        self.viewStateReducer = viewStateReducer ?? HomeViewStateReducer()
+        self.viewStateReducer = viewStateReducer ?? SearchViewStateReducer()
 
         // Set up state observation
         setupStateObservation()
@@ -87,8 +87,8 @@ final class SearchViewModel: CombineViewModel {
      *
      * - Parameter event: The view event to handle
      */
-    func handle(_ event: HomeViewEvent) {
-        let domainAction = HomeDomainEventActionMap.map(event)
+    func handle(_ event: SearchViewEvent) {
+        let domainAction = SearchDomainEventActionMap.map(event)
         domainInteractor.handleAction(domainAction)
     }
 
@@ -99,7 +99,7 @@ final class SearchViewModel: CombineViewModel {
      *
      * - Parameter event: The view event to send
      */
-    func sendViewEvent(_ event: HomeViewEvent) {
+    func sendViewEvent(_ event: SearchViewEvent) {
         handle(event)
     }
 
@@ -125,13 +125,9 @@ final class SearchViewModel: CombineViewModel {
 
     /**
      * Load more movies for pagination.
-     *
-     * Note: This method is included for API compatibility but does nothing
-     * in search context since search doesn't support pagination in the current implementation.
      */
     func loadMoreMovies() {
-        // Search doesn't support pagination in current implementation
-        // This is here for API compatibility with SearchView
+        handle(.loadMoreMovies)
     }
 
     // MARK: - Private Methods
