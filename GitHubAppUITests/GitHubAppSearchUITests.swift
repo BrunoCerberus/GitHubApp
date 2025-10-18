@@ -91,9 +91,9 @@ final class GitHubAppSearchUITests: XCTestCase {
 
         // Wait for search results to appear (give time for mock API call)
         let movieTitle = app.staticTexts["Barbie"]
-        let predicate = NSPredicate(format: "exists == 1")
+        let predicate = NSPredicate(format: "exists == true")
         let expectation = XCTNSPredicateExpectation(predicate: predicate, object: movieTitle)
-        let result = XCTestWaiter().wait(for: [expectation], timeout: 5.0)
+        let result = XCTWaiter().wait(for: [expectation], timeout: 5.0)
 
         XCTAssertEqual(result, .completed, "Barbie title should appear in search results")
     }
@@ -111,8 +111,8 @@ final class GitHubAppSearchUITests: XCTestCase {
         searchField.typeText("test")
 
         // Wait for results to appear
-        let firstResult = app.staticTexts.element(matching: NSPredicate(format: "label CONTAINS 'Barbie'"))
-        XCTAssertTrue(waitForElement(firstResult, timeout: 5))
+        let barbieText = app.staticTexts["Barbie"]
+        XCTAssertTrue(waitForElement(barbieText, timeout: 5))
 
         // Verify multiple movie results are visible
         let allStaticTexts = app.staticTexts.allElementsBoundByIndex
@@ -135,9 +135,8 @@ final class GitHubAppSearchUITests: XCTestCase {
         let barbieText = app.staticTexts["Barbie"]
         XCTAssertTrue(waitForElement(barbieText, timeout: 5))
 
-        // Find and tap the Barbie cell
-        let barbieCell = app.cells.containing(barbieText).firstMatch
-        barbieCell.tap()
+        // Tap the Barbie text
+        barbieText.tap()
 
         // Verify movie details view is displayed (should have movie title as navigation bar)
         let movieDetailsNav = app.navigationBars["Barbie"]
@@ -157,8 +156,8 @@ final class GitHubAppSearchUITests: XCTestCase {
         searchField.typeText("test")
 
         // Wait for results to appear
-        let firstResult = app.staticTexts.element(matching: NSPredicate(format: "label CONTAINS 'Barbie'"))
-        XCTAssertTrue(waitForElement(firstResult, timeout: 5))
+        let barbieText = app.staticTexts["Barbie"]
+        XCTAssertTrue(waitForElement(barbieText, timeout: 5))
 
         // Clear search field
         searchField.clearText()
@@ -209,8 +208,8 @@ final class GitHubAppSearchUITests: XCTestCase {
         searchField.typeText("test")
 
         // Wait for results to appear
-        let firstResult = app.staticTexts.element(matching: NSPredicate(format: "label CONTAINS 'Barbie'"))
-        XCTAssertTrue(waitForElement(firstResult, timeout: 5))
+        let barbieText = app.staticTexts["Barbie"]
+        XCTAssertTrue(waitForElement(barbieText, timeout: 5))
 
         // Find the results list
         let listView = app.collectionViews.firstMatch
@@ -238,8 +237,7 @@ final class GitHubAppSearchUITests: XCTestCase {
         // Wait for and tap search result
         let barbieText = app.staticTexts["Barbie"]
         XCTAssertTrue(waitForElement(barbieText, timeout: 5))
-        let barbieCell = app.cells.containing(barbieText).firstMatch
-        barbieCell.tap()
+        barbieText.tap()
 
         // Verify we're in movie details
         let movieDetailsNav = app.navigationBars["Barbie"]
@@ -289,9 +287,9 @@ final class GitHubAppSearchUITests: XCTestCase {
     ///   - timeout: Maximum time to wait in seconds
     /// - Returns: true if element appeared within timeout, false otherwise
     private func waitForElement(_ element: XCUIElement, timeout: TimeInterval) -> Bool {
-        let predicate = NSPredicate(format: "exists == 1")
+        let predicate = NSPredicate(format: "exists == true")
         let expectation = XCTNSPredicateExpectation(predicate: predicate, object: element)
-        let result = XCTestWaiter().wait(for: [expectation], timeout: timeout)
+        let result = XCTWaiter().wait(for: [expectation], timeout: timeout)
         return result == .completed
     }
 }
