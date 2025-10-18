@@ -13,12 +13,12 @@ import SwiftUI
  * Provides a search-first interface that only displays results when actively searching.
  * Unlike HomeView, this starts empty and encourages user interaction.
  */
-struct SearchView<R: HomeNavigationRouter>: View {
+struct SearchView: View {
     /// Router responsible for navigation actions
-    private var router: R
+    private var router: SearchNavigationRouter
 
     /// Backing ViewModel managing data and actions
-    @StateObject private var viewModel: HomeViewModel
+    @StateObject private var viewModel: SearchViewModel
     /// Service locator for dependency injection
     private let serviceLocator: ServiceLocator
     /// Bound text for the search field
@@ -36,7 +36,7 @@ struct SearchView<R: HomeNavigationRouter>: View {
      *   - viewModel: ViewModel for managing data and actions
      *   - serviceLocator: Service locator for dependency injection
      */
-    init(router: R, viewModel: HomeViewModel, serviceLocator: ServiceLocator) {
+    init(router: SearchNavigationRouter, viewModel: SearchViewModel, serviceLocator: ServiceLocator) {
         self.router = router
         _viewModel = StateObject(wrappedValue: viewModel)
         self.serviceLocator = serviceLocator
@@ -119,11 +119,11 @@ struct SearchView<R: HomeNavigationRouter>: View {
             } else {
                 // Display search results
                 List {
-                    ForEach(dataViewState.movies) { movie in
+                    ForEach(dataViewState.movies, id: \.id) { movie in
                         movieRow(movie: movie, dataViewState: dataViewState)
                             .onAppear {
                                 // Load more when reaching the last item
-                                if movie.id == dataViewState.movies.last?.id {
+                                if let lastMovieId = dataViewState.movies.last?.id, movie.id == lastMovieId {
                                     viewModel.loadMoreMovies()
                                 }
                             }

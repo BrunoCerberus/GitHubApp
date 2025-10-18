@@ -38,8 +38,8 @@ final class Coordinator: ObservableObject, CoordinatorProtocol {
     /// Shared HomeViewModel instance
     lazy var homeViewModel: HomeViewModel = .init(serviceLocator: serviceLocator)
 
-    /// Shared SearchViewModel instance (uses HomeViewModel for search functionality)
-    lazy var searchViewModel: HomeViewModel = .init(serviceLocator: serviceLocator)
+    /// Shared SearchViewModel instance (dedicated for search functionality)
+    lazy var searchViewModel: SearchViewModel = .init(serviceLocator: serviceLocator)
 
     /// Shared FavoritesMoviesViewModel instance
     lazy var favoriteMoviesViewModel: FavoritesMoviesViewModel = .init(serviceLocator: serviceLocator)
@@ -80,7 +80,7 @@ final class Coordinator: ObservableObject, CoordinatorProtocol {
         case .home:
             HomeView(router: HomeNavigationRouter(coordinator: self), viewModel: homeViewModel)
         case .search:
-            SearchView(router: HomeNavigationRouter(coordinator: self), viewModel: searchViewModel, serviceLocator: serviceLocator)
+            SearchView(router: SearchNavigationRouter(coordinator: self), viewModel: searchViewModel, serviceLocator: serviceLocator)
         case let .detail(movie):
             let viewModel = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
             MovieDetailsView(viewModel: viewModel)
