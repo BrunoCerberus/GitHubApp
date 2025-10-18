@@ -43,3 +43,4 @@
 
 // MARK: - Home View
 "home.loading_movies" = "Loading movies...";
+"home.search_movies" = "Search movies...";

@@ -77,10 +77,6 @@ struct HomeView<R: HomeNavigationRouter>: View {
                 .scrollIndicators(.hidden)
             }
         }
-        .searchable(text: $searchText)
-        .onChange(of: searchText) { _, newValue in
-            handleSearchQueryChange(newValue)
-        }
     }
 
     /// Handle changes to the search text by fetching or searching

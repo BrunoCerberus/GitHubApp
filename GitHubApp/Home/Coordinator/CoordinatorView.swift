@@ -8,12 +8,23 @@
 import SwiftUI
 
 /**
+ * Tab selection enum for iOS 26 TabView API
+ */
+enum AppTab {
+    case home
+    case search
+    case favorites
+    case settings
+}
+
+/**
  * Root SwiftUI container that wires the Coordinator into the UI.
  *
  * Hosts a `TabView` with the main navigation stack and the Favorites tab.
  */
 struct CoordinatorView: View {
     @StateObject private var coordinator: Coordinator
+    @State private var selectedTab: AppTab = .home
 
     /// Reference to the scene delegate for deeplink setup
     @Environment(\.scenePhase) private var scenePhase
@@ -28,31 +39,32 @@ struct CoordinatorView: View {
         _coordinator = StateObject(wrappedValue: Coordinator(serviceLocator: serviceLocator))
     }
 
-    /// View content composed of a tab bar and navigation stack
+    /// View content composed of a tab bar and navigation stack using iOS 26 Tab API
     var body: some View {
-        TabView {
-            NavigationStack(path: $coordinator.path) {
-                coordinator.build(page: .home)
-                    .navigationDestination(for: Page.self) { page in
-                        coordinator.build(page: page)
-                    }
-            }
-            .tabItem {
-                Label("Home", systemImage: "house")
-            }
-            .environmentObject(coordinator)
-
-            FavoritesMoviesView(viewModel: coordinator.favoriteMoviesViewModel)
-                .tabItem {
-                    Label("Favorites", systemImage: "heart")
+        TabView(selection: $selectedTab) {
+            Tab("Home", systemImage: "house", value: .home) {
+                NavigationStack(path: $coordinator.path) {
+                    coordinator.build(page: .home)
+                        .navigationDestination(for: Page.self) { page in
+                            coordinator.build(page: page)
+                        }
                 }
+                .environmentObject(coordinator)
+            }
 
-            SettingsView(viewModel: coordinator.settingsViewModel)
-                .tabItem {
-                    Label("Settings", systemImage: "gear")
-                }
+            Tab("Search", systemImage: "magnifyingglass", value: .search, role: .search) {
+                coordinator.build(page: .search)
+            }
+
+            Tab("Favorites", systemImage: "heart", value: .favorites) {
+                FavoritesMoviesView(viewModel: coordinator.favoriteMoviesViewModel)
+            }
+
+            Tab("Settings", systemImage: "gear", value: .settings) {
+                SettingsView(viewModel: coordinator.settingsViewModel)
+            }
         }
-
+        .tabViewStyle(.sidebarAdaptable)
         .onAppear {
             setupDeeplinkRouter()
         }

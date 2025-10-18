@@ -43,3 +43,4 @@
 
 // MARK: - Home View
 "home.loading_movies" = "Cargando películas...";
+"home.search_movies" = "Buscar películas...";

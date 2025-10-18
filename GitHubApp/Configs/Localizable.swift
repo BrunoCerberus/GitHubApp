@@ -152,6 +152,9 @@ struct Localizable {
 
         /// "Loading movies..." loading state message
         static let loadingMovies = NSLocalizedString("home.loading_movies", comment: "Loading movies message")
+
+        /// "Search movies..." search prompt
+        static let searchMovies = NSLocalizedString("home.search_movies", comment: "Search movies prompt")
     }
 
     // MARK: - Convenience Access
