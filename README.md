@@ -152,9 +152,21 @@ This project uses [XcodeGen](https://github.com/yonaskolb/XcodeGen) to generate 
 
 The project configuration is defined in `project.yml`:
 - **Targets**: GitHubApp (main app), GitHubAppTests (unit tests), GitHubAppUITests (UI tests)
-- **Schemes**: GitHubAppDev, GitHubAppProd
+- **Schemes**: GitHubAppDev, GitHubAppProd, GitHubAppTests, GitHubAppUITests
 - **Settings**: iOS 26.0+ deployment target, Swift 5.0
 - **Environment Variables**: API keys configured per scheme
+
+**Feature Structure:**
+```
+GitHubApp/
+├── Home/           # Main movie browsing with infinite scroll
+├── Search/         # Movie search with Liquid Glass design UI
+├── Favorites/      # Saved favorite movies
+├── Settings/       # App preferences and configuration
+├── Configs/        # Shared utilities, mocks, and configuration
+├── Widgets/        # iOS widget extension with image caching
+└── Localization/   # Multi-language support (EN, ES, PT-BR)
+```
 
 ### Modifying the Project
 
@@ -186,6 +198,36 @@ The project includes multiple Xcode schemes optimized for different development 
 - Use `GitHubAppUITests` scheme when focusing on UI testing and debugging
 - Use `GitHubAppDev` for comprehensive testing before commits
 - Use `GitHubAppProd` for release validation
+
+## Features
+
+### Home
+Browse and discover movies with infinite scroll pagination. The Home feature serves as the primary reference implementation for Clean Architecture in this project.
+
+### Search
+Search for movies by title with a modern Liquid Glass design UI. Implements dedicated Clean Architecture with:
+- **SearchDomainInteractor**: Handles search queries and state management
+- **SearchService**: API integration for movie search
+- **SearchView**: Beautiful SwiftUI interface with real-time search
+- Comprehensive unit tests and UI snapshot tests
+
+### Favorites
+Save and manage your favorite movies with persistent storage using SwiftData.
+
+### Settings
+Configure app preferences including language selection (English, Spanish, Portuguese-BR).
+
+### Localization
+Full multi-language support:
+- 🇬🇧 English
+- 🇪🇸 Spanish (Español)
+- 🇧🇷 Portuguese - Brazil (Português-BR)
+
+### Widget Extension
+iOS widget with:
+- Real-time movie display
+- Image caching via App Groups
+- Clean Architecture implementation
 
 ## Deeplinks
 
@@ -469,6 +511,10 @@ Any feature can implement this Clean Architecture pattern by following these ste
 5. **Refactor Presentation Layer**: Update `ViewModel` to conform to `CombineViewModel`
 6. **Update View Layer**: Ensure `View` uses `@StateObject` and observes `viewState`
 7. **Add Comprehensive Testing**: Create unit tests for each component in isolation
+
+**Reference Implementations:**
+- **Home Feature**: Complete implementation with infinite scroll and data persistence
+- **Search Feature**: Real-time search with state management and Liquid Glass UI design
 
 ### Example Implementation Pattern
 

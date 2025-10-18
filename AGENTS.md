@@ -3,9 +3,15 @@
 This guide helps contributors work consistently across this iOS Swift project. Keep changes focused, documented, and covered by tests.
 
 ## Project Structure & Module Organization
-- App code: `GitHubApp/` organized by feature: `Home/`, `Favorites/`, `Settings/` with subfolders `Domain/`, `View/`, `ViewModel/`, `API/`, `Router/`, `HostingController/`.
-- Widget: `GitHubAppWidgetExtension/`.
-- Tests: `GitHubAppTests/` (unit, snapshots) and `GitHubAppUITests/` (UI).
+- App code: `GitHubApp/` organized by feature with Clean Architecture:
+  - `Home/` - Movie browsing with infinite scroll (reference implementation)
+  - `Search/` - Movie search with Liquid Glass UI design
+  - `Favorites/` - Movie favorites management
+  - `Settings/` - App configuration and preferences
+  - Each feature contains: `Domain/`, `View/`, `ViewModel/`, `API/` (if needed)
+- Widget: `GitHubAppWidgetExtension/` with image caching via App Groups.
+- Localization: `en.lproj/`, `es.lproj/`, `pt-BR.lproj/` for multi-language support.
+- Tests: `GitHubAppTests/` (unit, snapshots) and `GitHubAppUITests/` (UI tests including SearchView tests).
 - Config/build: `project.yml` (XcodeGen), `Makefile`, `.github/workflows/`.
 - Scripts: `scripts/` (e.g., `generate-project.sh`, `coverage-badge.sh`).
 

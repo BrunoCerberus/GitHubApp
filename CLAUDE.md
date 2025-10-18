@@ -29,6 +29,11 @@ GitHubApp/
 │   ├── Domain/     # Business logic layer
 │   ├── View/       # SwiftUI views
 │   └── ViewModel/  # Presentation layer
+├── Search/         # Movie search feature with Clean Architecture
+│   ├── API/        # SearchService, LiveSearchService
+│   ├── Domain/     # Search business logic and state
+│   ├── View/       # SwiftUI search UI with Liquid Glass design
+│   └── ViewModel/  # Search presentation layer
 ├── Favorites/      # Movie favorites feature
 ├── Settings/       # App settings
 ├── Configs/        # Shared configuration, utilities, and Mock services
@@ -221,7 +226,7 @@ SYMBOLS LEGEND:
 ## Development Guidelines
 
 ### When Adding New Features
-1. Follow the Home feature as reference implementation
+1. Follow the Home or Search feature as reference implementations
 2. Create Domain models first (Action, State, Interactor)
 3. **Implement Network Layer** (if API calls required):
    - Create API enum conforming to `APIFetcher` (e.g., `UserAPI: APIFetcher`)
