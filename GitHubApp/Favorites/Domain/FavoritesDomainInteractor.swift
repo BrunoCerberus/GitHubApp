@@ -37,8 +37,8 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
 
     // MARK: - Dependencies
 
-    /// Service for handling favorite movies persistence
-    private let favoritesService: FavoritesService
+    /// Storage service for handling favorite movies persistence
+    private let storageService: StorageService
 
     /// Combine cancellables for memory management
     private var cancellables: Set<AnyCancellable> = []
@@ -51,18 +51,17 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
      * - Parameter serviceLocator: Service locator for dependency injection
      */
     init(serviceLocator: ServiceLocator) {
-        // Retrieve FavoritesService from ServiceLocator
+        // Retrieve StorageService from ServiceLocator
         do {
-            favoritesService = try serviceLocator.retrieve(FavoritesService.self)
+            storageService = try serviceLocator.retrieve(StorageService.self)
         } catch {
-            Logger.shared.service("Failed to retrieve FavoritesService from ServiceLocator: \(error)", level: .warning)
-            favoritesService = LiveFavoritesService()
+            Logger.shared.service("Failed to retrieve StorageService from ServiceLocator: \(error)", level: .warning)
+            storageService = try! LiveStorageService()
         }
 
-        // Initialize with cached data to avoid loading flicker
-        let cachedMovies = Self.loadCachedMovies(from: favoritesService)
+        // Initialize with empty state
         currentState = FavoritesDomainState(
-            favoriteMovies: cachedMovies,
+            favoriteMovies: [],
             isLoading: false,
             error: nil
         )
@@ -130,18 +129,13 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
         currentState.isLoading = true
         currentState.error = nil
 
-        favoritesService.loadFavoriteMovies()
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    self?.currentState.isLoading = false
-                    if case let .failure(error) = completion {
-                        self?.currentState.error = error.localizedDescription
-                    }
-                },
-                receiveValue: { [weak self] movies in
-                    self?.currentState.favoriteMovies = movies
-                    self?.currentState.isLoading = false
+        Task {
+            do {
+                let movies = try await storageService.fetchLikedMovies()
+
+                await MainActor.run {
+                    currentState.favoriteMovies = movies
+                    currentState.isLoading = false
 
                     // Notify other components that favorites have been updated
                     NotificationCenter.default.post(
@@ -149,8 +143,13 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
                         object: movies
                     )
                 }
-            )
-            .store(in: &cancellables)
+            } catch {
+                await MainActor.run {
+                    currentState.isLoading = false
+                    currentState.error = error.localizedDescription
+                }
+            }
+        }
     }
 
     /**
@@ -161,16 +160,12 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
     private func toggleMovieFavorite(_ movie: Movie) {
         currentState.error = nil
 
-        favoritesService.toggleMovieFavorite(movie)
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    if case let .failure(error) = completion {
-                        self?.currentState.error = error.localizedDescription
-                    }
-                },
-                receiveValue: { [weak self] movies in
-                    self?.currentState.favoriteMovies = movies
+        Task {
+            do {
+                let movies = try await storageService.toggleMovieFavorite(movie)
+
+                await MainActor.run {
+                    currentState.favoriteMovies = movies
 
                     // Notify other components that favorites have been updated
                     NotificationCenter.default.post(
@@ -178,8 +173,12 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
                         object: movies
                     )
                 }
-            )
-            .store(in: &cancellables)
+            } catch {
+                await MainActor.run {
+                    currentState.error = error.localizedDescription
+                }
+            }
+        }
     }
 
     /**
@@ -188,16 +187,12 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
     private func clearAllFavoriteMovies() {
         currentState.error = nil
 
-        favoritesService.clearAllFavoriteMovies()
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    if case let .failure(error) = completion {
-                        self?.currentState.error = error.localizedDescription
-                    }
-                },
-                receiveValue: { [weak self] _ in
-                    self?.currentState.favoriteMovies = []
+        Task {
+            do {
+                try await storageService.clearFavoriteMovies()
+
+                await MainActor.run {
+                    currentState.favoriteMovies = []
 
                     // Notify other components that favorites have been updated
                     NotificationCenter.default.post(
@@ -205,8 +200,12 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
                         object: []
                     )
                 }
-            )
-            .store(in: &cancellables)
+            } catch {
+                await MainActor.run {
+                    currentState.error = error.localizedDescription
+                }
+            }
+        }
     }
 
     /**
@@ -214,20 +213,5 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
      */
     private func refreshFavoriteMovies() {
         loadFavoriteMovies()
-    }
-
-    // MARK: - Static Helper Methods
-
-    /**
-     * Load cached movies synchronously to avoid loading flicker.
-     * This provides immediate data on initialization.
-     *
-     * Since the StorageService is async, we'll return empty array for now
-     * and let the normal loading process populate the data.
-     */
-    private static func loadCachedMovies(from _: FavoritesService) -> [Movie] {
-        // For now, return empty array to avoid complex async initialization
-        // The data will be loaded via the normal loadFavoriteMovies flow
-        []
     }
 }

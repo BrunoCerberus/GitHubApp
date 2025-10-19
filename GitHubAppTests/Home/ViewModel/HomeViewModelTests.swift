@@ -9,18 +9,18 @@ import Testing
 
 struct HomeViewModelTests {
     private func createTestServiceLocator(homeService: HomeService) -> ServiceLocator {
+        let mockStorageService = MockStorageService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: homeService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
         return serviceLocator
     }
 
     @Test("Fetch data populates movies and favorites synchronously")
     func fetchDataPopulatesMoviesAndFavoritesSync() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -38,10 +38,8 @@ struct HomeViewModelTests {
     @Test("Search movies replaces current movies")
     func searchMoviesReplacesMovies() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -61,10 +59,8 @@ struct HomeViewModelTests {
     @Test("Toggle favorite for movie executes successfully")
     func toggleFavoriteForMovie() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -89,10 +85,8 @@ struct HomeViewModelTests {
     @Test("Load favorite movies executes successfully")
     func loadFavoriteMovies() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -109,10 +103,8 @@ struct HomeViewModelTests {
     @Test("Is liked movie returns correct boolean value")
     func isLikedMovie() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -137,10 +129,8 @@ struct HomeViewModelTests {
     @Test("Send view event executes successfully")
     func sendViewEvent() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -157,10 +147,8 @@ struct HomeViewModelTests {
     @Test("ViewModel getters return expected values")
     func viewModelGetters() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 

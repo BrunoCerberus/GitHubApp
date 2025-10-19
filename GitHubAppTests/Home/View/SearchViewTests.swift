@@ -17,13 +17,13 @@ import Testing
 @MainActor
 struct SearchViewTests {
     private func createTestComponents(mockService: HomeService? = nil) -> (SearchNavigationRouter, SearchViewModel, SearchView) {
-        // Reset storage service cache to ensure fresh instances
-        StorageServiceFactory.shared.resetCache()
-
         let router = SearchNavigationRouter()
         let service = mockService ?? MockHomeService()
+        let mockStorageService = MockStorageService()
+
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: service)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
 
         // Configure API key for testing
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
@@ -34,8 +34,6 @@ struct SearchViewTests {
     }
 
     private func cleanupTest() {
-        // Reset storage service cache for test isolation
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.removeMovieAPIKey()
     }
 

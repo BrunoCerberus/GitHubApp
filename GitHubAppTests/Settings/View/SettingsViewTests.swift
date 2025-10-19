@@ -18,17 +18,18 @@ import Testing
 @MainActor
 struct SettingsViewTests {
     private func createTestComponents() -> (SettingsView, MockSettingsService) {
-        // Configure storage for testing
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.testing)
         // Clear UserDefaults for clean testing
         UserDefaults.standard.removeObject(forKey: "profileImageData")
         UserDefaults.standard.removeObject(forKey: "hasRatedApp")
         UserDefaults.standard.synchronize()
 
         let mockSettingsService = MockSettingsService()
+        let mockStorageService = MockStorageService()
+
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
         let settingsViewModel = SettingsViewModel(serviceLocator: serviceLocator)
         let view = SettingsView(viewModel: settingsViewModel)
 

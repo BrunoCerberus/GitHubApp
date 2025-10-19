@@ -53,13 +53,6 @@ protocol SettingsService {
     func markAppAsRated() -> AnyPublisher<Void, Never>
 
     /**
-     * Clear all favorite movies.
-     *
-     * - Returns: Publisher that completes when the operation is finished
-     */
-    func clearAllFavoriteMovies() -> AnyPublisher<Void, Error>
-
-    /**
      * Get app version information.
      *
      * - Returns: Publisher that emits version and build number

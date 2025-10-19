@@ -42,6 +42,9 @@ final class SettingsDomainInteractor: ObservableObject, CombineInteractor {
     /// Service for settings operations
     private let settingsService: SettingsService
 
+    /// Storage service for persisting favorite movies
+    private let storageService: StorageService
+
     /// Combine cancellables for memory management
     private var cancellables: Set<AnyCancellable> = []
 
@@ -65,6 +68,14 @@ final class SettingsDomainInteractor: ObservableObject, CombineInteractor {
         } catch {
             Logger.shared.service("Failed to retrieve SettingsService from ServiceLocator: \(error)", level: .warning)
             settingsService = LiveSettingsService()
+        }
+
+        // Retrieve StorageService from ServiceLocator
+        do {
+            storageService = try serviceLocator.retrieve(StorageService.self)
+        } catch {
+            Logger.shared.service("Failed to retrieve StorageService from ServiceLocator: \(error)", level: .warning)
+            storageService = try! LiveStorageService()
         }
 
         currentState = initialState
@@ -234,23 +245,28 @@ final class SettingsDomainInteractor: ObservableObject, CombineInteractor {
      * Handle clearing all favorite movies.
      */
     private func handleClearAllFavoriteMovies() {
-        settingsService.clearAllFavoriteMovies()
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    if case let .failure(error) = completion {
-                        self?.currentState = self?.currentState.copy(
-                            error: error.localizedDescription
-                        ) ?? SettingsDomainState.initial
-                    }
-                },
-                receiveValue: { [weak self] in
-                    self?.currentState = self?.currentState.copy(
+        Task {
+            do {
+                // Use StorageService to clear favorite movies (bridge between services)
+                try await storageService.clearFavoriteMovies()
+
+                await MainActor.run {
+                    currentState = currentState.copy(
                         showClearFavoriteMoviesAlert: true,
                         error: nil
-                    ) ?? SettingsDomainState.initial
+                    )
                 }
-            )
-            .store(in: &cancellables)
+
+                // Post notification to notify other features about the change
+                NotificationCenter.default.post(name: .favoriteMoviesDidUpdate, object: nil)
+            } catch {
+                await MainActor.run {
+                    currentState = currentState.copy(
+                        error: error.localizedDescription
+                    )
+                }
+            }
+        }
     }
 
     /**
@@ -298,6 +314,7 @@ extension SettingsDomainState {
      * Create a copy of the current state with modified properties.
      */
     func copy(
+        profileImage: UIImage?? = nil,
         hasRatedApp: Bool? = nil,
         appVersion: String? = nil,
         appBuildNumber: String? = nil,
@@ -309,7 +326,7 @@ extension SettingsDomainState {
         error: String? = nil
     ) -> SettingsDomainState {
         SettingsDomainState(
-            profileImage: profileImage,
+            profileImage: profileImage ?? self.profileImage,
             hasRatedApp: hasRatedApp ?? self.hasRatedApp,
             appVersion: appVersion ?? self.appVersion,
             appBuildNumber: appBuildNumber ?? self.appBuildNumber,

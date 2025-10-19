@@ -10,19 +10,19 @@ import Testing
 @MainActor
 struct FavoritesMoviesViewTests {
     private func createTestComponents() -> (ServiceLocator, MockFavoritesService) {
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.testing)
         try? APIKeysProvider.setMovieAPIKey("ui-key")
 
         let mockService = MockFavoritesService()
+        let mockStorageService = MockStorageService()
+
         let serviceLocator = ServiceLocator()
         serviceLocator.register(FavoritesService.self, instance: mockService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
         return (serviceLocator, mockService)
     }
 
     private func cleanupTest() {
-        StorageServiceFactory.shared.resetCache()
-        // Keep in testing mode to avoid interfering with other concurrent tests
         try? APIKeysProvider.removeMovieAPIKey()
     }
 

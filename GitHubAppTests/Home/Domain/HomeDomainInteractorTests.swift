@@ -8,29 +8,19 @@ import Combine
 import Testing
 
 struct HomeDomainInteractorTests {
-    private func createTestComponents() -> (HomeDomainInteractor, MockHomeService, StorageServiceProtocol) {
+    private func createTestComponents() -> (HomeDomainInteractor, MockHomeService, StorageService) {
         let mockHomeService = MockHomeService()
+        let mockStorageService = MockStorageService()
+
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockHomeService)
-
-        // Configure StorageServiceFactory for testing
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.testing)
-
-        // Get the test storage service instance
-        let storageService: StorageServiceProtocol
-        do {
-            storageService = try StorageServiceFactory.shared.getStorageService()
-        } catch {
-            Issue.record("Failed to get storage service for testing: \(error)")
-            fatalError("Failed to get storage service for testing: \(error)")
-        }
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
 
         let interactor = HomeDomainInteractor(serviceLocator: serviceLocator)
         // Ensure API key exists in case anything inadvertently touches HomeAPI
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
 
-        return (interactor, mockHomeService, storageService)
+        return (interactor, mockHomeService, mockStorageService)
     }
 
     private func createMockMovie(id: Int, title: String) -> Movie {
@@ -47,8 +37,6 @@ struct HomeDomainInteractorTests {
         // Given
         let (sut, _, _) = createTestComponents()
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -68,8 +56,6 @@ struct HomeDomainInteractorTests {
         // Given
         let (sut, _, _) = createTestComponents()
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -93,8 +79,6 @@ struct HomeDomainInteractorTests {
         let (sut, _, _) = createTestComponents()
         let query = "test query"
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -117,8 +101,6 @@ struct HomeDomainInteractorTests {
         // Given
         let (sut, _, _) = createTestComponents()
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -142,8 +124,6 @@ struct HomeDomainInteractorTests {
         let (sut, _, storageService) = createTestComponents()
         let movie = createMockMovie(id: 1, title: "Test Movie")
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -166,8 +146,6 @@ struct HomeDomainInteractorTests {
         let (sut, _, storageService) = createTestComponents()
         let movie = createMockMovie(id: 1, title: "Test Movie")
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -195,8 +173,6 @@ struct HomeDomainInteractorTests {
         let movie2 = createMockMovie(id: 615_656, title: "Meg 2") // This matches MockHomeService
         let favoriteMovies = [movie1, movie2]
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -234,8 +210,6 @@ struct HomeDomainInteractorTests {
         let (sut, mockHomeService, _) = createTestComponents()
         mockHomeService.shouldFail = true
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 

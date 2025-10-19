@@ -12,15 +12,10 @@ import UIKit
 /**
  * Live implementation of SettingsService.
  *
- * This implementation handles real settings operations using UserDefaults
- * and StorageService for data persistence.
+ * This implementation handles real settings operations using UserDefaults.
+ * The service is independent and does not depend on other services.
  */
 final class LiveSettingsService: SettingsService {
-    // MARK: - Dependencies
-
-    /// Storage service for handling favorite movies operations
-    private let storageService: StorageServiceProtocol
-
     /// UserDefaults keys
     private enum Keys {
         static let profileImageData = "profileImageData"
@@ -30,21 +25,9 @@ final class LiveSettingsService: SettingsService {
     // MARK: - Initialization
 
     /**
-     * Initialize the service with dependencies.
-     *
-     * - Parameter storageService: Optional storage service (defaults to shared instance)
+     * Initialize the service.
      */
-    init(storageService: StorageServiceProtocol? = nil) {
-        if let storageService {
-            self.storageService = storageService
-        } else {
-            do {
-                self.storageService = try StorageServiceFactory.shared.getStorageService()
-            } catch {
-                fatalError("Failed to initialize storage service: \(error)")
-            }
-        }
-    }
+    init() {}
 
     // MARK: - Profile Image Operations
 
@@ -97,27 +80,6 @@ final class LiveSettingsService: SettingsService {
             UserDefaults.standard.set(true, forKey: Keys.hasRatedApp)
             UserDefaults.standard.synchronize()
             promise(.success(()))
-        }
-        .eraseToAnyPublisher()
-    }
-
-    // MARK: - Favorite Movies Operations
-
-    func clearAllFavoriteMovies() -> AnyPublisher<Void, Error> {
-        Future<Void, Error> { [weak self] promise in
-            guard let self else {
-                promise(.failure(SettingsError.serviceUnavailable))
-                return
-            }
-
-            Task {
-                do {
-                    try await self.storageService.clearFavoriteMovies()
-                    promise(.success(()))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
         }
         .eraseToAnyPublisher()
     }

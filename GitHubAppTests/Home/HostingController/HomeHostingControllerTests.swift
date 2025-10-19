@@ -10,19 +10,18 @@ import UIKit
 @MainActor
 struct HomeHostingControllerTests {
     private func createTestComponents() -> ServiceLocator {
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.testing)
         // Ensure API key is available to avoid fatalError in HomeAPI
         try? APIKeysProvider.setMovieAPIKey("test-key")
 
+        let mockStorageService = MockStorageService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: MockHomeService())
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
         return serviceLocator
     }
 
     private func cleanupTest() {
-        StorageServiceFactory.shared.resetCache()
-        // Keep in testing mode to avoid interfering with other concurrent tests
         try? APIKeysProvider.removeMovieAPIKey()
     }
 

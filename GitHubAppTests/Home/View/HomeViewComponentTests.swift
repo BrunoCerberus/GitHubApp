@@ -15,19 +15,21 @@ import Testing
 @MainActor
 struct HomeViewComponentTests {
     private func createTestComponents() -> (HomeNavigationRouter, MockHomeService, HomeViewModel, HomeView<HomeNavigationRouter>) {
-        StorageServiceFactory.shared.resetCache()
-
         let router = HomeNavigationRouter()
         let mockService = MockHomeService()
+        let mockStorageService = MockStorageService()
+
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
         let viewModel = HomeViewModel(serviceLocator: serviceLocator)
         let view = HomeView(router: router, viewModel: viewModel)
         return (router, mockService, viewModel, view)
     }
 
     private func cleanupTest() {
-        StorageServiceFactory.shared.resetCache()
+        // Cleanup test resources
     }
 
     @Test("Home view body with loading state")

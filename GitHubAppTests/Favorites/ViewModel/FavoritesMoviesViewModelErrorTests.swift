@@ -12,11 +12,12 @@ import Testing
 
 struct FavoritesMoviesViewModelErrorTests {
     private func createTestComponents() -> (FavoritesMoviesViewModel, MockFavoritesService) {
-        StorageServiceFactory.shared.resetCache()
-
         let mockFavoritesService = MockFavoritesService()
+        let mockStorageService = MockStorageService()
+
         let serviceLocator = ServiceLocator()
         serviceLocator.register(FavoritesService.self, instance: mockFavoritesService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
 
         let mockDomainInteractor = FavoritesDomainInteractor(serviceLocator: serviceLocator)
         let viewModel = FavoritesMoviesViewModel(
@@ -28,8 +29,10 @@ struct FavoritesMoviesViewModelErrorTests {
     }
 
     private func createServiceLocator(mockService: MockFavoritesService) -> ServiceLocator {
+        let mockStorageService = MockStorageService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(FavoritesService.self, instance: mockService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
         return serviceLocator
     }
 
@@ -37,8 +40,6 @@ struct FavoritesMoviesViewModelErrorTests {
 
     @Test("Initialization with nil parameters uses defaults")
     func initializationWithNilParameters() async {
-        defer { StorageServiceFactory.shared.resetCache() }
-
         // Given - All parameters nil to test default initialization paths
         let serviceLocator = ServiceLocator()
         serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())
@@ -62,8 +63,6 @@ struct FavoritesMoviesViewModelErrorTests {
 
     @Test("Initialization with service locator only uses defaults")
     func initializationWithServiceLocator() async {
-        defer { StorageServiceFactory.shared.resetCache() }
-
         // Given
         let serviceLocator = ServiceLocator()
 
@@ -82,8 +81,6 @@ struct FavoritesMoviesViewModelErrorTests {
 
     @Test("View model properties in loading state return defaults")
     func viewModelPropertiesInLoadingState() async {
-        defer { StorageServiceFactory.shared.resetCache() }
-
         // Given
         let (viewModel, _) = createTestComponents()
 
@@ -99,8 +96,6 @@ struct FavoritesMoviesViewModelErrorTests {
 
     @Test("Send view event method executes without crashing")
     func sendViewEventMethod() async {
-        defer { StorageServiceFactory.shared.resetCache() }
-
         // Given
         let (viewModel, _) = createTestComponents()
         let movie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
@@ -116,8 +111,6 @@ struct FavoritesMoviesViewModelErrorTests {
 
     @Test("All view event conversions are handled without errors")
     func allViewEventConversions() async {
-        defer { StorageServiceFactory.shared.resetCache() }
-
         // Given
         let (viewModel, _) = createTestComponents()
         let movie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
@@ -142,8 +135,6 @@ struct FavoritesMoviesViewModelErrorTests {
 
     @Test("Set favorite movies for testing with empty array updates state")
     func setFavoriteMoviesForTestingWithEmptyArray() async {
-        defer { StorageServiceFactory.shared.resetCache() }
-
         // Given
         let (viewModel, _) = createTestComponents()
 
@@ -164,8 +155,6 @@ struct FavoritesMoviesViewModelErrorTests {
 
     @Test("View model memory management works correctly")
     func viewModelMemoryManagement() async throws {
-        defer { StorageServiceFactory.shared.resetCache() }
-
         // Given
         weak var weakViewModel: FavoritesMoviesViewModel?
 

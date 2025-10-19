@@ -9,13 +9,13 @@ import Testing
 
 struct FavoritesMoviesViewModelTests {
     private func createTestComponents() -> (FavoritesMoviesViewModel, MockFavoritesService) {
-        // Reset storage cache for test isolation
-        StorageServiceFactory.shared.resetCache()
-
         // Set up mock services
         let mockFavoritesService = MockFavoritesService()
+        let mockStorageService = MockStorageService()
+
         let serviceLocator = ServiceLocator()
         serviceLocator.register(FavoritesService.self, instance: mockFavoritesService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
 
         let mockDomainInteractor = FavoritesDomainInteractor(serviceLocator: serviceLocator)
         let viewModel = FavoritesMoviesViewModel(
@@ -31,7 +31,6 @@ struct FavoritesMoviesViewModelTests {
         // Given
         let (sut, mockFavoritesService) = createTestComponents()
         let movie = Movie(id: 1, title: "A", overview: "B", posterPath: nil)
-        defer { StorageServiceFactory.shared.resetCache() }
 
         // Clear pre-populated mock data
         mockFavoritesService.setMockLikedMovies([])
@@ -65,10 +64,20 @@ struct FavoritesMoviesViewModelTests {
     func persistenceAcrossInstances() async throws {
         // Given
         let movie = Movie(id: 42, title: "Persist", overview: "Test", posterPath: nil)
-        defer { StorageServiceFactory.shared.resetCache() }
 
-        // Create first instance
-        let (sut1, mockFavoritesService) = createTestComponents()
+        // Create first instance with shared storage
+        let mockFavoritesService = MockFavoritesService()
+        let mockStorageService = MockStorageService()
+
+        let serviceLocator1 = ServiceLocator()
+        serviceLocator1.register(FavoritesService.self, instance: mockFavoritesService)
+        serviceLocator1.register(StorageService.self, instance: mockStorageService)
+
+        let mockDomainInteractor1 = FavoritesDomainInteractor(serviceLocator: serviceLocator1)
+        let sut1 = FavoritesMoviesViewModel(
+            serviceLocator: serviceLocator1,
+            domainInteractor: mockDomainInteractor1
+        )
 
         // Clear pre-populated mock data
         mockFavoritesService.setMockLikedMovies([])
@@ -85,13 +94,14 @@ struct FavoritesMoviesViewModelTests {
         // Then - First instance should show as favorited
         #expect(sut1.isFavorited(movie: movie))
 
-        // When - Create second instance (using same mock service to ensure persistence)
-        let serviceLocator = ServiceLocator()
-        serviceLocator.register(FavoritesService.self, instance: mockFavoritesService)
-        let mockDomainInteractor = FavoritesDomainInteractor(serviceLocator: serviceLocator)
+        // When - Create second instance (using SAME mock services to ensure persistence)
+        let serviceLocator2 = ServiceLocator()
+        serviceLocator2.register(FavoritesService.self, instance: mockFavoritesService)
+        serviceLocator2.register(StorageService.self, instance: mockStorageService)
+        let mockDomainInteractor2 = FavoritesDomainInteractor(serviceLocator: serviceLocator2)
         let sut2 = FavoritesMoviesViewModel(
-            serviceLocator: serviceLocator,
-            domainInteractor: mockDomainInteractor
+            serviceLocator: serviceLocator2,
+            domainInteractor: mockDomainInteractor2
         )
 
         // Load favorites on second instance to ensure it reads the persisted state

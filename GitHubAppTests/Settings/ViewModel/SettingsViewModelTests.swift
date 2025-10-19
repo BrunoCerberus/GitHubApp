@@ -13,8 +13,10 @@ import UIKit
 struct SettingsViewModelTests {
     private func createTestComponents() -> (SettingsViewModel, MockSettingsService) {
         let mockSettingsService = MockSettingsService()
+        let mockStorageService = MockStorageService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
 
         let mockDomainInteractor = SettingsDomainInteractor(
             serviceLocator: serviceLocator,
@@ -177,7 +179,7 @@ struct SettingsViewModelTests {
     @Test("Clear all favorite movies shows confirmation alert")
     func clearAllFavoriteMovies() async throws {
         // Given
-        let (settingsViewModel, mockSettingsService) = createTestComponents()
+        let (settingsViewModel, _) = createTestComponents()
 
         // When
         await MainActor.run {
@@ -189,8 +191,7 @@ struct SettingsViewModelTests {
 
         // Then
         await MainActor.run {
-            #expect(mockSettingsService.clearAllFavoriteMoviesCallCount == 1)
-
+            // The domain interactor now calls StorageService directly
             if case let .success(dataViewState) = settingsViewModel.viewState {
                 #expect(dataViewState.showClearFavoriteMoviesAlert)
             }

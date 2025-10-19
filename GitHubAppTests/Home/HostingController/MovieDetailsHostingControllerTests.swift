@@ -9,19 +9,18 @@ import UIKit
 
 struct MovieDetailsHostingControllerTests {
     private func createTestComponents(movie: Movie) -> MovieDetailsHostingController {
-        // Configure storage for testing
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.testing)
         // Ensure API key is available to avoid fatalError in HomeAPI
         try? APIKeysProvider.setMovieAPIKey("test-key")
+
+        let mockStorageService = MockStorageService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: MockHomeService())
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
         return MovieDetailsHostingController(movie: movie, serviceLocator: serviceLocator)
     }
 
     private func cleanupTest() {
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.production)
         try? APIKeysProvider.removeMovieAPIKey()
     }
 

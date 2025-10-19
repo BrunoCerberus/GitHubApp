@@ -42,7 +42,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     private let homeService: HomeService
 
     /// Storage service for persisting favorite movies
-    private let storageService: StorageServiceProtocol
+    private let storageService: StorageService
 
     /// Combine cancellables for memory management
     private var cancellables: Set<AnyCancellable> = []
@@ -67,11 +67,12 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
             homeService = LiveHomeService()
         }
 
-        // Initialize storage service
+        // Retrieve StorageService from ServiceLocator
         do {
-            storageService = try StorageServiceFactory.shared.getStorageService()
+            storageService = try serviceLocator.retrieve(StorageService.self)
         } catch {
-            fatalError("Failed to initialize storage service: \(error)")
+            Logger.shared.service("Failed to retrieve StorageService from ServiceLocator: \(error)", level: .warning)
+            storageService = try! LiveStorageService()
         }
 
         currentState = initialState

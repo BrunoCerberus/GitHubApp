@@ -11,18 +11,16 @@ import Testing
 import UIKit
 
 struct LiveSettingsServiceTests {
-    private func createTestComponents() -> LiveSettingsService {
-        // Configure StorageServiceFactory for testing
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.testing)
+    private func createTestComponents() -> (LiveSettingsService, ServiceLocator) {
+        let mockStorageService = MockStorageService()
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
 
         let settingsService = LiveSettingsService()
-        return settingsService
+        return (settingsService, serviceLocator)
     }
 
     private func cleanup() {
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.production)
         UserDefaults.standard.removeObject(forKey: "profileImageData")
         UserDefaults.standard.removeObject(forKey: "hasRatedApp")
         UserDefaults.standard.synchronize()
@@ -31,7 +29,7 @@ struct LiveSettingsServiceTests {
     @Test("Load profile image returns nil when not saved")
     func loadProfileImageReturnsNilWhenNotSaved() throws {
         // Given
-        let settingsService = createTestComponents()
+        let (settingsService, _) = createTestComponents()
         defer { cleanup() }
 
         // When
@@ -54,7 +52,7 @@ struct LiveSettingsServiceTests {
     @Test("Save and load profile image works correctly")
     func saveAndLoadProfileImageWorks() throws {
         // Given
-        let settingsService = createTestComponents()
+        let (settingsService, _) = createTestComponents()
         defer { cleanup() }
 
         // Create a test image
@@ -89,7 +87,7 @@ struct LiveSettingsServiceTests {
     @Test("Clear profile image removes saved image")
     func clearProfileImageRemovesSavedImage() throws {
         // Given
-        let settingsService = createTestComponents()
+        let (settingsService, _) = createTestComponents()
         defer { cleanup() }
 
         // Create and save a test image
@@ -122,7 +120,7 @@ struct LiveSettingsServiceTests {
     @Test("Has rated app returns false by default")
     func hasRatedAppReturnsFalseByDefault() throws {
         // Given
-        let settingsService = createTestComponents()
+        let (settingsService, _) = createTestComponents()
         defer { cleanup() }
 
         // When
@@ -142,7 +140,7 @@ struct LiveSettingsServiceTests {
     @Test("Mark app as rated updates state correctly")
     func markAppAsRatedUpdatesStateCorrectly() throws {
         // Given
-        let settingsService = createTestComponents()
+        let (settingsService, _) = createTestComponents()
         defer { cleanup() }
 
         // When - Mark as rated
@@ -166,7 +164,7 @@ struct LiveSettingsServiceTests {
     @Test("Get app version info returns valid version and build")
     func getAppVersionInfoReturnsValidVersionAndBuild() throws {
         // Given
-        let settingsService = createTestComponents()
+        let (settingsService, _) = createTestComponents()
         defer { cleanup() }
 
         // When
@@ -187,7 +185,7 @@ struct LiveSettingsServiceTests {
     @Test("Get app version info returns expected format")
     func getAppVersionInfoReturnsExpectedFormat() throws {
         // Given
-        let settingsService = createTestComponents()
+        let (settingsService, _) = createTestComponents()
         defer { cleanup() }
 
         // When
@@ -208,38 +206,10 @@ struct LiveSettingsServiceTests {
         cancellable.cancel()
     }
 
-    @Test("Clear all favorite movies completes without error")
-    func clearAllFavoriteMoviesSucceeds() throws {
-        // Given
-        let settingsService = createTestComponents()
-        defer { cleanup() }
-
-        // When
-        var completed = false
-        var hasError = false
-        let cancellable = settingsService.clearAllFavoriteMovies()
-            .sink(
-                receiveCompletion: { completion in
-                    completed = true
-                    if case .failure = completion {
-                        hasError = true
-                    }
-                },
-                receiveValue: { _ in }
-            )
-
-        usleep(100_000)
-
-        // Then
-        #expect(completed)
-        #expect(!hasError)
-        cancellable.cancel()
-    }
-
     @Test("Settings service conforms to SettingsService protocol")
     func serviceConformsToSettingsServiceProtocol() {
         // Given
-        let settingsService = createTestComponents()
+        let (settingsService, _) = createTestComponents()
         defer { cleanup() }
 
         // When & Then
@@ -250,7 +220,7 @@ struct LiveSettingsServiceTests {
     @Test("Multiple save operations work sequentially")
     func multipleProfileImagesSequentialOperations() throws {
         // Given
-        let settingsService = createTestComponents()
+        let (settingsService, _) = createTestComponents()
         defer { cleanup() }
 
         let image1 = UIImage(systemName: "star.fill") ?? UIImage()
@@ -312,7 +282,7 @@ struct LiveSettingsServiceTests {
     @Test("Settings operations are independent")
     func settingsOperationsAreIndependent() throws {
         // Given
-        let settingsService = createTestComponents()
+        let (settingsService, _) = createTestComponents()
         defer { cleanup() }
 
         // When - Mark as rated

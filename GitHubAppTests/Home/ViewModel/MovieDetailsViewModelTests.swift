@@ -10,18 +10,18 @@ import Testing
 
 struct MovieDetailsViewModelTests {
     private func createTestComponents(with service: HomeService) -> MovieDetailsViewModel {
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.testing)
         try? APIKeysProvider.setMovieAPIKey("md-key")
+        let mockStorageService = MockStorageService()
+
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: service)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
         let movie = Movie(id: 999, title: "T", overview: "O", posterPath: nil)
         return MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
     }
 
     private func cleanupTest() {
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.production)
         try? APIKeysProvider.removeMovieAPIKey()
     }
 

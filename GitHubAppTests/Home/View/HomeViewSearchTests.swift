@@ -15,21 +15,21 @@ import Testing
 @MainActor
 struct HomeViewSearchTests {
     private func createTestComponents() -> (HomeNavigationRouter, MockHomeService, HomeViewModel) {
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.testing)
-
         let router = HomeNavigationRouter()
         let mockService = MockHomeService()
+        let mockStorageService = MockStorageService()
+
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
         let viewModel = HomeViewModel(serviceLocator: serviceLocator)
 
         return (router, mockService, viewModel)
     }
 
     private func cleanupTest() {
-        StorageServiceFactory.shared.resetCache()
-        // Keep in testing mode to avoid interfering with other concurrent tests
+        // Cleanup test resources
     }
 
     @Test("Home view with search text")
@@ -53,9 +53,11 @@ struct HomeViewSearchTests {
         defer { cleanupTest() }
 
         // Given - Initialize without providing a viewModel
-        StorageServiceFactory.shared.updateConfiguration(.testing)
+        let mockStorageService = MockStorageService()
         let defaultServiceLocator = ServiceLocator()
         defaultServiceLocator.register(HomeService.self, instance: MockHomeService())
+        defaultServiceLocator.register(StorageService.self, instance: mockStorageService)
+
         let defaultViewModel = HomeViewModel(serviceLocator: defaultServiceLocator)
         let router = HomeNavigationRouter()
         let view = HomeView(router: router, viewModel: defaultViewModel)

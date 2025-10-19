@@ -9,18 +9,18 @@ import Testing
 
 struct SearchViewModelTests {
     private func createTestServiceLocator(homeService: HomeService) -> ServiceLocator {
+        let mockStorageService = MockStorageService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: homeService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
         return serviceLocator
     }
 
     @Test("ViewModel starts with loading state")
     func viewModelStartsWithLoadingState() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -42,10 +42,8 @@ struct SearchViewModelTests {
     @Test("Search movies updates state with results")
     func searchMoviesUpdatesState() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -70,10 +68,8 @@ struct SearchViewModelTests {
     @Test("Search movies with empty query clears results")
     func searchMoviesWithEmptyQueryClearsResults() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -102,10 +98,8 @@ struct SearchViewModelTests {
     @Test("Toggle favorite for movie executes successfully")
     func toggleFavoriteForMovie() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -131,10 +125,8 @@ struct SearchViewModelTests {
     @Test("Load more movies executes successfully")
     func loadMoreMovies() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -158,10 +150,8 @@ struct SearchViewModelTests {
     @Test("Send view event executes successfully")
     func sendViewEvent() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -181,10 +171,8 @@ struct SearchViewModelTests {
     @Test("ViewModel handles different search queries")
     func viewModelHandlesDifferentSearchQueries() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -213,10 +201,8 @@ struct SearchViewModelTests {
     @Test("ViewModel uses SearchViewEvent types")
     func viewModelUsesSearchViewEventTypes() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -245,10 +231,8 @@ struct SearchViewModelTests {
     @Test("ViewModel uses SearchViewState types")
     func viewModelUsesSearchViewStateTypes() async throws {
         // Given
-        StorageServiceFactory.shared.resetCache()
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
         defer {
-            StorageServiceFactory.shared.resetCache()
             try? APIKeysProvider.removeMovieAPIKey()
         }
 

@@ -21,21 +21,21 @@ import Testing
 @MainActor
 struct HomeViewTests {
     private func createTestComponents() -> (HomeNavigationRouter, MockHomeService, HomeViewModel, HomeView<HomeNavigationRouter>) {
-        // Reset storage service cache to ensure fresh instances
-        StorageServiceFactory.shared.resetCache()
-
         let router = HomeNavigationRouter()
         let mockService = MockHomeService()
+        let mockStorageService = MockStorageService()
+
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
         let viewModel = HomeViewModel(serviceLocator: serviceLocator)
         let view = HomeView(router: router, viewModel: viewModel)
         return (router, mockService, viewModel, view)
     }
 
     private func cleanupTest() {
-        // Reset storage service cache for test isolation
-        StorageServiceFactory.shared.resetCache()
+        // Cleanup test resources
     }
 
     @Test("Home view snapshot matches stored reference")

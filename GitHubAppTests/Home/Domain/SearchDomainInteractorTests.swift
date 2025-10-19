@@ -8,29 +8,19 @@ import Combine
 import Testing
 
 struct SearchDomainInteractorTests {
-    private func createTestComponents() -> (SearchDomainInteractor, MockSearchService, StorageServiceProtocol) {
+    private func createTestComponents() -> (SearchDomainInteractor, MockSearchService, StorageService) {
         let mockSearchService = MockSearchService()
+        let mockStorageService = MockStorageService()
+
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SearchService.self, instance: mockSearchService)
-
-        // Configure StorageServiceFactory for testing
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.testing)
-
-        // Get the test storage service instance
-        let storageService: StorageServiceProtocol
-        do {
-            storageService = try StorageServiceFactory.shared.getStorageService()
-        } catch {
-            Issue.record("Failed to get storage service for testing: \(error)")
-            fatalError("Failed to get storage service for testing: \(error)")
-        }
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
 
         let interactor = SearchDomainInteractor(serviceLocator: serviceLocator)
         // Ensure API key exists in case anything inadvertently touches SearchAPI
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
 
-        return (interactor, mockSearchService, storageService)
+        return (interactor, mockSearchService, mockStorageService)
     }
 
     private func createMockMovie(id: Int, title: String) -> Movie {
@@ -47,8 +37,6 @@ struct SearchDomainInteractorTests {
         // Given
         let (sut, _, _) = createTestComponents()
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -69,8 +57,6 @@ struct SearchDomainInteractorTests {
         let (sut, mockSearchService, _) = createTestComponents()
         let query = "test query"
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -90,8 +76,6 @@ struct SearchDomainInteractorTests {
         // Given
         let (sut, _, _) = createTestComponents()
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -119,8 +103,6 @@ struct SearchDomainInteractorTests {
         let (sut, _, storageService) = createTestComponents()
         let testMovie = createMockMovie(id: 1001, title: "Test Movie")
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -141,8 +123,6 @@ struct SearchDomainInteractorTests {
         let (sut, _, storageService) = createTestComponents()
         let testMovie = createMockMovie(id: 1002, title: "Test Movie 2")
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -170,8 +150,6 @@ struct SearchDomainInteractorTests {
         let movie1 = createMockMovie(id: 1, title: "Movie 1")
         let movie2 = createMockMovie(id: 2, title: "Movie 2")
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -200,8 +178,6 @@ struct SearchDomainInteractorTests {
         let (sut, _, _) = createTestComponents()
         let query = "test"
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -227,8 +203,6 @@ struct SearchDomainInteractorTests {
         // Given
         let (sut, _, _) = createTestComponents()
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -250,8 +224,6 @@ struct SearchDomainInteractorTests {
         // Given
         let (sut, _, _) = createTestComponents()
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -278,8 +250,6 @@ struct SearchDomainInteractorTests {
         // Given
         let (sut, _, _) = createTestComponents()
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -310,8 +280,6 @@ struct SearchDomainInteractorTests {
         // Given
         let (sut, _, _) = createTestComponents()
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -333,8 +301,6 @@ struct SearchDomainInteractorTests {
         // Given
         let (sut, _, _) = createTestComponents()
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -353,8 +319,6 @@ struct SearchDomainInteractorTests {
         // Given
         let (sut, _, _) = createTestComponents()
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -379,8 +343,6 @@ struct SearchDomainInteractorTests {
         let (sut, _, storageService) = createTestComponents()
         let testMovie = createMockMovie(id: 1003, title: "Test Favorite")
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -403,8 +365,6 @@ struct SearchDomainInteractorTests {
         let (sut, _, _) = createTestComponents()
         let mockSearchService = MockSearchService()
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
@@ -433,8 +393,6 @@ struct SearchDomainInteractorTests {
         // Given
         let (sut, _, _) = createTestComponents()
         defer {
-            StorageServiceFactory.shared.resetCache()
-            StorageServiceFactory.shared.updateConfiguration(.production)
             try? APIKeysProvider.removeMovieAPIKey()
         }
 

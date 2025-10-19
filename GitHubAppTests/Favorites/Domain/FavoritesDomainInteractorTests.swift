@@ -6,17 +6,18 @@
 //
 
 import Combine
+import Foundation
 @testable import GitHubApp
 import Testing
 
 struct FavoritesDomainInteractorTests {
-    private func createTestComponents() -> (FavoritesDomainInteractor, MockFavoritesService) {
-        let mockFavoritesService = MockFavoritesService()
+    private func createTestComponents() -> (FavoritesDomainInteractor, MockStorageService) {
+        let mockStorageService = MockStorageService()
         let serviceLocator = ServiceLocator()
-        serviceLocator.register(FavoritesService.self, instance: mockFavoritesService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
 
         let interactor = FavoritesDomainInteractor(serviceLocator: serviceLocator)
-        return (interactor, mockFavoritesService)
+        return (interactor, mockStorageService)
     }
 
     private func createMockMovie(id: Int, title: String) -> Movie {
@@ -50,7 +51,7 @@ struct FavoritesDomainInteractorTests {
             createMockMovie(id: 1, title: "Favorite Movie 1"),
             createMockMovie(id: 2, title: "Favorite Movie 2"),
         ]
-        mockService.setMockLikedMovies(testMovies)
+        mockService.favoriteMovies = testMovies
 
         // When
         sut.process(.loadFavoriteMovies)
@@ -70,7 +71,7 @@ struct FavoritesDomainInteractorTests {
     func loadFavoriteMoviesEmpty() async throws {
         // Given
         let (sut, mockService) = createTestComponents()
-        mockService.setMockLikedMovies([])
+        mockService.favoriteMovies = []
 
         // When
         sut.process(.loadFavoriteMovies)
@@ -91,9 +92,11 @@ struct FavoritesDomainInteractorTests {
         let (sut, _) = createTestComponents()
 
         // Create a mock service that fails
-        let failingService = MockFavoritesService(shouldSimulateErrors: true)
+        let failingService = MockStorageService()
+        failingService.shouldSimulateErrors = true
+        failingService.fetchLikedMoviesError = NSError(domain: "TestError", code: -1, userInfo: nil)
         let failingServiceLocator = ServiceLocator()
-        failingServiceLocator.register(FavoritesService.self, instance: failingService)
+        failingServiceLocator.register(StorageService.self, instance: failingService)
         let failingInteractor = FavoritesDomainInteractor(serviceLocator: failingServiceLocator)
 
         // When
@@ -115,7 +118,7 @@ struct FavoritesDomainInteractorTests {
         let (sut, mockService) = createTestComponents()
         let movieToAdd = createMockMovie(id: 1, title: "New Favorite")
         // Start with empty favorites so toggle will add the movie
-        mockService.setMockLikedMovies([])
+        mockService.favoriteMovies = []
 
         // When
         sut.process(.toggleMovieFavorite(movieToAdd))
@@ -134,12 +137,17 @@ struct FavoritesDomainInteractorTests {
         // Given
         let (sut, mockService) = createTestComponents()
         let movie = createMockMovie(id: 1, title: "Movie to Remove")
-        mockService.setMockLikedMovies([movie])
+
+        // Add movie to mock's internal storage so isMovieLiked returns true
+        try await mockService.save(movie, context: StorageContext.favoriteMovies)
 
         // Setup initial state with movie
-        await MainActor.run {
-            sut.currentState.favoriteMovies = [movie]
-        }
+        mockService.favoriteMovies = [movie]
+        sut.process(.loadFavoriteMovies)
+        try await Task.sleep(nanoseconds: 100_000_000)
+
+        // Clear favoriteMovies so fetchLikedMovies returns the internal movies array after toggle
+        mockService.favoriteMovies = []
 
         // When - toggle to remove
         sut.process(.toggleMovieFavorite(movie))
@@ -156,9 +164,11 @@ struct FavoritesDomainInteractorTests {
     @Test("Toggle movie favorite with service error updates state with error")
     func toggleMovieFavoriteWithError() async throws {
         // Given
-        let failingService = MockFavoritesService(shouldSimulateErrors: true)
+        let failingService = MockStorageService()
+        failingService.shouldSimulateErrors = true
+        failingService.toggleError = NSError(domain: "TestError", code: -1, userInfo: nil)
         let failingServiceLocator = ServiceLocator()
-        failingServiceLocator.register(FavoritesService.self, instance: failingService)
+        failingServiceLocator.register(StorageService.self, instance: failingService)
         let sut = FavoritesDomainInteractor(serviceLocator: failingServiceLocator)
 
         let movie = createMockMovie(id: 1, title: "Test Movie")
@@ -188,7 +198,7 @@ struct FavoritesDomainInteractorTests {
             sut.currentState.favoriteMovies = testMovies
         }
 
-        mockService.setMockLikedMovies([])
+        mockService.favoriteMovies = []
 
         // When
         sut.process(.clearAllFavoriteMovies)
@@ -205,9 +215,11 @@ struct FavoritesDomainInteractorTests {
     @Test("Clear all favorite movies with service error updates state with error")
     func clearAllFavoriteMoviesWithError() async throws {
         // Given
-        let failingService = MockFavoritesService(shouldSimulateErrors: true)
+        let failingService = MockStorageService()
+        failingService.shouldSimulateErrors = true
+        failingService.clearError = NSError(domain: "TestError", code: -1, userInfo: nil)
         let failingServiceLocator = ServiceLocator()
-        failingServiceLocator.register(FavoritesService.self, instance: failingService)
+        failingServiceLocator.register(StorageService.self, instance: failingService)
         let sut = FavoritesDomainInteractor(serviceLocator: failingServiceLocator)
 
         // When
@@ -230,7 +242,7 @@ struct FavoritesDomainInteractorTests {
             createMockMovie(id: 2, title: "Refreshed Movie 2"),
             createMockMovie(id: 3, title: "Refreshed Movie 3"),
         ]
-        mockService.setMockLikedMovies(testMovies)
+        mockService.favoriteMovies = testMovies
 
         // When
         sut.process(.refreshFavoriteMovies)
@@ -254,22 +266,24 @@ struct FavoritesDomainInteractorTests {
         let movie2 = createMockMovie(id: 2, title: "Movie 2")
 
         // When - Load movies
-        mockService.setMockLikedMovies([movie1, movie2])
+        mockService.favoriteMovies = [movie1, movie2]
         sut.process(.loadFavoriteMovies)
         try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
 
         var stateAfterLoad = sut.currentState
         #expect(stateAfterLoad.favoriteMovies.count == 2)
 
-        // When - Toggle one movie
+        // When - Toggle one movie (remove movie2, leaving only movie1)
+        mockService.toggledMovies = [movie1]
         sut.process(.toggleMovieFavorite(movie2))
         try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
 
         stateAfterLoad = sut.currentState
         #expect(stateAfterLoad.favoriteMovies.count == 1)
 
-        // When - Refresh
-        mockService.setMockLikedMovies([movie1, movie2])
+        // When - Refresh (reset toggledMovies to use favoriteMovies)
+        mockService.toggledMovies = []
+        mockService.favoriteMovies = [movie1, movie2]
         sut.process(.refreshFavoriteMovies)
         try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
 
@@ -284,7 +298,7 @@ struct FavoritesDomainInteractorTests {
         // Given
         let (sut, mockService) = createTestComponents()
         let testMovies = [createMockMovie(id: 1, title: "Test Movie")]
-        mockService.setMockLikedMovies(testMovies)
+        mockService.favoriteMovies = testMovies
 
         // Create upstream publisher
         let actionSubject = PassthroughSubject<FavoritesDomainAction, Never>()
@@ -315,7 +329,7 @@ struct FavoritesDomainInteractorTests {
         // Given
         let (sut, mockService) = createTestComponents()
         let testMovie = createMockMovie(id: 1, title: "Test Movie")
-        mockService.setMockLikedMovies([testMovie])
+        mockService.favoriteMovies = [testMovie]
 
         // When
         sut.process(.loadFavoriteMovies)
@@ -353,9 +367,11 @@ struct FavoritesDomainInteractorTests {
     @Test("Error is cleared when new action is processed")
     func errorClearedOnNewAction() async throws {
         // Given
-        let failingService = MockFavoritesService(shouldSimulateErrors: true)
+        let failingService = MockStorageService()
+        failingService.shouldSimulateErrors = true
+        failingService.fetchLikedMoviesError = NSError(domain: "TestError", code: -1, userInfo: nil)
         let failingServiceLocator = ServiceLocator()
-        failingServiceLocator.register(FavoritesService.self, instance: failingService)
+        failingServiceLocator.register(StorageService.self, instance: failingService)
         let sut = FavoritesDomainInteractor(serviceLocator: failingServiceLocator)
 
         // When - First action fails
@@ -368,11 +384,11 @@ struct FavoritesDomainInteractorTests {
         // When - Toggle without failure - use a normal service now
         let (_, normalService) = createTestComponents()
         let normalServiceLocator = ServiceLocator()
-        normalServiceLocator.register(FavoritesService.self, instance: normalService)
+        normalServiceLocator.register(StorageService.self, instance: normalService)
         let normalInteractor = FavoritesDomainInteractor(serviceLocator: normalServiceLocator)
 
         let movie = createMockMovie(id: 1, title: "Test Movie")
-        normalService.setMockLikedMovies([movie])
+        normalService.favoriteMovies = [movie]
         normalInteractor.process(.toggleMovieFavorite(movie))
         try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
 

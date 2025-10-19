@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 /**
- * SwiftData-based implementation of StorageServiceProtocol.
+ * SwiftData-based implementation of StorageService.
  *
  * This service provides a modern, efficient data persistence layer using SwiftData,
  * replacing the previous UserDefaults-based approach. It supports generic CRUD
@@ -22,7 +22,7 @@ import SwiftData
  * - Automatic migration from UserDefaults
  * - Thread-safe operations
  */
-final class SwiftDataStorageService: StorageServiceProtocol {
+final class SwiftDataStorageService: StorageService {
     // MARK: - Properties
 
     /// SwiftData model container

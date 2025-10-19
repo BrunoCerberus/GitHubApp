@@ -15,11 +15,13 @@ import Testing
  */
 struct HomeViewModelErrorTests {
     private func createTestComponents() -> (HomeViewModel, MockHomeService) {
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.testing)
         let mockService = MockHomeService()
+        let mockStorageService = MockStorageService()
+
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
 
         let viewModel = HomeViewModel(serviceLocator: serviceLocator)
@@ -27,8 +29,6 @@ struct HomeViewModelErrorTests {
     }
 
     private func cleanupTest() {
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.production)
         try? APIKeysProvider.removeMovieAPIKey()
     }
 

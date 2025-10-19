@@ -15,7 +15,7 @@ import SwiftData
  * allowing different implementations (SwiftData, UserDefaults, etc.)
  * while maintaining a consistent interface across the application.
  */
-protocol StorageServiceProtocol: AnyObject {
+protocol StorageService: AnyObject {
     // MARK: - Generic CRUD Operations
 
     /**

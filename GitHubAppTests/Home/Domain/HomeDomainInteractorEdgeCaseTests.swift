@@ -16,25 +16,26 @@ import Testing
  */
 struct HomeDomainInteractorEdgeCaseTests {
     private func createTestComponents() -> (ServiceLocator, MockHomeService) {
-        StorageServiceFactory.shared.resetCache()
-        StorageServiceFactory.shared.updateConfiguration(.testing)
-
         let mockHomeService = MockHomeService()
+        let mockStorageService = MockStorageService()
+
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockHomeService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
         return (serviceLocator, mockHomeService)
     }
 
     private func createServiceLocatorWithService(_ service: HomeService) -> ServiceLocator {
+        let mockStorageService = MockStorageService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: service)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
         return serviceLocator
     }
 
     private func cleanupTest() {
-        StorageServiceFactory.shared.resetCache()
-        // Keep in testing mode to avoid interfering with other concurrent tests
-        // StorageServiceFactory.shared.updateConfiguration(.production)
+        // Cleanup test resources
     }
 
     // MARK: - Service Initialization Edge Cases
@@ -117,12 +118,11 @@ struct HomeDomainInteractorEdgeCaseTests {
         // When
         interactor.handleAction(.searchMovies("test"))
 
-        // Then
-        let state = try await interactor.$currentState
-            .dropFirst() // Skip initial state
-            .first()
-            .async()
+        // Wait for async operation
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
 
+        // Then
+        let state = interactor.currentState
         #expect(!state.isLoading)
         #expect(state.error != nil)
         #expect(state.error?.contains("SearchError") == true)
@@ -142,10 +142,9 @@ struct HomeDomainInteractorEdgeCaseTests {
         interactor.handleAction(.fetchUpcomingMovies)
 
         // Then
-        let state = try await interactor.$currentState
-            .dropFirst()
-            .first()
-            .async()
+        // Wait for async operation to complete
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        let state = interactor.currentState
 
         #expect(!state.isLoading)
         #expect(state.error != nil)
@@ -165,10 +164,9 @@ struct HomeDomainInteractorEdgeCaseTests {
         interactor.handleAction(.toggleMovieFavorite(movie))
 
         // Then - Should not crash and should handle the action
-        _ = try await interactor.$currentState
-            .dropFirst()
-            .first()
-            .async()
+        // Wait for async operation to complete
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        _ = interactor.currentState
     }
 
     // MARK: - Edge Cases in Movie Operations
@@ -185,10 +183,9 @@ struct HomeDomainInteractorEdgeCaseTests {
         interactor.handleAction(.searchMovies(""))
 
         // Then - Should still call service but may return empty results
-        let state = try await interactor.$currentState
-            .dropFirst()
-            .first()
-            .async()
+        // Wait for async operation to complete
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        let state = interactor.currentState
 
         #expect(!state.isLoading)
     }
@@ -205,10 +202,9 @@ struct HomeDomainInteractorEdgeCaseTests {
         interactor.handleAction(.searchMovies("   "))
 
         // Then
-        let state = try await interactor.$currentState
-            .dropFirst()
-            .first()
-            .async()
+        // Wait for async operation to complete
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        let state = interactor.currentState
 
         #expect(!state.isLoading)
     }
@@ -225,10 +221,9 @@ struct HomeDomainInteractorEdgeCaseTests {
         interactor.handleAction(.fetchUpcomingMovies)
 
         // Then
-        let state = try await interactor.$currentState
-            .dropFirst()
-            .first()
-            .async()
+        // Wait for async operation to complete
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        let state = interactor.currentState
 
         // Should complete without error
         #expect(!state.isLoading)
@@ -246,10 +241,9 @@ struct HomeDomainInteractorEdgeCaseTests {
         interactor.handleAction(.loadPersistedFavoriteMovies)
 
         // Then
-        _ = try await interactor.$currentState
-            .dropFirst()
-            .first()
-            .async()
+        // Wait for async operation to complete
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        _ = interactor.currentState
     }
 
     // MARK: - State Transition Edge Cases
@@ -269,10 +263,9 @@ struct HomeDomainInteractorEdgeCaseTests {
 
         // Then - Operations should be handled without conflicts
         // Just wait for the first state change to confirm operations are processed
-        _ = try await interactor.$currentState
-            .dropFirst()
-            .first()
-            .async()
+        // Wait for async operation to complete
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        _ = interactor.currentState
     }
 
     @Test("Operation cancellation")

@@ -1,12 +1,11 @@
 //
 //  MockStorageService.swift
-//  GitHubAppTests
+//  GitHubApp
 //
 //  Created for testing purposes.
 //
 
 import Foundation
-@testable import GitHubApp
 
 /**
  * Mock implementation of StorageService for testing.
