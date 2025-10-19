@@ -8,10 +8,10 @@ import Combine
 import Testing
 
 struct SearchDomainInteractorTests {
-    private func createTestComponents() -> (SearchDomainInteractor, MockHomeService, StorageServiceProtocol) {
-        let mockHomeService = MockHomeService()
+    private func createTestComponents() -> (SearchDomainInteractor, MockSearchService, StorageServiceProtocol) {
+        let mockSearchService = MockSearchService()
         let serviceLocator = ServiceLocator()
-        serviceLocator.register(HomeService.self, instance: mockHomeService)
+        serviceLocator.register(SearchService.self, instance: mockSearchService)
 
         // Configure StorageServiceFactory for testing
         StorageServiceFactory.shared.resetCache()
@@ -27,10 +27,10 @@ struct SearchDomainInteractorTests {
         }
 
         let interactor = SearchDomainInteractor(serviceLocator: serviceLocator)
-        // Ensure API key exists in case anything inadvertently touches HomeAPI
+        // Ensure API key exists in case anything inadvertently touches SearchAPI
         try? APIKeysProvider.setMovieAPIKey("unit-test-key")
 
-        return (interactor, mockHomeService, storageService)
+        return (interactor, mockSearchService, storageService)
     }
 
     private func createMockMovie(id: Int, title: String) -> Movie {

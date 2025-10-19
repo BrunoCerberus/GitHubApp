@@ -38,8 +38,8 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
 
     // MARK: - Dependencies
 
-    /// Service for fetching movie data from external APIs
-    private let homeService: HomeService
+    /// Service for searching movie data from external APIs
+    private let searchService: SearchService
 
     /// Storage service for persisting favorite movies
     private let storageService: StorageServiceProtocol
@@ -59,12 +59,12 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
         serviceLocator: ServiceLocator,
         initialState: SearchDomainState = .initial
     ) {
-        // Retrieve HomeService from ServiceLocator
+        // Retrieve SearchService from ServiceLocator
         do {
-            homeService = try serviceLocator.retrieve(HomeService.self)
+            searchService = try serviceLocator.retrieve(SearchService.self)
         } catch {
-            Logger.shared.service("Failed to retrieve HomeService from ServiceLocator: \(error)", level: .warning)
-            homeService = LiveHomeService()
+            Logger.shared.service("Failed to retrieve SearchService from ServiceLocator: \(error)", level: .warning)
+            searchService = LiveSearchService()
         }
 
         // Initialize storage service
@@ -173,7 +173,7 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
             totalPages: 0
         )
 
-        homeService.searchMovies(with: query, page: 1)
+        searchService.searchMovies(with: query, page: 1)
             .sink(
                 receiveCompletion: { [weak self] completion in
                     if case let .failure(error) = completion {
@@ -255,7 +255,7 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
         // Set loading more state
         currentState = currentState.copy(isLoadingMore: true)
 
-        homeService.searchMovies(with: searchQuery, page: nextPage)
+        searchService.searchMovies(with: searchQuery, page: nextPage)
             .sink(
                 receiveCompletion: { [weak self] completion in
                     if case let .failure(error) = completion {
