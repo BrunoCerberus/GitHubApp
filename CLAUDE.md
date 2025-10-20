@@ -128,12 +128,53 @@ private func createTestServiceLocator() -> ServiceLocator {
 - **Mock Services**: Comprehensive mock implementations for testing
 - **Environment Detection**: Automatic mock service selection for test environments
 - **Clean Initialization**: Components only accept ServiceLocator as dependency
+- **No Service-to-Service Dependencies**: Services are independent; only DomainInteractors coordinate multiple services
+- **DomainInteractor as Bridge**: DomainInteractors retrieve all needed services from ServiceLocator and act as coordinators
+
+### Storage Service Architecture
+The app uses a bridge pattern where DomainInteractors coordinate storage operations:
+
+```swift
+// StorageService Protocol (accessed via ServiceLocator)
+protocol StorageService {
+    func fetchFavorites() -> [Movie]
+    func saveFavorite(movie: Movie)
+    func removeFavorite(movieId: Int)
+    // ... other operations
+}
+
+// Concrete Implementation
+final class LiveStorageService: StorageService {
+    // Uses SwiftData for persistence
+}
+
+// DomainInteractors coordinate with StorageService
+class HomeDomainInteractor: CombineInteractor {
+    private let storageService: StorageService
+
+    init(serviceLocator: ServiceLocator) {
+        self.storageService = try serviceLocator.retrieve(StorageService.self)
+    }
+}
+
+// Mock for Testing
+class MockStorageService: StorageService {
+    // In-memory implementations for testing
+}
+```
+
+**Key Benefits:**
+- **Service Independence**: Services don't depend on other services
+- **DomainInteractor as Coordinator**: Handles multi-service orchestration
+- **Testability**: Each test can provide isolated mock services via ServiceLocator
+- **No Singleton State**: Removed StorageServiceFactory singleton pattern
 
 ### Service Layer
 - Services return `AnyPublisher<Response, Error>` for async operations
 - Protocol-based design for easy mocking and testing
 - Separate Live implementations for production usage
 - All services accessed through ServiceLocator dependency resolution
+- DomainInteractors act as bridges for coordinating multiple services
 
 ### Network Layer (EntropyCore Framework)
 The app uses a sophisticated network layer built on **APIFetcher** and **APIRequest** protocols from EntropyCore:
@@ -294,9 +335,11 @@ make clean             # Clean generated files
 ### ServiceLocator Issues
 - **Missing Service Registration**: Ensure all services are registered in GitHubAppSceneDelegate.swift
 - **Test Failures**: Use `createTestServiceLocator()` helper methods in test setUp
-- **Storage Service Issues**: Configure `StorageServiceFactory.shared.updateConfiguration(.testing)` for unit tests
-- **Mock Service Injection**: Verify MockServices are available in main bundle for test environment detection
+- **Storage Service Issues**: Register `MockStorageService` in test ServiceLocator for unit tests
+- **Mock Service Injection**: All mock services must be registered in the test ServiceLocator
 - **Dependency Resolution Errors**: Check service protocols match registered implementations
+- **Service-to-Service Dependencies**: Avoid services depending on other services; use DomainInteractors as coordinators
+- **Multiple Service Coordination**: When a feature needs multiple services, coordinate them in the DomainInteractor, not in individual services
 
 ### Network Layer Issues
 - **API Key Problems**: Check API key fallback hierarchy (Secrets.plist → Environment → Keychain → Default)

@@ -31,9 +31,12 @@ Open in Xcode with: `open GitHubApp.xcodeproj`. Use schemes: `GitHubAppDev` (dev
 - Lint/format: SwiftLint config at `GitHubApp/.swiftlint.yml`; format with SwiftFormat (installed via `make init`).
 
 ## Testing Guidelines
-- Framework: XCTest; snapshot images under `GitHubAppTests/**/__Snapshots__/`.
+- Framework: Swift Testing; snapshot images under `GitHubAppTests/**/__Snapshots__/`.
 - Naming: Mirror source names with `*Tests.swift` (e.g., `HomeViewModelTests.swift`). Group by feature folders.
 - Run unit/UI tests via Makefile (see above). Aim to keep or improve coverage (`make coverage`).
+- **ServiceLocator Pattern in Tests**: Use `createTestServiceLocator()` to inject mock services per test.
+- **StorageService Testing**: Register `MockStorageService` in test ServiceLocator; no shared state between tests.
+- **Service Coordination**: Test DomainInteractor service coordination logic with isolated mock services.
 
 ## Commit & Pull Request Guidelines
 - Use Conventional Commits (e.g., `feat:`, `fix:`, `docs:`, `refactor:`). Example: `refactor: update domain interactors`.
@@ -45,5 +48,23 @@ Open in Xcode with: `open GitHubApp.xcodeproj`. Use schemes: `GitHubAppDev` (dev
 - Do not commit secrets. Update `scripts/exportOptions.plist` with your Team ID for distribution.
 
 ## Agent-Specific Notes
+
+### Architecture & Patterns
+- **Service Independence**: Never make services depend on other services. Use DomainInteractors as coordinators.
+- **StorageService Integration**: If a feature needs storage, retrieve StorageService in DomainInteractor, not at service level.
+- **ServiceLocator Coordination**: All services (StorageService, HomeService, etc.) are retrieved by DomainInteractors from ServiceLocator.
+- **No Singleton Factories**: Removed StorageServiceFactory pattern; use ServiceLocator for dependency injection throughout.
+- **DomainInteractor Bridge Pattern**:
+  - Interactors retrieve multiple services from ServiceLocator
+  - Interactors handle all service-to-service coordination
+  - Services remain independent and testable in isolation
+
+### Project Configuration
 - If you change `project.yml`, rerun `make generate`.
 - Keep edits minimal and feature-scoped; do not rename targets or schemes without discussion.
+
+### Testing with Services
+- Create mock services matching the service protocol.
+- Register all mocks in test ServiceLocator using `createTestServiceLocator()`.
+- Each test creates its own ServiceLocator; no shared state between tests.
+- Test feature coordination by injecting specific mock combinations.

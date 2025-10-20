@@ -354,16 +354,16 @@ The Clean Architecture implementation follows these key principles:
 │            │                                           ▲                        │
 │            ▼                                           │                        │
 │    ┌─────────────────┐                                 │                        │
-│    │ DomainInteractor│                                 │                        │
+│    │ DomainInteractor│ (Service Bridge)               │                        │
 │    │                 │─────────────────────────────────┘                        │
 │    │ • CombineInterac│          @Published                                      │
 │    │   tor Protocol  │          currentState                                    │
 │    │ • Business Logic│                                                          │
-│    │ • State Machine │                                                          │
-│    │ • Side Effects  │                                                          │
-│    │ • Persistence   │                                                          │
-│    │ • API Orchestra │                                                          │
-│    │   tion          │                                                          │
+│    │ • State Machine │          ServiceLocator                                  │
+│    │ • Side Effects  │              ├─► StorageService                         │
+│    │ • Persistence   │              ├─► HomeService                            │
+│    │ • API Orchestr. │              └─► Other Services                         │
+│    │ • Service Coord │                                                          │
 │    └─────────────────┘                                                          │
 │            │                                                                    │
 │            │ Service Calls                                                      │
@@ -380,8 +380,9 @@ The Clean Architecture implementation follows these key principles:
 │    │   Conformance   │                        │ • GraphQL       │               │
 │    │ • AnyPublisher  │                        │ • Third-party   │               │
 │    │   Return Types  │                        │   Services      │               │
-│    │ • Network Layer │                        │ • Databases     │               │
-│    │ • Data Mapping  │                        │ • File System   │               │
+│    │ • No Service-to │                        │ • Databases     │               │
+│    │   Service Deps  │                        │ • File System   │               │
+│    │ • Data Mapping  │                        │                 │               │
 │    │ • Error Handling│                        │                 │               │
 │    └─────────────────┘                        └─────────────────┘               │
 └─────────────────────────────────────────────────────────────────────────────────┘
@@ -460,7 +461,7 @@ SYMBOLS LEGEND:
 - Observes `viewState` for reactive UI updates and re-rendering
 - Focuses purely on presentation logic and user experience
 
-#### Presentation Layer  
+#### Presentation Layer
 - **ViewModel**: Coordinates between view and domain layer using `CombineViewModel`
 - Implements single source of truth with `@Published viewState`
 - Uses `DomainEventActionMap` to translate UI events to domain actions
@@ -469,6 +470,9 @@ SYMBOLS LEGEND:
 
 #### Domain Layer
 - **DomainInteractor**: Contains all business logic and state management using `CombineInteractor`
+  - Acts as a service bridge when multiple services are needed
+  - Retrieves all dependencies from ServiceLocator
+  - Coordinates between multiple services (e.g., StorageService, HomeService)
 - **DomainAction**: Defines all possible business operations as enum cases
 - **DomainState**: Represents the complete feature state with all necessary data
 - Handles data persistence, validation, API orchestration, and business rules
@@ -479,15 +483,59 @@ SYMBOLS LEGEND:
 - Returns reactive publishers (`AnyPublisher<Response, Error>`) for async operations
 - Manages network requests, database operations, file system access
 - Provides data transformation and error handling
+- **No Service-to-Service Dependencies**: Services are independent and don't depend on other services
+- All services registered through ServiceLocator and coordinated by DomainInteractors
+
+### Storage Service Architecture
+
+The app implements a bridge pattern where **DomainInteractors coordinate storage and API operations**:
+
+**Key Principles:**
+- **Service Independence**: Services don't depend on other services
+- **DomainInteractor as Bridge**: Coordinates between multiple services (StorageService, HomeService, etc.)
+- **ServiceLocator Coordination**: Each DomainInteractor retrieves needed services from ServiceLocator
+- **No Singleton State**: Eliminated StorageServiceFactory singleton pattern
+
+**Example Structure:**
+```
+┌──────────────────────────────────┐
+│    DomainInteractor (Bridge)     │
+│                                  │
+│  • Retrieves from ServiceLocator │
+│  • Coordinates StorageService    │
+│  • Orchestrates API calls        │
+│  • Manages business logic        │
+└──────────┬───────────────────────┘
+           │
+      ┌────┴─────────────────────┐
+      │                          │
+      ▼                          ▼
+┌──────────────────────┐ ┌──────────────────────┐
+│   StorageService     │ │    HomeService       │
+│                      │ │                      │
+│ • SwiftData storage  │ │ • API calls          │
+│ • Independent        │ │ • Independent        │
+│ • No cross-service   │ │ • No storage knowledge│
+│   dependencies       │ │                      │
+└──────────────────────┘ └──────────────────────┘
+```
+
+**Testing Benefits:**
+- Isolated mock services via ServiceLocator
+- Each test controls which services are injected
+- No shared singleton state between tests
+- Easy to test service coordination logic
 
 ### Benefits
 
-✅ **Separation of Concerns**: Each layer has a single responsibility  
-✅ **Testability**: All components can be unit tested in isolation  
-✅ **Maintainability**: Changes in one layer don't affect others  
-✅ **Scalability**: Easy to add new features following the same pattern  
-✅ **Reactive**: Uses Combine for efficient state management  
-✅ **Single Source of Truth**: Eliminates state synchronization issues  
+✅ **Separation of Concerns**: Each layer has a single responsibility
+✅ **Testability**: All components can be unit tested in isolation
+✅ **Maintainability**: Changes in one layer don't affect others
+✅ **Scalability**: Easy to add new features following the same pattern
+✅ **Reactive**: Uses Combine for efficient state management
+✅ **Single Source of Truth**: Eliminates state synchronization issues
+✅ **Service Independence**: No service-to-service dependencies
+✅ **Clean Coordination**: DomainInteractors handle multi-service orchestration  
 
 ### Testing Strategy
 
