@@ -219,3 +219,15 @@ struct SearchView: View {
         }
     }
 }
+
+#Preview {
+    let serviceLocator = ServiceLocator()
+    serviceLocator.register(SearchService.self, instance: MockSearchService())
+    let viewModel = SearchViewModel(serviceLocator: serviceLocator)
+    let router = SearchNavigationRouter()
+    return SearchView(
+        router: router,
+        viewModel: viewModel,
+        serviceLocator: serviceLocator
+    )
+}

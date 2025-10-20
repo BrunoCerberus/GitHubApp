@@ -91,3 +91,12 @@ struct CoordinatorView: View {
         }
     }
 }
+
+#Preview {
+    let serviceLocator = ServiceLocator()
+    serviceLocator.register(HomeService.self, instance: MockHomeService())
+    serviceLocator.register(SearchService.self, instance: MockSearchService())
+    serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())
+    serviceLocator.register(SettingsService.self, instance: MockSettingsService())
+    return CoordinatorView(serviceLocator: serviceLocator)
+}

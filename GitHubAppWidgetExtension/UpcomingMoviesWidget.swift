@@ -99,6 +99,78 @@ struct UpcomingMoviesWidgetEntryView: View {
     }
 }
 
+#Preview("UpcomingMoviesWidget - Small", as: .systemSmall) {
+    UpcomingMoviesWidget()
+} timeline: {
+    let sampleMovies = [
+        SharedMovie(
+            id: 615_656,
+            title: "Meg 2: The Trench",
+            overview: "An exploratory dive into the deepest depths.",
+            posterPath: nil
+        ),
+    ]
+    UpcomingMoviesTimelineEntry(
+        date: Date(),
+        movies: sampleMovies,
+        family: .systemSmall
+    )
+}
+
+#Preview("UpcomingMoviesWidget - Medium", as: .systemMedium) {
+    UpcomingMoviesWidget()
+} timeline: {
+    let sampleMovies = [
+        SharedMovie(
+            id: 615_656,
+            title: "Meg 2: The Trench",
+            overview: "An exploratory dive into the deepest depths.",
+            posterPath: nil
+        ),
+        SharedMovie(
+            id: 615_657,
+            title: "Oppenheimer",
+            overview: "The story of American scientist J. Robert Oppenheimer.",
+            posterPath: nil
+        ),
+    ]
+    UpcomingMoviesTimelineEntry(
+        date: Date(),
+        movies: sampleMovies,
+        family: .systemMedium
+    )
+}
+
+#Preview("UpcomingMoviesWidget - Large", as: .systemLarge) {
+    UpcomingMoviesWidget()
+} timeline: {
+    let sampleMovies = [
+        SharedMovie(
+            id: 615_656,
+            title: "Meg 2: The Trench",
+            overview: "An exploratory dive into the deepest depths.",
+            posterPath: nil
+        ),
+        SharedMovie(
+            id: 615_657,
+            title: "Oppenheimer",
+            overview: "The story of American scientist J. Robert Oppenheimer.",
+            posterPath: nil
+        ),
+        SharedMovie(
+            id: 615_658,
+            title: "Barbie",
+            overview: "Barbie doll comes to life in this fantasy adventure.",
+            posterPath: nil
+        ),
+    ]
+    UpcomingMoviesTimelineEntry(
+        date: Date(),
+        movies: sampleMovies,
+        family: .systemLarge
+    )
+}
+
 struct MovieRowView: View {
     let movie: SharedMovie
     let family: WidgetFamily
@@ -158,6 +230,30 @@ struct MovieRowView: View {
         .frame(maxWidth: .infinity)
         .frame(height: family == .systemSmall ? 67 : 75)
     }
+}
+
+#Preview("MovieRowView - Small") {
+    let sampleMovie = SharedMovie(
+        id: 615_656,
+        title: "Meg 2: The Trench",
+        overview: "An exploratory dive into the deepest depths of the ocean.",
+        posterPath: nil
+    )
+    return MovieRowView(movie: sampleMovie, family: .systemSmall)
+        .padding()
+        .previewLayout(.fixed(width: 200, height: 100))
+}
+
+#Preview("MovieRowView - Medium") {
+    let sampleMovie = SharedMovie(
+        id: 615_656,
+        title: "Meg 2: The Trench",
+        overview: "An exploratory dive into the deepest depths of the ocean.",
+        posterPath: nil
+    )
+    return MovieRowView(movie: sampleMovie, family: .systemMedium)
+        .padding()
+        .previewLayout(.fixed(width: 280, height: 100))
 }
 
 struct UpcomingMoviesTimelineEntry: TimelineEntry {
