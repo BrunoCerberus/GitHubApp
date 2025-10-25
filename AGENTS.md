@@ -4,7 +4,7 @@ This guide helps contributors work consistently across this iOS Swift project. K
 
 ## Project Structure & Module Organization
 - App code: `GitHubApp/` organized by feature with Clean Architecture:
-  - `Home/` - Movie browsing with infinite scroll (reference implementation)
+  - `Home/` - Movie browsing (reference implementation)
   - `Search/` - Movie search with Liquid Glass UI design
   - `Favorites/` - Movie favorites management
   - `Settings/` - App configuration and preferences

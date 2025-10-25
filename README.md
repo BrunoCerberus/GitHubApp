@@ -159,7 +159,7 @@ The project configuration is defined in `project.yml`:
 **Feature Structure:**
 ```
 GitHubApp/
-├── Home/           # Main movie browsing with infinite scroll
+├── Home/           # Main movie browsing
 ├── Search/         # Movie search with Liquid Glass design UI
 ├── Favorites/      # Saved favorite movies
 ├── Settings/       # App preferences and configuration
@@ -561,7 +561,7 @@ Any feature can implement this Clean Architecture pattern by following these ste
 7. **Add Comprehensive Testing**: Create unit tests for each component in isolation
 
 **Reference Implementations:**
-- **Home Feature**: Complete implementation with infinite scroll and data persistence
+- **Home Feature**: Complete implementation with data persistence
 - **Search Feature**: Real-time search with state management and Liquid Glass UI design
 
 ### Example Implementation Pattern
