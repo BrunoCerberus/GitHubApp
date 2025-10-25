@@ -173,26 +173,4 @@ struct SearchViewTests {
         // Test passes if view renders without crashing
         // Button interactions are tested through view model tests
     }
-
-    @Test("Load more movies pagination")
-    func loadMoreMoviesPagination() async throws {
-        defer { cleanupTest() }
-
-        let (_, viewModel, view) = createTestComponents()
-        _ = view.wrappedViewController
-
-        // Trigger initial search
-        viewModel.searchMovies(query: "test")
-
-        // Give time for search to complete
-        try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
-
-        // Trigger load more
-        viewModel.loadMoreMovies()
-
-        // Give time for pagination to complete
-        try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
-
-        // Test passes if pagination works without crashing
-    }
 }

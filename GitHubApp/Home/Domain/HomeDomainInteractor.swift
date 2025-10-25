@@ -228,8 +228,6 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
             handleToggleMovieFavorite(movie: movie)
         case .loadPersistedFavoriteMovies:
             handleLoadPersistedFavoriteMovies()
-        case .loadMoreMovies:
-            handleLoadMoreMovies()
         }
     }
 
@@ -262,13 +260,11 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
      * Handle fetching upcoming movies from the API.
      */
     private func handleFetchUpcomingMovies() {
-        // Set loading state and reset pagination
+        // Set loading state
         currentState = currentState.copy(
             isLoading: true,
             error: nil,
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0
+            searchQuery: nil
         )
 
         homeService.fetchMovies(page: 1)
@@ -299,9 +295,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
                         favoriteMovies: updatedLikedMovies,
                         isLoading: false,
                         error: nil,
-                        searchQuery: nil,
-                        currentPage: response.page,
-                        totalPages: response.totalPages
+                        searchQuery: nil
                     )
                 }
             )
@@ -317,13 +311,11 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
             return
         }
 
-        // Set loading state with search query and reset pagination
+        // Set loading state with search query
         currentState = currentState.copy(
             isLoading: true,
             error: nil,
-            searchQuery: query,
-            currentPage: 0,
-            totalPages: 0
+            searchQuery: query
         )
 
         homeService.searchMovies(with: query, page: 1)
@@ -346,9 +338,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
                         favoriteMovies: updatedLikedMovies,
                         isLoading: false,
                         error: nil,
-                        searchQuery: query,
-                        currentPage: response.page,
-                        totalPages: response.totalPages
+                        searchQuery: query
                     )
                 }
             )
@@ -387,107 +377,6 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
         Task {
             await handleLoadPersistedFavoriteMoviesAsync()
         }
-    }
-
-    /**
-     * Handle loading more movies for pagination (infinite scroll).
-     *
-     * ## Pagination Flow
-     *
-     * This method implements infinite scroll pagination with the following safeguards:
-     *
-     * ### Guard Conditions (Prevent Duplicate Requests)
-     * 1. **isLoadingMore**: Prevents multiple pagination requests simultaneously
-     * 2. **isLoading**: Prevents pagination during initial fetch
-     * 3. **hasMorePages**: Stops pagination when all pages are loaded
-     *
-     * **Why check both loading flags?**
-     * - `isLoadingMore`: Prevents triggering "load more" multiple times (e.g., rapid scrolling)
-     * - `isLoading`: Prevents pagination before initial data is loaded
-     * - Together they ensure only **one network request at a time**
-     *
-     * ### Context-Aware Pagination
-     * The method determines whether to paginate search results or regular movie list:
-     * - **Search Mode**: If `searchQuery` exists and is not empty
-     * - **Browse Mode**: Otherwise (upcoming movies list)
-     *
-     * This ensures pagination maintains the current context (search vs browse).
-     *
-     * ### Merge Strategy
-     * New movies are **appended** to existing movies array:
-     * ```swift
-     * let allMovies = currentState.movies + response.results
-     * ```
-     *
-     * **Why append instead of replace?**
-     * - Infinite scroll requires accumulating all loaded pages
-     * - Users expect to see all previously loaded content
-     * - Enables smooth scrolling experience
-     *
-     * ### Error Handling
-     * On pagination error:
-     * - Error is set in state (but ViewStateReducer will skip it during pagination)
-     * - `isLoadingMore` is reset to `false`
-     * - **Existing movies are preserved** (not cleared)
-     * - User can retry by scrolling again
-     *
-     * - SeeAlso: `ARCHITECTURE_PATTERNS.md` for detailed pagination pattern explanation
-     */
-    private func handleLoadMoreMovies() {
-        // GUARD 1: Prevent duplicate requests
-        // - isLoadingMore: No concurrent pagination requests
-        // - isLoading: No pagination during initial fetch
-        guard !currentState.isLoadingMore,
-              !currentState.isLoading,
-              currentState.hasMorePages // GUARD 2: Check if more pages exist
-        else {
-            return
-        }
-
-        let nextPage = currentState.currentPage + 1
-
-        // Set loading state before network request
-        currentState = currentState.copy(isLoadingMore: true)
-
-        // Context-aware pagination: Choose appropriate API call
-        // - If searching: paginate search results
-        // - Otherwise: paginate upcoming movies list
-        let publisher: AnyPublisher<MoviesResponse, Error> = if let searchQuery = currentState.searchQuery, !searchQuery.isEmpty {
-            homeService.searchMovies(with: searchQuery, page: nextPage)
-        } else {
-            homeService.fetchMovies(page: nextPage)
-        }
-
-        publisher
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    if case let .failure(error) = completion {
-                        // On error: preserve movies, reset loading flag
-                        // ViewStateReducer will skip error during isLoadingMore
-                        self?.currentState = self?.currentState.copy(
-                            error: error.localizedDescription,
-                            isLoadingMore: false
-                        ) ?? HomeDomainState.initial
-                    }
-                },
-                receiveValue: { [weak self] response in
-                    guard let self else { return }
-
-                    // Append new movies to existing array (accumulate pages)
-                    let allMovies = currentState.movies + response.results
-                    let updatedLikedMovies = filterLikedMovies(from: allMovies)
-
-                    currentState = currentState.copy(
-                        movies: allMovies,
-                        favoriteMovies: updatedLikedMovies,
-                        error: nil,
-                        currentPage: response.page,
-                        totalPages: response.totalPages,
-                        isLoadingMore: false
-                    )
-                }
-            )
-            .store(in: &cancellables)
     }
 
     /**
@@ -636,9 +525,6 @@ private extension HomeDomainState {
      *   - isLoading: New loading state (or nil to keep current value)
      *   - error: New error message - use `.some(nil)` to clear (or nil to keep current value)
      *   - searchQuery: New search query - use `.some(nil)` to clear (or nil to keep current value)
-     *   - currentPage: New current page number (or nil to keep current value)
-     *   - totalPages: New total pages count (or nil to keep current value)
-     *   - isLoadingMore: New pagination loading state (or nil to keep current value)
      * - Returns: A new HomeDomainState with updated properties
      *
      * - SeeAlso: `ARCHITECTURE_PATTERNS.md` for comprehensive pattern explanation
@@ -648,20 +534,14 @@ private extension HomeDomainState {
         favoriteMovies: [Movie]? = nil,
         isLoading: Bool? = nil,
         error: String?? = nil, // Double-optional: distinguishes "don't update" from "set to nil"
-        searchQuery: String?? = nil, // Double-optional: distinguishes "don't update" from "set to nil"
-        currentPage: Int? = nil,
-        totalPages: Int? = nil,
-        isLoadingMore: Bool? = nil
+        searchQuery: String?? = nil // Double-optional: distinguishes "don't update" from "set to nil"
     ) -> HomeDomainState {
         HomeDomainState(
             movies: movies ?? self.movies,
             favoriteMovies: favoriteMovies ?? self.favoriteMovies,
             isLoading: isLoading ?? self.isLoading,
             error: error ?? self.error, // Nil coalescing preserves existing value
-            searchQuery: searchQuery ?? self.searchQuery, // Nil coalescing preserves existing value
-            currentPage: currentPage ?? self.currentPage,
-            totalPages: totalPages ?? self.totalPages,
-            isLoadingMore: isLoadingMore ?? self.isLoadingMore
+            searchQuery: searchQuery ?? self.searchQuery // Nil coalescing preserves existing value
         )
     }
 }

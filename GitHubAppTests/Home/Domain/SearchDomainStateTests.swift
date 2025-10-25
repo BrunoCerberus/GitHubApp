@@ -18,10 +18,6 @@ struct SearchDomainStateTests {
         #expect(!state.isLoading)
         #expect(state.error == nil)
         #expect(state.searchQuery == nil)
-        #expect(state.currentPage == 0)
-        #expect(state.totalPages == 0)
-        #expect(!state.isLoadingMore)
-        #expect(!state.hasMorePages)
     }
 
     @Test("State equality comparison works correctly")
@@ -35,10 +31,7 @@ struct SearchDomainStateTests {
             favoriteMovies: [movie2],
             isLoading: true,
             error: "Error",
-            searchQuery: "query",
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
+            searchQuery: "query"
         )
 
         let state2 = SearchDomainState(
@@ -46,10 +39,7 @@ struct SearchDomainStateTests {
             favoriteMovies: [movie2],
             isLoading: true,
             error: "Error",
-            searchQuery: "query",
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
+            searchQuery: "query"
         )
 
         let state3 = SearchDomainState(
@@ -57,10 +47,7 @@ struct SearchDomainStateTests {
             favoriteMovies: [movie2],
             isLoading: true,
             error: "Error",
-            searchQuery: "query",
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
+            searchQuery: "query"
         )
 
         // Then
@@ -79,10 +66,7 @@ struct SearchDomainStateTests {
             favoriteMovies: [],
             isLoading: true,
             error: nil,
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         let errorState = SearchDomainState(
@@ -90,10 +74,7 @@ struct SearchDomainStateTests {
             favoriteMovies: [],
             isLoading: false,
             error: "Network error",
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         let successState = SearchDomainState(
@@ -101,10 +82,7 @@ struct SearchDomainStateTests {
             favoriteMovies: [],
             isLoading: false,
             error: nil,
-            searchQuery: "test query",
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
+            searchQuery: "test query"
         )
 
         // Then
@@ -119,78 +97,6 @@ struct SearchDomainStateTests {
         #expect(successState.searchQuery == "test query")
     }
 
-    @Test("Pagination state hasMorePages computed property works correctly")
-    func paginationHasMorePages() {
-        // Given
-        let stateWithMorePages = SearchDomainState(
-            movies: [],
-            favoriteMovies: [],
-            isLoading: false,
-            error: nil,
-            searchQuery: "test",
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
-        )
-
-        let stateOnLastPage = SearchDomainState(
-            movies: [],
-            favoriteMovies: [],
-            isLoading: false,
-            error: nil,
-            searchQuery: "test",
-            currentPage: 10,
-            totalPages: 10,
-            isLoadingMore: false
-        )
-
-        let stateNoPages = SearchDomainState(
-            movies: [],
-            favoriteMovies: [],
-            isLoading: false,
-            error: nil,
-            searchQuery: "test",
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
-        )
-
-        // Then
-        #expect(stateWithMorePages.hasMorePages)
-        #expect(!stateOnLastPage.hasMorePages)
-        #expect(!stateNoPages.hasMorePages)
-    }
-
-    @Test("Pagination loading more state works correctly")
-    func paginationLoadingMore() {
-        // Given
-        let stateLoadingMore = SearchDomainState(
-            movies: [],
-            favoriteMovies: [],
-            isLoading: false,
-            error: nil,
-            searchQuery: "test",
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: true
-        )
-
-        let stateNotLoadingMore = SearchDomainState(
-            movies: [],
-            favoriteMovies: [],
-            isLoading: false,
-            error: nil,
-            searchQuery: "test",
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
-        )
-
-        // Then
-        #expect(stateLoadingMore.isLoadingMore)
-        #expect(!stateNotLoadingMore.isLoadingMore)
-    }
-
     @Test("Search query state is properly maintained")
     func searchQueryState() {
         // Given
@@ -200,10 +106,7 @@ struct SearchDomainStateTests {
             favoriteMovies: [],
             isLoading: false,
             error: nil,
-            searchQuery: query,
-            currentPage: 1,
-            totalPages: 5,
-            isLoadingMore: false
+            searchQuery: query
         )
 
         // Then
@@ -218,10 +121,7 @@ struct SearchDomainStateTests {
             favoriteMovies: [],
             isLoading: false,
             error: nil,
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         // Then

@@ -21,7 +21,4 @@ struct SearchDataViewState: Equatable {
 
     /// Current search query
     var searchQuery: String?
-
-    /// Flag indicating if more pages are being loaded (for pagination)
-    var isLoadingMore: Bool
 }

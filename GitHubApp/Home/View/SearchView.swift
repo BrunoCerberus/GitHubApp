@@ -121,22 +121,6 @@ struct SearchView: View {
                 List {
                     ForEach(dataViewState.movies, id: \.id) { movie in
                         movieRow(movie: movie, dataViewState: dataViewState)
-                            .onAppear {
-                                // Load more when reaching the last item
-                                if let lastMovieId = dataViewState.movies.last?.id, movie.id == lastMovieId {
-                                    viewModel.loadMoreMovies()
-                                }
-                            }
-                    }
-
-                    // Loading indicator at the bottom when loading more
-                    if dataViewState.isLoadingMore {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                                .padding()
-                            Spacer()
-                        }
                     }
                 }
                 .scrollIndicators(.hidden)

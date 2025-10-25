@@ -18,10 +18,6 @@ struct HomeDomainStateTests {
         #expect(!state.isLoading)
         #expect(state.error == nil)
         #expect(state.searchQuery == nil)
-        #expect(state.currentPage == 0)
-        #expect(state.totalPages == 0)
-        #expect(!state.isLoadingMore)
-        #expect(!state.hasMorePages)
     }
 
     @Test("State equality comparison works correctly")
@@ -35,10 +31,7 @@ struct HomeDomainStateTests {
             favoriteMovies: [movie2],
             isLoading: true,
             error: "Error",
-            searchQuery: "query",
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
+            searchQuery: "query"
         )
 
         let state2 = HomeDomainState(
@@ -46,10 +39,7 @@ struct HomeDomainStateTests {
             favoriteMovies: [movie2],
             isLoading: true,
             error: "Error",
-            searchQuery: "query",
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
+            searchQuery: "query"
         )
 
         let state3 = HomeDomainState(
@@ -57,10 +47,7 @@ struct HomeDomainStateTests {
             favoriteMovies: [movie2],
             isLoading: true,
             error: "Error",
-            searchQuery: "query",
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
+            searchQuery: "query"
         )
 
         // Then
@@ -79,10 +66,7 @@ struct HomeDomainStateTests {
             favoriteMovies: [],
             isLoading: true,
             error: nil,
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         let errorState = HomeDomainState(
@@ -90,10 +74,7 @@ struct HomeDomainStateTests {
             favoriteMovies: [],
             isLoading: false,
             error: "Network error",
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         let successState = HomeDomainState(
@@ -101,10 +82,7 @@ struct HomeDomainStateTests {
             favoriteMovies: [],
             isLoading: false,
             error: nil,
-            searchQuery: nil,
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         let searchState = HomeDomainState(
@@ -112,10 +90,7 @@ struct HomeDomainStateTests {
             favoriteMovies: [],
             isLoading: false,
             error: nil,
-            searchQuery: "test query",
-            currentPage: 1,
-            totalPages: 5,
-            isLoadingMore: false
+            searchQuery: "test query"
         )
 
         // Then
@@ -130,78 +105,6 @@ struct HomeDomainStateTests {
 
         #expect(searchState.searchQuery == "test query")
         #expect(searchState.movies.count == 1)
-    }
-
-    @Test("Pagination state hasMorePages computed property works correctly")
-    func paginationHasMorePages() {
-        // Given
-        let stateWithMorePages = HomeDomainState(
-            movies: [],
-            favoriteMovies: [],
-            isLoading: false,
-            error: nil,
-            searchQuery: nil,
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
-        )
-
-        let stateOnLastPage = HomeDomainState(
-            movies: [],
-            favoriteMovies: [],
-            isLoading: false,
-            error: nil,
-            searchQuery: nil,
-            currentPage: 10,
-            totalPages: 10,
-            isLoadingMore: false
-        )
-
-        let stateNoPages = HomeDomainState(
-            movies: [],
-            favoriteMovies: [],
-            isLoading: false,
-            error: nil,
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
-        )
-
-        // Then
-        #expect(stateWithMorePages.hasMorePages)
-        #expect(!stateOnLastPage.hasMorePages)
-        #expect(!stateNoPages.hasMorePages)
-    }
-
-    @Test("Pagination loading more state works correctly")
-    func paginationLoadingMore() {
-        // Given
-        let stateLoadingMore = HomeDomainState(
-            movies: [],
-            favoriteMovies: [],
-            isLoading: false,
-            error: nil,
-            searchQuery: nil,
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: true
-        )
-
-        let stateNotLoadingMore = HomeDomainState(
-            movies: [],
-            favoriteMovies: [],
-            isLoading: false,
-            error: nil,
-            searchQuery: nil,
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
-        )
-
-        // Then
-        #expect(stateLoadingMore.isLoadingMore)
-        #expect(!stateNotLoadingMore.isLoadingMore)
     }
 
     // MARK: - Helper Methods

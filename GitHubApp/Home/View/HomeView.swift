@@ -53,22 +53,6 @@ struct HomeView<R: HomeNavigationRouter>: View {
                 List {
                     ForEach(dataViewState.movies) { movie in
                         movieRow(movie: movie, dataViewState: dataViewState)
-                            .onAppear {
-                                // Load more when reaching the last item
-                                if movie.id == dataViewState.movies.last?.id {
-                                    viewModel.loadMoreMovies()
-                                }
-                            }
-                    }
-
-                    // Loading indicator at the bottom when loading more
-                    if dataViewState.isLoadingMore {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                                .padding()
-                            Spacer()
-                        }
                     }
                 }
                 .refreshable {

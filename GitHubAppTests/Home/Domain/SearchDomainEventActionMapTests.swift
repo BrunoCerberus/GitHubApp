@@ -45,18 +45,6 @@ struct SearchDomainEventActionMapTests {
         #expect(action == SearchDomainAction.loadPersistedFavoriteMovies)
     }
 
-    @Test("Map load more movies event")
-    func mapLoadMoreMoviesEvent() {
-        // Given
-        let event = SearchViewEvent.loadMoreMovies
-
-        // When
-        let action = SearchDomainEventActionMap.map(event)
-
-        // Then
-        #expect(action == SearchDomainAction.loadMoreMovies)
-    }
-
     @Test("All view events are mapped")
     func allViewEventsAreMapped() {
         // Given
@@ -65,7 +53,6 @@ struct SearchDomainEventActionMapTests {
             .searchMovies("query"),
             .toggleFavorite(movie),
             .loadFavoriteMovies,
-            .loadMoreMovies,
         ]
 
         // When/Then - Verify all events can be mapped without throwing
@@ -91,14 +78,10 @@ struct SearchDomainEventActionMapTests {
         let action5 = SearchDomainEventActionMap.map(.loadFavoriteMovies)
         let action6 = SearchDomainEventActionMap.map(.loadFavoriteMovies)
 
-        let action7 = SearchDomainEventActionMap.map(.loadMoreMovies)
-        let action8 = SearchDomainEventActionMap.map(.loadMoreMovies)
-
         // Then - Verify mapping is consistent
         #expect(action1 == action2)
         #expect(action3 == action4)
         #expect(action5 == action6)
-        #expect(action7 == action8)
     }
 
     @Test("Search query is preserved through mapping")

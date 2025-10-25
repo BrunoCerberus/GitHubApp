@@ -202,7 +202,7 @@ The project includes multiple Xcode schemes optimized for different development 
 ## Features
 
 ### Home
-Browse and discover movies with infinite scroll pagination. The Home feature serves as the primary reference implementation for Clean Architecture in this project.
+Browse and discover movies. The Home feature serves as the primary reference implementation for Clean Architecture in this project.
 
 ### Search
 Search for movies by title with a modern Liquid Glass design UI. Implements dedicated Clean Architecture with:

@@ -35,26 +35,20 @@ struct HomeViewStateReducer: HomeViewStateReducing {
      *
      * The reduction logic follows a strict state priority order:
      * 1. Error state (critical issues must be shown to user)
-     * 2. Loading state (user feedback during initial operations)
+     * 2. Loading state (user feedback during operations)
      * 3. Success state (normal operation with data)
      *
      * ## State Priority Rules
      *
      * ### Priority 1: Error State
      * - Shows error messages for failed operations
-     * - **Exception**: Skips error during pagination (`isLoadingMore == true`)
-     * - **Reason**: Preserves existing content when "load more" fails
-     * - **UX Benefit**: Users can still see current movies instead of error screen
      *
      * ### Priority 2: Loading State
-     * - Shows full-screen loading indicator during initial fetch
-     * - Only applies when `isLoading == true` (not during pagination)
-     * - Different from pagination loading which shows at bottom of list
+     * - Shows full-screen loading indicator during fetch operations
      *
      * ### Priority 3: Success State
      * - Always returned when no error/loading conditions exist
      * - Includes both populated and empty data states
-     * - Handles pagination loading indicator via `isLoadingMore` flag
      *
      * - Parameter domainState: The current domain state
      * - Returns: The corresponding view state
@@ -63,28 +57,21 @@ struct HomeViewStateReducer: HomeViewStateReducing {
      */
     func reduce(_ domainState: HomeDomainState) -> HomeViewState {
         // PRIORITY 1: Error State
-        // Skip error during pagination to preserve existing content
-        // This allows showing current movies even when "load more" fails
-        if let error = domainState.error, !domainState.isLoadingMore {
+        if let error = domainState.error {
             return .error(error)
         }
 
         // PRIORITY 2: Loading State
-        // Show full-screen loading only during initial fetch
-        // Pagination uses isLoadingMore (handled in success state)
         if domainState.isLoading {
             return .loading
         }
 
         // PRIORITY 3: Success State
-        // Show content (even if empty) with optional pagination loading
-        // isLoadingMore indicates loading spinner at bottom of list
         let dataViewState = HomeDataViewState(
             title: domainState.searchQuery != nil ? "Search Results" : "Upcoming Movies",
             movies: domainState.movies,
             favoriteMovies: domainState.favoriteMovies,
-            searchQuery: domainState.searchQuery,
-            isLoadingMore: domainState.isLoadingMore
+            searchQuery: domainState.searchQuery
         )
         return .success(dataViewState)
     }

@@ -18,5 +18,4 @@ enum HomeDomainAction: Equatable {
     case searchMovies(String)
     case toggleMovieFavorite(Movie)
     case loadPersistedFavoriteMovies
-    case loadMoreMovies
 }

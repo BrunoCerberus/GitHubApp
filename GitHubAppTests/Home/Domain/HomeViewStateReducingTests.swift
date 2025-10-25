@@ -17,10 +17,7 @@ struct HomeViewStateReducingTests {
             favoriteMovies: [],
             isLoading: false,
             error: errorMessage,
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         // When
@@ -43,10 +40,7 @@ struct HomeViewStateReducingTests {
             favoriteMovies: [],
             isLoading: true,
             error: nil,
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         // When
@@ -73,10 +67,7 @@ struct HomeViewStateReducingTests {
             favoriteMovies: [likedMovie],
             isLoading: false,
             error: nil,
-            searchQuery: nil,
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         // When
@@ -108,10 +99,7 @@ struct HomeViewStateReducingTests {
             favoriteMovies: [],
             isLoading: false,
             error: nil,
-            searchQuery: searchQuery,
-            currentPage: 1,
-            totalPages: 5,
-            isLoadingMore: false
+            searchQuery: searchQuery
         )
 
         // When
@@ -138,10 +126,7 @@ struct HomeViewStateReducingTests {
             favoriteMovies: [],
             isLoading: true,
             error: "Error message",
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         // When
@@ -164,10 +149,7 @@ struct HomeViewStateReducingTests {
             favoriteMovies: [],
             isLoading: false,
             error: nil,
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         // When

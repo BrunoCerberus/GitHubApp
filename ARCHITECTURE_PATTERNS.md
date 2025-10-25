@@ -10,8 +10,7 @@ This document describes key architectural patterns used throughout the GitHubApp
 2. [Service Bridging Pattern](#service-bridging-pattern)
 3. [ViewStateReducing Pattern](#viewstatereducing-pattern)
 4. [NotificationCenter Communication](#notificationcenter-communication)
-5. [Pagination State Management](#pagination-state-management)
-6. [SwiftData Storage Strategy](#swiftdata-storage-strategy)
+5. [SwiftData Storage Strategy](#swiftdata-storage-strategy)
 
 ---
 
@@ -29,9 +28,6 @@ extension HomeDomainState {
         movies: [Movie]?? = nil,
         isLoading: Bool?? = nil,
         error: Error?? = nil,
-        currentPage: Int?? = nil,
-        hasMorePages: Bool?? = nil,
-        isLoadingMore: Bool?? = nil,
         searchQuery: String?? = nil,
         favoriteMovies: [Movie]?? = nil
     ) -> HomeDomainState {
@@ -39,9 +35,6 @@ extension HomeDomainState {
             movies: movies ?? self.movies,
             isLoading: isLoading ?? self.isLoading,
             error: error ?? self.error,
-            currentPage: currentPage ?? self.currentPage,
-            hasMorePages: hasMorePages ?? self.hasMorePages,
-            isLoadingMore: isLoadingMore ?? self.isLoadingMore,
             searchQuery: searchQuery ?? self.searchQuery,
             favoriteMovies: favoriteMovies ?? self.favoriteMovies
         )
@@ -226,13 +219,11 @@ Priority Order (Highest to Lowest):
 struct HomeViewStateReducing: ViewStateReducing {
     func reduce(_ domainState: HomeDomainState) -> HomeViewState {
         // PRIORITY 1: Error State
-        // Exception: Skip error during "load more" to preserve existing content
-        if let error = domainState.error, !domainState.isLoadingMore {
+        if let error = domainState.error {
             return .error(error.localizedDescription)
         }
 
         // PRIORITY 2: Loading State
-        // Show loading only on initial fetch, not during pagination
         if domainState.isLoading {
             return .loading
         }
@@ -241,8 +232,6 @@ struct HomeViewStateReducing: ViewStateReducing {
         // Show content (even if empty)
         let viewState = HomeDataViewState(
             movies: domainState.movies,
-            isLoadingMore: domainState.isLoadingMore,
-            hasMorePages: domainState.hasMorePages,
             searchQuery: domainState.searchQuery,
             favoriteMovies: domainState.favoriteMovies
         )
@@ -253,30 +242,29 @@ struct HomeViewStateReducing: ViewStateReducing {
 
 ### Key Business Rules
 
-#### 1. Error Handling During Pagination
+#### 1. Error Handling
 ```swift
-if let error = domainState.error, !domainState.isLoadingMore {
+if let error = domainState.error {
     return .error(error.localizedDescription)
 }
 ```
 
-**Why skip error when `isLoadingMore` is true?**
-- During pagination, we want to preserve existing content
-- If "load more" fails, we show the current movies instead of an error screen
-- This provides better UX - users can still see their current data
-- Error can be shown via a toast/banner without replacing entire view
+**Why prioritize error state?**
+- Critical issues must be shown to the user
+- Provides clear feedback when operations fail
+- Error state takes precedence over all other states
 
-#### 2. Initial Loading vs Load More
+#### 2. Loading State
 ```swift
 if domainState.isLoading {
     return .loading
 }
 ```
 
-**Why check `isLoading` separately from `isLoadingMore`?**
-- `isLoading`: Initial fetch - show full-screen loading indicator
-- `isLoadingMore`: Pagination - show loading indicator at bottom of list
-- Different UI treatments for different loading scenarios
+**Why check loading state?**
+- Provides user feedback during operations
+- Shows full-screen loading indicator during fetch
+- Second priority after error state
 
 #### 3. Success State Always Wins
 ```swift
@@ -299,24 +287,14 @@ viewState = .loading  // Show loading spinner
 domainState = HomeDomainState(movies: [...], isLoading: false)
 viewState = .success(data)  // Show movie list
 
-// Scenario 3: Load More (successful)
-domainState = HomeDomainState(movies: [...], isLoadingMore: true)
-viewState = .success(data)  // Show movies + loading at bottom
-
-// Scenario 4: Load More (failed)
-domainState = HomeDomainState(movies: [...], error: error, isLoadingMore: true)
-viewState = .success(data)  // Show current movies (error skipped)
-
-// Scenario 5: Initial Load Failed
-domainState = HomeDomainState(error: error, isLoadingMore: false)
+// Scenario 3: Load Failed
+domainState = HomeDomainState(error: error)
 viewState = .error(message)  // Show error screen
 ```
 
 ### Guidelines
 
 - Always follow the priority order (error → loading → success)
-- Consider user experience when handling errors during pagination
-- Separate initial loading from pagination loading
 - Make state transitions explicit and testable
 - Document any deviations from standard priority logic
 
@@ -444,203 +422,6 @@ init(serviceLocator: ServiceLocator) throws {
 - Communication is within the same feature (use state updates)
 - You need a response from the receiver (use protocols/closures)
 - Performance is critical (NotificationCenter has overhead)
-
----
-
-## Pagination State Management
-
-### Purpose
-Manage infinite scrolling with proper state tracking, preventing duplicate requests and handling edge cases like concurrent loads and errors.
-
-### State Properties
-
-```swift
-struct HomeDomainState {
-    var currentPage: Int = 0          // Current page loaded
-    var hasMorePages: Bool = true     // Are there more pages available?
-    var isLoading: Bool = false       // Initial load in progress
-    var isLoadingMore: Bool = false   // Pagination load in progress
-}
-```
-
-### Pagination Logic
-
-```swift
-private func handleLoadMoreMovies() -> AnyPublisher<HomeDomainState, Never> {
-    // GUARD 1: Prevent duplicate requests
-    guard !state.isLoadingMore, !state.isLoading else {
-        return Just(state).eraseToAnyPublisher()
-    }
-
-    // GUARD 2: Check if more pages exist
-    guard state.hasMorePages else {
-        return Just(state).eraseToAnyPublisher()
-    }
-
-    // Determine next page and API call
-    let nextPage = state.currentPage + 1
-
-    // Choose appropriate service call based on context
-    let publisher: AnyPublisher<MoviesResponse, Error>
-    if let searchQuery = state.searchQuery, !searchQuery.isEmpty {
-        // Pagination for search results
-        publisher = homeService.searchMovies(query: searchQuery, page: nextPage)
-    } else {
-        // Pagination for regular movie list
-        publisher = homeService.fetchMovies(page: nextPage)
-    }
-
-    return publisher
-        .map { [weak self] response in
-            guard let self = self else { return HomeDomainState() }
-
-            // Merge new movies with existing
-            let mergedMovies = self.state.movies + response.results
-
-            // Update pagination state
-            return self.state.copy(
-                movies: mergedMovies,
-                currentPage: nextPage,
-                hasMorePages: response.page < response.totalPages,
-                isLoadingMore: false
-            )
-        }
-        .catch { [weak self] error in
-            // On error, preserve current movies but stop loading
-            Just(self?.state.copy(
-                error: error,
-                isLoadingMore: false
-            ) ?? HomeDomainState())
-        }
-        .eraseToAnyPublisher()
-}
-```
-
-### Key Business Rules
-
-#### 1. Prevent Duplicate Requests
-```swift
-guard !state.isLoadingMore, !state.isLoading else {
-    return Just(state).eraseToAnyPublisher()
-}
-```
-
-**Why check both flags?**
-- `isLoadingMore`: Prevents triggering multiple pagination requests
-- `isLoading`: Prevents pagination during initial load
-- Both checks ensure only one network request at a time
-
-#### 2. Check Available Pages
-```swift
-guard state.hasMorePages else {
-    return Just(state).eraseToAnyPublisher()
-}
-```
-
-**How is `hasMorePages` determined?**
-```swift
-hasMorePages: response.page < response.totalPages
-```
-- API returns `page` (current) and `totalPages` (total available)
-- When `page >= totalPages`, we've reached the end
-
-#### 3. Context-Aware Pagination
-```swift
-if let searchQuery = state.searchQuery, !searchQuery.isEmpty {
-    publisher = homeService.searchMovies(query: searchQuery, page: nextPage)
-} else {
-    publisher = homeService.fetchMovies(page: nextPage)
-}
-```
-
-**Why conditional logic?**
-- Search results and regular lists have different API endpoints
-- Search pagination must maintain the search query
-- Ensures consistent pagination behavior across contexts
-
-#### 4. Merge Strategy
-```swift
-let mergedMovies = self.state.movies + response.results
-```
-
-**Why append instead of replace?**
-- Infinite scroll requires accumulating all loaded pages
-- Users expect to see all previously loaded content
-- New results are added to the end of existing list
-
-#### 5. Error Handling During Pagination
-```swift
-.catch { [weak self] error in
-    Just(self?.state.copy(
-        error: error,
-        isLoadingMore: false
-    ) ?? HomeDomainState())
-}
-```
-
-**Why preserve movies on error?**
-- Better UX - users keep their current content
-- Error can be shown via toast/banner
-- Allows retry without losing loaded data
-- ViewStateReducing skips error when `isLoadingMore` was true
-
-### State Transitions
-
-```swift
-// Initial State
-currentPage: 0, hasMorePages: true, isLoading: false, isLoadingMore: false
-
-// User scrolls to bottom → Trigger Load More
-currentPage: 0, hasMorePages: true, isLoading: false, isLoadingMore: true
-
-// Load More Success
-currentPage: 1, hasMorePages: true, isLoading: false, isLoadingMore: false
-
-// User scrolls to bottom again → Trigger Load More
-currentPage: 1, hasMorePages: true, isLoading: false, isLoadingMore: true
-
-// Load More Success (Last Page)
-currentPage: 2, hasMorePages: false, isLoading: false, isLoadingMore: false
-
-// User scrolls to bottom again → No Action (hasMorePages = false)
-// State unchanged
-```
-
-### Testing Considerations
-
-```swift
-// Test: Prevent duplicate requests
-func testLoadMoreWhileAlreadyLoading() {
-    interactor.send(.loadMoreMovies)  // First request
-    interactor.send(.loadMoreMovies)  // Should be ignored
-
-    // Verify only one network request was made
-}
-
-// Test: Stop at last page
-func testLoadMoreStopsAtLastPage() {
-    // Setup state with hasMorePages = false
-    interactor.send(.loadMoreMovies)
-
-    // Verify no network request was made
-}
-
-// Test: Error preserves movies
-func testLoadMoreErrorPreservesContent() {
-    // Setup initial movies
-    // Trigger load more with error
-
-    // Verify movies are still present
-    // Verify error is set but UI shows content
-}
-```
-
-### Performance Considerations
-
-- **Memory**: Old pages stay in memory (consider pagination window for very long lists)
-- **Network**: Only one request at a time prevents server overload
-- **UI**: Show loading indicator at list bottom during pagination
-- **Scrolling**: Trigger pagination before reaching absolute bottom (better UX)
 
 ---
 
@@ -898,7 +679,6 @@ These architectural patterns form the foundation of the GitHubApp codebase:
 2. **Service Bridging**: DomainInteractors coordinate independent services
 3. **ViewStateReducing**: Domain-to-view state transformation with priority rules
 4. **NotificationCenter**: Cross-feature communication without coupling
-5. **Pagination**: Infinite scroll with proper state management
-6. **SwiftData Storage**: Type-safe persistence with specialized implementations
+5. **SwiftData Storage**: Type-safe persistence with specialized implementations
 
 Following these patterns ensures consistency, maintainability, and testability throughout the codebase.

@@ -28,8 +28,6 @@ enum SearchDomainEventActionMap {
             .toggleMovieFavorite(movie)
         case .loadFavoriteMovies:
             .loadPersistedFavoriteMovies
-        case .loadMoreMovies:
-            .loadMoreMovies
         }
     }
 }

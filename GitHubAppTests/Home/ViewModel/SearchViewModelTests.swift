@@ -122,31 +122,6 @@ struct SearchViewModelTests {
         try await Task.sleep(nanoseconds: 100_000_000)
     }
 
-    @Test("Load more movies executes successfully")
-    func loadMoreMovies() async throws {
-        // Given
-        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
-        defer {
-            try? APIKeysProvider.removeMovieAPIKey()
-        }
-
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
-
-        // Perform initial search to have a query
-        sut.searchMovies(query: "test")
-        try await Task.sleep(nanoseconds: 200_000_000)
-
-        // When
-        sut.loadMoreMovies()
-
-        // Wait for async operation
-        try await Task.sleep(nanoseconds: 200_000_000)
-
-        // Then - Verify method was called (basic test for coverage)
-        // Test passes if no exception is thrown
-    }
-
     @Test("Send view event executes successfully")
     func sendViewEvent() async throws {
         // Given
@@ -219,9 +194,6 @@ struct SearchViewModelTests {
         try await Task.sleep(nanoseconds: 100_000_000)
 
         sut.sendViewEvent(.loadFavoriteMovies)
-        try await Task.sleep(nanoseconds: 100_000_000)
-
-        sut.sendViewEvent(.loadMoreMovies)
         try await Task.sleep(nanoseconds: 100_000_000)
 
         // Then - All events should execute without errors

@@ -21,19 +21,14 @@ struct SearchDomainActionTests {
         let action6 = SearchDomainAction.loadPersistedFavoriteMovies
         let action7 = SearchDomainAction.loadPersistedFavoriteMovies
 
-        let action8 = SearchDomainAction.loadMoreMovies
-        let action9 = SearchDomainAction.loadMoreMovies
-
         // Then
         #expect(action1 == action2)
         #expect(action4 == action5)
         #expect(action6 == action7)
-        #expect(action8 == action9)
 
         #expect(action1 != action3)
         #expect(action1 != action4)
         #expect(action1 != action6)
-        #expect(action1 != action8)
     }
 
     @Test("All domain action cases can be instantiated")
@@ -42,13 +37,11 @@ struct SearchDomainActionTests {
         let searchAction = SearchDomainAction.searchMovies("query")
         let toggleAction = SearchDomainAction.toggleMovieFavorite(createMockMovie(id: 1, title: "Test"))
         let loadAction = SearchDomainAction.loadPersistedFavoriteMovies
-        let loadMoreAction = SearchDomainAction.loadMoreMovies
 
         // Verify that all cases can be instantiated
         #expect(searchAction != nil)
         #expect(toggleAction != nil)
         #expect(loadAction != nil)
-        #expect(loadMoreAction != nil)
     }
 
     @Test("Search action preserves query string")

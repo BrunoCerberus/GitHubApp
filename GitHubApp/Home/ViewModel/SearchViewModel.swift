@@ -123,13 +123,6 @@ final class SearchViewModel: CombineViewModel {
         handle(.toggleFavorite(movie))
     }
 
-    /**
-     * Load more movies for pagination.
-     */
-    func loadMoreMovies() {
-        handle(.loadMoreMovies)
-    }
-
     // MARK: - Private Methods
 
     /**

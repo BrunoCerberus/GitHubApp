@@ -118,8 +118,6 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
             handleToggleMovieFavorite(movie: movie)
         case .loadPersistedFavoriteMovies:
             handleLoadPersistedFavoriteMovies()
-        case .loadMoreMovies:
-            handleLoadMoreMovies()
         }
     }
 
@@ -158,20 +156,16 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
                 movies: [],
                 isLoading: false,
                 error: .some(nil),
-                searchQuery: .some(nil),
-                currentPage: 0,
-                totalPages: 0
+                searchQuery: .some(nil)
             )
             return
         }
 
-        // Set loading state with search query and reset pagination
+        // Set loading state with search query
         currentState = currentState.copy(
             isLoading: true,
             error: nil,
-            searchQuery: query,
-            currentPage: 0,
-            totalPages: 0
+            searchQuery: query
         )
 
         searchService.searchMovies(with: query, page: 1)
@@ -194,9 +188,7 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
                         favoriteMovies: updatedLikedMovies,
                         isLoading: false,
                         error: nil,
-                        searchQuery: query,
-                        currentPage: response.page,
-                        totalPages: response.totalPages
+                        searchQuery: query
                     )
                 }
             )
@@ -235,55 +227,6 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
         Task {
             await handleLoadPersistedFavoriteMoviesAsync()
         }
-    }
-
-    /**
-     * Handle loading more movies for pagination (infinite scroll).
-     */
-    private func handleLoadMoreMovies() {
-        // Don't load if already loading or no more pages available
-        guard !currentState.isLoadingMore,
-              !currentState.isLoading,
-              currentState.hasMorePages,
-              let searchQuery = currentState.searchQuery,
-              !searchQuery.isEmpty
-        else {
-            return
-        }
-
-        let nextPage = currentState.currentPage + 1
-
-        // Set loading more state
-        currentState = currentState.copy(isLoadingMore: true)
-
-        searchService.searchMovies(with: searchQuery, page: nextPage)
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    if case let .failure(error) = completion {
-                        self?.currentState = self?.currentState.copy(
-                            error: error.localizedDescription,
-                            isLoadingMore: false
-                        ) ?? SearchDomainState.initial
-                    }
-                },
-                receiveValue: { [weak self] response in
-                    guard let self else { return }
-
-                    // Append new movies to existing ones
-                    let allMovies = currentState.movies + response.results
-                    let updatedLikedMovies = filterLikedMovies(from: allMovies)
-
-                    currentState = currentState.copy(
-                        movies: allMovies,
-                        favoriteMovies: updatedLikedMovies,
-                        error: nil,
-                        currentPage: response.page,
-                        totalPages: response.totalPages,
-                        isLoadingMore: false
-                    )
-                }
-            )
-            .store(in: &cancellables)
     }
 
     /**
@@ -348,20 +291,14 @@ private extension SearchDomainState {
         favoriteMovies: [Movie]? = nil,
         isLoading: Bool? = nil,
         error: String?? = nil,
-        searchQuery: String?? = nil,
-        currentPage: Int? = nil,
-        totalPages: Int? = nil,
-        isLoadingMore: Bool? = nil
+        searchQuery: String?? = nil
     ) -> SearchDomainState {
         SearchDomainState(
             movies: movies ?? self.movies,
             favoriteMovies: favoriteMovies ?? self.favoriteMovies,
             isLoading: isLoading ?? self.isLoading,
             error: error ?? self.error,
-            searchQuery: searchQuery ?? self.searchQuery,
-            currentPage: currentPage ?? self.currentPage,
-            totalPages: totalPages ?? self.totalPages,
-            isLoadingMore: isLoadingMore ?? self.isLoadingMore
+            searchQuery: searchQuery ?? self.searchQuery
         )
     }
 }

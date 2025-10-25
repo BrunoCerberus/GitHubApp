@@ -17,10 +17,7 @@ struct SearchViewStateReducingTests {
             favoriteMovies: [],
             isLoading: false,
             error: errorMessage,
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         // When
@@ -43,10 +40,7 @@ struct SearchViewStateReducingTests {
             favoriteMovies: [],
             isLoading: true,
             error: nil,
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         // When
@@ -74,10 +68,7 @@ struct SearchViewStateReducingTests {
             favoriteMovies: [likedMovie],
             isLoading: false,
             error: nil,
-            searchQuery: searchQuery,
-            currentPage: 1,
-            totalPages: 10,
-            isLoadingMore: false
+            searchQuery: searchQuery
         )
 
         // When
@@ -90,7 +81,6 @@ struct SearchViewStateReducingTests {
             #expect(dataViewState.searchQuery == searchQuery)
             #expect(dataViewState.movies.first?.title == "Search Result 1")
             #expect(dataViewState.favoriteMovies.first?.title == "Liked Movie")
-            #expect(!dataViewState.isLoadingMore)
         } else {
             Issue.record("Expected success state but got: \(viewState)")
         }
@@ -105,10 +95,7 @@ struct SearchViewStateReducingTests {
             favoriteMovies: [],
             isLoading: false,
             error: nil,
-            searchQuery: "empty query",
-            currentPage: 1,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: "empty query"
         )
 
         // When
@@ -133,10 +120,7 @@ struct SearchViewStateReducingTests {
             favoriteMovies: [],
             isLoading: true,
             error: "Error message",
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         // When
@@ -150,34 +134,6 @@ struct SearchViewStateReducingTests {
         }
     }
 
-    @Test("Reducer preserves loading more state in success")
-    func reduceSuccessStateWithLoadingMore() {
-        // Given
-        let sut = SearchViewStateReducer()
-        let movie = createMockMovie(id: 1, title: "Movie 1")
-        let domainState = SearchDomainState(
-            movies: [movie],
-            favoriteMovies: [],
-            isLoading: false,
-            error: nil,
-            searchQuery: "test",
-            currentPage: 1,
-            totalPages: 5,
-            isLoadingMore: true
-        )
-
-        // When
-        let viewState = sut.reduce(domainState)
-
-        // Then
-        if case let .success(dataViewState) = viewState {
-            #expect(dataViewState.isLoadingMore)
-            #expect(dataViewState.movies.count == 1)
-        } else {
-            Issue.record("Expected success state but got: \(viewState)")
-        }
-    }
-
     @Test("Reducer handles nil search query")
     func reduceStateWithNilSearchQuery() {
         // Given
@@ -187,10 +143,7 @@ struct SearchViewStateReducingTests {
             favoriteMovies: [],
             isLoading: false,
             error: nil,
-            searchQuery: nil,
-            currentPage: 0,
-            totalPages: 0,
-            isLoadingMore: false
+            searchQuery: nil
         )
 
         // When
@@ -202,34 +155,6 @@ struct SearchViewStateReducingTests {
             #expect(dataViewState.movies.isEmpty)
         } else {
             Issue.record("Expected success state but got: \(viewState)")
-        }
-    }
-
-    @Test("Reducer does not show error when loading more")
-    func reduceErrorStateNotShownWhenLoadingMore() {
-        // Given
-        let sut = SearchViewStateReducer()
-        let movie = createMockMovie(id: 1, title: "Movie 1")
-        let domainState = SearchDomainState(
-            movies: [movie],
-            favoriteMovies: [],
-            isLoading: false,
-            error: "Error loading more",
-            searchQuery: "test",
-            currentPage: 1,
-            totalPages: 5,
-            isLoadingMore: true
-        )
-
-        // When
-        let viewState = sut.reduce(domainState)
-
-        // Then - Error should not be shown when loading more
-        if case let .success(dataViewState) = viewState {
-            #expect(dataViewState.isLoadingMore)
-            #expect(dataViewState.movies.count == 1)
-        } else {
-            Issue.record("Expected success state (not error) when loading more, but got: \(viewState)")
         }
     }
 

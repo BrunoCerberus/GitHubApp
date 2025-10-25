@@ -15,5 +15,4 @@ enum HomeViewEvent: Equatable {
     case searchMovies(String)
     case toggleFavorite(Movie)
     case loadFavoriteMovies
-    case loadMoreMovies
 }
