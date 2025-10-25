@@ -7,7 +7,7 @@
         {
             "type": "sweetpad-lldb",
             "request": "attach",
-            "name": "SweetPad: Build and Run (Wait for debugger)",
+            "name": "SweetPad: Build and Run (iPhone Air - iOS 26.0)",
             "preLaunchTask": "sweetpad: debugging-launch"
         }
     ]

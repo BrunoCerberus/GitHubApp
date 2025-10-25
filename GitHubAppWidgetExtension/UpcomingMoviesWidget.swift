@@ -232,7 +232,7 @@ struct MovieRowView: View {
     }
 }
 
-#Preview("MovieRowView - Small") {
+#Preview("MovieRowView - Small", traits: .fixedLayout(width: 200, height: 100)) {
     let sampleMovie = SharedMovie(
         id: 615_656,
         title: "Meg 2: The Trench",
@@ -241,10 +241,9 @@ struct MovieRowView: View {
     )
     return MovieRowView(movie: sampleMovie, family: .systemSmall)
         .padding()
-        .previewLayout(.fixed(width: 200, height: 100))
 }
 
-#Preview("MovieRowView - Medium") {
+#Preview("MovieRowView - Medium", traits: .fixedLayout(width: 280, height: 100)) {
     let sampleMovie = SharedMovie(
         id: 615_656,
         title: "Meg 2: The Trench",
@@ -253,7 +252,6 @@ struct MovieRowView: View {
     )
     return MovieRowView(movie: sampleMovie, family: .systemMedium)
         .padding()
-        .previewLayout(.fixed(width: 280, height: 100))
 }
 
 struct UpcomingMoviesTimelineEntry: TimelineEntry {
