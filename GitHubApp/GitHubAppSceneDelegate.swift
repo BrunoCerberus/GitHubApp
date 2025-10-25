@@ -92,7 +92,7 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
             // Check if running in test environment
             if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
                 // Use mock services for tests
-                serviceLocator.register(StorageService.self, instance: try! MockStorageService())
+                serviceLocator.register(StorageService.self, instance: MockStorageService())
                 serviceLocator.register(HomeService.self, instance: MockHomeService())
                 serviceLocator.register(SearchService.self, instance: MockSearchService())
                 serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())

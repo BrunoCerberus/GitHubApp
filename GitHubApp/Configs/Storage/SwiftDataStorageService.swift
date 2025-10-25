@@ -63,13 +63,69 @@ final class SwiftDataStorageService: StorageService {
 
     // MARK: - Generic CRUD Operations
 
+    //
+    // These methods use a **type-based routing pattern** to direct operations
+    // to specialized implementations based on the concrete type being stored.
+    //
+    // ## Type-Based Routing Pattern
+    //
+    // Instead of using only generic constraints, we check the actual runtime type
+    // and route to specialized implementations. This provides:
+    // - Type safety through generic constraints
+    // - Optimized operations for specific types
+    // - Flexibility to add new specialized types
+    //
+    // See ARCHITECTURE_PATTERNS.md for detailed explanation.
+
+    /**
+     * Save a single object to SwiftData storage.
+     *
+     * ## Type-Based Routing
+     *
+     * This method uses runtime type checking to route to specialized implementations:
+     *
+     * ### Movie Type (Optimized Path)
+     * ```swift
+     * if let movie = object as? Movie {
+     *     try await saveMovie(movie, context: context)
+     * }
+     * ```
+     * - Uses specialized `StoredMovie` @Model for persistence
+     * - Optimized queries with SwiftData predicates
+     * - Automatic `updatedAt` timestamp tracking
+     * - Context-based organization (favorites, watchlist, etc.)
+     *
+     * ### Other Types (Generic Path)
+     * ```swift
+     * else {
+     *     // Use UserSetting storage
+     * }
+     * ```
+     * - Serializes to JSON via Codable
+     * - Stores in generic `UserSetting` @Model
+     * - Category-based organization
+     *
+     * **Why this pattern?**
+     * - Balances type safety with specialized optimizations
+     * - Allows extending with new specialized types without breaking existing code
+     * - Provides optimal storage strategy per type
+     *
+     * - Parameters:
+     *   - object: The object to save (must conform to Codable & Identifiable)
+     *   - context: Storage context (e.g., "favoriteMovies", "watchlist")
+     * - Throws: StorageError.saveFailure if save operation fails
+     *
+     * - SeeAlso: `ARCHITECTURE_PATTERNS.md` for SwiftData storage strategy details
+     */
     @MainActor
     func save<T: Codable & Identifiable>(_ object: T, context: String?) async throws {
         do {
+            // Type-based routing: Check runtime type and route to specialized implementation
             if let movie = object as? Movie {
+                // Specialized path: Use optimized StoredMovie @Model
                 try await saveMovie(movie, context: context ?? StorageContext.favoriteMovies)
             } else {
-                // For other types, use UserSetting storage
+                // Generic path: Serialize to UserSetting for other types
                 let key = "\(T.self)_\(object.id)"
                 let category = context ?? "generic"
                 let setting = try UserSetting(key: key, value: object, category: category)
@@ -88,20 +144,82 @@ final class SwiftDataStorageService: StorageService {
         }
     }
 
+    /**
+     * Fetch objects of a specific type from SwiftData storage.
+     *
+     * ## Type-Based Routing with Safe Force Casting
+     *
+     * This method uses the same type-based routing pattern as `save()`:
+     *
+     * ### Movie Type (Specialized Path)
+     * ```swift
+     * if type == Movie.self {
+     *     let movies = try await self.fetchMovies(context: context)
+     *     continuation.resume(returning: movies as! [T])
+     * }
+     * ```
+     *
+     * **Why is force casting safe here?**
+     *
+     * The force cast `movies as! [T]` is guaranteed to succeed because:
+     * 1. We verify `type == Movie.self` before this line executes
+     * 2. `fetchMovies()` is guaranteed to return `[Movie]`
+     * 3. Generic constraint ensures `T == Movie` in this branch
+     * 4. Swift's type system ensures `[Movie] as! [T]` will succeed when `T == Movie`
+     *
+     * This is a safe use of force cast with **compile-time verification** via the type guard.
+     *
+     * ### Other Types (Generic Path)
+     * - Fetches from UserSetting storage
+     * - Uses `compactMap` for safe optional unwrapping
+     * - No force casts needed (uses `try?` for safe deserialization)
+     *
+     * ## SwiftData Predicate Pattern
+     *
+     * Uses `FetchDescriptor` with type-safe predicates:
+     * ```swift
+     * let predicate = UserSetting.categoryPredicate(category)
+     * let descriptor = FetchDescriptor<UserSetting>(predicate: predicate)
+     * ```
+     *
+     * **Benefits:**
+     * - Compile-time validation of predicate logic
+     * - Optimized SQL generation by SwiftData
+     * - Type-safe query construction
+     *
+     * - Parameters:
+     *   - type: The type of objects to fetch
+     *   - context: Storage context (e.g., "favoriteMovies")
+     * - Returns: Array of objects matching the type and context
+     * - Throws: StorageError.fetchFailure if fetch operation fails
+     *
+     * - SeeAlso: `ARCHITECTURE_PATTERNS.md` for predicate patterns and force cast safety
+     */
     nonisolated func fetch<T: Codable & Identifiable>(_ type: T.Type, context: String?) async throws -> [T] {
         try await withCheckedThrowingContinuation { continuation in
             Task { @MainActor in
                 do {
+                    // Type-based routing with compile-time type verification
                     if type == Movie.self {
+                        // Specialized path: Use optimized StoredMovie queries
                         let movies = try await self.fetchMovies(context: context ?? StorageContext.favoriteMovies)
+
+                        // SAFE FORCE CAST: Type guard ensures T == Movie here
+                        // This cast will never fail because:
+                        // 1. type == Movie.self verifies the generic type
+                        // 2. fetchMovies() returns [Movie]
+                        // 3. Swift guarantees [Movie] can be cast to [T] when T == Movie
                         continuation.resume(returning: movies as! [T])
                     } else {
-                        // For other types, fetch from UserSetting
+                        // Generic path: Deserialize from UserSetting storage
                         let category = context ?? "generic"
+
+                        // SwiftData predicate-based query (type-safe, optimized)
                         let predicate = UserSetting.categoryPredicate(category)
                         let descriptor = FetchDescriptor<UserSetting>(predicate: predicate)
                         let settings = try self.context.fetch(descriptor)
 
+                        // Safe deserialization with compactMap (filters out failures)
                         let result = settings.compactMap { setting in
                             try? setting.getValue(as: type)
                         }

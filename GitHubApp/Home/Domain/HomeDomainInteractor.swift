@@ -13,10 +13,64 @@ import SwiftData
 /**
  * Domain interactor for the Home feature business logic.
  *
- * This interactor handles all business logic for the Home feature using Clean Architecture principles.
- * It processes domain actions and manages domain state while communicating with external services.
+ * ## Service Bridging Pattern
  *
- * Conforms to CombineInteractor to leverage reactive programming patterns.
+ * This interactor demonstrates the **Service Bridging Pattern** where DomainInteractors
+ * act as coordinators for multiple independent services, implementing business logic
+ * that spans across service boundaries.
+ *
+ * ### Architecture Role
+ *
+ * ```
+ * ┌─────────────────────────────────────────────────┐
+ * │      HomeDomainInteractor (Bridge/Coordinator)  │
+ * │  • Retrieves services from ServiceLocator      │
+ * │  • Coordinates HomeService + StorageService     │
+ * │  • Implements cross-service business logic      │
+ * └─────────────────────────────────────────────────┘
+ *            │                    │
+ *            ▼                    ▼
+ * ┌──────────────────┐  ┌──────────────────┐
+ * │  HomeService     │  │ StorageService   │
+ * │  • Fetch movies  │  │ • Persist data   │
+ * │  • Search movies │  │ • Fetch favorites│
+ * │  • Independent   │  │ • Independent    │
+ * └──────────────────┘  └──────────────────┘
+ * ```
+ *
+ * ### Key Principles
+ *
+ * 1. **Services Don't Know Each Other**: HomeService and StorageService are completely independent
+ * 2. **DomainInteractor Coordinates**: All multi-service operations happen here
+ * 3. **ServiceLocator for DI**: All dependencies resolved through ServiceLocator
+ * 4. **Business Logic Layer**: Complex operations that need multiple services
+ *
+ * ### Example: Fetching Movies with Favorites
+ *
+ * ```swift
+ * // This requires coordination of TWO services:
+ * // 1. HomeService.fetchMovies() - get movies from API
+ * // 2. StorageService.fetchLikedMovies() - get favorites from storage
+ * // 3. Business logic: merge the data to mark favorites
+ *
+ * // ❌ WRONG: Services calling other services
+ * class HomeService {
+ *     func fetchMovies() {
+ *         let favorites = storageService.fetchLikedMovies() // NO!
+ *     }
+ * }
+ *
+ * // ✅ CORRECT: DomainInteractor coordinates both services
+ * class HomeDomainInteractor {
+ *     func handleFetchMovies() {
+ *         let movies = homeService.fetchMovies()
+ *         let favorites = storageService.fetchLikedMovies()
+ *         return mergeMoviesWithFavorites(movies, favorites)
+ *     }
+ * }
+ * ```
+ *
+ * - SeeAlso: `ARCHITECTURE_PATTERNS.md` for complete Service Bridging pattern documentation
  */
 final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     // MARK: - CombineInteractor Requirements
@@ -36,12 +90,18 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     /// Current state of the interactor
     @Published var currentState: HomeDomainState
 
-    // MARK: - Dependencies
+    // MARK: - Dependencies (Retrieved from ServiceLocator)
+
+    //
+    // Following the Service Bridging pattern, this interactor coordinates
+    // multiple independent services retrieved from the ServiceLocator.
 
     /// Service for fetching movie data from external APIs
+    /// Retrieved from ServiceLocator during initialization
     private let homeService: HomeService
 
-    /// Storage service for persisting favorite movies
+    /// Storage service for persisting favorite movies and user data
+    /// Retrieved from ServiceLocator during initialization
     private let storageService: StorageService
 
     /// Combine cancellables for memory management
@@ -50,34 +110,82 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     // MARK: - Initialization
 
     /**
-     * Initialize the domain interactor with required dependencies.
+     * Initialize the domain interactor with required dependencies via ServiceLocator.
      *
-     * - Parameter serviceLocator: Service locator for dependency injection
-     * - Parameter initialState: Initial domain state (defaults to HomeDomainState.initial)
+     * ## Dependency Injection via ServiceLocator
+     *
+     * This initializer demonstrates the **ServiceLocator pattern** for dependency injection:
+     *
+     * ### Service Retrieval Strategy
+     *
+     * 1. **Attempt retrieval from ServiceLocator**:
+     *    - Try to get registered service (Mock in tests, Live in production)
+     *    - ServiceLocator.retrieve() throws if service not registered
+     *
+     * 2. **Fallback to Live implementation**:
+     *    - If retrieval fails, use Live service as fallback
+     *    - Ensures app still works even if service not registered
+     *    - Logs warning for debugging
+     *
+     * ### Why Fallback to Live Services?
+     *
+     * ```swift
+     * do {
+     *     homeService = try serviceLocator.retrieve(HomeService.self)
+     * } catch {
+     *     Logger.shared.service("Failed to retrieve...", level: .warning)
+     *     homeService = LiveHomeService()  // Fallback ensures robustness
+     * }
+     * ```
+     *
+     * **Benefits**:
+     * - **Robustness**: App doesn't crash if service not registered
+     * - **Development**: Easy to test individual components
+     * - **Production**: Graceful degradation if ServiceLocator misconfigured
+     * - **Debugging**: Clear log warnings when fallback is used
+     *
+     * ### Service Registration
+     *
+     * Services are registered centrally in `GitHubAppSceneDelegate.swift`:
+     * ```swift
+     * // Production
+     * serviceLocator.register(HomeService.self, instance: LiveHomeService())
+     * serviceLocator.register(StorageService.self, instance: LiveStorageService())
+     *
+     * // Testing
+     * serviceLocator.register(HomeService.self, instance: MockHomeService())
+     * serviceLocator.register(StorageService.self, instance: MockStorageService())
+     * ```
+     *
+     * - Parameters:
+     *   - serviceLocator: Central service registry for dependency injection
+     *   - initialState: Initial domain state (defaults to HomeDomainState.initial)
+     *
+     * - SeeAlso: `ARCHITECTURE_PATTERNS.md` for Service Bridging pattern details
      */
     init(
         serviceLocator: ServiceLocator,
         initialState: HomeDomainState = .initial
     ) {
-        // Retrieve HomeService from ServiceLocator
+        // Retrieve HomeService from ServiceLocator with fallback
         do {
             homeService = try serviceLocator.retrieve(HomeService.self)
         } catch {
             Logger.shared.service("Failed to retrieve HomeService from ServiceLocator: \(error)", level: .warning)
-            homeService = LiveHomeService()
+            homeService = LiveHomeService() // Fallback to Live implementation
         }
 
-        // Retrieve StorageService from ServiceLocator
+        // Retrieve StorageService from ServiceLocator with fallback
         do {
             storageService = try serviceLocator.retrieve(StorageService.self)
         } catch {
             Logger.shared.service("Failed to retrieve StorageService from ServiceLocator: \(error)", level: .warning)
-            storageService = try! LiveStorageService()
+            storageService = try! LiveStorageService() // Fallback to Live implementation
         }
 
         currentState = initialState
 
-        // Listen for favorite movies updates from other features
+        // Listen for favorite movies updates from other features (cross-feature communication)
         setupFavoritesNotificationObserver()
     }
 
@@ -283,22 +391,67 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
 
     /**
      * Handle loading more movies for pagination (infinite scroll).
+     *
+     * ## Pagination Flow
+     *
+     * This method implements infinite scroll pagination with the following safeguards:
+     *
+     * ### Guard Conditions (Prevent Duplicate Requests)
+     * 1. **isLoadingMore**: Prevents multiple pagination requests simultaneously
+     * 2. **isLoading**: Prevents pagination during initial fetch
+     * 3. **hasMorePages**: Stops pagination when all pages are loaded
+     *
+     * **Why check both loading flags?**
+     * - `isLoadingMore`: Prevents triggering "load more" multiple times (e.g., rapid scrolling)
+     * - `isLoading`: Prevents pagination before initial data is loaded
+     * - Together they ensure only **one network request at a time**
+     *
+     * ### Context-Aware Pagination
+     * The method determines whether to paginate search results or regular movie list:
+     * - **Search Mode**: If `searchQuery` exists and is not empty
+     * - **Browse Mode**: Otherwise (upcoming movies list)
+     *
+     * This ensures pagination maintains the current context (search vs browse).
+     *
+     * ### Merge Strategy
+     * New movies are **appended** to existing movies array:
+     * ```swift
+     * let allMovies = currentState.movies + response.results
+     * ```
+     *
+     * **Why append instead of replace?**
+     * - Infinite scroll requires accumulating all loaded pages
+     * - Users expect to see all previously loaded content
+     * - Enables smooth scrolling experience
+     *
+     * ### Error Handling
+     * On pagination error:
+     * - Error is set in state (but ViewStateReducer will skip it during pagination)
+     * - `isLoadingMore` is reset to `false`
+     * - **Existing movies are preserved** (not cleared)
+     * - User can retry by scrolling again
+     *
+     * - SeeAlso: `ARCHITECTURE_PATTERNS.md` for detailed pagination pattern explanation
      */
     private func handleLoadMoreMovies() {
-        // Don't load if already loading or no more pages available
+        // GUARD 1: Prevent duplicate requests
+        // - isLoadingMore: No concurrent pagination requests
+        // - isLoading: No pagination during initial fetch
         guard !currentState.isLoadingMore,
               !currentState.isLoading,
-              currentState.hasMorePages
+              currentState.hasMorePages // GUARD 2: Check if more pages exist
         else {
             return
         }
 
         let nextPage = currentState.currentPage + 1
 
-        // Set loading more state
+        // Set loading state before network request
         currentState = currentState.copy(isLoadingMore: true)
 
-        // Determine if we're searching or fetching upcoming movies
+        // Context-aware pagination: Choose appropriate API call
+        // - If searching: paginate search results
+        // - Otherwise: paginate upcoming movies list
         let publisher: AnyPublisher<MoviesResponse, Error> = if let searchQuery = currentState.searchQuery, !searchQuery.isEmpty {
             homeService.searchMovies(with: searchQuery, page: nextPage)
         } else {
@@ -309,6 +462,8 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
             .sink(
                 receiveCompletion: { [weak self] completion in
                     if case let .failure(error) = completion {
+                        // On error: preserve movies, reset loading flag
+                        // ViewStateReducer will skip error during isLoadingMore
                         self?.currentState = self?.currentState.copy(
                             error: error.localizedDescription,
                             isLoadingMore: false
@@ -318,7 +473,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
                 receiveValue: { [weak self] response in
                     guard let self else { return }
 
-                    // Append new movies to existing ones
+                    // Append new movies to existing array (accumulate pages)
                     let allMovies = currentState.movies + response.results
                     let updatedLikedMovies = filterLikedMovies(from: allMovies)
 
@@ -415,14 +570,85 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
 
 private extension HomeDomainState {
     /**
-     * Create a copy of the current state with modified properties.
+     * Create a copy of the current state with selectively modified properties.
+     *
+     * ## State Copy Helper Pattern
+     *
+     * This method enables **immutable state updates** following functional programming principles.
+     * Instead of mutating the state directly, we create a new state object with only the
+     * properties we want to change, while preserving all other properties.
+     *
+     * ### Double-Optional Syntax Explained
+     *
+     * Notice the `String??` syntax for optional properties:
+     * ```swift
+     * error: String?? = nil,
+     * searchQuery: String?? = nil
+     * ```
+     *
+     * **Why double-optional instead of single-optional?**
+     *
+     * The double-optional pattern solves a critical distinction problem:
+     *
+     * #### Single Optional (`String? = nil`)
+     * - **Problem**: Cannot distinguish between:
+     *   - "Don't update this property" (keep existing value)
+     *   - "Update this property to nil" (clear the value)
+     * - Both scenarios would pass `nil` as the parameter
+     *
+     * #### Double Optional (`String?? = nil`)
+     * - `nil` (outer nil) = "Don't update this property" ✅ Default behavior
+     * - `.some(nil)` (outer some, inner nil) = "Update this property to nil" ✅ Clear value
+     * - `.some(.some(value))` (both some) = "Update to specific value" ✅ Set value
+     *
+     * ### Usage Examples
+     *
+     * ```swift
+     * // Update only movies, keep everything else unchanged
+     * let newState = currentState.copy(movies: updatedMovies)
+     *
+     * // Update multiple properties at once
+     * let newState = currentState.copy(
+     *     movies: updatedMovies,
+     *     isLoading: false,
+     *     error: nil  // Don't change error (keeps existing value)
+     * )
+     *
+     * // Clear the search query (set to nil explicitly)
+     * let newState = currentState.copy(searchQuery: .some(nil))
+     *
+     * // Update error to specific value
+     * let newState = currentState.copy(error: .some("Network error"))
+     * ```
+     *
+     * ### Benefits of This Pattern
+     *
+     * 1. **Immutability**: State objects are never mutated, only copied
+     * 2. **Selective Updates**: Specify only the properties that need to change
+     * 3. **Type Safety**: Compiler enforces correct types for all properties
+     * 4. **Readability**: Clear intent about which properties are being updated
+     * 5. **Testability**: Easy to verify state transitions in unit tests
+     * 6. **Thread Safety**: Immutable objects are inherently thread-safe
+     *
+     * - Parameters:
+     *   - movies: New movies array (or nil to keep current value)
+     *   - favoriteMovies: New favorite movies array (or nil to keep current value)
+     *   - isLoading: New loading state (or nil to keep current value)
+     *   - error: New error message - use `.some(nil)` to clear (or nil to keep current value)
+     *   - searchQuery: New search query - use `.some(nil)` to clear (or nil to keep current value)
+     *   - currentPage: New current page number (or nil to keep current value)
+     *   - totalPages: New total pages count (or nil to keep current value)
+     *   - isLoadingMore: New pagination loading state (or nil to keep current value)
+     * - Returns: A new HomeDomainState with updated properties
+     *
+     * - SeeAlso: `ARCHITECTURE_PATTERNS.md` for comprehensive pattern explanation
      */
     func copy(
         movies: [Movie]? = nil,
         favoriteMovies: [Movie]? = nil,
         isLoading: Bool? = nil,
-        error: String?? = nil,
-        searchQuery: String?? = nil,
+        error: String?? = nil, // Double-optional: distinguishes "don't update" from "set to nil"
+        searchQuery: String?? = nil, // Double-optional: distinguishes "don't update" from "set to nil"
         currentPage: Int? = nil,
         totalPages: Int? = nil,
         isLoadingMore: Bool? = nil
@@ -431,8 +657,8 @@ private extension HomeDomainState {
             movies: movies ?? self.movies,
             favoriteMovies: favoriteMovies ?? self.favoriteMovies,
             isLoading: isLoading ?? self.isLoading,
-            error: error ?? self.error,
-            searchQuery: searchQuery ?? self.searchQuery,
+            error: error ?? self.error, // Nil coalescing preserves existing value
+            searchQuery: searchQuery ?? self.searchQuery, // Nil coalescing preserves existing value
             currentPage: currentPage ?? self.currentPage,
             totalPages: totalPages ?? self.totalPages,
             isLoadingMore: isLoadingMore ?? self.isLoadingMore
