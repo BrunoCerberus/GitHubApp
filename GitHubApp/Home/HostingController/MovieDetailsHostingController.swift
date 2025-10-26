@@ -19,7 +19,8 @@ final class MovieDetailsHostingController: BaseHostingController<MovieDetailsVie
     init(movie: Movie, serviceLocator: ServiceLocator) {
         self.movie = movie
         let viewModel = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
-        let rootView = MovieDetailsView(viewModel: viewModel)
+        let router = MovieDetailsNavigationRouter()
+        let rootView = MovieDetailsView(router: router, viewModel: viewModel)
         super.init(rootView: rootView)
     }
 

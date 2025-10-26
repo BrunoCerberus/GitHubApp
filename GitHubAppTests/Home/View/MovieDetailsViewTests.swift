@@ -32,7 +32,8 @@ struct MovieDetailsViewTests {
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
         let viewModel = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
-        let view = MovieDetailsView(viewModel: viewModel)
+        let router = MovieDetailsNavigationRouter()
+        let view = MovieDetailsView(router: router, viewModel: viewModel)
         return (mockService, viewModel, view)
     }
 

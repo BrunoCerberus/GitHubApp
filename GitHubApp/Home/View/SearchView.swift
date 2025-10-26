@@ -61,7 +61,8 @@ struct SearchView: View {
                 handleSearchQueryChange(newValue)
             }
             .navigationDestination(for: Movie.self) { movie in
-                MovieDetailsView(viewModel: MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator))
+                let viewModel = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
+                MovieDetailsView(router: MovieDetailsNavigationRouter(), viewModel: viewModel)
             }
         }
     }

@@ -6,6 +6,7 @@
 */
 
 // MARK: - Movie Details View
+"movie_details.loading" = "Loading details...";
 "movie_details.credits.title" = "Credits";
 "movie_details.credits.empty" = "No credits available";
 "movie_details.reviews.title" = "Reviews";

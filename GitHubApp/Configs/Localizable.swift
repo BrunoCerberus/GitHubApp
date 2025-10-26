@@ -31,6 +31,9 @@ struct Localizable {
         /// Private initializer to prevent instantiation
         private init() {}
 
+        /// "Loading details..." loading state message
+        static let loadingDetails = NSLocalizedString("movie_details.loading", comment: "Loading movie details message")
+
         /// "Credits" section title
         static let creditsTitle = NSLocalizedString("movie_details.credits.title", comment: "Credits section title")
 

@@ -2,128 +2,197 @@
 //  MovieDetailsViewModel.swift
 //  GitHubApp
 //
-//  Created by bruno on 06/08/23.
+//  Created by Claude Code
 //
 
 import Combine
+import EntropyCore
 import Foundation
-import Observation
 
 /**
- * Data structure for movie details information.
+ * ViewModel for the MovieDetails screen using Clean Architecture principles.
  *
- * Contains both cast/crew credits and reviews for a specific movie.
- * This structure is used to organize the data fetched for movie details.
+ * This ViewModel follows Clean Architecture by:
+ * - Using CombineViewModel from EntropyCore
+ * - Having a single source of truth through viewState
+ * - Delegating business logic to MovieDetailsDomainInteractor
+ * - Converting view events to domain actions
+ * - Converting domain state to view state
+ *
+ * Uses Combine for reactive programming and state management.
  */
-struct MovieDetailsData {
-    /// Cast and crew members for the movie
-    var credits: [MovieCastMember]
+final class MovieDetailsViewModel: CombineViewModel {
+    /// Single source of truth for the view state
+    @Published var viewState: MovieDetailsViewState = .loading
 
-    /// User and critic reviews for the movie
-    var reviews: [MovieReview]
-}
+    // MARK: - CombineViewModel Requirements
 
-/**
- * ViewModel for the Movie Details screen.
- *
- * This ViewModel handles:
- * - Fetching movie credits (cast and crew)
- * - Fetching movie reviews
- * - Managing loading states and errors
- * - Providing computed properties for UI state
- *
- * Uses @Observable for SwiftUI integration and Combine for reactive programming.
- */
-@Observable
-final class MovieDetailsViewModel {
-    /// Combined data for movie credits and reviews
-    var data: MovieDetailsData = .init(credits: [], reviews: [])
+    /// Type alias for the view event type
+    typealias ViewEventType = MovieDetailsViewEvent
 
-    /// Error message to display to the user
-    var error: String?
+    /// Type alias for the view state type
+    typealias ViewStateType = MovieDetailsViewState
+
+    // MARK: - Dependencies
+
+    /// Domain interactor handling business logic
+    private let domainInteractor: MovieDetailsDomainInteractor
+
+    /// Reducer for converting domain state to view state
+    private let viewStateReducer: MovieDetailsViewStateReducing
+
+    /// Service locator for dependency management
+    private let serviceLocator: ServiceLocator
 
     /// The movie being displayed
-    let movie: Movie
+    private let movie: Movie
 
-    /// Network service for API calls
-    let service: HomeService
-
-    /// Combine cancellables for memory management
-    private var cancellables: Set<AnyCancellable> = .init()
+    // MARK: - Initialization
 
     /**
-     * Initialize the ViewModel with a movie and service locator.
+     * Initialize the ViewModel with dependencies.
      *
-     * - Parameter movie: The movie to display details for
-     * - Parameter serviceLocator: Service locator for dependency injection
+     * - Parameters:
+     *   - movie: The movie to display details for
+     *   - serviceLocator: Service locator for dependency injection
+     *   - domainInteractor: Optional domain interactor (created if not provided)
+     *   - viewStateReducer: Optional view state reducer (created if not provided)
      */
-    init(movie: Movie, serviceLocator: ServiceLocator) {
+    init(
+        movie: Movie,
+        serviceLocator: ServiceLocator,
+        domainInteractor: MovieDetailsDomainInteractor? = nil,
+        viewStateReducer: MovieDetailsViewStateReducing? = nil
+    ) {
         self.movie = movie
+        self.serviceLocator = serviceLocator
 
-        // Retrieve HomeService from ServiceLocator
-        do {
-            service = try serviceLocator.retrieve(HomeService.self)
-        } catch {
-            Logger.shared.service("Failed to retrieve HomeService from ServiceLocator: \(error)", level: .warning)
-            service = LiveHomeService()
-        }
+        // Initialize domain interactor
+        self.domainInteractor = domainInteractor ?? MovieDetailsDomainInteractor(
+            serviceLocator: serviceLocator,
+            movie: movie
+        )
+
+        // Initialize view state reducer
+        self.viewStateReducer = viewStateReducer ?? MovieDetailsViewStateReducer()
+
+        // Set up state observation
+        setupStateObservation()
+
+        // Load initial data
+        loadInitialData()
+    }
+
+    // MARK: - CombineViewModel Implementation
+
+    /**
+     * Handle incoming view events and delegate to domain interactor.
+     *
+     * This method implements the CombineViewModel protocol by processing view events,
+     * converting them to domain actions, and sending them to the domain interactor.
+     *
+     * - Parameter event: The view event to handle
+     */
+    func handle(_ event: MovieDetailsViewEvent) {
+        let domainAction = MovieDetailsDomainEventActionMap.map(event)
+        domainInteractor.handleAction(domainAction)
     }
 
     /**
-     * Fetch all movie details data (credits and reviews).
+     * Send view event - required by CombineViewModel protocol.
      *
-     * Makes parallel requests for credits and reviews, then combines
-     * the results into the data property. Handles errors appropriately.
+     * This method is the protocol requirement for sending view events.
+     *
+     * - Parameter event: The view event to send
+     */
+    func sendViewEvent(_ event: MovieDetailsViewEvent) {
+        handle(event)
+    }
+
+    // MARK: - Public Interface Methods
+
+    /**
+     * Fetch movie details (credits and reviews).
+     *
+     * Delegates to domain interactor through view event handling.
      */
     func fetchData() {
-        fetchCredits()
-            .zip(fetchReviews())
+        handle(.fetchData)
+    }
+
+    /**
+     * Toggle the favorite status of the movie.
+     *
+     * Delegates to domain interactor through view event handling.
+     *
+     * - Parameter movie: The movie to toggle favorite status for
+     */
+    func toggleFavorite(for movie: Movie) {
+        handle(.toggleFavorite(movie))
+    }
+
+    /**
+     * Check if a movie is currently favorited by the user.
+     *
+     * - Parameter movie: The movie to check
+     * - Returns: True if the movie is favorited, false otherwise
+     */
+    func isFavorited(movie: Movie) -> Bool {
+        guard case let .success(dataViewState) = viewState else {
+            return false
+        }
+        return dataViewState.favoriteMovies.contains(where: { $0.id == movie.id })
+    }
+
+    /**
+     * Get current favorite movies from view state.
+     *
+     * - Returns: Array of favorite movies, or empty array if not in success state
+     */
+    var favoriteMovies: [Movie] {
+        guard case let .success(dataViewState) = viewState else {
+            return []
+        }
+        return dataViewState.favoriteMovies
+    }
+
+    /**
+     * Get current error message from view state.
+     *
+     * - Returns: Error message if in error state, nil otherwise
+     */
+    var error: String? {
+        guard case let .error(errorMessage) = viewState else {
+            return nil
+        }
+        return errorMessage
+    }
+
+    // MARK: - Private Methods
+
+    /**
+     * Set up observation of domain state changes.
+     *
+     * This method observes the domain interactor's state and converts it to view state
+     * using the view state reducer.
+     */
+    private func setupStateObservation() {
+        domainInteractor.$currentState
+            .map { [weak self] domainState in
+                self?.viewStateReducer.reduce(domainState) ?? .loading
+            }
             .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { [weak self] completion in
-                if case let .failure(error) = completion {
-                    self?.handleError(error)
-                }
-            }, receiveValue: { [weak self] credits, reviews in
-                self?.data = MovieDetailsData(credits: credits, reviews: reviews)
-            })
-            .store(in: &cancellables)
+            .assign(to: &$viewState)
     }
 
     /**
-     * Fetch movie credits (cast and crew).
-     *
-     * - Returns: Publisher that emits array of cast members or Error
+     * Load initial data with appropriate timing to ensure state observation is established.
      */
-    private func fetchCredits() -> AnyPublisher<[MovieCastMember], Error> {
-        service.fetchCredits(with: movie.id)
-            .map(\.cast)
-            .eraseToAnyPublisher()
-    }
-
-    /**
-     * Fetch movie reviews.
-     *
-     * - Returns: Publisher that emits array of reviews or Error
-     */
-    private func fetchReviews() -> AnyPublisher<[MovieReview], Error> {
-        service.fetchReviews(with: movie.id)
-            .map(\.results)
-            .eraseToAnyPublisher()
-    }
-
-    /**
-     * Handle and display errors from API calls.
-     *
-     * Sets the error message for UI display and logs the error for debugging.
-     *
-     * - Parameter error: The error that occurred
-     */
-    private func handleError(_ error: Error) {
-        self.error = "Failed to load data: \(error.localizedDescription)"
-        #if DEBUG
-            // Only log in debug builds to avoid exposing internal details in production
-            Logger.shared.viewModel("MovieDetailsViewModel error: \(error)", level: .error)
-        #endif
+    private func loadInitialData() {
+        // Use a small delay to ensure the state observation pipeline is fully set up
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.001) { [weak self] in
+            self?.handle(.fetchData)
+        }
     }
 
     /**
@@ -132,30 +201,6 @@ final class MovieDetailsViewModel {
      * Logs deallocation for debugging purposes.
      */
     deinit {
-        #if DEBUG
-            Logger.shared.viewModel("MovieDetailsViewModel deallocated", level: .debug)
-        #endif
-    }
-}
-
-// MARK: - Computed Properties
-
-extension MovieDetailsViewModel {
-    /**
-     * Check if credits section should be displayed.
-     *
-     * - Returns: True if there are credits to show, false otherwise
-     */
-    var showCredits: Bool {
-        !data.credits.isEmpty
-    }
-
-    /**
-     * Check if reviews section should be displayed.
-     *
-     * - Returns: True if there are reviews to show, false otherwise
-     */
-    var showReviews: Bool {
-        !data.reviews.isEmpty
+        Logger.shared.viewModel("MovieDetailsViewModel deallocated", level: .debug)
     }
 }
