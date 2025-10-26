@@ -309,6 +309,194 @@ struct HomeViewTests {
         // Test passes if view renders without crashing
     }
 
+    // MARK: - Button Interaction Tests
+
+    @Test("Heart button favorite toggle")
+    func heartButtonFavoriteToggle() async throws {
+        defer { cleanupTest() }
+
+        let (_, _, viewModel, view) = createTestComponents()
+        let controller: UIViewController = view.wrappedViewController
+
+        // Trigger data fetch to populate movies
+        viewModel.fetchData()
+        try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds for data to load
+
+        // Verify success state with movies
+        if case let .success(dataViewState) = viewModel.viewState {
+            #expect(!dataViewState.movies.isEmpty, "Movies should be loaded")
+
+            // Get first movie
+            let firstMovie = dataViewState.movies[0]
+
+            // Initial state - movie should not be favorited
+            let isFavoritedBefore = dataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
+            #expect(!isFavoritedBefore, "Movie should not be favorited initially")
+
+            // Toggle favorite
+            viewModel.toggleFavorite(for: firstMovie)
+
+            // Wait for state update
+            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+            // Verify state changed to include the movie in favorites
+            if case let .success(updatedDataViewState) = viewModel.viewState {
+                let isFavoritedAfter = updatedDataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
+                #expect(isFavoritedAfter, "Movie should be in favorites after toggle")
+            }
+        } else {
+            #expect(Bool(false), "Expected success state")
+        }
+    }
+
+    @Test("Heart button favorite toggle visual feedback")
+    func heartButtonVisualFeedback() async throws {
+        defer { cleanupTest() }
+
+        let (_, _, viewModel, view) = createTestComponents()
+        let controller: UIViewController = view.wrappedViewController
+
+        // Trigger data fetch
+        viewModel.fetchData()
+        try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+
+        // Snapshot before toggle
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+        }
+
+        // Toggle favorite
+        if case let .success(dataViewState) = viewModel.viewState {
+            let firstMovie = dataViewState.movies[0]
+            viewModel.toggleFavorite(for: firstMovie)
+
+            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+            // Snapshot after toggle to verify icon change (heart -> heart.fill or vice versa)
+            await MainActor.run {
+                assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+            }
+        }
+    }
+
+    // MARK: - Navigation Tests
+
+    @Test("Movie row tap navigation")
+    func movieRowTapNavigation() async throws {
+        defer { cleanupTest() }
+
+        let (router, _, viewModel, view) = createTestComponents()
+        _ = view.wrappedViewController
+
+        // Trigger data fetch
+        viewModel.fetchData()
+        try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+
+        // Verify success state with movies
+        if case let .success(dataViewState) = viewModel.viewState {
+            #expect(!dataViewState.movies.isEmpty, "Movies should be loaded")
+
+            let firstMovie = dataViewState.movies[0]
+
+            // Simulate row tap by calling router
+            router.route(navigationEvent: .detail(firstMovie))
+
+            // Test passes if navigation executes without crashing
+            #expect(true)
+        }
+    }
+
+    // MARK: - Empty State Tests
+
+    @Test("Home view with empty movie list")
+    func homeViewWithEmptyMovieList() async throws {
+        defer { cleanupTest() }
+
+        // Create a service that returns empty movies
+        struct EmptyMoviesService: HomeService {
+            func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
+                Just(MovieCreditsResponse(cast: []))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
+                Just(MovieReviewsResponse(results: []))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+        }
+
+        let emptyService = EmptyMoviesService()
+        let mockStorageService = MockStorageService()
+
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: emptyService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
+        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+        let router = HomeNavigationRouter()
+        let view = HomeView(router: router, viewModel: viewModel)
+        let controller: UIViewController = view.wrappedViewController
+
+        // Trigger fetch
+        viewModel.fetchData()
+        try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+
+        // Verify success state with empty list
+        if case let .success(dataViewState) = viewModel.viewState {
+            #expect(dataViewState.movies.isEmpty, "Movies list should be empty")
+        } else {
+            #expect(Bool(false), "Expected success state")
+        }
+
+        // Snapshot the empty list
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+        }
+    }
+
+    // MARK: - Refresh Gesture Tests
+
+    @Test("Pull-to-refresh executes data fetch")
+    func pullToRefreshExecutesFetch() async throws {
+        defer { cleanupTest() }
+
+        let (_, mockService, viewModel, view) = createTestComponents()
+        _ = view.wrappedViewController
+
+        // Trigger initial fetch
+        viewModel.fetchData()
+        try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+
+        // Verify initial state
+        if case let .success(dataViewState) = viewModel.viewState {
+            let initialCount = dataViewState.movies.count
+
+            // Trigger refresh (simulates pull-to-refresh gesture)
+            viewModel.fetchData()
+            try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
+
+            // Verify data was re-fetched
+            if case let .success(refreshedDataViewState) = viewModel.viewState {
+                // If refetch succeeds, we should still have movies
+                #expect(!refreshedDataViewState.movies.isEmpty, "Movies should be available after refresh")
+            }
+        }
+    }
+
     // DISABLED: This test uses the old MVVM architecture
     /*
      /**

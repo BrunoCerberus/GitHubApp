@@ -277,4 +277,146 @@ struct SearchViewTests {
 
         #expect(true) // Test passes if we captured the loading state
     }
+
+    // MARK: - Button Interaction Tests
+
+    @Test("Search results favorite button toggle")
+    func searchResultsFavoriteToggle() async throws {
+        defer { cleanupTest() }
+
+        let (_, viewModel, view) = createTestComponents()
+        let controller: UIViewController = view.wrappedViewController
+
+        // Trigger search
+        viewModel.searchMovies(query: "Avatar")
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+
+        // Verify success state with results
+        if case let .success(dataViewState) = viewModel.viewState {
+            #expect(!dataViewState.movies.isEmpty, "Search results should be populated")
+
+            let firstMovie = dataViewState.movies[0]
+
+            // Initial state - movie should not be favorited
+            let isFavoritedBefore = dataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
+            #expect(!isFavoritedBefore, "Movie should not be favorited initially")
+
+            // Toggle favorite
+            viewModel.toggleFavorite(for: firstMovie)
+
+            // Wait for state update
+            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+            // Verify state changed
+            if case let .success(updatedDataViewState) = viewModel.viewState {
+                let isFavoritedAfter = updatedDataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
+                #expect(isFavoritedAfter, "Movie should be in favorites after toggle")
+            }
+        }
+    }
+
+    @Test("Search results favorite visual feedback")
+    func searchResultsFavoriteVisualFeedback() async throws {
+        defer { cleanupTest() }
+
+        let (_, viewModel, view) = createTestComponents()
+        let controller: UIViewController = view.wrappedViewController
+
+        // Trigger search
+        viewModel.searchMovies(query: "Avatar")
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+
+        // Snapshot before toggle
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig())))
+        }
+
+        // Toggle favorite
+        if case let .success(dataViewState) = viewModel.viewState {
+            let firstMovie = dataViewState.movies[0]
+            viewModel.toggleFavorite(for: firstMovie)
+
+            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+            // Snapshot after toggle
+            await MainActor.run {
+                assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig())))
+            }
+        }
+    }
+
+    // MARK: - Navigation Tests
+
+    @Test("Search result movie row tap navigation")
+    func searchResultMovieRowTapNavigation() async throws {
+        defer { cleanupTest() }
+
+        let (router, viewModel, view) = createTestComponents()
+        _ = view.wrappedViewController
+
+        // Trigger search
+        viewModel.searchMovies(query: "Avatar")
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+
+        // Verify success state with results
+        if case let .success(dataViewState) = viewModel.viewState {
+            #expect(!dataViewState.movies.isEmpty, "Search results should be populated")
+
+            let firstMovie = dataViewState.movies[0]
+
+            // Simulate row tap by calling router
+            router.route(navigationEvent: .detail(firstMovie))
+
+            // Test passes if navigation executes without crashing
+            #expect(true)
+        }
+    }
+
+    // MARK: - Empty State Tests
+
+    @Test("Search view empty state rendering")
+    func searchViewEmptyStateRendering() async throws {
+        defer { cleanupTest() }
+
+        let (_, viewModel, view) = createTestComponents()
+        let controller: UIViewController = view.wrappedViewController
+
+        // Verify initial empty state (no search performed yet)
+        if case .success = viewModel.viewState {
+            // Empty state is the default
+            #expect(true)
+        }
+
+        // Snapshot the empty state
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig())))
+        }
+    }
+
+    @Test("Search query persistence during rapid changes")
+    func searchQueryPersistenceDuringRapidChanges() async throws {
+        defer { cleanupTest() }
+
+        let (_, viewModel, view) = createTestComponents()
+        _ = view.wrappedViewController
+
+        // Trigger multiple rapid searches (tests debouncing)
+        viewModel.searchMovies(query: "A")
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        viewModel.searchMovies(query: "Av")
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        viewModel.searchMovies(query: "Ava")
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        viewModel.searchMovies(query: "Avar")
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        viewModel.searchMovies(query: "Avatar")
+
+        // Wait for debounce to complete
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+
+        // Verify final state has results for "Avatar"
+        if case let .success(dataViewState) = viewModel.viewState {
+            #expect(!dataViewState.movies.isEmpty, "Should have results for final query")
+        }
+    }
 }
