@@ -34,6 +34,12 @@ struct HomeViewTests {
         return (router, mockService, viewModel, view)
     }
 
+    private let iPhoneAirConfig = ViewImageConfig(
+        safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
+        size: CGSize(width: 393, height: 852),
+        traits: UITraitCollection()
+    )
+
     private func cleanupTest() {
         // Cleanup test resources
     }
@@ -51,14 +57,82 @@ struct HomeViewTests {
         // Give time for async operations and UI updates
         try await Task.sleep(nanoseconds: 3_500_000_000) // 3.5 seconds
 
-        // Using iPhone Air (iOS 26) dimensions
-        let iPhoneAirConfig = ViewImageConfig(
-            safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
-            size: CGSize(width: 393, height: 852),
-            traits: UITraitCollection()
-        )
-
         assertSnapshot(of: view.wrappedViewController, as: .wait(for: 1.0, on: .image(on: iPhoneAirConfig)))
+    }
+
+    @Test("Home view displays loading state")
+    func homeViewDisplaysLoadingState() async throws {
+        defer { cleanupTest() }
+
+        let (_, _, viewModel, view) = createTestComponents()
+        let controller: UIViewController = view.wrappedViewController
+
+        // Verify initial loading state is displayed
+        if case .loading = viewModel.viewState {
+            // Correct state
+        } else {
+            #expect(Bool(false), "Expected loading state initially")
+        }
+
+        // Snapshot the loading state
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+        }
+    }
+
+    @Test("Home view displays error message on fetch failure")
+    func homeViewDisplaysErrorMessageOnFetchFailure() async throws {
+        defer { cleanupTest() }
+
+        // Create a failing service
+        struct FailingHomeService: HomeService {
+            func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Fail(error: NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Network error occurred"])).eraseToAnyPublisher()
+            }
+
+            func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Fail(error: NSError(domain: "test", code: 1)).eraseToAnyPublisher()
+            }
+
+            func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
+                Fail(error: NSError(domain: "test", code: 1)).eraseToAnyPublisher()
+            }
+
+            func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
+                Fail(error: NSError(domain: "test", code: 1)).eraseToAnyPublisher()
+            }
+        }
+
+        try? APIKeysProvider.setMovieAPIKey("test-key")
+
+        let failingService = FailingHomeService()
+        let mockStorageService = MockStorageService()
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: failingService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
+        let errorViewModel = HomeViewModel(serviceLocator: serviceLocator)
+        let router = HomeNavigationRouter()
+        let view = HomeView(router: router, viewModel: errorViewModel)
+        let controller: UIViewController = view.wrappedViewController
+
+        // Trigger fetch
+        errorViewModel.fetchData()
+
+        // Wait for error to propagate
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+        // Verify error state
+        if case let .error(message) = errorViewModel.viewState {
+            #expect(!message.isEmpty, "Error message should not be empty")
+        } else {
+            #expect(Bool(false), "Expected error state")
+        }
+
+        // Snapshot the error state
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+        }
     }
 
     @Test("Search functionality and text change handling")

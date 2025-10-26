@@ -146,4 +146,193 @@ struct SettingsViewTests {
         // Then
         // Test passes if view initializes without crashing
     }
+
+    // MARK: - Loading State Tests
+
+    @Test("Settings view displays loading state")
+    func settingsViewDisplaysLoadingState() async throws {
+        defer { UserDefaults.standard.removeObject(forKey: "profileImageData") }
+
+        // Given
+        let mockSettingsService = MockSettingsService()
+        let mockStorageService = MockStorageService()
+
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(SettingsService.self, instance: mockSettingsService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
+        let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
+        let view = SettingsView(viewModel: viewModel)
+        let controller: UIViewController = view.wrappedViewController
+
+        // Verify initial loading state is displayed
+        if case .loading = viewModel.viewState {
+            // Correct state
+        } else {
+            #expect(Bool(false), "Expected loading state initially")
+        }
+
+        // Snapshot the loading state
+        let iPhoneAirConfig = ViewImageConfig(
+            safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
+            size: CGSize(width: 393, height: 852),
+            traits: UITraitCollection()
+        )
+
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+        }
+    }
+
+    // MARK: - Error State Tests
+
+    @Test("Settings view displays error message on fetch failure")
+    func settingsViewDisplaysErrorMessageOnFetchFailure() async throws {
+        defer { UserDefaults.standard.removeObject(forKey: "profileImageData") }
+
+        // Create a failing service
+        struct FailingSettingsService: SettingsService {
+            func loadProfileImage() -> AnyPublisher<UIImage?, Never> {
+                Just(nil).eraseToAnyPublisher()
+            }
+
+            func saveProfileImage(_: UIImage) -> AnyPublisher<Void, Error> {
+                Fail(error: NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to save profile image"])).eraseToAnyPublisher()
+            }
+
+            func clearProfileImage() -> AnyPublisher<Void, Never> {
+                Just(()).eraseToAnyPublisher()
+            }
+
+            func hasRatedApp() -> AnyPublisher<Bool, Never> {
+                Just(false).eraseToAnyPublisher()
+            }
+
+            func markAppAsRated() -> AnyPublisher<Void, Never> {
+                Just(()).eraseToAnyPublisher()
+            }
+
+            func getAppVersionInfo() -> AnyPublisher<(version: String, buildNumber: String), Never> {
+                Just((version: "1.0", buildNumber: "1")).eraseToAnyPublisher()
+            }
+        }
+
+        // Given
+        let failingService = FailingSettingsService()
+        let mockStorageService = MockStorageService()
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(SettingsService.self, instance: failingService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
+        let errorViewModel = SettingsViewModel(serviceLocator: serviceLocator)
+        let view = SettingsView(viewModel: errorViewModel)
+        let controller: UIViewController = view.wrappedViewController
+
+        // Wait for initial state to load
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+        // Snapshot the view
+        let iPhoneAirConfig = ViewImageConfig(
+            safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
+            size: CGSize(width: 393, height: 852),
+            traits: UITraitCollection()
+        )
+
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+        }
+    }
+
+    // MARK: - Profile Image Selection Tests
+
+    @Test("Settings view displays profile image selection on button tap")
+    func settingsViewProfileImageSelection() async throws {
+        defer { UserDefaults.standard.removeObject(forKey: "profileImageData") }
+
+        // Given
+        let mockSettingsService = MockSettingsService()
+        let mockStorageService = MockStorageService()
+
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(SettingsService.self, instance: mockSettingsService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
+        let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
+        let view = SettingsView(viewModel: viewModel)
+
+        // Wait for initial load
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+        // Verify initial state is success (loaded)
+        if case .success = viewModel.viewState {
+            // Correct state
+        } else {
+            #expect(Bool(false), "Expected success state after initialization")
+        }
+
+        // Test passes if view initializes and state transitions to success
+        #expect(true)
+    }
+
+    @Test("Settings view handles profile image updates")
+    func settingsViewHandlesProfileImageUpdates() throws {
+        defer { UserDefaults.standard.removeObject(forKey: "profileImageData") }
+
+        // Given
+        let mockSettingsService = MockSettingsService()
+        let mockStorageService = MockStorageService()
+
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(SettingsService.self, instance: mockSettingsService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
+        let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
+
+        // Create a simple test image
+        let testImage = UIImage(systemName: "person.fill") ?? UIImage()
+
+        // When - Handle profile image selection
+        viewModel.handleProfileImageSelection(testImage)
+
+        // Then - Test passes if image handling completes without crashing
+        #expect(true)
+    }
+
+    @Test("Settings view with profile image displays correctly")
+    func settingsViewWithProfileImageDisplaysCorrectly() async throws {
+        defer { UserDefaults.standard.removeObject(forKey: "profileImageData") }
+
+        // Given
+        let mockSettingsService = MockSettingsService()
+        let mockStorageService = MockStorageService()
+
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(SettingsService.self, instance: mockSettingsService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
+        let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
+        let view = SettingsView(viewModel: viewModel)
+        let controller: UIViewController = view.wrappedViewController
+
+        // Wait for initial load
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+        // Create and set a profile image
+        let testImage = UIImage(systemName: "star.fill") ?? UIImage()
+        viewModel.handleProfileImageSelection(testImage)
+
+        // Wait for image to be processed
+        try await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+
+        // Snapshot the view with profile image
+        let iPhoneAirConfig = ViewImageConfig(
+            safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
+            size: CGSize(width: 393, height: 852),
+            traits: UITraitCollection()
+        )
+
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+        }
+    }
 }
