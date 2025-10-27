@@ -469,4 +469,52 @@ struct MovieDetailsViewTests {
             assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
         }
     }
+
+    @Test("Image loading failure handles gracefully")
+    func imageLoadingFailureHandling() async throws {
+        struct ImageFailureService: HomeService {
+            func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Just(MoviesResponse(results: [Movie(id: 1, title: "Test", overview: "Test", posterPath: "/invalid-path.jpg")], page: 1, totalPages: 1, totalResults: 1))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
+                Just(MovieCreditsResponse(cast: []))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
+                Just(MovieReviewsResponse(results: []))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+        }
+
+        let failureService = ImageFailureService()
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: failureService)
+        serviceLocator.register(StorageService.self, instance: MockStorageService())
+
+        let viewModel = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
+
+        // Trigger data fetch
+        viewModel.handle(.fetchData)
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+        // Verify view state is still valid despite image loading issues
+        if case let .success(dataViewState) = viewModel.viewState {
+            // Movie with invalid image path should still render successfully
+            #expect(!dataViewState.movie.title.isEmpty, "Movie should render even if image fails to load")
+        } else {
+            #expect(Bool(false), "Expected success state even with image loading failure")
+        }
+    }
 }

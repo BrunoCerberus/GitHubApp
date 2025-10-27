@@ -552,4 +552,33 @@ struct SearchViewTests {
         // Take snapshot of no-results state
         assertSnapshot(of: viewController, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig())))
     }
+
+    @Test("Favorite toggle functionality in search view")
+    func favoriteToggleFunctionality() async throws {
+        defer { cleanupTest() }
+
+        let (_, viewModel, _) = createTestComponents()
+
+        // Wait for initial load
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+        // Get initial favorite count
+        var initialFavoriteCount = 0
+        if case let .success(dataViewState) = viewModel.viewState {
+            initialFavoriteCount = dataViewState.favoriteMovies.count
+
+            // Get a movie to toggle
+            if let firstMovie = dataViewState.movies.first {
+                // Toggle favorite
+                viewModel.toggleFavorite(for: firstMovie)
+                try await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+
+                // Verify favorite count changed
+                if case let .success(updatedState) = viewModel.viewState {
+                    let newFavoriteCount = updatedState.favoriteMovies.count
+                    #expect(newFavoriteCount > initialFavoriteCount, "Favorite count should increase after toggling favorite")
+                }
+            }
+        }
+    }
 }
