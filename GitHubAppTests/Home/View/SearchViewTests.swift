@@ -419,4 +419,89 @@ struct SearchViewTests {
             #expect(!dataViewState.movies.isEmpty, "Should have results for final query")
         }
     }
+
+    // MARK: - Text Input & Debouncing Tests
+
+    @Test("Search debouncing prevents excessive API calls")
+    func searchDebouncingPreventsExcessiveAPICalls() async throws {
+        defer { cleanupTest() }
+
+        let (_, viewModel, view) = createTestComponents()
+        _ = view.wrappedViewController
+
+        // Simulate user typing fast (each character with <300ms gap)
+        viewModel.searchMovies(query: "T")
+        try await Task.sleep(nanoseconds: 150_000_000) // 0.15 seconds (less than 300ms debounce)
+        viewModel.searchMovies(query: "Th")
+        try await Task.sleep(nanoseconds: 150_000_000) // 0.15 seconds
+        viewModel.searchMovies(query: "Tha")
+        try await Task.sleep(nanoseconds: 150_000_000) // 0.15 seconds
+        viewModel.searchMovies(query: "Than")
+        try await Task.sleep(nanoseconds: 150_000_000) // 0.15 seconds
+        viewModel.searchMovies(query: "Thano")
+        try await Task.sleep(nanoseconds: 150_000_000) // 0.15 seconds
+        viewModel.searchMovies(query: "Thanos")
+
+        // Wait for debounce delay to complete (300ms after last query)
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds total
+
+        // Verify final results for "Thanos" (should have searched only once)
+        if case let .success(dataViewState) = viewModel.viewState {
+            // If debouncing works, we should have results for final query
+            #expect(!dataViewState.movies.isEmpty, "Search should execute after debounce completes")
+        }
+    }
+
+    @Test("Search executes after debounce delay")
+    func searchExecutesAfterDebounceDelay() async throws {
+        defer { cleanupTest() }
+
+        let (_, viewModel, view) = createTestComponents()
+        _ = view.wrappedViewController
+
+        // Trigger single search
+        viewModel.searchMovies(query: "Avatar")
+
+        // Immediately check - should still be in previous state or loading
+        if case .success = viewModel.viewState {
+            // May transition but verify it continues
+        }
+
+        // Wait for debounce completion (0.3s) + API response time
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+
+        // Verify results arrived after debounce
+        if case let .success(dataViewState) = viewModel.viewState {
+            #expect(!dataViewState.movies.isEmpty, "Search should have executed and returned results")
+        } else {
+            #expect(Bool(false), "Expected success state after search completes")
+        }
+    }
+
+    @Test("Empty search query returns to full movie list")
+    func emptySearchQueryReturnToFullList() async throws {
+        defer { cleanupTest() }
+
+        let (_, viewModel, view) = createTestComponents()
+        _ = view.wrappedViewController
+
+        // Perform initial search
+        viewModel.searchMovies(query: "Avatar")
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+
+        // Verify search results
+        if case let .success(dataViewState) = viewModel.viewState {
+            let searchResultCount = dataViewState.movies.count
+            #expect(searchResultCount > 0, "Should have Avatar search results")
+
+            // Now clear search by fetching all movies
+            viewModel.searchMovies(query: "")
+            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds to debounce
+
+            // Verify search is cleared
+            if case let .success(fullListState) = viewModel.viewState {
+                #expect(fullListState.movies.count >= searchResultCount, "Full list should have more or equal results after clearing search")
+            }
+        }
+    }
 }

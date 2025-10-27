@@ -497,6 +497,132 @@ struct HomeViewTests {
         }
     }
 
+    // MARK: - Error Handling Tests
+
+    @Test("Network error displays error message to user")
+    func networkErrorDisplaysErrorMessage() async throws {
+        defer { cleanupTest() }
+
+        // Create a service that fails with network error
+        struct NetworkErrorService: HomeService {
+            func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Fail(error: NSError(domain: "NSURLErrorDomain", code: -1001, userInfo: [NSLocalizedDescriptionKey: "The request timed out."]))
+                    .eraseToAnyPublisher()
+            }
+
+            func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Fail(error: NSError(domain: "NSURLErrorDomain", code: -1001)).eraseToAnyPublisher()
+            }
+
+            func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
+                Fail(error: NSError(domain: "test", code: 1)).eraseToAnyPublisher()
+            }
+
+            func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
+                Fail(error: NSError(domain: "test", code: 1)).eraseToAnyPublisher()
+            }
+        }
+
+        let errorService = NetworkErrorService()
+        let mockStorageService = MockStorageService()
+
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: errorService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
+        let viewModel = HomeViewModel(serviceLocator: serviceLocator)
+        let router = HomeNavigationRouter()
+        let view = HomeView(router: router, viewModel: viewModel)
+        let controller: UIViewController = view.wrappedViewController
+
+        // Trigger fetch that will fail
+        viewModel.fetchData()
+        try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
+
+        // Verify error state
+        if case let .error(message) = viewModel.viewState {
+            #expect(!message.isEmpty, "Error message should display network error")
+        } else {
+            #expect(Bool(false), "Expected error state")
+        }
+
+        // Snapshot the error message
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+        }
+    }
+
+    @Test("Multiple favorites toggle consistency")
+    func multipleFavoritesTogglesConsistency() async throws {
+        defer { cleanupTest() }
+
+        let (_, _, viewModel, view) = createTestComponents()
+        _ = view.wrappedViewController
+
+        // Trigger initial fetch
+        viewModel.fetchData()
+        try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+
+        // Verify success with movies
+        if case let .success(dataViewState) = viewModel.viewState {
+            #expect(!dataViewState.movies.isEmpty, "Should have movies")
+
+            let movie1 = dataViewState.movies[0]
+            let movie2 = dataViewState.movies.count > 1 ? dataViewState.movies[1] : nil
+
+            // Toggle first movie as favorite
+            viewModel.toggleFavorite(for: movie1)
+            try await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+
+            // Verify first movie is favorited
+            if case let .success(state1) = viewModel.viewState {
+                let isMovie1Favorited = state1.favoriteMovies.contains(where: { $0.id == movie1.id })
+                #expect(isMovie1Favorited, "First movie should be favorited")
+
+                // Toggle second movie
+                if let movie2 {
+                    viewModel.toggleFavorite(for: movie2)
+                    try await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+
+                    // Verify both are favorited
+                    if case let .success(state2) = viewModel.viewState {
+                        let isMovie2Favorited = state2.favoriteMovies.contains(where: { $0.id == movie2.id })
+                        #expect(isMovie2Favorited, "Second movie should be favorited")
+                        #expect(state2.favoriteMovies.count >= 2, "Should have at least 2 favorites")
+                    }
+                }
+            }
+        }
+    }
+
+    @Test("Search clears when fetching full list")
+    func searchClearsWhenFetchingFullList() async throws {
+        defer { cleanupTest() }
+
+        let (_, _, viewModel, view) = createTestComponents()
+        _ = view.wrappedViewController
+
+        // Perform a search
+        viewModel.searchMovies(query: "Avatar")
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+
+        // Verify search results
+        if case let .success(dataViewState) = viewModel.viewState {
+            let searchCount = dataViewState.movies.count
+            #expect(searchCount > 0, "Should have search results")
+
+            // Now fetch full list
+            viewModel.fetchData()
+            try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+
+            // Verify we have full list (should be different size)
+            if case let .success(fullState) = viewModel.viewState {
+                // Full list may have more or fewer results depending on API
+                #expect(!fullState.movies.isEmpty, "Should have full list results")
+            }
+        }
+    }
+
     // DISABLED: This test uses the old MVVM architecture
     /*
      /**

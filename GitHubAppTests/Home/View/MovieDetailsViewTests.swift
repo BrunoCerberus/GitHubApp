@@ -262,4 +262,211 @@ struct MovieDetailsViewTests {
         // View should be properly initialized with router
         #expect(true)
     }
+
+    // MARK: - Empty Sections Tests
+
+    @Test("Movie details empty credits with reviews present")
+    func movieDetailsEmptyCreditsWithReviewsPresent() async throws {
+        // Create a service that returns credits but no reviews
+        struct PartialDataService: HomeService {
+            func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
+                // Return empty credits
+                Just(MovieCreditsResponse(cast: []))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
+                // Return some reviews
+                let review = MovieReview(id: "1", author: "Test Author", content: "Great movie!")
+                return Just(MovieReviewsResponse(results: [review]))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+        }
+
+        try? APIKeysProvider.setMovieAPIKey("test-api-key")
+        defer { try? APIKeysProvider.removeMovieAPIKey() }
+
+        let partialService = PartialDataService()
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: partialService)
+
+        let viewModel = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
+        let router = MovieDetailsNavigationRouter()
+        let view = MovieDetailsView(router: router, viewModel: viewModel)
+        let controller: UIViewController = view.wrappedViewController
+
+        // Trigger data fetch
+        viewModel.fetchData()
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+
+        // Verify success state
+        if case let .success(dataViewState) = viewModel.viewState {
+            // Credits should be empty
+            #expect(dataViewState.credits.isEmpty, "Credits should be empty")
+            // Reviews should have content
+            #expect(!dataViewState.reviews.isEmpty, "Reviews should be present")
+        } else {
+            #expect(Bool(false), "Expected success state")
+        }
+
+        // Snapshot showing empty credits section
+        let iPhoneAirConfig = ViewImageConfig(
+            safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
+            size: CGSize(width: 393, height: 852),
+            traits: UITraitCollection()
+        )
+
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+        }
+    }
+
+    @Test("Movie details empty reviews with credits present")
+    func movieDetailsEmptyReviewsWithCreditsPresent() async throws {
+        // Create a service that returns credits but no reviews
+        struct PartialDataService: HomeService {
+            func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
+                // Return some credits
+                let actor = MovieCastMember(id: 1, name: "Tom Cruise", character: "Maverick")
+                return Just(MovieCreditsResponse(cast: [actor]))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
+                // Return empty reviews
+                Just(MovieReviewsResponse(results: []))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+        }
+
+        try? APIKeysProvider.setMovieAPIKey("test-api-key")
+        defer { try? APIKeysProvider.removeMovieAPIKey() }
+
+        let partialService = PartialDataService()
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: partialService)
+
+        let viewModel = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
+        let router = MovieDetailsNavigationRouter()
+        let view = MovieDetailsView(router: router, viewModel: viewModel)
+        let controller: UIViewController = view.wrappedViewController
+
+        // Trigger data fetch
+        viewModel.fetchData()
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+
+        // Verify success state
+        if case let .success(dataViewState) = viewModel.viewState {
+            // Credits should have content
+            #expect(!dataViewState.credits.isEmpty, "Credits should be present")
+            // Reviews should be empty
+            #expect(dataViewState.reviews.isEmpty, "Reviews should be empty")
+        } else {
+            #expect(Bool(false), "Expected success state")
+        }
+
+        // Snapshot showing empty reviews section
+        let iPhoneAirConfig = ViewImageConfig(
+            safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
+            size: CGSize(width: 393, height: 852),
+            traits: UITraitCollection()
+        )
+
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+        }
+    }
+
+    @Test("Movie details both credits and reviews empty")
+    func movieDetailsBothEmptySections() async throws {
+        // Create a service that returns no credits or reviews
+        struct EmptyDataService: HomeService {
+            func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
+                Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
+                Just(MovieCreditsResponse(cast: []))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+
+            func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
+                Just(MovieReviewsResponse(results: []))
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+        }
+
+        try? APIKeysProvider.setMovieAPIKey("test-api-key")
+        defer { try? APIKeysProvider.removeMovieAPIKey() }
+
+        let emptyService = EmptyDataService()
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(HomeService.self, instance: emptyService)
+
+        let viewModel = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
+        let router = MovieDetailsNavigationRouter()
+        let view = MovieDetailsView(router: router, viewModel: viewModel)
+        let controller: UIViewController = view.wrappedViewController
+
+        // Trigger data fetch
+        viewModel.fetchData()
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+
+        // Verify success state with empty sections
+        if case let .success(dataViewState) = viewModel.viewState {
+            #expect(dataViewState.credits.isEmpty, "Credits should be empty")
+            #expect(dataViewState.reviews.isEmpty, "Reviews should be empty")
+        } else {
+            #expect(Bool(false), "Expected success state")
+        }
+
+        // Snapshot showing both sections empty
+        let iPhoneAirConfig = ViewImageConfig(
+            safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
+            size: CGSize(width: 393, height: 852),
+            traits: UITraitCollection()
+        )
+
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+        }
+    }
 }
