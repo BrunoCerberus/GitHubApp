@@ -176,6 +176,142 @@ struct LocalizableTests {
         #expect(errorMessage.contains(testURL), "Error message should handle URLs with special characters")
     }
 
+    // MARK: - Settings Tests
+
+    @Test("Settings title is properly localized")
+    func settingsTitle() {
+        let title = Localizable.settings.title
+
+        #expect(!title.isEmpty, "Settings title should not be empty")
+        #expect(title != "settings.title", "String should be localized, not showing the key")
+    }
+
+    @Test("Settings profile image label is properly localized")
+    func settingsProfileImage() {
+        let label = Localizable.settings.profileImage
+
+        #expect(!label.isEmpty, "Profile image label should not be empty")
+        #expect(label != "settings.profile_image", "String should be localized, not showing the key")
+    }
+
+    @Test("Settings profile image tap hint is properly localized")
+    func settingsProfileImageTapToChange() {
+        let hint = Localizable.settings.profileImageTapToChange
+
+        #expect(!hint.isEmpty, "Profile image hint should not be empty")
+        #expect(hint != "settings.profile_image_tap_to_change", "String should be localized, not showing the key")
+    }
+
+    @Test("Settings app version label is properly localized")
+    func settingsAppVersion() {
+        let label = Localizable.settings.appVersion
+
+        #expect(!label.isEmpty, "App version label should not be empty")
+        #expect(label != "settings.app_version", "String should be localized, not showing the key")
+    }
+
+    @Test("Settings clear favorites button is properly localized")
+    func settingsClearFavoriteMovies() {
+        let label = Localizable.settings.clearFavoriteMovies
+
+        #expect(!label.isEmpty, "Clear favorites button should not be empty")
+        #expect(label != "settings.clear_favorited_movies", "String should be localized, not showing the key")
+    }
+
+    @Test("Settings clear favorites confirmation is properly localized")
+    func settingsClearFavoriteMoviesConfirmation() {
+        let message = Localizable.settings.clearFavoriteMoviesConfirmation
+
+        #expect(!message.isEmpty, "Clear favorites confirmation should not be empty")
+        #expect(message != "settings.clear_favorited_movies_confirmation", "String should be localized, not showing the key")
+    }
+
+    @Test("Settings clear favorites alert title is properly localized")
+    func settingsClearFavoriteMoviesAlertTitle() {
+        let title = Localizable.settings.clearFavoriteMoviesAlertTitle
+
+        #expect(!title.isEmpty, "Clear favorites alert title should not be empty")
+        #expect(title != "settings.clear_favorited_movies_alert_title", "String should be localized, not showing the key")
+    }
+
+    @Test("Settings clear favorites alert message is properly localized")
+    func settingsClearFavoriteMoviesAlertMessage() {
+        let message = Localizable.settings.clearFavoriteMoviesAlertMessage
+
+        #expect(!message.isEmpty, "Clear favorites alert message should not be empty")
+        #expect(message != "settings.clear_favorited_movies_alert_message", "String should be localized, not showing the key")
+    }
+
+    @Test("Settings clear favorites alert clear button is properly localized")
+    func settingsClearFavoriteMoviesAlertClear() {
+        let buttonText = Localizable.settings.clearFavoriteMoviesAlertClear
+
+        #expect(!buttonText.isEmpty, "Clear button should not be empty")
+        #expect(buttonText != "settings.clear_favorited_movies_alert_clear", "String should be localized, not showing the key")
+    }
+
+    @Test("Settings clear favorites alert cancel button is properly localized")
+    func settingsClearFavoriteMoviesAlertCancel() {
+        let buttonText = Localizable.settings.clearFavoriteMoviesAlertCancel
+
+        #expect(!buttonText.isEmpty, "Cancel button should not be empty")
+        #expect(buttonText != "settings.clear_favorited_movies_alert_cancel", "String should be localized, not showing the key")
+    }
+
+    @Test("Settings rate app section title is properly localized")
+    func settingsRateApp() {
+        let title = Localizable.settings.rateApp
+
+        #expect(!title.isEmpty, "Rate app section title should not be empty")
+        #expect(title != "settings.rate_app", "String should be localized, not showing the key")
+    }
+
+    @Test("Settings rate app message is properly localized")
+    func settingsRateAppMessage() {
+        let message = Localizable.settings.rateAppMessage
+
+        #expect(!message.isEmpty, "Rate app message should not be empty")
+        #expect(message != "settings.rate_app_message", "String should be localized, not showing the key")
+    }
+
+    @Test("Settings rate app button is properly localized")
+    func settingsRateAppButton() {
+        let buttonText = Localizable.settings.rateAppButton
+
+        #expect(!buttonText.isEmpty, "Rate app button should not be empty")
+        #expect(buttonText != "settings.rate_app_button", "String should be localized, not showing the key")
+    }
+
+    @Test("Settings rate app thanks message is properly localized")
+    func settingsRateAppThanks() {
+        let message = Localizable.settings.rateAppThanks
+
+        #expect(!message.isEmpty, "Rate app thanks message should not be empty")
+        #expect(message != "settings.rate_app_thanks", "String should be localized, not showing the key")
+    }
+
+    @Test("Convenience access to settings works correctly")
+    func settingsConvenience() {
+        #expect(!Localizable.settings.title.isEmpty, "Settings title should be accessible")
+        #expect(Localizable.settings.title == Localizable.settings.title, "Convenience access should be consistent")
+    }
+
+    @Test("Movie details loading message is properly localized")
+    func movieDetailsLoadingDetails() {
+        let loadingMessage = Localizable.movieDetails.loadingDetails
+
+        #expect(!loadingMessage.isEmpty, "Loading message should not be empty")
+        #expect(loadingMessage != "movie_details.loading", "String should be localized, not showing the key")
+    }
+
+    @Test("Home search prompt is properly localized")
+    func homeSearchMovies() {
+        let searchPrompt = Localizable.home.searchMovies
+
+        #expect(!searchPrompt.isEmpty, "Search prompt should not be empty")
+        #expect(searchPrompt != "home.search_movies", "String should be localized, not showing the key")
+    }
+
     // MARK: - NSLocalizedString Integration Tests
 
     @Test("All localized strings are properly formatted")
@@ -185,18 +321,25 @@ struct LocalizableTests {
             Localizable.movieDetails.creditsEmpty,
             Localizable.movieDetails.reviewsTitle,
             Localizable.movieDetails.reviewsEmpty,
+            Localizable.movieDetails.loadingDetails,
             Localizable.favorites.title,
             Localizable.favorites.emptyState,
+            Localizable.settings.title,
+            Localizable.settings.profileImage,
+            Localizable.settings.appVersion,
+            Localizable.settings.clearFavoriteMovies,
+            Localizable.settings.rateApp,
             Localizable.apiErrors.urlConstructionFailed,
             Localizable.widget.upcomingMoviesTitle,
             Localizable.widget.upcomingMoviesDescription,
             Localizable.widget.loadingMovies,
             Localizable.home.loadingMovies,
+            Localizable.home.searchMovies,
         ]
 
         for string in strings {
             #expect(!string.isEmpty, "Localized string should not be empty: \(string)")
-            #expect(!(string.hasPrefix("movie_details.") || string.hasPrefix("favorites.") || string.hasPrefix("api_error.") || string.hasPrefix("widget.") || string.hasPrefix("home.")),
+            #expect(!(string.hasPrefix("movie_details.") || string.hasPrefix("favorites.") || string.hasPrefix("settings.") || string.hasPrefix("api_error.") || string.hasPrefix("widget.") || string.hasPrefix("home.")),
                     "String should be localized, not showing the key: \(string)")
         }
     }
