@@ -525,4 +525,28 @@ struct SettingsViewTests {
         // The successView shows rate app card only if !viewModel.hasRatedApp
         #expect(true)
     }
+
+    @Test("Settings onAppear lifecycle triggers data load")
+    func settingsOnAppearLifecycleTest() async throws {
+        let mockService = MockSettingsService()
+        let mockStorageService = MockStorageService()
+
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(SettingsService.self, instance: mockService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
+
+        // Create viewModel which should trigger onAppear
+        let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
+
+        // Wait for onAppear lifecycle to complete
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+        // Verify that profile image was loaded during onAppear
+        if case let .success(dataViewState) = viewModel.viewState {
+            // The success state indicates onAppear processed correctly
+            #expect(true, "Settings view lifecycle completed successfully")
+        } else {
+            #expect(Bool(false), "Expected success state after onAppear lifecycle")
+        }
+    }
 }

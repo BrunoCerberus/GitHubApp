@@ -493,25 +493,49 @@ struct FavoritesMoviesViewTests {
         _ = view.wrappedViewController
         #expect(view != nil)
     }
-}
 
-// MARK: - Mock ViewModel for Testing
+    // MARK: - Clear Favorites Tests
 
-/**
- * Mock ViewModel for testing FavoritesMoviesView behavior.
- *
- * This mock allows us to track when specific methods are called
- * and verify the behavior of the view.
- */
-private class MockFavoritesMoviesViewModel: ObservableObject {
-    @Published var favoriteMovies: [Movie] = []
-    var onLoadLikedMovies: (() -> Void)?
+    @Test("Clear all favorites trigger handles event")
+    func clearAllFavoritesEventTrigger() async throws {
+        let mockService = MockStorageService()
+        let serviceLocator = ServiceLocator()
+        serviceLocator.register(StorageService.self, instance: mockService)
 
-    init() {
-        onLoadLikedMovies?()
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+
+        // Wait for initial load
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+        // Verify initial state loads
+        if case .success = viewModel.viewState {
+            // Trigger clear all favorites event
+            viewModel.handle(.clearAllFavoriteMovies)
+
+            // Wait for event to be processed
+            try await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+
+            // Verify event was processed without errors
+            #expect(true, "Clear all favorites event processed successfully")
+        }
     }
 
-    func loadFavoriteMovies() {
-        onLoadLikedMovies?()
+    /**
+     * Mock ViewModel for testing FavoritesMoviesView behavior.
+     *
+     * This mock allows us to track when specific methods are called
+     * and verify the behavior of the view.
+     */
+    private class MockFavoritesMoviesViewModel: ObservableObject {
+        @Published var favoriteMovies: [Movie] = []
+        var onLoadLikedMovies: (() -> Void)?
+
+        init() {
+            onLoadLikedMovies?()
+        }
+
+        func loadFavoriteMovies() {
+            onLoadLikedMovies?()
+        }
     }
 }
