@@ -125,8 +125,8 @@ jobs:
       with:
         name: unit-test-results
         path: |
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult.zip
+          /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+        if-no-files-found: warn
 
   ui-tests:
     name: UI Tests
@@ -180,8 +180,8 @@ jobs:
       with:
         name: ui-test-results
         path: |
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult.zip
+          /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+        if-no-files-found: warn
 
   snapshot-tests:
     name: Snapshot Tests
@@ -235,8 +235,8 @@ jobs:
       with:
         name: snapshot-test-results
         path: |
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult.zip
+          /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+        if-no-files-found: warn
 
   test-results:
     name: Test Results Summary

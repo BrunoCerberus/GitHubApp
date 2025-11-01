@@ -53,8 +53,8 @@ jobs:
       with:
         name: scheduled-unit-test-results
         path: |
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult.zip
+          /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+        if-no-files-found: warn
         retention-days: 5
 
   ui-tests:
@@ -103,8 +103,8 @@ jobs:
       with:
         name: scheduled-ui-test-results
         path: |
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult.zip
+          /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+        if-no-files-found: warn
         retention-days: 5
 
   snapshot-tests:
@@ -153,8 +153,8 @@ jobs:
       with:
         name: scheduled-snapshot-test-results
         path: |
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
-          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult.zip
+          /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+        if-no-files-found: warn
         retention-days: 5
 
   test-results:
