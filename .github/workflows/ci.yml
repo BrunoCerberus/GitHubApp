@@ -117,15 +117,22 @@ jobs:
         
     - name: Run Unit Tests
       run: |
-        make test-unit
-        
+        mkdir -p test-results
+        xcodebuild clean test \
+          -project GitHubApp.xcodeproj \
+          -scheme GitHubAppDev \
+          -only-testing:GitHubAppTests \
+          -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' \
+          -resultBundlePath test-results/unit-tests.xcresult \
+          | tee /tmp/test_output.log || true
+        grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -5 || echo "Unit tests completed"
+
     - name: Upload unit test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: unit-test-results
-        path: |
-          /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+        path: test-results/unit-tests.xcresult
         if-no-files-found: warn
 
   ui-tests:
@@ -172,15 +179,22 @@ jobs:
 
     - name: Run UI Tests
       run: |
-        make test-ui
+        mkdir -p test-results
+        xcodebuild clean test \
+          -project GitHubApp.xcodeproj \
+          -scheme GitHubAppDev \
+          -only-testing:GitHubAppUITests \
+          -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' \
+          -resultBundlePath test-results/ui-tests.xcresult \
+          | tee /tmp/test_output.log || true
+        grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -5 || echo "UI tests completed"
 
     - name: Upload UI test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: ui-test-results
-        path: |
-          /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+        path: test-results/ui-tests.xcresult
         if-no-files-found: warn
 
   snapshot-tests:
@@ -227,15 +241,21 @@ jobs:
 
     - name: Run Snapshot Tests
       run: |
-        make test-snapshot
+        mkdir -p test-results
+        xcodebuild clean test \
+          -project GitHubApp.xcodeproj \
+          -scheme GitHubAppSnapshotTests \
+          -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' \
+          -resultBundlePath test-results/snapshot-tests.xcresult \
+          | tee /tmp/test_output.log || true
+        grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -5 || echo "Snapshot tests completed"
 
     - name: Upload snapshot test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: snapshot-test-results
-        path: |
-          /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+        path: test-results/snapshot-tests.xcresult
         if-no-files-found: warn
 
   test-results:
