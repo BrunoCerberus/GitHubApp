@@ -11,18 +11,24 @@ This guide helps contributors work consistently across this iOS Swift project. K
   - Each feature contains: `Domain/`, `View/`, `ViewModel/`, `API/` (if needed)
 - Widget: `GitHubAppWidgetExtension/` with image caching via App Groups.
 - Localization: `en.lproj/`, `es.lproj/`, `pt-BR.lproj/` for multi-language support.
-- Tests: `GitHubAppTests/` (unit, snapshots) and `GitHubAppUITests/` (UI tests including SearchView tests).
+- Tests:
+  - `GitHubAppTests/` (unit tests)
+  - `GitHubAppUITests/` (UI interaction tests)
+  - `GitHubAppSnapshotTests/` (visual regression tests with SnapshotTesting)
 - Config/build: `project.yml` (XcodeGen), `Makefile`, `.github/workflows/`.
 - Scripts: `scripts/` (e.g., `generate-project.sh`, `coverage-badge.sh`).
 
 ## Build, Test, and Development Commands
 - `make setup` – Install XcodeGen and generate the project.
 - `make generate` – Regenerate `GitHubApp.xcodeproj` from `project.yml`.
-- `make test` | `make test-unit` | `make test-ui` – Run tests on iOS Simulator (iPhone Air, iOS 26.0).
+- `make test` – Run all tests (unit + UI + snapshot) on iOS Simulator (iPhone Air, iOS 26.0).
+- `make test-unit` – Run unit tests only.
+- `make test-ui` – Run UI interaction tests only.
+- `make test-snapshot` – Run snapshot visual regression tests only.
 - `make coverage` | `make coverage-badge` – Show coverage and update `badges/coverage.svg`.
 - `make clean` | `make clean-packages` – Remove generated project/SPM artifacts.
 - Requires Xcode 26.0.1+.
-Open in Xcode with: `open GitHubApp.xcodeproj`. Use schemes: `GitHubAppDev` (dev), `GitHubAppProd` (release).
+Open in Xcode with: `open GitHubApp.xcodeproj`. Use schemes: `GitHubAppDev` (dev), `GitHubAppProd` (release), `GitHubAppSnapshotTests` (snapshot tests).
 
 ## Coding Style & Naming Conventions
 - Swift 5. Indentation: 4 spaces. Prefer `final` where applicable.
@@ -31,12 +37,17 @@ Open in Xcode with: `open GitHubApp.xcodeproj`. Use schemes: `GitHubAppDev` (dev
 - Lint/format: SwiftLint config at `GitHubApp/.swiftlint.yml`; format with SwiftFormat (installed via `make init`).
 
 ## Testing Guidelines
-- Framework: Swift Testing; snapshot images under `GitHubAppTests/**/__Snapshots__/`.
+- Framework: Swift Testing; snapshot images under `GitHubAppSnapshotTests/**/__Snapshots__/`.
+- Test Organization:
+  - **Unit Tests**: `GitHubAppTests/` - Business logic and domain tests
+  - **UI Tests**: `GitHubAppUITests/` - UI interaction and integration tests
+  - **Snapshot Tests**: `GitHubAppSnapshotTests/` - Visual regression tests
 - Naming: Mirror source names with `*Tests.swift` (e.g., `HomeViewModelTests.swift`). Group by feature folders.
-- Run unit/UI tests via Makefile (see above). Aim to keep or improve coverage (`make coverage`).
+- Run tests via Makefile: `make test-unit`, `make test-ui`, `make test-snapshot`. Aim to keep or improve coverage (`make coverage`).
 - **ServiceLocator Pattern in Tests**: Use `createTestServiceLocator()` to inject mock services per test.
 - **StorageService Testing**: Register `MockStorageService` in test ServiceLocator; no shared state between tests.
 - **Service Coordination**: Test DomainInteractor service coordination logic with isolated mock services.
+- **CI/CD Testing**: Tests run in parallel jobs (unit, UI, snapshot) with explicit `-resultBundlePath` for artifact collection.
 
 ## Commit & Pull Request Guidelines
 - Use Conventional Commits (e.g., `feat:`, `fix:`, `docs:`, `refactor:`). Example: `refactor: update domain interactors`.

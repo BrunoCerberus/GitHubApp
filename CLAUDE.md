@@ -48,6 +48,7 @@ GitHubApp/
 - **Coverage**: `make coverage` (shows coverage percentage)
 - **Unit Tests**: `make test-unit`
 - **UI Tests**: `make test-ui`
+- **Snapshot Tests**: `make test-snapshot`
 - **Deeplink Tests**: `make deeplink-test`
 
 ### Code Quality
@@ -65,10 +66,10 @@ The project includes multiple Xcode schemes for different purposes:
 
 - **GitHubAppDev**: Main development scheme (Debug configuration)
   - Builds main app and widget extension
-  - Runs all tests (unit + UI) during test action
-- **GitHubAppProd**: Production scheme (Release configuration) 
+  - Runs all tests (unit + UI + snapshot) during test action
+- **GitHubAppProd**: Production scheme (Release configuration)
   - Builds main app and widget extension
-  - Runs all tests (unit + UI) during test action
+  - Runs all tests (unit + UI + snapshot) during test action
 - **GitHubAppTests**: Dedicated unit testing scheme
   - Focuses solely on unit test execution
   - Builds and runs only the GitHubAppTests target
@@ -77,6 +78,10 @@ The project includes multiple Xcode schemes for different purposes:
   - Focuses solely on UI test execution
   - Builds and runs only the GitHubAppUITests target
   - Useful for isolated UI testing and debugging
+- **GitHubAppSnapshotTests**: Dedicated snapshot testing scheme
+  - Focuses solely on snapshot test execution
+  - Builds and runs only the GitHubAppSnapshotTests target
+  - Useful for isolated snapshot testing and reference image management
 
 ## API Configuration
 - **API Key**: The Movie Database API key stored in `Secrets.plist` (gitignored for security)
@@ -352,6 +357,9 @@ make clean             # Clean generated files
 
 ## Continuous Integration
 - GitHub Actions workflows for CI/CD
+- **Parallel Test Execution**: Unit, UI, and snapshot tests run concurrently
+- **Explicit Result Paths**: Uses `-resultBundlePath` for reliable artifact collection
+- **Resilient Workflows**: Gracefully handles missing artifacts with `continue-on-error`
 - Automated testing on pull requests
 - Build verification for multiple configurations
 - Release automation with tagged versions
@@ -374,10 +382,16 @@ This project includes custom slash commands for Claude Code to streamline develo
 - **Equivalent**: `make test-unit`
 
 #### `/test-ui` - Run UI Tests Only
-- **Description**: Executes UI tests including snapshot testing
+- **Description**: Executes UI tests including interaction testing
 - **Usage**: `/test-ui`
 - **Timeout**: 300 seconds (UI tests take time)
 - **Equivalent**: `make test-ui`
+
+#### `/test-snapshot` - Run Snapshot Tests Only
+- **Description**: Executes snapshot tests for visual regression testing
+- **Usage**: `/test-snapshot`
+- **Timeout**: 300 seconds (snapshot tests take time)
+- **Equivalent**: `make test-snapshot`
 
 #### `/coverage` - Generate Coverage Report
 - **Description**: Runs tests and generates detailed code coverage report

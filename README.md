@@ -13,10 +13,10 @@ This project includes comprehensive GitHub Actions workflows for continuous inte
 
 #### 1. CI Pipeline (`ci.yml`)
 **Triggers**: Pull requests to `develop`, `master`, or `main` branches
-- **Tests**: Runs unit tests and UI tests with code coverage
+- **Tests**: Runs unit tests, UI tests, and snapshot tests in parallel with code coverage
 - **Builds**: Builds the app for both Dev and Prod schemes in Debug and Release configurations
 - **Code Quality**: Checks for TODO/FIXME comments and runs SwiftLint (if configured)
-- **Artifacts**: Uploads test results and build artifacts
+- **Artifacts**: Uploads test results using explicit `-resultBundlePath` for reliable artifact collection
 
 #### 2. Deploy Pipeline (`deploy.yml`)
 **Triggers**: Pushes to `master` or `main` branches, or when tags starting with `v*` are pushed
@@ -26,17 +26,21 @@ This project includes comprehensive GitHub Actions workflows for continuous inte
 
 #### 3. Scheduled Tests (`scheduled-tests.yml`)
 **Triggers**: Daily at 2 AM UTC, or manually via workflow dispatch
+- **Parallel Execution**: Runs unit, UI, and snapshot tests concurrently
 - **Health Check**: Ensures the project stays healthy with daily test runs
 - **Monitoring**: Provides early warning of breaking changes
+- **Artifact Preservation**: Test results stored with 5-day retention
 
 ### Pipeline Features
 
 - **XcodeGen Integration**: Automatically generates the Xcode project from `project.yml`
-- **Multi-Scheme Testing**: Tests GitHubAppDev, GitHubAppProd, and dedicated test schemes (GitHubAppTests, GitHubAppUITests)
+- **Multi-Scheme Testing**: Tests GitHubAppDev, GitHubAppProd, and dedicated test schemes (GitHubAppTests, GitHubAppUITests, GitHubAppSnapshotTests)
+- **Parallel Test Execution**: Unit, UI, and snapshot tests run concurrently for faster feedback
 - **Code Coverage**: Enables code coverage reporting for unit tests
 - **Swift Testing**: Uses modern Swift Testing framework for enhanced test performance
 - **SwiftData Integration**: Tests data persistence layer with in-memory configurations
-- **Artifact Management**: Preserves test results and build artifacts
+- **Artifact Management**: Preserves test results using explicit `-resultBundlePath` configuration
+- **Resilient Workflows**: Gracefully handles missing artifacts with `continue-on-error` and `if: always()`
 - **Matrix Builds**: Tests multiple configurations simultaneously
 - **Quality Gates**: Checks for code quality issues before deployment
 
@@ -47,6 +51,11 @@ To test the workflows locally, you can use the Makefile commands:
 ```sh
 # Run all tests (similar to CI pipeline)
 make test
+
+# Run specific test types
+make test-unit      # Unit tests only
+make test-ui        # UI tests only
+make test-snapshot  # Snapshot tests only
 
 # Run tests with coverage and print app coverage
 make coverage
@@ -151,8 +160,8 @@ This project uses [XcodeGen](https://github.com/yonaskolb/XcodeGen) to generate 
 ### Project Structure
 
 The project configuration is defined in `project.yml`:
-- **Targets**: GitHubApp (main app), GitHubAppTests (unit tests), GitHubAppUITests (UI tests)
-- **Schemes**: GitHubAppDev, GitHubAppProd, GitHubAppTests, GitHubAppUITests
+- **Targets**: GitHubApp (main app), GitHubAppTests (unit tests), GitHubAppUITests (UI tests), GitHubAppSnapshotTests (snapshot tests)
+- **Schemes**: GitHubAppDev, GitHubAppProd, GitHubAppTests, GitHubAppUITests, GitHubAppSnapshotTests
 - **Settings**: iOS 26.0+ deployment target, Swift 5.0
 - **Environment Variables**: API keys configured per scheme
 
@@ -188,10 +197,11 @@ The project includes multiple Xcode schemes optimized for different development 
 
 | Scheme | Purpose | Configuration | Test Targets |
 |--------|---------|---------------|--------------|
-| **GitHubAppDev** | Main development | Debug | All tests (Unit + UI) |
-| **GitHubAppProd** | Production builds | Release | All tests (Unit + UI) |
+| **GitHubAppDev** | Main development | Debug | All tests (Unit + UI + Snapshot) |
+| **GitHubAppProd** | Production builds | Release | All tests (Unit + UI + Snapshot) |
 | **GitHubAppTests** | Unit testing only | Debug | Unit tests only |
 | **GitHubAppUITests** | UI testing only | Debug | UI tests only |
+| **GitHubAppSnapshotTests** | Snapshot testing only | Debug | Snapshot tests only |
 
 **Usage Examples:**
 - Use `GitHubAppTests` scheme for rapid unit test iterations during development
