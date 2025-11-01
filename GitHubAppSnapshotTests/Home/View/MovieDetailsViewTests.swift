@@ -49,8 +49,10 @@ struct MovieDetailsViewTests {
         try? APIKeysProvider.setMovieAPIKey("test-api-key-for-movie-details")
 
         let mockService = MockHomeService()
+        let mockStorageService = MockStorageService()
         let serviceLocator = ServiceLocator()
         serviceLocator.register(HomeService.self, instance: mockService)
+        serviceLocator.register(StorageService.self, instance: mockStorageService)
 
         let testViewModel = viewModel ?? MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
         let router = MovieDetailsNavigationRouter()
