@@ -258,7 +258,7 @@ struct SettingsViewTests {
         serviceLocator.register(StorageService.self, instance: mockStorageService)
 
         let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        let view = SettingsView(viewModel: viewModel)
+        _ = SettingsView(viewModel: viewModel)
 
         // Wait for initial load
         try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
@@ -542,7 +542,7 @@ struct SettingsViewTests {
         try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
 
         // Verify that profile image was loaded during onAppear
-        if case let .success(dataViewState) = viewModel.viewState {
+        if case .success = viewModel.viewState {
             // The success state indicates onAppear processed correctly
             #expect(true, "Settings view lifecycle completed successfully")
         } else {

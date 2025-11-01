@@ -242,7 +242,7 @@ struct SearchViewTests {
 
         // Verify error state - the viewModel may have transitioned to error
         // If not, that's also acceptable as some error handling might be silent
-        let isErrorState = if case .error = viewModel.viewState {
+        _ = if case .error = viewModel.viewState {
             true
         } else {
             false
@@ -285,7 +285,7 @@ struct SearchViewTests {
         defer { cleanupTest() }
 
         let (_, viewModel, view) = createTestComponents()
-        let controller: UIViewController = view.wrappedViewController
+        _ = view.wrappedViewController
 
         // Trigger search
         viewModel.searchMovies(query: "Avatar")
@@ -608,7 +608,7 @@ struct SearchViewTests {
         defer { try? APIKeysProvider.removeMovieAPIKey() }
 
         let viewModel = SearchViewModel(serviceLocator: serviceLocator)
-        let _view = SearchView(router: router, viewModel: viewModel, serviceLocator: serviceLocator)
+        _ = SearchView(router: router, viewModel: viewModel, serviceLocator: serviceLocator)
 
         // Trigger search to load data
         viewModel.handle(.searchMovies("test"))
@@ -651,7 +651,7 @@ struct SearchViewTests {
         defer { try? APIKeysProvider.removeMovieAPIKey() }
 
         let viewModel = SearchViewModel(serviceLocator: serviceLocator)
-        let _view = SearchView(router: router, viewModel: viewModel, serviceLocator: serviceLocator)
+        _ = SearchView(router: router, viewModel: viewModel, serviceLocator: serviceLocator)
 
         // Load page 1 results
         viewModel.handle(.searchMovies("test"))

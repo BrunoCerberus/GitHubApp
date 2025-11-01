@@ -212,7 +212,7 @@ struct HomeViewTests {
         defer { cleanupTest() }
 
         let (_, _, viewModel, view) = createTestComponents()
-        let controller: UIViewController = view.wrappedViewController
+        _ = view.wrappedViewController
 
         // Trigger data fetch to populate movies
         viewModel.fetchData()
@@ -370,7 +370,7 @@ struct HomeViewTests {
     func pullToRefreshExecutesFetch() async throws {
         defer { cleanupTest() }
 
-        let (_, mockService, viewModel, view) = createTestComponents()
+        let (_, _, viewModel, view) = createTestComponents()
         _ = view.wrappedViewController
 
         // Trigger initial fetch
@@ -379,7 +379,7 @@ struct HomeViewTests {
 
         // Verify initial state
         if case let .success(dataViewState) = viewModel.viewState {
-            let initialCount = dataViewState.movies.count
+            _ = dataViewState.movies.count
 
             // Trigger refresh (simulates pull-to-refresh gesture)
             viewModel.fetchData()

@@ -76,10 +76,29 @@ test:
 coverage:
 	@echo "Running tests with coverage on iOS 26.0 iPhone Air..."
 	@rm -rf build/TestResults.xcresult
-	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' -enableCodeCoverage YES -resultBundlePath build/TestResults.xcresult >/dev/null
-	@echo "\nCoverage summary (GitHubApp.app):"
-	@xcrun xccov view --report --only-targets build/TestResults.xcresult | awk '/GitHubApp.app/{print $$0}'
-	@echo "\nUse 'make coverage-report' for details."
+	@xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppDev -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' -enableCodeCoverage YES -resultBundlePath build/TestResults.xcresult 2>&1 | tee /tmp/coverage_output.log | grep -E '(Testing|Test Suite|Test Case|passed|failed|✔|✘)' || true
+	@echo ""
+	@if grep -E "Executed .* tests, with [1-9][0-9]* failures" /tmp/coverage_output.log > /dev/null; then \
+		echo "❌ Tests failed! Coverage report may be incomplete."; \
+		echo ""; \
+		echo "Failure details:"; \
+		grep -E "(✘|failed|FAIL|Fatal error|error:|Expectation failed)" /tmp/coverage_output.log | head -20; \
+		echo ""; \
+		echo "📝 Full output saved to /tmp/coverage_output.log"; \
+		exit 1; \
+	elif grep -E "Executed .* tests, with 0 failures" /tmp/coverage_output.log > /dev/null; then \
+		echo "✅ All tests passed!"; \
+		echo ""; \
+		echo "Coverage summary (GitHubApp.app):"; \
+		xcrun xccov view --report --only-targets build/TestResults.xcresult | awk '/GitHubApp.app/{print $$0}'; \
+		echo ""; \
+		echo "Use 'make coverage-report' for details."; \
+	else \
+		echo "❌ Could not determine test status!"; \
+		echo ""; \
+		echo "📝 Full output saved to /tmp/coverage_output.log"; \
+		exit 1; \
+	fi
 
 # Show full per-file coverage report
 coverage-report:

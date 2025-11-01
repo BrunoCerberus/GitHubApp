@@ -63,7 +63,7 @@ struct MovieDetailsViewTests {
 
     @Test("Movie details view displays loading state")
     func movieDetailsViewDisplaysLoadingState() async throws {
-        let (_, viewModel, view) = createTestComponents()
+        let (_, _, view) = createTestComponents()
         let controller: UIViewController = view.wrappedViewController
 
         // Verify loading state is displayed
@@ -92,7 +92,7 @@ struct MovieDetailsViewTests {
 
     @Test("Movie details view displays credits section when data is loaded")
     func movieDetailsViewDisplaysCreditsSection() async throws {
-        let (_, viewModel, view) = createTestComponents()
+        let (_, viewModel, _) = createTestComponents()
 
         // Verify initial state is loading
         if case .loading = viewModel.viewState {
@@ -118,7 +118,7 @@ struct MovieDetailsViewTests {
 
     @Test("Movie details view displays reviews section when data is loaded")
     func movieDetailsViewDisplaysReviewsSection() async throws {
-        let (_, viewModel, view) = createTestComponents()
+        let (_, viewModel, _) = createTestComponents()
 
         viewModel.fetchData()
 
@@ -201,7 +201,7 @@ struct MovieDetailsViewTests {
         try await Task.sleep(nanoseconds: 500_000_000)
 
         // Check if we can verify the UI handles empty sections
-        if case let .success(dataViewState) = viewModel.viewState {
+        if case .success = viewModel.viewState {
             // Both sections should be rendered
             #expect(true)
         }
@@ -218,8 +218,11 @@ struct MovieDetailsViewTests {
     func movieDetailsViewInitializesWithCorrectMovieData() {
         let (_, viewModel, _) = createTestComponents()
 
-        #expect(viewModel.viewState != nil)
-        #expect(true) // View initializes successfully
+        // View initializes successfully and has a valid state
+        switch viewModel.viewState {
+        case .loading, .success, .error:
+            #expect(true)
+        }
     }
 
     @Test("Movie details view handles state transitions correctly")
@@ -257,7 +260,7 @@ struct MovieDetailsViewTests {
 
     @Test("Movie details view supports router for navigation")
     func movieDetailsViewSupportsRouterForNavigation() {
-        let (_, _, view) = createTestComponents()
+        _ = createTestComponents()
 
         // View should be properly initialized with router
         #expect(true)
