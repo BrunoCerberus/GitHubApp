@@ -1,4 +1,4 @@
-.PHONY: install-xcodegen generate clean test test-unit test-ui test-debug clean-packages help init coverage coverage-report coverage-badge deeplink-test
+.PHONY: install-xcodegen generate clean test test-unit test-ui test-snapshot test-debug clean-packages help init coverage coverage-report coverage-badge deeplink-test
 
 # Default target
 help:
@@ -9,6 +9,7 @@ help:
 	@echo "  test              - Run all unit tests on iOS 26.0 iPhone Air"
 	@echo "  test-unit         - Run only unit tests"
 	@echo "  test-ui           - Run only UI tests"
+	@echo "  test-snapshot     - Run only snapshot tests"
 	@echo "  test-debug        - Run tests with full verbose output for debugging"
 	@echo "  clean             - Remove generated Xcode project"
 	@echo "  clean-packages    - Clean Swift Package Manager dependencies"
@@ -115,6 +116,22 @@ test-ui:
 		grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -1; \
 	else \
 		echo "❌ UI tests failed! Here are the failure details:"; \
+		echo ""; \
+		grep -E "(✘|failed|FAIL|Fatal error|error:|Expectation failed)" /tmp/test_output.log | head -20; \
+		echo ""; \
+		echo "📝 Full output saved to /tmp/test_output.log"; \
+		exit 1; \
+	fi
+
+# Run only snapshot tests
+test-snapshot:
+	@echo "Running snapshot tests on iOS 26.0 iPhone Air..."
+	@make clean-packages
+	@if xcodebuild clean test -project GitHubApp.xcodeproj -scheme GitHubAppSnapshotTests -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' 2>&1 | tee /tmp/test_output.log; then \
+		echo "✅ Snapshot tests completed successfully!"; \
+		grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -1; \
+	else \
+		echo "❌ Snapshot tests failed! Here are the failure details:"; \
 		echo ""; \
 		grep -E "(✘|failed|FAIL|Fatal error|error:|Expectation failed)" /tmp/test_output.log | head -20; \
 		echo ""; \

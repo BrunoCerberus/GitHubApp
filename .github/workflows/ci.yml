@@ -132,31 +132,31 @@ jobs:
     name: UI Tests
     runs-on: macos-latest
     needs: code-quality
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: '26.0.1'
-        
+
     - name: Install XcodeGen
       run: |
         brew install xcodegen
-        
+
     - name: Generate Xcode project
       run: |
         make generate
-        
+
     - name: Debug Package Dependencies
       run: |
         echo "🔍 Checking package dependencies..."
         ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
         echo "📦 Package.resolved content:"
         cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
-        
+
     - name: Clean Package Dependencies
       run: |
         echo "🧹 Cleaning package dependencies..."
@@ -164,16 +164,16 @@ jobs:
         rm -rf GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/configuration
         rm -rf GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/artifacts
         echo "✅ Package dependencies cleaned!"
-        
+
     - name: Regenerate Project
       run: |
         echo "🔄 Regenerating project after cleaning..."
         make generate
-        
+
     - name: Run UI Tests
       run: |
         make test-ui
-        
+
     - name: Upload UI test results
       uses: actions/upload-artifact@v4
       if: always()
@@ -183,27 +183,92 @@ jobs:
           ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
           ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult.zip
 
-  test-results:
-    name: Test Results Summary
+  snapshot-tests:
+    name: Snapshot Tests
     runs-on: macos-latest
-    needs: [unit-tests, ui-tests]
-    
+    needs: code-quality
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '26.0.1'
+
+    - name: Install XcodeGen
+      run: |
+        brew install xcodegen
+
+    - name: Generate Xcode project
+      run: |
+        make generate
+
+    - name: Debug Package Dependencies
+      run: |
+        echo "🔍 Checking package dependencies..."
+        ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+        echo "📦 Package.resolved content:"
+        cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
+
+    - name: Clean Package Dependencies
+      run: |
+        echo "🧹 Cleaning package dependencies..."
+        rm -rf GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+        rm -rf GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/configuration
+        rm -rf GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/artifacts
+        echo "✅ Package dependencies cleaned!"
+
+    - name: Regenerate Project
+      run: |
+        echo "🔄 Regenerating project after cleaning..."
+        make generate
+
+    - name: Run Snapshot Tests
+      run: |
+        make test-snapshot
+
+    - name: Upload snapshot test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: snapshot-test-results
+        path: |
+          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+          ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult.zip
+
+  test-results:
+    name: Test Results Summary
+    runs-on: macos-latest
+    needs: [unit-tests, ui-tests, snapshot-tests]
+    if: always()
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
     - name: Download unit test results
       uses: actions/download-artifact@v4
+      continue-on-error: true
       with:
         name: unit-test-results
         path: unit-test-results
-        
+
     - name: Download UI test results
       uses: actions/download-artifact@v4
+      continue-on-error: true
       with:
         name: ui-test-results
         path: ui-test-results
-        
+
+    - name: Download snapshot test results
+      uses: actions/download-artifact@v4
+      continue-on-error: true
+      with:
+        name: snapshot-test-results
+        path: snapshot-test-results
+
     - name: Display Test Results Summary
       run: |
         echo "📊 Test Results Summary"
@@ -211,9 +276,11 @@ jobs:
         echo ""
         echo "✅ Unit Tests: Completed"
         echo "✅ UI Tests: Completed"
+        echo "✅ Snapshot Tests: Completed"
         echo ""
         echo "📁 Test artifacts downloaded:"
         ls -la unit-test-results/ 2>/dev/null || echo "No unit test artifacts found"
         ls -la ui-test-results/ 2>/dev/null || echo "No UI test artifacts found"
+        ls -la snapshot-test-results/ 2>/dev/null || echo "No snapshot test artifacts found"
         echo ""
         echo "🎉 All tests completed successfully!" 

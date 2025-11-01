@@ -180,6 +180,32 @@ targets:
         CFBundleShortVersionString: "1.0.0"
         CFBundleVersion: "1"
 
+  GitHubAppSnapshotTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: GitHubAppSnapshotTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bruno.GitHubAppSnapshotTests
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/GitHubApp.app/GitHubApp"
+        BUNDLE_LOADER: $(TEST_HOST)
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""
+    dependencies:
+      - target: GitHubApp
+      - sdk: XCTest.framework
+      - package: SnapshotTesting
+    info:
+      path: GitHubAppSnapshotTests/Info.plist
+      properties:
+        CFBundleName: GitHubAppSnapshotTests
+        CFBundleIdentifier: com.bruno.GitHubAppSnapshotTests
+        CFBundlePackageType: BNDL
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "1"
+
   GitHubAppWidgetExtension:
     type: app-extension
     platform: iOS
@@ -290,4 +316,14 @@ schemes:
       config: Debug
       targets:
         - GitHubAppUITests
+      environmentVariables: {}
+
+  GitHubAppSnapshotTests:
+    build:
+      targets:
+        GitHubAppSnapshotTests: all
+    test:
+      config: Debug
+      targets:
+        - GitHubAppSnapshotTests
       environmentVariables: {}
