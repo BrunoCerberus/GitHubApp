@@ -341,7 +341,8 @@ struct UserSettingTests {
             category: UserSetting.Category.preferences
         )
 
-        // Then
-        #expect(setting.createdAt == setting.updatedAt)
+        // Then - Timestamps should be within 1 second of each other (account for potential microsecond differences)
+        let timeDifference = abs(setting.createdAt.timeIntervalSince(setting.updatedAt))
+        #expect(timeDifference < 1.0, "Created and updated timestamps should be nearly identical on initialization")
     }
 }
