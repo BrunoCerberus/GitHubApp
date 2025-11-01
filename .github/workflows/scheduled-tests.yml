@@ -111,19 +111,22 @@ jobs:
     name: Test Results Summary
     runs-on: macos-latest
     needs: [unit-tests, ui-tests]
-    
+    if: always()
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Download unit test results
       uses: actions/download-artifact@v4
+      continue-on-error: true
       with:
         name: scheduled-unit-test-results
         path: unit-test-results
-        
+
     - name: Download UI test results
       uses: actions/download-artifact@v4
+      continue-on-error: true
       with:
         name: scheduled-ui-test-results
         path: ui-test-results
