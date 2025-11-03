@@ -255,6 +255,23 @@ schemes:
       targets:
         GitHubApp: all
         GitHubAppWidgetExtension: all
+      buildSettings:
+        COMPILER_INDEX_STORE_ENABLE: NO
+        ENABLE_BITCODE: NO
+        CLANG_ENABLE_MODULE_DEBUGGING: NO
+        SWIFT_COMPILATION_MODE: singlefile
+        SWIFT_OPTIMIZATION_LEVEL: -Onone
+        DWARFDUMP_USE_BINARY_PLIST: YES
+        DEBUG_INFORMATION_FORMAT: dwarf
+        ONLY_ACTIVE_ARCH: YES
+        CLANG_ENABLE_OBJC_ARC: YES
+        CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: NO
+        GCC_OPTIMIZATION_LEVEL: 0
+        ENABLE_TESTABILITY: YES
+        COPY_PHASE_STRIP: NO
+        VALIDATE_PRODUCT: NO
+        CLANG_INDEX_STORE_PATH: "$(OBJROOT)/IndexStore"
+        INDEX_ENABLE_DATA_STORE: NO
     run:
       config: Debug
       environmentVariables: {}
