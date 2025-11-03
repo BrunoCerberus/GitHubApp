@@ -8,7 +8,7 @@
 import XCTest
 
 /**
- * Basic UI smoke tests for application launch and performance.
+ * Basic UI smoke tests for application  launch and performance.
  */
 final class GitHubAppUITests: XCTestCase {
     override func setUpWithError() throws {
