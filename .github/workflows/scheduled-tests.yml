@@ -27,22 +27,18 @@ jobs:
     - name: Generate Xcode project
       run: |
         make generate
-        
+
     - name: Debug Package Dependencies
       run: |
         echo "🔍 Checking package dependencies..."
-        ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
-        echo "📦 Package.resolved content:"
-        cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
-        
-    - name: Clean Package Dependencies
-      run: |
-        make clean-packages
-        
-    - name: Generate Xcode project (after cleaning)
-      run: |
-        make generate
-        
+        if [ -d "GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/" ]; then
+          ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+          echo "📦 Package.resolved content:"
+          cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
+        else
+          echo "⚠️  Swift PM directory not found (this is normal for a fresh project generation)"
+        fi
+
     - name: Run Unit Tests
       run: |
         mkdir -p test-results
@@ -88,17 +84,13 @@ jobs:
     - name: Debug Package Dependencies
       run: |
         echo "🔍 Checking package dependencies..."
-        ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
-        echo "📦 Package.resolved content:"
-        cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
-
-    - name: Clean Package Dependencies
-      run: |
-        make clean-packages
-
-    - name: Generate Xcode project (after cleaning)
-      run: |
-        make generate
+        if [ -d "GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/" ]; then
+          ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+          echo "📦 Package.resolved content:"
+          cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
+        else
+          echo "⚠️  Swift PM directory not found (this is normal for a fresh project generation)"
+        fi
 
     - name: Run UI Tests
       run: |
@@ -145,17 +137,13 @@ jobs:
     - name: Debug Package Dependencies
       run: |
         echo "🔍 Checking package dependencies..."
-        ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
-        echo "📦 Package.resolved content:"
-        cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
-
-    - name: Clean Package Dependencies
-      run: |
-        make clean-packages
-
-    - name: Generate Xcode project (after cleaning)
-      run: |
-        make generate
+        if [ -d "GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/" ]; then
+          ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+          echo "📦 Package.resolved content:"
+          cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
+        else
+          echo "⚠️  Swift PM directory not found (this is normal for a fresh project generation)"
+        fi
 
     - name: Run Snapshot Tests
       run: |
