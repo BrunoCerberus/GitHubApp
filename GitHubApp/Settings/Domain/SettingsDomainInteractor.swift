@@ -206,20 +206,20 @@ final class SettingsDomainInteractor: ObservableObject, CombineInteractor {
         // Only proceed if the app hasn't been rated yet
         guard !currentState.hasRatedApp else { return }
 
-        // Request app review (iOS 14.0+)
-        if #available(iOS 14.0, *) {
-            if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                // Only request review in production builds, not in test environments
-                #if DEBUG
-                    Logger.shared.domain("Skipping app review request in debug/test build", level: .debug)
-                #else
-                    SKStoreReviewController.requestReview(in: scene)
-                #endif
-            }
-        } else {
-            // Fallback for older iOS versions
-            if let url = URL(string: "https://apps.apple.com/app/id1234567890") {
-                UIApplication.shared.open(url)
+        // Request app review using the appropriate API based on iOS version
+        Task { @MainActor in
+            if #available(iOS 18.0, *) {
+                // Use new AppStore.requestReview API (iOS 18.0+)
+                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                    // Only request review in production builds, not in test environments
+                    Logger.shared.domain("Requesting app review using AppStore API", level: .debug)
+                    AppStore.requestReview(in: scene)
+                }
+            } else {
+                // Fallback for older iOS versions
+                if let url = URL(string: "https://apps.apple.com/app/id1234567890") {
+                    UIApplication.shared.open(url)
+                }
             }
         }
 

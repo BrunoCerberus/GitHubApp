@@ -274,9 +274,7 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
      */
     deinit {
         NotificationCenter.default.removeObserver(self)
-        #if DEBUG
-            Logger.shared.domain("SearchDomainInteractor deallocated", level: .debug)
-        #endif
+        Logger.shared.domain("SearchDomainInteractor deallocated", level: .debug)
     }
 }
 

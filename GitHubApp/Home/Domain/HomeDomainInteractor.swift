@@ -449,9 +449,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
      */
     deinit {
         NotificationCenter.default.removeObserver(self)
-        #if DEBUG
-            Logger.shared.domain("HomeDomainInteractor deallocated", level: .debug)
-        #endif
+        Logger.shared.domain("HomeDomainInteractor deallocated", level: .debug)
     }
 }
 
