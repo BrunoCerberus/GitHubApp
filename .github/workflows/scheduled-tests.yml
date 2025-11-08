@@ -7,23 +7,42 @@ on:
   workflow_dispatch: # Allow manual triggering
 
 jobs:
-  unit-tests:
-    name: Unit Tests
+  build:
+    name: Build Project
     runs-on: macos-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: '26.0.1'
-        
+
+    - name: Cache Homebrew packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/Library/Caches/Homebrew
+          /usr/local/Homebrew
+        key: ${{ runner.os }}-brew-${{ hashFiles('.github/workflows/*.yml') }}
+        restore-keys: |
+          ${{ runner.os }}-brew-
+
+    - name: Cache SPM dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved', 'project.yml') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
     - name: Install XcodeGen
       run: |
         brew install xcodegen
-        
+
     - name: Generate Xcode project
       run: |
         make generate
@@ -39,136 +58,130 @@ jobs:
           echo "⚠️  Swift PM directory not found (this is normal for a fresh project generation)"
         fi
 
-    - name: Run Unit Tests
+    - name: Pre-boot simulator
       run: |
-        mkdir -p test-results
-        xcodebuild clean test \
+        echo "🚀 Pre-booting simulator..."
+        xcrun simctl boot "iPhone Air" || echo "Simulator already booted or unavailable"
+
+    - name: Build for testing (GitHubAppDev)
+      run: |
+        echo "🔨 Building GitHubAppDev scheme for testing..."
+        xcodebuild build-for-testing \
           -project GitHubApp.xcodeproj \
           -scheme GitHubAppDev \
-          -only-testing:GitHubAppTests \
-          -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' \
-          -resultBundlePath test-results/unit-tests.xcresult \
-          | tee /tmp/test_output.log || true
-        grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -5 || echo "Unit tests completed"
+          -destination 'platform=iOS Simulator,name=iPhone Air' \
+          -derivedDataPath ./DerivedData
 
-    - name: Upload unit test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: scheduled-unit-test-results
-        path: test-results/unit-tests.xcresult
-        if-no-files-found: warn
-        retention-days: 5
-
-  ui-tests:
-    name: UI Tests
-    runs-on: macos-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Xcode
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '26.0.1'
-
-    - name: Install XcodeGen
+    - name: Build for testing (GitHubAppSnapshotTests)
       run: |
-        brew install xcodegen
-
-    - name: Generate Xcode project
-      run: |
-        make generate
-
-    - name: Debug Package Dependencies
-      run: |
-        echo "🔍 Checking package dependencies..."
-        if [ -d "GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/" ]; then
-          ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
-          echo "📦 Package.resolved content:"
-          cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
-        else
-          echo "⚠️  Swift PM directory not found (this is normal for a fresh project generation)"
-        fi
-
-    - name: Run UI Tests
-      run: |
-        mkdir -p test-results
-        xcodebuild clean test \
-          -project GitHubApp.xcodeproj \
-          -scheme GitHubAppDev \
-          -only-testing:GitHubAppUITests \
-          -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' \
-          -resultBundlePath test-results/ui-tests.xcresult \
-          | tee /tmp/test_output.log || true
-        grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -5 || echo "UI tests completed"
-
-    - name: Upload UI test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: scheduled-ui-test-results
-        path: test-results/ui-tests.xcresult
-        if-no-files-found: warn
-        retention-days: 5
-
-  snapshot-tests:
-    name: Snapshot Tests
-    runs-on: macos-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Xcode
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '26.0.1'
-
-    - name: Install XcodeGen
-      run: |
-        brew install xcodegen
-
-    - name: Generate Xcode project
-      run: |
-        make generate
-
-    - name: Debug Package Dependencies
-      run: |
-        echo "🔍 Checking package dependencies..."
-        if [ -d "GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/" ]; then
-          ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
-          echo "📦 Package.resolved content:"
-          cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
-        else
-          echo "⚠️  Swift PM directory not found (this is normal for a fresh project generation)"
-        fi
-
-    - name: Run Snapshot Tests
-      run: |
-        mkdir -p test-results
-        xcodebuild clean test \
+        echo "🔨 Building GitHubAppSnapshotTests scheme for testing..."
+        xcodebuild build-for-testing \
           -project GitHubApp.xcodeproj \
           -scheme GitHubAppSnapshotTests \
-          -destination 'platform=iOS Simulator,name=iPhone Air,OS=26.0' \
-          -resultBundlePath test-results/snapshot-tests.xcresult \
-          | tee /tmp/test_output.log || true
-        grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -5 || echo "Snapshot tests completed"
+          -destination 'platform=iOS Simulator,name=iPhone Air' \
+          -derivedDataPath ./DerivedData
 
-    - name: Upload snapshot test results
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: scheduled-build-products
+        path: ./DerivedData
+        retention-days: 1
+
+  tests:
+    name: ${{ matrix.test-name }}
+    runs-on: macos-latest
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - test-target: GitHubAppTests
+            test-name: Unit Tests
+            scheme: GitHubAppDev
+            artifact-name: scheduled-unit-test-results
+          - test-target: GitHubAppUITests
+            test-name: UI Tests
+            scheme: GitHubAppDev
+            artifact-name: scheduled-ui-test-results
+          - test-target: GitHubAppSnapshotTests
+            test-name: Snapshot Tests
+            scheme: GitHubAppSnapshotTests
+            artifact-name: scheduled-snapshot-test-results
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '26.0.1'
+
+    - name: Cache Homebrew packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/Library/Caches/Homebrew
+          /usr/local/Homebrew
+        key: ${{ runner.os }}-brew-${{ hashFiles('.github/workflows/*.yml') }}
+        restore-keys: |
+          ${{ runner.os }}-brew-
+
+    - name: Cache SPM dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved', 'project.yml') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - name: Install XcodeGen
+      run: |
+        brew install xcodegen
+
+    - name: Generate Xcode project
+      run: |
+        make generate
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: scheduled-build-products
+        path: ./DerivedData
+
+    - name: Pre-boot simulator
+      run: |
+        echo "🚀 Pre-booting simulator..."
+        xcrun simctl boot "iPhone Air" || echo "Simulator already booted or unavailable"
+
+    - name: Run ${{ matrix.test-name }}
+      run: |
+        mkdir -p test-results
+        xcodebuild test-without-building \
+          -project GitHubApp.xcodeproj \
+          -scheme ${{ matrix.scheme }} \
+          -only-testing:${{ matrix.test-target }} \
+          -destination 'platform=iOS Simulator,name=iPhone Air' \
+          -derivedDataPath ./DerivedData \
+          -resultBundlePath test-results/${{ matrix.artifact-name }}.xcresult \
+          | tee /tmp/test_output.log || true
+        grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -5 || echo "${{ matrix.test-name }} completed"
+
+    - name: Upload test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: scheduled-snapshot-test-results
-        path: test-results/snapshot-tests.xcresult
+        name: ${{ matrix.artifact-name }}
+        path: test-results/${{ matrix.artifact-name }}.xcresult
         if-no-files-found: warn
         retention-days: 5
 
   test-results:
     name: Test Results Summary
     runs-on: macos-latest
-    needs: [unit-tests, ui-tests, snapshot-tests]
+    needs: [tests]
     if: always()
 
     steps:
