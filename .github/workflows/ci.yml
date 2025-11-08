@@ -3,8 +3,6 @@ name: CI Pipeline
 on:
   pull_request:
     branches: [ develop, master, main ]
-  push:
-    branches: [ develop, master, main ]
 
 jobs:
   code-quality:
@@ -120,7 +118,7 @@ jobs:
       with:
         path: |
           GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
-        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved', 'project.yml') }}
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}-${{ hashFiles('project.yml') }}
         restore-keys: |
           ${{ runner.os }}-spm-
 
@@ -218,7 +216,7 @@ jobs:
       with:
         path: |
           GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
-        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved', 'project.yml') }}
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}-${{ hashFiles('project.yml') }}
         restore-keys: |
           ${{ runner.os }}-spm-
 
@@ -242,6 +240,7 @@ jobs:
         xcrun simctl boot "iPhone Air" || echo "Simulator already booted or unavailable"
 
     - name: Run ${{ matrix.test-name }}
+      timeout-minutes: 30
       run: |
         mkdir -p test-results
         xcodebuild test-without-building \
@@ -293,18 +292,66 @@ jobs:
         name: snapshot-test-results
         path: snapshot-test-results
 
+    - name: Check test job results
+      id: check-results
+      run: |
+        # Check the outcome of the tests job
+        TEST_RESULT="${{ needs.tests.result }}"
+        echo "Tests job result: $TEST_RESULT"
+
+        if [ "$TEST_RESULT" == "success" ]; then
+          echo "status=success" >> $GITHUB_OUTPUT
+        else
+          echo "status=failure" >> $GITHUB_OUTPUT
+        fi
+
     - name: Display Test Results Summary
       run: |
         echo "📊 Test Results Summary"
         echo "========================"
         echo ""
-        echo "✅ Unit Tests: Completed"
-        echo "✅ UI Tests: Completed"
-        echo "✅ Snapshot Tests: Completed"
+
+        # Check if artifacts exist and display status
+        UNIT_STATUS="❓ Unknown"
+        UI_STATUS="❓ Unknown"
+        SNAPSHOT_STATUS="❓ Unknown"
+
+        if [ -d "unit-test-results" ]; then
+          UNIT_STATUS="✅ Completed"
+        else
+          UNIT_STATUS="❌ Failed or Missing"
+        fi
+
+        if [ -d "ui-test-results" ]; then
+          UI_STATUS="✅ Completed"
+        else
+          UI_STATUS="❌ Failed or Missing"
+        fi
+
+        if [ -d "snapshot-test-results" ]; then
+          SNAPSHOT_STATUS="✅ Completed"
+        else
+          SNAPSHOT_STATUS="❌ Failed or Missing"
+        fi
+
+        echo "Unit Tests: $UNIT_STATUS"
+        echo "UI Tests: $UI_STATUS"
+        echo "Snapshot Tests: $SNAPSHOT_STATUS"
         echo ""
         echo "📁 Test artifacts downloaded:"
-        ls -la unit-test-results/ 2>/dev/null || echo "No unit test artifacts found"
-        ls -la ui-test-results/ 2>/dev/null || echo "No UI test artifacts found"
-        ls -la snapshot-test-results/ 2>/dev/null || echo "No snapshot test artifacts found"
+        ls -la unit-test-results/ 2>/dev/null || echo "  ⚠️  No unit test artifacts found"
+        ls -la ui-test-results/ 2>/dev/null || echo "  ⚠️  No UI test artifacts found"
+        ls -la snapshot-test-results/ 2>/dev/null || echo "  ⚠️  No snapshot test artifacts found"
         echo ""
-        echo "🎉 All tests completed successfully!" 
+
+        if [ "${{ steps.check-results.outputs.status }}" == "success" ]; then
+          echo "🎉 All tests completed successfully!"
+        else
+          echo "⚠️  Some tests failed or were cancelled"
+        fi
+
+    - name: Fail if tests failed
+      if: steps.check-results.outputs.status == 'failure'
+      run: |
+        echo "::error::Test suite failed or was cancelled"
+        exit 1 
