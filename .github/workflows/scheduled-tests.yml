@@ -160,8 +160,7 @@ jobs:
       timeout-minutes: 30
       run: |
         mkdir -p test-results
-        # Add timeout command as fallback (25 minutes = 1500 seconds)
-        timeout 1500 xcodebuild test-without-building \
+        xcodebuild test-without-building \
           -project GitHubApp.xcodeproj \
           -scheme ${{ matrix.scheme }} \
           -only-testing:${{ matrix.test-target }} \
