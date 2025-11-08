@@ -157,9 +157,11 @@ jobs:
         xcrun simctl boot "iPhone Air" || echo "Simulator already booted or unavailable"
 
     - name: Run ${{ matrix.test-name }}
+      timeout-minutes: 30
       run: |
         mkdir -p test-results
-        xcodebuild test-without-building \
+        # Add timeout command as fallback (25 minutes = 1500 seconds)
+        timeout 1500 xcodebuild test-without-building \
           -project GitHubApp.xcodeproj \
           -scheme ${{ matrix.scheme }} \
           -only-testing:${{ matrix.test-target }} \
