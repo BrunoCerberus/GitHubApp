@@ -11,6 +11,12 @@ GitHubApp.xcodeproj/xcuserdata/
 # XcodeGen generated project (optional - you can commit this if you want)
 GitHubApp.xcodeproj/
 
+# Exception: Commit Package.resolved for deterministic CI builds
+!GitHubApp.xcodeproj/project.xcworkspace/
+!GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/
+!GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+!GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+
 # Build artifacts
 build/
 DerivedData/

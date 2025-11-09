@@ -58,6 +58,15 @@ jobs:
           echo "⚠️  Swift PM directory not found (this is normal for a fresh project generation)"
         fi
 
+    - name: Resolve Package Dependencies
+      run: |
+        echo "📦 Explicitly resolving Swift Package Manager dependencies..."
+        xcodebuild -resolvePackageDependencies \
+          -project GitHubApp.xcodeproj \
+          -scheme GitHubAppDev \
+          -onlyUsePackageVersionsFromResolvedFile
+        echo "✅ Package dependencies resolved successfully"
+
     - name: Pre-boot simulator
       run: |
         echo "🚀 Pre-booting simulator..."
