@@ -58,6 +58,15 @@ jobs:
           echo "⚠️  Swift PM directory not found (this is normal for a fresh project generation)"
         fi
 
+    - name: Resolve Package Dependencies
+      run: |
+        echo "📦 Explicitly resolving Swift Package Manager dependencies..."
+        xcodebuild -resolvePackageDependencies \
+          -project GitHubApp.xcodeproj \
+          -scheme GitHubAppDev \
+          -onlyUsePackageVersionsFromResolvedFile
+        echo "✅ Package dependencies resolved successfully"
+
     - name: Pre-boot simulator
       run: |
         echo "🚀 Pre-booting simulator..."
@@ -167,6 +176,7 @@ jobs:
           -destination 'platform=iOS Simulator,name=iPhone Air' \
           -derivedDataPath ./DerivedData \
           -resultBundlePath test-results/${{ matrix.artifact-name }}.xcresult \
+          -disableAutomaticPackageResolution \
           | tee /tmp/test_output.log || true
         grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -5 || echo "${{ matrix.test-name }} completed"
 
