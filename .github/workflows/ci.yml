@@ -259,6 +259,7 @@ jobs:
           -destination 'platform=iOS Simulator,name=iPhone Air' \
           -derivedDataPath ./DerivedData \
           -resultBundlePath test-results/${{ matrix.artifact-name }}.xcresult \
+          -disableAutomaticPackageResolution \
           | tee /tmp/test_output.log || true
         grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -5 || echo "${{ matrix.test-name }} completed"
 
