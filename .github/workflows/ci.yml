@@ -173,11 +173,16 @@ jobs:
           -destination 'platform=iOS Simulator,name=iPhone Air' \
           -derivedDataPath ./DerivedData
 
+    - name: Create tarball of build products
+      run: |
+        echo "📦 Creating tarball of DerivedData..."
+        tar -czf build-products.tar.gz -C ./DerivedData .
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-products
-        path: ./DerivedData
+        path: build-products.tar.gz
         retention-days: 1
 
   tests:
@@ -241,7 +246,14 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: build-products
-        path: ./DerivedData
+        path: .
+
+    - name: Extract build products
+      run: |
+        echo "📦 Extracting build products..."
+        mkdir -p ./DerivedData
+        tar -xzf build-products.tar.gz -C ./DerivedData
+        echo "✅ Build products extracted successfully"
 
     - name: Pre-boot simulator
       run: |
