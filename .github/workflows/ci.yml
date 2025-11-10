@@ -89,100 +89,10 @@ jobs:
           echo "✅ No FIXME comments found"
         fi
 
-  build:
-    name: Build Project
-    runs-on: macos-latest
-    needs: code-quality
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Xcode
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '26.0.1'
-
-    - name: Cache Homebrew packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/Library/Caches/Homebrew
-          /usr/local/Homebrew
-        key: ${{ runner.os }}-brew-${{ hashFiles('.github/workflows/*.yml') }}
-        restore-keys: |
-          ${{ runner.os }}-brew-
-
-    - name: Cache SPM dependencies
-      uses: actions/cache@v4
-      with:
-        path: |
-          GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
-        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}-${{ hashFiles('project.yml') }}
-        restore-keys: |
-          ${{ runner.os }}-spm-
-
-    - name: Install XcodeGen
-      run: |
-        brew install xcodegen
-
-    - name: Generate Xcode project
-      run: |
-        make generate
-
-    - name: Debug Package Dependencies
-      run: |
-        echo "🔍 Checking package dependencies..."
-        if [ -d "GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/" ]; then
-          ls -la GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
-          echo "📦 Package.resolved content:"
-          cat GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || echo "Package.resolved not found"
-        else
-          echo "⚠️  Swift PM directory not found (this is normal for a fresh project generation)"
-        fi
-
-    - name: Resolve Package Dependencies
-      run: |
-        echo "📦 Explicitly resolving Swift Package Manager dependencies..."
-        xcodebuild -resolvePackageDependencies \
-          -project GitHubApp.xcodeproj \
-          -scheme GitHubAppDev \
-          -onlyUsePackageVersionsFromResolvedFile
-        echo "✅ Package dependencies resolved successfully"
-
-    - name: Pre-boot simulator
-      run: |
-        echo "🚀 Pre-booting simulator..."
-        xcrun simctl boot "iPhone Air" || echo "Simulator already booted or unavailable"
-
-    - name: Build for testing (GitHubAppDev)
-      run: |
-        echo "🔨 Building GitHubAppDev scheme for testing..."
-        xcodebuild build-for-testing \
-          -project GitHubApp.xcodeproj \
-          -scheme GitHubAppDev \
-          -destination 'platform=iOS Simulator,name=iPhone Air' \
-          -derivedDataPath ./DerivedData
-
-    - name: Build for testing (GitHubAppSnapshotTests)
-      run: |
-        echo "🔨 Building GitHubAppSnapshotTests scheme for testing..."
-        xcodebuild build-for-testing \
-          -project GitHubApp.xcodeproj \
-          -scheme GitHubAppSnapshotTests \
-          -destination 'platform=iOS Simulator,name=iPhone Air' \
-          -derivedDataPath ./DerivedData
-
-    - name: Cache DerivedData build products
-      uses: actions/cache/save@v4
-      with:
-        path: ./DerivedData/Build/Products
-        key: ${{ runner.os }}-build-products-${{ github.sha }}
-
   tests:
     name: ${{ matrix.test-name }}
     runs-on: macos-latest
-    needs: build
+    needs: code-quality
     strategy:
       fail-fast: false
       matrix:
@@ -236,12 +146,14 @@ jobs:
       run: |
         make generate
 
-    - name: Restore DerivedData build products
-      uses: actions/cache/restore@v4
-      with:
-        path: ./DerivedData/Build/Products
-        key: ${{ runner.os }}-build-products-${{ github.sha }}
-        fail-on-cache-miss: true
+    - name: Resolve Package Dependencies
+      run: |
+        echo "📦 Resolving Swift Package Manager dependencies..."
+        xcodebuild -resolvePackageDependencies \
+          -project GitHubApp.xcodeproj \
+          -scheme ${{ matrix.scheme }} \
+          -onlyUsePackageVersionsFromResolvedFile
+        echo "✅ Package dependencies resolved"
 
     - name: Pre-boot simulator
       run: |
@@ -252,14 +164,12 @@ jobs:
       timeout-minutes: 30
       run: |
         mkdir -p test-results
-        xcodebuild test-without-building \
+        xcodebuild test \
           -project GitHubApp.xcodeproj \
           -scheme ${{ matrix.scheme }} \
           -only-testing:${{ matrix.test-target }} \
           -destination 'platform=iOS Simulator,name=iPhone Air' \
-          -derivedDataPath ./DerivedData \
           -resultBundlePath test-results/${{ matrix.artifact-name }}.xcresult \
-          -disableAutomaticPackageResolution \
           | tee /tmp/test_output.log || true
         grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -5 || echo "${{ matrix.test-name }} completed"
 
