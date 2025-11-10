@@ -90,17 +90,11 @@ jobs:
           -destination 'platform=iOS Simulator,name=iPhone Air' \
           -derivedDataPath ./DerivedData
 
-    - name: Create tarball of build products
-      run: |
-        echo "📦 Creating tarball of DerivedData..."
-        tar -czf build-products.tar.gz -C ./DerivedData .
-
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+    - name: Cache DerivedData build products
+      uses: actions/cache/save@v4
       with:
-        name: scheduled-build-products
-        path: build-products.tar.gz
-        retention-days: 1
+        path: ./DerivedData/Build/Products
+        key: ${{ runner.os }}-build-products-${{ github.sha }}
 
   tests:
     name: ${{ matrix.test-name }}
@@ -159,18 +153,12 @@ jobs:
       run: |
         make generate
 
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
+    - name: Restore DerivedData build products
+      uses: actions/cache/restore@v4
       with:
-        name: scheduled-build-products
-        path: .
-
-    - name: Extract build products
-      run: |
-        echo "📦 Extracting build products..."
-        mkdir -p ./DerivedData
-        tar -xzf build-products.tar.gz -C ./DerivedData
-        echo "✅ Build products extracted successfully"
+        path: ./DerivedData/Build/Products
+        key: ${{ runner.os }}-build-products-${{ github.sha }}
+        fail-on-cache-miss: true
 
     - name: Pre-boot simulator
       run: |
