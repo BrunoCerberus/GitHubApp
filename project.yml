@@ -228,9 +228,6 @@ targets:
     sources:
       - path: GitHubAppWidgetExtension
       - path: GitHubApp/Configs/Localizable.swift
-      - path: GitHubApp/en.lproj/Localizable.strings
-      - path: GitHubApp/es.lproj/Localizable.strings
-      - path: GitHubApp/pt-BR.lproj/Localizable.strings
     dependencies:
       - sdk: Foundation.framework
       - sdk: UIKit.framework
