@@ -34,9 +34,6 @@ class SharedDataManager {
             let data = try JSONEncoder().encode(movies)
             userDefaults.set(data, forKey: moviesKey)
             userDefaults.set(Date(), forKey: lastUpdateKey)
-
-            // Synchronize to ensure data is written immediately (important for tests)
-            userDefaults.synchronize()
         } catch {
             Logger.shared.database("Failed to save upcoming movies: \(error)", level: .error)
         }
@@ -81,8 +78,5 @@ class SharedDataManager {
     func clearData() {
         userDefaults.removeObject(forKey: moviesKey)
         userDefaults.removeObject(forKey: lastUpdateKey)
-
-        // Synchronize to ensure data is cleared immediately (important for tests)
-        userDefaults.synchronize()
     }
 }
