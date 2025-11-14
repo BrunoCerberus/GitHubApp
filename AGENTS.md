@@ -21,7 +21,7 @@ This guide helps contributors work consistently across this iOS Swift project. K
 ## Build, Test, and Development Commands
 - `make setup` – Install XcodeGen and generate the project.
 - `make generate` – Regenerate `GitHubApp.xcodeproj` from `project.yml`.
-- `make test` – Run all tests (unit + UI + snapshot) on iOS Simulator (iPhone Air, iOS 26.0).
+- `make test` – Run all tests (unit + UI + snapshot) on iOS Simulator (iPhone Air, iOS 26.1).
 - `make test-unit` – Run unit tests only.
 - `make test-ui` – Run UI interaction tests only.
 - `make test-snapshot` – Run snapshot visual regression tests only.

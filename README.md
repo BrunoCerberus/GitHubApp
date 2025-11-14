@@ -108,7 +108,7 @@ This project uses [XcodeGen](https://github.com/yonaskolb/XcodeGen) to generate 
 - macOS
 - Homebrew (for installing XcodeGen)
 - Xcode 26.0.1+
-- iOS 26.0+ deployment target
+- iOS 26.1+ deployment target
 
 ### Quick Start
 
@@ -162,7 +162,7 @@ This project uses [XcodeGen](https://github.com/yonaskolb/XcodeGen) to generate 
 The project configuration is defined in `project.yml`:
 - **Targets**: GitHubApp (main app), GitHubAppTests (unit tests), GitHubAppUITests (UI tests), GitHubAppSnapshotTests (snapshot tests)
 - **Schemes**: GitHubAppDev, GitHubAppProd, GitHubAppTests, GitHubAppUITests, GitHubAppSnapshotTests
-- **Settings**: iOS 26.0+ deployment target, Swift 5.0
+- **Settings**: iOS 26.1+ deployment target, Swift 5.0
 - **Environment Variables**: API keys configured per scheme
 
 **Feature Structure:**

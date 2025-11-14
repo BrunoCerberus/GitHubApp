@@ -43,7 +43,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
      * This method is called when the app is opened via a custom URL scheme.
      * For iOS 13+, this is handled by the scene delegate.
      *
-     * Note: This method is deprecated in iOS 26.0. URL handling should be done
+     * Note: This method is deprecated in iOS 26.1. URL handling should be done
      * in the scene delegate using UIScene.ConnectionOptions instead.
      *
      * - Parameter application: The singleton app object

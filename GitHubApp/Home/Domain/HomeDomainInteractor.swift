@@ -404,6 +404,13 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
                 // Update state on main thread
                 await MainActor.run {
                     currentState = currentState.copy(favoriteMovies: filteredLikedMovies)
+
+                    // Post notification to sync with other features (Favorites, Search)
+                    // This ensures consistent UI state across all views
+                    NotificationCenter.default.post(
+                        name: .favoriteMoviesDidUpdate,
+                        object: updatedLikedMovies
+                    )
                 }
             } catch {
                 Logger.shared.domain("Failed to toggle movie like: \(error)", level: .error)
