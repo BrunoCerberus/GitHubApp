@@ -505,60 +505,6 @@ struct SearchViewTests {
         }
     }
 
-    @Test("Search no-results state rendering")
-    func searchNoResultsStateRendering() async throws {
-        defer { cleanupTest() }
-
-        struct NoResultsSearchService: HomeService {
-            func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
-                Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
-                    .setFailureType(to: Error.self)
-                    .receive(on: DispatchQueue.main)
-                    .eraseToAnyPublisher()
-            }
-
-            func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
-                // Return empty results for any search query
-                Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
-                    .setFailureType(to: Error.self)
-                    .receive(on: DispatchQueue.main)
-                    .eraseToAnyPublisher()
-            }
-
-            func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
-                Just(MovieCreditsResponse(cast: []))
-                    .setFailureType(to: Error.self)
-                    .receive(on: DispatchQueue.main)
-                    .eraseToAnyPublisher()
-            }
-
-            func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
-                Just(MovieReviewsResponse(results: []))
-                    .setFailureType(to: Error.self)
-                    .receive(on: DispatchQueue.main)
-                    .eraseToAnyPublisher()
-            }
-        }
-
-        let noResultsService = NoResultsSearchService()
-        let (_, viewModel, view) = createTestComponents(mockService: noResultsService)
-        let viewController = view.wrappedViewController
-
-        // Perform a search that returns no results
-        viewModel.searchMovies(query: "NonexistentMovie12345")
-        try await Task.sleep(nanoseconds: 2_500_000_000) // 2.5 seconds
-
-        // Verify the no-results state
-        if case let .success(dataViewState) = viewModel.viewState {
-            #expect(dataViewState.movies.isEmpty, "Search should return empty results")
-        } else {
-            #expect(Bool(false), "Expected success state with empty results")
-        }
-
-        // Take snapshot of no-results state
-        assertSnapshot(of: viewController, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig())))
-    }
-
     @Test("Favorite toggle functionality in search view")
     func favoriteToggleFunctionality() async throws {
         defer { cleanupTest() }

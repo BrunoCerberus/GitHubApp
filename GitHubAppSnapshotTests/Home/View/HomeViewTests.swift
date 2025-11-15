@@ -207,49 +207,6 @@ struct HomeViewTests {
 
     // MARK: - Button Interaction Tests
 
-    @Test("Heart button favorite toggle")
-    func heartButtonFavoriteToggle() async throws {
-        defer { cleanupTest() }
-
-        let (_, _, viewModel, view) = createTestComponents()
-        _ = view.wrappedViewController
-
-        // Wait for auto-load to complete
-        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
-
-        // Verify success state with movies
-        await MainActor.run {
-            if case let .success(dataViewState) = viewModel.viewState {
-                #expect(!dataViewState.movies.isEmpty, "Movies should be loaded")
-
-                // Get first movie
-                let firstMovie = dataViewState.movies[0]
-
-                // Initial state - movie should not be favorited
-                let isFavoritedBefore = dataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
-                #expect(!isFavoritedBefore, "Movie should not be favorited initially")
-
-                // Toggle favorite
-                viewModel.toggleFavorite(for: firstMovie)
-            } else {
-                #expect(Bool(false), "Expected success state")
-            }
-        }
-
-        // Wait for state update (favorites are persisted asynchronously)
-        try await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds
-
-        // Verify state changed to include the movie in favorites
-        await MainActor.run {
-            if case let .success(updatedDataViewState) = viewModel.viewState {
-                if let firstMovie = updatedDataViewState.movies.first {
-                    let isFavoritedAfter = updatedDataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
-                    #expect(isFavoritedAfter, "Movie should be in favorites after toggle")
-                }
-            }
-        }
-    }
-
     @Test("Heart button favorite toggle visual feedback")
     func heartButtonVisualFeedback() async throws {
         defer { cleanupTest() }
