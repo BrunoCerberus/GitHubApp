@@ -12,6 +12,7 @@ import Testing
 /**
  * Tests for MovieDetailsViewStateReducing protocol and MovieDetailsViewStateReducer implementation.
  */
+@MainActor
 struct MovieDetailsViewStateReducingTests {
     private let reducer = MovieDetailsViewStateReducer()
 

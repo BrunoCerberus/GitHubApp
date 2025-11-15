@@ -9,6 +9,7 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct DeeplinkManagerTests {
     // MARK: - URL Scheme Tests
 

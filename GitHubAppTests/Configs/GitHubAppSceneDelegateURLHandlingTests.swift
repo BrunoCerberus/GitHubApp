@@ -13,6 +13,7 @@ import UIKit
  * Tests for GitHubAppSceneDelegate URL handling methods to improve test coverage.
  * These tests focus on verifying the methods exist and basic functionality.
  */
+@MainActor
 struct GitHubAppSceneDelegateURLHandlingTests {
     private func createSceneDelegate() -> GitHubAppSceneDelegate {
         GitHubAppSceneDelegate()

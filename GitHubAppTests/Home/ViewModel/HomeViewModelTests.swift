@@ -7,6 +7,8 @@ import Combine
 @testable import GitHubApp
 import Testing
 
+@Suite(.serialized)
+@MainActor
 struct HomeViewModelTests {
     private func createTestServiceLocator(homeService: HomeService) -> ServiceLocator {
         let mockStorageService = MockStorageService()

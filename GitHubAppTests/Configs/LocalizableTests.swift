@@ -17,6 +17,7 @@ import Testing
  * - Parameterized strings work correctly
  * - Localization keys exist in string files
  */
+@MainActor
 struct LocalizableTests {
     // MARK: - Movie Details Tests
 

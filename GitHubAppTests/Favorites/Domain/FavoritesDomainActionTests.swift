@@ -8,6 +8,7 @@
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct FavoritesDomainActionTests {
     @Test("Favorites domain action equality comparison works correctly")
     func favoritesDomainActionEquality() {

@@ -20,7 +20,11 @@ import Foundation
  * - Converting domain state to view state
  *
  * Uses Combine for reactive programming and state management.
+ *
+ * @MainActor ensures all UI-related operations happen on the main thread,
+ * maintaining thread safety when interacting with the domain layer.
  */
+@MainActor
 final class FavoritesMoviesViewModel: CombineViewModel {
     /// Single source of truth for the view state
     @Published var viewState: FavoritesViewState = .loading

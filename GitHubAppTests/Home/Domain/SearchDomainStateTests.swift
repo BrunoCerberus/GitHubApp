@@ -6,6 +6,7 @@
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct SearchDomainStateTests {
     @Test("Initial state has empty collections and default values")
     func initialState() {

@@ -131,7 +131,7 @@ struct MockSearchService: SearchService {
 
         return Just(response)
             .setFailureType(to: Error.self)
-            .receive(on: RunLoop.current)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }

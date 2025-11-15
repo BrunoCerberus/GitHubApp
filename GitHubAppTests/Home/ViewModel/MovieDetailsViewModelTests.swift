@@ -8,6 +8,8 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
+@Suite(.serialized)
+@MainActor
 struct MovieDetailsViewModelTests {
     private func createTestComponents(with service: HomeService) -> MovieDetailsViewModel {
         try? APIKeysProvider.setMovieAPIKey("md-key")

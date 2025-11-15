@@ -18,6 +18,7 @@ import Testing
  * - Error simulation
  * - State management
  */
+@MainActor
 struct MockStorageServiceTests {
     @Test("Save single movie adds movie to storage")
     func saveSingleMovieAddsToStorage() async throws {

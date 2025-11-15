@@ -6,6 +6,7 @@
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct HomeDomainEventActionMapTests {
     @Test("Map fetch data event")
     func mapFetchDataEvent() {

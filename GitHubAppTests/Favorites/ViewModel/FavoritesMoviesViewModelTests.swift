@@ -7,6 +7,7 @@ import Combine
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct FavoritesMoviesViewModelTests {
     private func createTestComponents() -> (FavoritesMoviesViewModel, MockFavoritesService) {
         // Set up mock services

@@ -8,6 +8,7 @@
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct FavoritesDomainStateTests {
     @Test("Initial state has empty movies, not loading, and no error")
     func initialState() {

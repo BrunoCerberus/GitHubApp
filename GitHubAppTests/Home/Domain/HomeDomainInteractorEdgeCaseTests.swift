@@ -14,6 +14,7 @@ import Testing
  * Edge case and error handling tests for HomeDomainInteractor.
  * These tests focus on covering service initialization edge cases and error paths.
  */
+@MainActor
 struct HomeDomainInteractorEdgeCaseTests {
     private func createTestComponents() -> (ServiceLocator, MockHomeService) {
         let mockHomeService = MockHomeService()

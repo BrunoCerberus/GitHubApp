@@ -6,6 +6,7 @@
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct SearchDomainEventActionMapTests {
     @Test("Map search movies event")
     func mapSearchMoviesEvent() {

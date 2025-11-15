@@ -9,6 +9,7 @@
 import Testing
 import UIKit
 
+@MainActor
 struct GitHubAppSceneDelegateSimpleTests {
     private func createSceneDelegate() -> GitHubAppSceneDelegate {
         GitHubAppSceneDelegate()

@@ -19,7 +19,11 @@ import Testing
  * - JSON encoding/decoding
  * - Empty state handling
  * - UserDefaults integration
+ *
+ * Note: Tests run serially (.serialized) because they share UserDefaults storage.
  */
+@Suite(.serialized)
+@MainActor
 struct SharedDataManagerTests {
     @Test("SharedDataManager singleton instance is accessible")
     func singletonInstanceIsAccessible() {

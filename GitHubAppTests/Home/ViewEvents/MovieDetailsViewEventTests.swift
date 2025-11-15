@@ -12,6 +12,7 @@ import Testing
 /**
  * Tests for MovieDetailsViewEvent enum.
  */
+@MainActor
 struct MovieDetailsViewEventTests {
     private let testMovie = Movie(
         id: 555,

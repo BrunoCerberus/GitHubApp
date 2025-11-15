@@ -17,6 +17,7 @@ import SwiftData
  * acts as a coordinator for multiple independent services, implementing business logic
  * that spans across service boundaries.
  */
+@MainActor
 final class MovieDetailsDomainInteractor: ObservableObject, CombineInteractor {
     // MARK: - CombineInteractor Requirements
 

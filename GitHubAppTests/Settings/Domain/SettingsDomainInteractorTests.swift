@@ -10,6 +10,7 @@ import Combine
 import Testing
 import UIKit
 
+@MainActor
 struct SettingsDomainInteractorTests {
     private func createTestComponents() -> (SettingsDomainInteractor, MockSettingsService) {
         let mockSettingsService = MockSettingsService()

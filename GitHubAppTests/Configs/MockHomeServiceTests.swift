@@ -7,6 +7,7 @@ import Combine
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct MockHomeServiceTests {
     @Test("Mock home service fetch movies emits non-empty results")
     func fetchMoviesEmitsResults() async throws {

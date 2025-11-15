@@ -21,6 +21,7 @@ import Foundation
  *
  * Uses Combine for reactive programming and state management.
  */
+@MainActor
 final class HomeViewModel: CombineViewModel {
     /// Single source of truth for the view state
     @Published var viewState: HomeViewState = .loading

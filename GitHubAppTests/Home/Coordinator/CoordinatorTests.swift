@@ -7,6 +7,7 @@
 import SwiftUI
 import Testing
 
+@MainActor
 struct CoordinatorTests {
     init() {
         try? APIKeysProvider.setMovieAPIKey("coord-key")

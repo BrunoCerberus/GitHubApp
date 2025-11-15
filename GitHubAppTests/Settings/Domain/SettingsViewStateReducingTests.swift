@@ -13,6 +13,7 @@ import UIKit
 /**
  * Unit tests for SettingsViewStateReducer.
  */
+@MainActor
 struct SettingsViewStateReducingTests {
     let reducer = SettingsViewStateReducer()
 

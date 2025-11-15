@@ -6,6 +6,7 @@
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct MovieReviewsTests {
     @Test("Display author falls back to 'Anonymous' when author is empty")
     func displayAuthorFallback() {

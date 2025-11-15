@@ -13,6 +13,7 @@ import Testing
  * Unit tests for `ServiceLocator` covering registration, retrieval,
  * safe retrieval, clearing, and thread-safety behaviors.
  */
+@MainActor
 struct ServiceLocatorTests {
     // MARK: - Test Protocols and Classes
 

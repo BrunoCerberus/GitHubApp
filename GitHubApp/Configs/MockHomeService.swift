@@ -105,7 +105,7 @@ struct MockHomeService: HomeService {
         )
         return Just(response)
             .setFailureType(to: Error.self)
-            .receive(on: RunLoop.current)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 
@@ -118,21 +118,21 @@ struct MockHomeService: HomeService {
         )
         return Just(response)
             .setFailureType(to: Error.self)
-            .receive(on: RunLoop.current)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 
     func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
         Just(mockMovieCreditsResponse)
             .setFailureType(to: Error.self)
-            .receive(on: RunLoop.current)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 
     func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
         Just(mockMovieReviewsResponse)
             .setFailureType(to: Error.self)
-            .receive(on: RunLoop.current)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }

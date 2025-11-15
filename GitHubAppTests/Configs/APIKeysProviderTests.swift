@@ -7,6 +7,7 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct APIKeysProviderTests {
     private let tempKey = "unit-test-key-123"
 

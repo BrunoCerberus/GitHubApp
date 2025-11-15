@@ -72,6 +72,7 @@ import SwiftData
  *
  * - SeeAlso: `ARCHITECTURE_PATTERNS.md` for complete Service Bridging pattern documentation
  */
+@MainActor
 final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     // MARK: - CombineInteractor Requirements
 

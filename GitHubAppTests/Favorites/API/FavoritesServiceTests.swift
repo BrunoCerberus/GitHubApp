@@ -9,6 +9,7 @@ import Combine
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct FavoritesServiceTests {
     @Test("Loading favorite movies returns empty list when no movies are saved")
     func loadLikedMoviesEmpty() async throws {

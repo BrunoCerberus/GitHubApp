@@ -6,6 +6,7 @@
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct MovieCreditsTests {
     @Test("Display name falls back to 'Unknown' when name is empty")
     func displayNameFallback() {

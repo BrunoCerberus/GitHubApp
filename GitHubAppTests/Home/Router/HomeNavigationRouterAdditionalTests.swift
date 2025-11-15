@@ -6,6 +6,7 @@
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct HomeNavigationRouterAdditionalTests {
     @Test("Route uses coordinator when available")
     func routeUsesCoordinatorWhenAvailable() {

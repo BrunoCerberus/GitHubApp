@@ -24,6 +24,7 @@ import UIKit
  * Note: Some tests are limited by App Group container access in test environment.
  * These tests focus on code paths that can be exercised without actual file I/O.
  */
+@MainActor
 struct ImageCacheManagerTests {
     @Test("ImageCacheManager singleton instance is accessible")
     func singletonInstanceIsAccessible() {

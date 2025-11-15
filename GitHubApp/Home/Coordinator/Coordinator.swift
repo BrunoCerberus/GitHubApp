@@ -27,7 +27,10 @@ public enum Page: Hashable {
  * Navigation coordinator that builds views and manages navigation path.
  *
  * Holds shared ViewModels and routes between SwiftUI pages.
+ *
+ * @MainActor ensures all navigation and ViewModel initialization happens on the main thread.
  */
+@MainActor
 final class Coordinator: ObservableObject, CoordinatorProtocol {
     /// Current navigation path for the primary stack
     @Published var path: NavigationPath = .init()

@@ -6,6 +6,7 @@
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct ServiceLocatorExampleTests {
     @Test("Example functions do not crash")
     func exampleFunctionsDoNotCrash() {

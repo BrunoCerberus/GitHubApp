@@ -10,7 +10,11 @@ import Foundation
 
 /**
  * Mock implementation of StorageService for testing.
+ *
+ * @MainActor ensures thread-safe access to the mutable movies array
+ * and prevents concurrent modification crashes.
  */
+@MainActor
 final class MockStorageService: StorageService {
     private var movies: [Movie] = []
 

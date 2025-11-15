@@ -14,6 +14,7 @@ import Testing
  * Comprehensive edge case tests for HomeAPI to improve test coverage.
  * These tests focus on boundary conditions and error handling.
  */
+@MainActor
 struct HomeAPIEdgeCasesTests {
     private func ensureAPIKey() {
         // Ensure API key is present for URL construction

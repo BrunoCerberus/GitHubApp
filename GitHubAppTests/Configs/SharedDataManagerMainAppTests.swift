@@ -7,6 +7,12 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
+/**
+ * Note: Tests run serially (.serialized) because they share UserDefaults storage
+ * with WidgetDataManagerTests and SharedDataManagerTests.
+ */
+@Suite(.serialized)
+@MainActor
 struct SharedDataManagerMainAppTests {
     private func createTestComponents() -> (SharedDataManager, [SharedMovie]) {
         let sharedDataManager = SharedDataManager.shared

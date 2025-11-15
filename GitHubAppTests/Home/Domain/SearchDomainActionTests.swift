@@ -6,6 +6,7 @@
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct SearchDomainActionTests {
     @Test("Domain actions with same cases and parameters are equal")
     func domainActionEquality() {

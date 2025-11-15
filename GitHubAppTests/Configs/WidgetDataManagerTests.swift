@@ -20,7 +20,12 @@ import Testing
  * - Notification-based movie updates
  * - Clear shared data operation
  * - Integration with SharedDataManager
+ *
+ * Note: Tests run serially (.serialized) because they share UserDefaults storage
+ * and would interfere with each other if run in parallel.
+ * @MainActor removed to allow async Task operations to complete properly.
  */
+@Suite(.serialized)
 struct WidgetDataManagerTests {
     @Test("WidgetDataManager singleton instance is accessible")
     func singletonInstanceIsAccessible() {

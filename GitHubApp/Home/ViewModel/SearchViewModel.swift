@@ -22,6 +22,7 @@ import SwiftUI
  *
  * Uses Combine for reactive programming and state management.
  */
+@MainActor
 final class SearchViewModel: CombineViewModel {
     /// Single source of truth for the view state
     @Published var viewState: SearchViewState = .loading

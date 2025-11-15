@@ -13,6 +13,7 @@ import UIKit
 /**
  * Unit tests for SettingsDomainEventActionMap.
  */
+@MainActor
 struct SettingsDomainEventActionMapTests {
     // MARK: - View Event to Domain Action Mapping Tests
 

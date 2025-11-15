@@ -10,6 +10,7 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct FavoritesMoviesViewModelErrorTests {
     private func createTestComponents() -> (FavoritesMoviesViewModel, MockFavoritesService) {
         let mockFavoritesService = MockFavoritesService()

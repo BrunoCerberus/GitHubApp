@@ -7,6 +7,7 @@ import Combine
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct HomeDomainInteractorTests {
     private func createTestComponents() -> (HomeDomainInteractor, MockHomeService, StorageService) {
         let mockHomeService = MockHomeService()

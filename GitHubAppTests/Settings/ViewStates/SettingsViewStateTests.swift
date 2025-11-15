@@ -10,6 +10,7 @@ import Foundation
 import Testing
 import UIKit
 
+@MainActor
 struct SettingsViewStateTests {
     // MARK: - SettingsViewState Tests
 

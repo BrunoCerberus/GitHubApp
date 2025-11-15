@@ -9,6 +9,7 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct UniversalLinksSceneDelegateTests {
     private func createDeeplinkManager() -> DeeplinkManager {
         DeeplinkManager()

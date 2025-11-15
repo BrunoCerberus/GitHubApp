@@ -21,6 +21,7 @@ import UIKit
  * - Equality comparison
  * - Service locator inheritance
  */
+@MainActor
 struct SearchNavigationRouterTests {
     @Test("Router initializes with coordinator and inherits service locator")
     func routerInitializesWithCoordinator() {

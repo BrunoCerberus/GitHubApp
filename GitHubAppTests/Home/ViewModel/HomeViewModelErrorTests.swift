@@ -13,6 +13,7 @@ import Testing
 /**
  * Simple error tests for HomeViewModel to improve coverage.
  */
+@MainActor
 struct HomeViewModelErrorTests {
     private func createTestComponents() -> (HomeViewModel, MockHomeService) {
         let mockService = MockHomeService()

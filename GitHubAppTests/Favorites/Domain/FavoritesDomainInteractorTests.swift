@@ -10,6 +10,7 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct FavoritesDomainInteractorTests {
     private func createTestComponents() -> (FavoritesDomainInteractor, MockStorageService) {
         let mockStorageService = MockStorageService()

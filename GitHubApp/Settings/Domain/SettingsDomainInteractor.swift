@@ -19,6 +19,7 @@ import UIKit
  *
  * Conforms to CombineInteractor to leverage reactive programming patterns.
  */
+@MainActor
 final class SettingsDomainInteractor: ObservableObject, CombineInteractor {
     // MARK: - CombineInteractor Requirements
 

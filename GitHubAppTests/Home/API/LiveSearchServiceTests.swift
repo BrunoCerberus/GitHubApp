@@ -7,6 +7,7 @@ import Combine
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct LiveSearchServiceTests {
     private func createTestComponents() -> (LiveSearchService, AnyCancellable?) {
         // Set test API key

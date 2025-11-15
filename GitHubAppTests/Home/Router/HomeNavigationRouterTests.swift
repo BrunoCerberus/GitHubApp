@@ -9,6 +9,7 @@
 import Testing
 import UIKit
 
+@MainActor
 struct HomeNavigationRouterTests {
     @Test("Pushing a detail event presents MovieDetailsHostingController")
     func router() async throws {

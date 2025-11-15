@@ -17,6 +17,7 @@ import Testing
  * - Return type correctness
  * - Publisher chain setup
  */
+@MainActor
 struct HomeServiceTests {
     private func createTestComponents() -> (LiveHomeService, Set<AnyCancellable>) {
         // Ensure API key is present for tests

@@ -10,6 +10,7 @@ import Combine
 import Testing
 import UIKit
 
+@MainActor
 struct SettingsViewModelTests {
     private func createTestComponents() -> (SettingsViewModel, MockSettingsService) {
         let mockSettingsService = MockSettingsService()

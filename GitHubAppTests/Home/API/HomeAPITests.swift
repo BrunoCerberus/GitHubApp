@@ -6,6 +6,7 @@
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct HomeAPITests {
     init() {
         // Ensure API key is present so HomeAPI can build URLs

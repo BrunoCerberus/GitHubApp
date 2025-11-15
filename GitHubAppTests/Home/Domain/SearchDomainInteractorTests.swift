@@ -7,6 +7,7 @@ import Combine
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct SearchDomainInteractorTests {
     private func createTestComponents() -> (SearchDomainInteractor, MockSearchService, StorageService) {
         let mockSearchService = MockSearchService()

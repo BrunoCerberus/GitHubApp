@@ -6,6 +6,7 @@
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct SearchViewStateReducingTests {
     @Test("Reducer converts domain error state to view error state")
     func reduceErrorState() {

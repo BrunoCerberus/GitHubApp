@@ -18,6 +18,7 @@ import SwiftData
  *
  * Conforms to CombineInteractor to leverage reactive programming patterns.
  */
+@MainActor
 final class SearchDomainInteractor: ObservableObject, CombineInteractor {
     // MARK: - CombineInteractor Requirements
 

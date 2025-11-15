@@ -9,6 +9,7 @@
 import Testing
 import UIKit
 
+@MainActor
 struct SettingsManagerTests {
     // MARK: - Profile Image Tests
 

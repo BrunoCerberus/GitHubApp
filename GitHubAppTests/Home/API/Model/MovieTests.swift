@@ -6,6 +6,7 @@
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct MovieTests {
     @Test("Display title falls back to 'Untitled' when title is empty")
     func displayTitleFallback() {

@@ -12,6 +12,7 @@ import Testing
 /**
  * Tests for MovieDetailsDomainAction enum.
  */
+@MainActor
 struct MovieDetailsDomainActionTests {
     private let testMovie = Movie(
         id: 123,

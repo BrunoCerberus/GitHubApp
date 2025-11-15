@@ -12,6 +12,7 @@ import Testing
 /**
  * Tests for MovieDetailsDomainState struct.
  */
+@MainActor
 struct MovieDetailsDomainStateTests {
     private let testMovie = Movie(
         id: 456,

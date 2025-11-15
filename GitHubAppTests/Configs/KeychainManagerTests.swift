@@ -9,6 +9,7 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct KeychainManagerTests {
     private let testService: String = "com.bruno.GitHubApp.TestKeychain"
     private let testKey: String = "testKey"

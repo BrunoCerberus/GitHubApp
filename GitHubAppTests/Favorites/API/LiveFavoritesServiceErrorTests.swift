@@ -10,6 +10,7 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct LiveFavoritesServiceErrorTests {
     // MARK: - Service Initialization Tests
 

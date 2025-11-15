@@ -9,6 +9,7 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct DeeplinkRouterTests {
     // MARK: - Initialization Tests
 

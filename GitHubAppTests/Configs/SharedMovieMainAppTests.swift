@@ -7,6 +7,7 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct SharedMovieMainAppTests {
     private func createTestMovies() -> (SharedMovie, SharedMovie, SharedMovie, SharedMovie, SharedMovie) {
         let movieWithPoster = SharedMovie(

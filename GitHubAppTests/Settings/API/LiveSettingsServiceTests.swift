@@ -10,6 +10,7 @@ import Combine
 import Testing
 import UIKit
 
+@MainActor
 struct LiveSettingsServiceTests {
     private func createTestComponents() -> (LiveSettingsService, ServiceLocator) {
         let mockStorageService = MockStorageService()

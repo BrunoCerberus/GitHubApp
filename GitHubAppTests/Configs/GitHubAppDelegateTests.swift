@@ -7,6 +7,7 @@
 import Testing
 import UIKit
 
+@MainActor
 struct GitHubAppDelegateTests {
     private func createTestComponents() -> (AppDelegate, UIApplication) {
         let appDelegate = AppDelegate()

@@ -7,6 +7,7 @@
 import Testing
 import UIKit
 
+@MainActor
 struct MovieDetailsHostingControllerTests {
     private func createTestComponents(movie: Movie) -> MovieDetailsHostingController {
         // Ensure API key is available to avoid fatalError in HomeAPI

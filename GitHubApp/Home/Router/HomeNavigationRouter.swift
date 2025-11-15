@@ -13,7 +13,10 @@ import UIKit
  * Router for Home module navigation.
  *
  * Supports both SwiftUI navigation via Coordinator and UIKit fallback.
+ *
+ * @MainActor ensures all navigation operations happen on the main thread.
  */
+@MainActor
 final class HomeNavigationRouter: NavigationRouter, Equatable {
     /// Optional UIKit navigation controller for fallback navigation
     weak var navigation: UINavigationController?

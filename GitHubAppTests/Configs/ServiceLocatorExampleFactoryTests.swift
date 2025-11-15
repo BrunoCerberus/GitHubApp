@@ -11,6 +11,7 @@ import Testing
 /**
  * Additional tests for ServiceLocatorExample factory closures to improve coverage.
  */
+@MainActor
 struct ServiceLocatorExampleFactoryTests {
     @Test("Service locator example factory registration")
     func serviceLocatorExampleFactoryRegistration() {

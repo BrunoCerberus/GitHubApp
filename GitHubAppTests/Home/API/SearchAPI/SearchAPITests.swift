@@ -7,6 +7,7 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
+@MainActor
 struct SearchAPITests {
     private func setupTestEnvironment() {
         try? APIKeysProvider.setMovieAPIKey("unit-test-key-123")

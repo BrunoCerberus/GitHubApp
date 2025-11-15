@@ -16,7 +16,11 @@ import Foundation
  * It processes domain actions and manages domain state while handling persistence of favorite movies.
  *
  * Conforms to CombineInteractor to leverage reactive programming patterns.
+ *
+ * @MainActor ensures all state mutations happen on the main thread, preventing race conditions
+ * and deadlocks when accessing @Published properties.
  */
+@MainActor
 final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
     // MARK: - CombineInteractor Requirements
 
@@ -133,21 +137,17 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
             do {
                 let movies = try await storageService.fetchLikedMovies()
 
-                await MainActor.run {
-                    currentState.favoriteMovies = movies
-                    currentState.isLoading = false
+                currentState.favoriteMovies = movies
+                currentState.isLoading = false
 
-                    // Notify other components that favorites have been updated
-                    NotificationCenter.default.post(
-                        name: .favoriteMoviesDidUpdate,
-                        object: movies
-                    )
-                }
+                // Notify other components that favorites have been updated
+                NotificationCenter.default.post(
+                    name: .favoriteMoviesDidUpdate,
+                    object: movies
+                )
             } catch {
-                await MainActor.run {
-                    currentState.isLoading = false
-                    currentState.error = error.localizedDescription
-                }
+                currentState.isLoading = false
+                currentState.error = error.localizedDescription
             }
         }
     }
@@ -164,19 +164,15 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
             do {
                 let movies = try await storageService.toggleMovieFavorite(movie)
 
-                await MainActor.run {
-                    currentState.favoriteMovies = movies
+                currentState.favoriteMovies = movies
 
-                    // Notify other components that favorites have been updated
-                    NotificationCenter.default.post(
-                        name: .favoriteMoviesDidUpdate,
-                        object: movies
-                    )
-                }
+                // Notify other components that favorites have been updated
+                NotificationCenter.default.post(
+                    name: .favoriteMoviesDidUpdate,
+                    object: movies
+                )
             } catch {
-                await MainActor.run {
-                    currentState.error = error.localizedDescription
-                }
+                currentState.error = error.localizedDescription
             }
         }
     }
@@ -191,19 +187,15 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
             do {
                 try await storageService.clearFavoriteMovies()
 
-                await MainActor.run {
-                    currentState.favoriteMovies = []
+                currentState.favoriteMovies = []
 
-                    // Notify other components that favorites have been updated
-                    NotificationCenter.default.post(
-                        name: .favoriteMoviesDidUpdate,
-                        object: []
-                    )
-                }
+                // Notify other components that favorites have been updated
+                NotificationCenter.default.post(
+                    name: .favoriteMoviesDidUpdate,
+                    object: []
+                )
             } catch {
-                await MainActor.run {
-                    currentState.error = error.localizedDescription
-                }
+                currentState.error = error.localizedDescription
             }
         }
     }
