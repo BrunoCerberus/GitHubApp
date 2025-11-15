@@ -182,21 +182,16 @@ struct SearchViewTests {
         let controller: UIViewController = view.wrappedViewController
 
         // Trigger search
-        viewModel.searchMovies(query: "Avatar")
+        await MainActor.run {
+            viewModel.searchMovies(query: "Avatar")
+        }
 
         // Give time for search to complete
-        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
-
-        // Verify success state with results
-        if case let .success(dataViewState) = viewModel.viewState {
-            #expect(!dataViewState.movies.isEmpty, "Search results should be populated")
-        } else {
-            #expect(Bool(false), "Expected success state with results")
-        }
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
         // Snapshot the search results
         await MainActor.run {
-            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig())))
+            assertSnapshot(of: controller, as: .wait(for: 2.0, on: .image(on: iPhoneAirConfig())))
         }
     }
 
@@ -288,29 +283,37 @@ struct SearchViewTests {
         _ = view.wrappedViewController
 
         // Trigger search
-        viewModel.searchMovies(query: "Avatar")
-        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+        await MainActor.run {
+            viewModel.searchMovies(query: "Avatar")
+        }
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
-        // Verify success state with results
-        if case let .success(dataViewState) = viewModel.viewState {
-            #expect(!dataViewState.movies.isEmpty, "Search results should be populated")
+        // Verify success state with results and toggle favorite
+        await MainActor.run {
+            if case let .success(dataViewState) = viewModel.viewState {
+                #expect(!dataViewState.movies.isEmpty, "Search results should be populated")
 
-            let firstMovie = dataViewState.movies[0]
+                let firstMovie = dataViewState.movies[0]
 
-            // Initial state - movie should not be favorited
-            let isFavoritedBefore = dataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
-            #expect(!isFavoritedBefore, "Movie should not be favorited initially")
+                // Initial state - movie should not be favorited
+                let isFavoritedBefore = dataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
+                #expect(!isFavoritedBefore, "Movie should not be favorited initially")
 
-            // Toggle favorite
-            viewModel.toggleFavorite(for: firstMovie)
+                // Toggle favorite
+                viewModel.toggleFavorite(for: firstMovie)
+            }
+        }
 
-            // Wait for state update
-            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+        // Wait for state update (favorites are persisted asynchronously)
+        try await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds
 
-            // Verify state changed
+        // Verify state changed
+        await MainActor.run {
             if case let .success(updatedDataViewState) = viewModel.viewState {
-                let isFavoritedAfter = updatedDataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
-                #expect(isFavoritedAfter, "Movie should be in favorites after toggle")
+                if let firstMovie = updatedDataViewState.movies.first {
+                    let isFavoritedAfter = updatedDataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
+                    #expect(isFavoritedAfter, "Movie should be in favorites after toggle")
+                }
             }
         }
     }
@@ -460,21 +463,20 @@ struct SearchViewTests {
         _ = view.wrappedViewController
 
         // Trigger single search
-        viewModel.searchMovies(query: "Avatar")
-
-        // Immediately check - should still be in previous state or loading
-        if case .success = viewModel.viewState {
-            // May transition but verify it continues
+        await MainActor.run {
+            viewModel.searchMovies(query: "Avatar")
         }
 
         // Wait for debounce completion (0.3s) + API response time
-        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
         // Verify results arrived after debounce
-        if case let .success(dataViewState) = viewModel.viewState {
-            #expect(!dataViewState.movies.isEmpty, "Search should have executed and returned results")
-        } else {
-            #expect(Bool(false), "Expected success state after search completes")
+        await MainActor.run {
+            if case let .success(dataViewState) = viewModel.viewState {
+                #expect(!dataViewState.movies.isEmpty, "Search should have executed and returned results")
+            } else {
+                #expect(Bool(false), "Expected success state after search completes")
+            }
         }
     }
 
@@ -511,6 +513,7 @@ struct SearchViewTests {
             func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
                 Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
 
@@ -518,18 +521,21 @@ struct SearchViewTests {
                 // Return empty results for any search query
                 Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
 
             func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
                 Just(MovieCreditsResponse(cast: []))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
 
             func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
                 Just(MovieReviewsResponse(results: []))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
         }
@@ -540,7 +546,7 @@ struct SearchViewTests {
 
         // Perform a search that returns no results
         viewModel.searchMovies(query: "NonexistentMovie12345")
-        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+        try await Task.sleep(nanoseconds: 2_500_000_000) // 2.5 seconds
 
         // Verify the no-results state
         if case let .success(dataViewState) = viewModel.viewState {

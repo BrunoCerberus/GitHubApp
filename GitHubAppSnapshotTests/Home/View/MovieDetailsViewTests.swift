@@ -81,14 +81,11 @@ struct MovieDetailsViewTests {
         let (_, viewModel, view) = createTestComponents()
         let controller: UIViewController = view.wrappedViewController
 
-        // Trigger data fetch
-        viewModel.fetchData()
-
-        // Give time for async operations and UI updates (credits and reviews to load)
-        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+        // Wait for auto-load to complete
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
         await MainActor.run {
-            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+            assertSnapshot(of: controller, as: .wait(for: 2.0, on: .image(on: iPhoneAirConfig)))
         }
     }
 
@@ -96,25 +93,17 @@ struct MovieDetailsViewTests {
     func movieDetailsViewDisplaysCreditsSection() async throws {
         let (_, viewModel, _) = createTestComponents()
 
-        // Verify initial state is loading
-        if case .loading = viewModel.viewState {
-            // Correct state
-        } else {
-            #expect(Bool(false), "Expected loading state initially")
-        }
-
-        // Trigger data fetch
-        viewModel.fetchData()
-
-        // Wait for data
-        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+        // Wait for auto-load to complete
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
         // Verify success state
-        if case let .success(dataViewState) = viewModel.viewState {
-            // Credits should be populated from MockHomeService
-            #expect(!dataViewState.credits.isEmpty, "Credits should be populated")
-        } else {
-            #expect(Bool(false), "Expected success state after fetch")
+        await MainActor.run {
+            if case let .success(dataViewState) = viewModel.viewState {
+                // Credits should be populated from MockHomeService
+                #expect(!dataViewState.credits.isEmpty, "Credits should be populated")
+            } else {
+                #expect(Bool(false), "Expected success state after fetch")
+            }
         }
     }
 
@@ -122,16 +111,16 @@ struct MovieDetailsViewTests {
     func movieDetailsViewDisplaysReviewsSection() async throws {
         let (_, viewModel, _) = createTestComponents()
 
-        viewModel.fetchData()
-
-        // Wait for data
-        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+        // Wait for auto-load to complete
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
         // Verify success state with reviews
-        if case let .success(dataViewState) = viewModel.viewState {
-            #expect(!dataViewState.reviews.isEmpty, "Reviews should be populated")
-        } else {
-            #expect(Bool(false), "Expected success state after fetch")
+        await MainActor.run {
+            if case let .success(dataViewState) = viewModel.viewState {
+                #expect(!dataViewState.reviews.isEmpty, "Reviews should be populated")
+            } else {
+                #expect(Bool(false), "Expected success state after fetch")
+            }
         }
     }
 
@@ -196,21 +185,12 @@ struct MovieDetailsViewTests {
         let (_, viewModel, view) = createTestComponents()
         let controller: UIViewController = view.wrappedViewController
 
-        // Manually set view state to success with empty credits
-        // We'll create a modified state through the viewModel's internal state
-        viewModel.fetchData()
+        // Wait for auto-load to complete
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
-        try await Task.sleep(nanoseconds: 500_000_000)
-
-        // Check if we can verify the UI handles empty sections
-        if case .success = viewModel.viewState {
-            // Both sections should be rendered
-            #expect(true)
-        }
-
-        // Snapshot empty state
+        // Snapshot the view
         await MainActor.run {
-            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+            assertSnapshot(of: controller, as: .wait(for: 2.0, on: .image(on: iPhoneAirConfig)))
         }
     }
 

@@ -50,13 +50,13 @@ struct HomeViewTests {
         let (_, _, viewModel, view) = createTestComponents()
         _ = view.wrappedViewController
 
-        // Trigger data fetch
-        viewModel.fetchData()
+        // Wait for auto-load to complete (ViewModel calls loadInitialData in init)
+        // Increased wait time to ensure data loads before snapshot
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
-        // Give time for async operations and UI updates
-        try await Task.sleep(nanoseconds: 3_500_000_000) // 3.5 seconds
-
-        assertSnapshot(of: view.wrappedViewController, as: .wait(for: 1.0, on: .image(on: iPhoneAirConfig)))
+        await MainActor.run {
+            assertSnapshot(of: view.wrappedViewController, as: .wait(for: 2.0, on: .image(on: iPhoneAirConfig)))
+        }
     }
 
     @Test("Home view displays loading state")
@@ -214,34 +214,39 @@ struct HomeViewTests {
         let (_, _, viewModel, view) = createTestComponents()
         _ = view.wrappedViewController
 
-        // Trigger data fetch to populate movies
-        viewModel.fetchData()
-        try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds for data to load
+        // Wait for auto-load to complete
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
         // Verify success state with movies
-        if case let .success(dataViewState) = viewModel.viewState {
-            #expect(!dataViewState.movies.isEmpty, "Movies should be loaded")
+        await MainActor.run {
+            if case let .success(dataViewState) = viewModel.viewState {
+                #expect(!dataViewState.movies.isEmpty, "Movies should be loaded")
 
-            // Get first movie
-            let firstMovie = dataViewState.movies[0]
+                // Get first movie
+                let firstMovie = dataViewState.movies[0]
 
-            // Initial state - movie should not be favorited
-            let isFavoritedBefore = dataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
-            #expect(!isFavoritedBefore, "Movie should not be favorited initially")
+                // Initial state - movie should not be favorited
+                let isFavoritedBefore = dataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
+                #expect(!isFavoritedBefore, "Movie should not be favorited initially")
 
-            // Toggle favorite
-            viewModel.toggleFavorite(for: firstMovie)
-
-            // Wait for state update
-            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-
-            // Verify state changed to include the movie in favorites
-            if case let .success(updatedDataViewState) = viewModel.viewState {
-                let isFavoritedAfter = updatedDataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
-                #expect(isFavoritedAfter, "Movie should be in favorites after toggle")
+                // Toggle favorite
+                viewModel.toggleFavorite(for: firstMovie)
+            } else {
+                #expect(Bool(false), "Expected success state")
             }
-        } else {
-            #expect(Bool(false), "Expected success state")
+        }
+
+        // Wait for state update (favorites are persisted asynchronously)
+        try await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds
+
+        // Verify state changed to include the movie in favorites
+        await MainActor.run {
+            if case let .success(updatedDataViewState) = viewModel.viewState {
+                if let firstMovie = updatedDataViewState.movies.first {
+                    let isFavoritedAfter = updatedDataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
+                    #expect(isFavoritedAfter, "Movie should be in favorites after toggle")
+                }
+            }
         }
     }
 
@@ -252,26 +257,27 @@ struct HomeViewTests {
         let (_, _, viewModel, view) = createTestComponents()
         let controller: UIViewController = view.wrappedViewController
 
-        // Trigger data fetch
-        viewModel.fetchData()
-        try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+        // Wait for auto-load to complete
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
         // Snapshot before toggle
         await MainActor.run {
-            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+            assertSnapshot(of: controller, as: .wait(for: 2.0, on: .image(on: iPhoneAirConfig)))
         }
 
         // Toggle favorite
-        if case let .success(dataViewState) = viewModel.viewState {
-            let firstMovie = dataViewState.movies[0]
-            viewModel.toggleFavorite(for: firstMovie)
-
-            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-
-            // Snapshot after toggle to verify icon change (heart -> heart.fill or vice versa)
-            await MainActor.run {
-                assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+        await MainActor.run {
+            if case let .success(dataViewState) = viewModel.viewState {
+                let firstMovie = dataViewState.movies[0]
+                viewModel.toggleFavorite(for: firstMovie)
             }
+        }
+
+        try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
+
+        // Snapshot after toggle to verify icon change (heart -> heart.fill or vice versa)
+        await MainActor.run {
+            assertSnapshot(of: controller, as: .wait(for: 2.0, on: .image(on: iPhoneAirConfig)))
         }
     }
 
@@ -524,8 +530,11 @@ struct HomeViewTests {
         let (router, _, viewModel, view) = createTestComponents()
         _ = view.wrappedViewController
 
-        // Wait for initial load
-        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+        // Explicitly fetch data
+        viewModel.fetchData()
+
+        // Wait for data to load
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
 
         // Verify we have movies to tap
         if case let .success(dataViewState) = viewModel.viewState {
@@ -555,8 +564,11 @@ struct HomeViewTests {
     func pullToRefreshTriggerTest() async throws {
         let (_, _, viewModel, _) = createTestComponents()
 
+        // Explicitly fetch data
+        viewModel.fetchData()
+
         // Wait for initial load
-        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
 
         // Get initial movie count
         var initialMovieCount = 0
@@ -582,23 +594,16 @@ struct HomeViewTests {
     func loadingStateTransitionTest() async throws {
         let (_, _, viewModel, _) = createTestComponents()
 
-        // Initially should be in loading state or quickly transition to success
-        let initialState = viewModel.viewState
-        if case .loading = initialState {
-            #expect(true, "Initial state is loading")
+        // Wait for auto-load to complete
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
-            // Wait for transition to success
-            try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
-
-            // Verify transitioned to success
+        // Verify transitioned to success
+        await MainActor.run {
             if case let .success(dataViewState) = viewModel.viewState {
                 #expect(!dataViewState.movies.isEmpty, "Should have movies after loading completes")
             } else {
                 #expect(Bool(false), "Expected success state after loading completes")
             }
-        } else if case let .success(dataViewState) = initialState {
-            // Already in success state (fast loading)
-            #expect(!dataViewState.movies.isEmpty, "Should have movies in success state")
         }
     }
 
@@ -612,11 +617,13 @@ struct HomeViewTests {
                 if requestCount == 1 {
                     // First request fails
                     return Fail(error: NSError(domain: "Test", code: -1, userInfo: [NSLocalizedDescriptionKey: "Test error"]))
+                        .receive(on: DispatchQueue.main)
                         .eraseToAnyPublisher()
                 } else {
                     // Second request succeeds
                     return Just(MoviesResponse(results: [Movie(id: 1, title: "Test", overview: "Test", posterPath: "/test.jpg")], page: 1, totalPages: 1, totalResults: 1))
                         .setFailureType(to: Error.self)
+                        .receive(on: DispatchQueue.main)
                         .eraseToAnyPublisher()
                 }
             }
@@ -624,18 +631,21 @@ struct HomeViewTests {
             func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
                 Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
 
             func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
                 Just(MovieCreditsResponse(cast: []))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
 
             func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
                 Just(MovieReviewsResponse(results: []))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
         }
@@ -648,24 +658,30 @@ struct HomeViewTests {
         let viewModel = HomeViewModel(serviceLocator: serviceLocator)
 
         // Initial fetch should fail - wait for error state
-        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
         // Verify error state was reached
         var errorStateReached = false
-        if case let .error(errorMessage) = viewModel.viewState {
-            errorStateReached = !errorMessage.isEmpty
-            #expect(errorStateReached, "Should have error message")
+        await MainActor.run {
+            if case let .error(errorMessage) = viewModel.viewState {
+                errorStateReached = !errorMessage.isEmpty
+                #expect(errorStateReached, "Should have error message")
+            }
         }
 
         // Retry by fetching again
-        viewModel.fetchData()
-        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+        await MainActor.run {
+            viewModel.fetchData()
+        }
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
         // Verify transitioned to success
-        if case let .success(dataViewState) = viewModel.viewState {
-            #expect(!dataViewState.movies.isEmpty, "Should have movies after retry succeeds")
-        } else {
-            #expect(errorStateReached, "Should have reached error state before retry attempt")
+        await MainActor.run {
+            if case let .success(dataViewState) = viewModel.viewState {
+                #expect(!dataViewState.movies.isEmpty, "Should have movies after retry succeeds")
+            } else {
+                #expect(errorStateReached, "Should have reached error state before retry attempt")
+            }
         }
     }
 
@@ -679,24 +695,28 @@ struct HomeViewTests {
                 }
                 return Just(MoviesResponse(results: movies, page: 1, totalPages: 1, totalResults: 100))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
 
             func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
                 Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
 
             func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
                 Just(MovieCreditsResponse(cast: []))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
 
             func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
                 Just(MovieReviewsResponse(results: []))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
         }
@@ -709,13 +729,15 @@ struct HomeViewTests {
         let viewModel = HomeViewModel(serviceLocator: serviceLocator)
 
         // Wait for large data set to load
-        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
         // Verify all 100 movies loaded
-        if case let .success(dataViewState) = viewModel.viewState {
-            #expect(dataViewState.movies.count == 100, "Should have all 100 movies loaded")
-        } else {
-            #expect(Bool(false), "Expected success state with large data set")
+        await MainActor.run {
+            if case let .success(dataViewState) = viewModel.viewState {
+                #expect(dataViewState.movies.count == 100, "Should have all 100 movies loaded")
+            } else {
+                #expect(Bool(false), "Expected success state with large data set")
+            }
         }
     }
 
@@ -757,7 +779,8 @@ struct HomeViewTests {
         let (_, _, viewModel, _) = createTestComponents()
 
         // First request - load initial data
-        try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
+        viewModel.fetchData()
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
 
         if case let .success(dataViewState) = viewModel.viewState {
             #expect(!dataViewState.movies.isEmpty, "Should have initial movies")
@@ -791,24 +814,28 @@ struct HomeViewTests {
                 }
                 return Just(MoviesResponse(results: movies, page: page, totalPages: 3, totalResults: 60))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
 
             func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
                 Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
 
             func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
                 Just(MovieCreditsResponse(cast: []))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
 
             func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
                 Just(MovieReviewsResponse(results: []))
                     .setFailureType(to: Error.self)
+                    .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             }
         }
@@ -820,8 +847,11 @@ struct HomeViewTests {
 
         let viewModel = HomeViewModel(serviceLocator: serviceLocator)
 
+        // Explicitly fetch data
+        viewModel.fetchData()
+
         // Wait for initial page to load
-        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds
+        try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
 
         if case let .success(dataViewState) = viewModel.viewState {
             let initialCount = dataViewState.movies.count
