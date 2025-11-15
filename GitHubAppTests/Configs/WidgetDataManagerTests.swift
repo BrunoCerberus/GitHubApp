@@ -27,6 +27,14 @@ import Testing
  */
 @Suite(.serialized)
 struct WidgetDataManagerTests {
+    init() {
+        // Clean up any stale data from previous test suites
+        let sharedDataManager = SharedDataManager()
+        sharedDataManager.clearData()
+        // Force UserDefaults to synchronize
+        UserDefaults(suiteName: "group.com.bruno.GitHubApp")?.synchronize()
+    }
+
     @Test("WidgetDataManager singleton instance is accessible")
     func singletonInstanceIsAccessible() {
         // When
@@ -59,7 +67,7 @@ struct WidgetDataManagerTests {
     }
 
     @Test("Save upcoming movies converts and stores movies")
-    func saveUpcomingMoviesConvertsAndStores() async {
+    func saveUpcomingMoviesConvertsAndStores() async throws {
         // Given
         let manager = WidgetDataManager.shared
         let sharedDataManager = SharedDataManager()
@@ -73,8 +81,11 @@ struct WidgetDataManagerTests {
         // When
         manager.saveUpcomingMovies(movies)
 
-        // Give time for async Task to complete
-        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second
+        // Wait for data to be saved
+        try await waitForCondition(description: "movies saved to UserDefaults") {
+            let savedMovies = sharedDataManager.getUpcomingMovies()
+            return savedMovies.count == 2
+        }
 
         // Then - Verify data was saved
         let savedMovies = sharedDataManager.getUpcomingMovies()
@@ -86,23 +97,40 @@ struct WidgetDataManagerTests {
         sharedDataManager.clearData()
     }
 
+    /// NOTE: This test may occasionally fail in full suite context due to stale data from other tests.
+    /// The test consistently passes in isolation. Aggressive cleanup has been added to mitigate this.
+    /// If failures persist, they indicate cross-test contamination via shared UserDefaults storage.
     @Test("Save empty movie list clears data")
-    func saveEmptyMovieListClearsData() async {
+    func saveEmptyMovieListClearsData() async throws {
         // Given
         let manager = WidgetDataManager.shared
         let sharedDataManager = SharedDataManager()
+
+        // Aggressively clear any existing data
+        sharedDataManager.clearData()
+
+        // Wait for clean state
+        try await waitForCondition(description: "clean state") {
+            sharedDataManager.getUpcomingMovies().isEmpty
+        }
 
         let initialMovies = [
             Movie(id: 1, title: "Movie 1", overview: "Overview", posterPath: nil),
         ]
         manager.saveUpcomingMovies(initialMovies)
 
-        try? await Task.sleep(nanoseconds: 100_000_000) // Wait for save
+        // Wait for initial save
+        try await waitForCondition(description: "initial movies saved") {
+            !sharedDataManager.getUpcomingMovies().isEmpty
+        }
 
         // When - Save empty list
         manager.saveUpcomingMovies([])
 
-        try? await Task.sleep(nanoseconds: 100_000_000) // Wait for save
+        // Wait for data to be cleared
+        try await waitForCondition(description: "movies cleared") {
+            sharedDataManager.getUpcomingMovies().isEmpty
+        }
 
         // Then
         let savedMovies = sharedDataManager.getUpcomingMovies()
@@ -113,7 +141,7 @@ struct WidgetDataManagerTests {
     }
 
     @Test("Clear shared data removes all data")
-    func clearSharedDataRemovesAllData() async {
+    func clearSharedDataRemovesAllData() async throws {
         // Given
         let manager = WidgetDataManager.shared
         let sharedDataManager = SharedDataManager()
@@ -123,7 +151,10 @@ struct WidgetDataManagerTests {
         ]
         manager.saveUpcomingMovies(movies)
 
-        try? await Task.sleep(nanoseconds: 100_000_000) // Wait for save
+        // Wait for movies to be saved
+        try await waitForCondition(description: "movies saved") {
+            !sharedDataManager.getUpcomingMovies().isEmpty
+        }
 
         // When
         manager.clearSharedData()
@@ -134,7 +165,7 @@ struct WidgetDataManagerTests {
     }
 
     @Test("Movies did update notification triggers save")
-    func moviesDidUpdateNotificationTriggersSave() async {
+    func moviesDidUpdateNotificationTriggersSave() async throws {
         // Given
         let manager = WidgetDataManager.shared
         let sharedDataManager = SharedDataManager()
@@ -152,8 +183,11 @@ struct WidgetDataManagerTests {
             object: movies
         )
 
-        // Give time for notification handling and async operations
-        try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+        // Wait for notification to be processed and data saved
+        try await waitForCondition(description: "notification processed and saved") {
+            let savedMovies = sharedDataManager.getUpcomingMovies()
+            return savedMovies.count == 1 && savedMovies[0].id == 100
+        }
 
         // Then - Verify data was saved via notification
         let savedMovies = sharedDataManager.getUpcomingMovies()
@@ -188,11 +222,18 @@ struct WidgetDataManagerTests {
     }
 
     @Test("Movies did update notification with nil payload is ignored")
-    func moviesDidUpdateWithNilPayloadIsIgnored() async {
+    func moviesDidUpdateWithNilPayloadIsIgnored() async throws {
         // Given
         let manager = WidgetDataManager.shared
         let sharedDataManager = SharedDataManager()
-        sharedDataManager.clearData() // Clean state
+
+        // Aggressively clear and wait for clean state
+        sharedDataManager.clearData()
+        UserDefaults(suiteName: "group.com.bruno.GitHubApp")?.synchronize()
+
+        try await waitForCondition(description: "clean state before test") {
+            sharedDataManager.getUpcomingMovies().isEmpty
+        }
 
         manager.startMonitoring()
 
@@ -204,13 +245,13 @@ struct WidgetDataManagerTests {
 
         try? await Task.sleep(nanoseconds: 100_000_000) // Wait
 
-        // Then - Should not crash
+        // Then - Should not crash and should not save anything
         let savedMovies = sharedDataManager.getUpcomingMovies()
         #expect(savedMovies.isEmpty, "Should not save nil payload")
     }
 
     @Test("Save converts Movie to SharedMovie correctly")
-    func saveConvertsMovieToSharedMovieCorrectly() async {
+    func saveConvertsMovieToSharedMovieCorrectly() async throws {
         // Given
         let manager = WidgetDataManager.shared
         let sharedDataManager = SharedDataManager()
@@ -226,7 +267,11 @@ struct WidgetDataManagerTests {
         // When
         manager.saveUpcomingMovies([movie])
 
-        try? await Task.sleep(nanoseconds: 100_000_000) // Wait for save
+        // Wait for data to be saved
+        try await waitForCondition(description: "movie saved and converted") {
+            let savedMovies = sharedDataManager.getUpcomingMovies()
+            return savedMovies.count == 1 && savedMovies[0].id == 999
+        }
 
         // Then - Verify all fields converted correctly
         let savedMovies = sharedDataManager.getUpcomingMovies()
@@ -243,7 +288,7 @@ struct WidgetDataManagerTests {
     }
 
     @Test("Save handles movies with nil poster paths")
-    func saveHandlesMoviesWithNilPosterPaths() async {
+    func saveHandlesMoviesWithNilPosterPaths() async throws {
         // Given
         let manager = WidgetDataManager.shared
         let sharedDataManager = SharedDataManager()
@@ -256,7 +301,10 @@ struct WidgetDataManagerTests {
         // When
         manager.saveUpcomingMovies(movies)
 
-        try? await Task.sleep(nanoseconds: 100_000_000)
+        // Wait for data to be saved
+        try await waitForCondition(description: "movie with nil poster saved") {
+            sharedDataManager.getUpcomingMovies().count == 1
+        }
 
         // Then
         let savedMovies = sharedDataManager.getUpcomingMovies()
@@ -268,7 +316,7 @@ struct WidgetDataManagerTests {
     }
 
     @Test("Multiple saves replace previous data")
-    func multipleSavesReplacePreviousData() async {
+    func multipleSavesReplacePreviousData() async throws {
         // Given
         let manager = WidgetDataManager.shared
         let sharedDataManager = SharedDataManager()
@@ -284,10 +332,20 @@ struct WidgetDataManagerTests {
 
         // When
         manager.saveUpcomingMovies(firstBatch)
-        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        // Wait for first batch to be saved
+        try await waitForCondition(description: "first batch saved") {
+            let saved = sharedDataManager.getUpcomingMovies()
+            return saved.count == 1 && saved[0].id == 1
+        }
 
         manager.saveUpcomingMovies(secondBatch)
-        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        // Wait for second batch to replace first batch
+        try await waitForCondition(description: "second batch replaced first") {
+            let saved = sharedDataManager.getUpcomingMovies()
+            return saved.count == 2 && saved[0].id == 2
+        }
 
         // Then - Should only have second batch
         let savedMovies = sharedDataManager.getUpcomingMovies()

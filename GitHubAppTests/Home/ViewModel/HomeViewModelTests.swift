@@ -29,8 +29,10 @@ struct HomeViewModelTests {
         let service = MockHomeService()
         let sut = HomeViewModel(serviceLocator: createTestServiceLocator(homeService: service))
 
-        // Wait for the Combine pipeline; MockHomeService uses DispatchQueue delivery
-        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        // Wait for movies to load using polling helper (longer timeout for initialization)
+        try await waitForMainActorCondition(timeout: 5.0, description: "movies to be populated") {
+            !sut.movies.isEmpty
+        }
 
         // Then
         #expect(!sut.movies.isEmpty)
@@ -52,7 +54,7 @@ struct HomeViewModelTests {
         sut.searchMovies(query: "barbie")
 
         // Wait for async operation
-        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        try await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
 
         // Then
         #expect(!sut.movies.isEmpty)

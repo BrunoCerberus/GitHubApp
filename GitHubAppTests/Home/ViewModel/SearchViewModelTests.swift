@@ -55,8 +55,13 @@ struct SearchViewModelTests {
         // When
         sut.searchMovies(query: "avengers")
 
-        // Wait for async operation
-        try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+        // Wait for search results using polling
+        try await waitForMainActorCondition(timeout: 3.0, description: "search results loaded") {
+            if case let .success(dataViewState) = sut.viewState {
+                return !dataViewState.movies.isEmpty && dataViewState.searchQuery == "avengers"
+            }
+            return false
+        }
 
         // Then
         if case let .success(dataViewState) = sut.viewState {

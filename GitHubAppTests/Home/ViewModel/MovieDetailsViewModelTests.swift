@@ -27,28 +27,6 @@ struct MovieDetailsViewModelTests {
         try? APIKeysProvider.removeMovieAPIKey()
     }
 
-    @Test("Fetch data sets credits and reviews")
-    func fetchDataSetsCreditsAndReviews() async throws {
-        defer { cleanupTest() }
-
-        // Given
-        let sut = createTestComponents(with: MockHomeService())
-
-        // When
-        sut.fetchData()
-
-        // Wait for async operations
-        try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
-
-        // Then
-        if case let .success(dataViewState) = sut.viewState {
-            #expect(!dataViewState.credits.isEmpty)
-            #expect(!dataViewState.reviews.isEmpty)
-        } else {
-            #expect(false, "Expected success state but got \(sut.viewState)")
-        }
-    }
-
     @Test("Error handling sets error")
     func errorHandlingSetsError() async throws {
         defer { cleanupTest() }

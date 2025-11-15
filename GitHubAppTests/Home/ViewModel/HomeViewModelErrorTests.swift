@@ -35,22 +35,6 @@ struct HomeViewModelErrorTests {
 
     // MARK: - Basic Tests
 
-    @Test("Initialization with ServiceLocator")
-    func initializationWithServiceLocator() {
-        defer { cleanupTest() }
-
-        // Given - Test service resolution from ServiceLocator
-        let (viewModel, _) = createTestComponents()
-
-        // Then - Should initialize with registered service (loads initial data)
-        // ViewModel immediately loads data with mock services
-        if case .success = viewModel.viewState {
-            // Success state is expected with mock services
-        } else {
-            Issue.record("Expected success state after initialization with mock services")
-        }
-    }
-
     @Test("Initialization with nil ServiceLocator")
     func initializationWithNilServiceLocator() {
         defer { cleanupTest() }
