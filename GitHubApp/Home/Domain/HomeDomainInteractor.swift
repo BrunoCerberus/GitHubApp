@@ -280,7 +280,15 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
                 },
                 receiveValue: { [weak self] response in
                     guard let self else { return }
-                    let updatedLikedMovies = filterLikedMovies(from: response.results)
+
+                    // Update state synchronously with fetched movies and empty favorites initially
+                    currentState = currentState.copy(
+                        movies: response.results,
+                        favoriteMovies: [],
+                        isLoading: false,
+                        error: nil,
+                        searchQuery: nil
+                    )
 
                     // Save movies to widget shared storage
                     WidgetDataManager.shared.saveUpcomingMovies(response.results)
@@ -291,13 +299,24 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
                         object: response.results
                     )
 
-                    currentState = currentState.copy(
-                        movies: response.results,
-                        favoriteMovies: updatedLikedMovies,
-                        isLoading: false,
-                        error: nil,
-                        searchQuery: nil
-                    )
+                    // Load persisted favorites asynchronously and update state
+                    Task {
+                        do {
+                            let persistedLikedMovies = try await self.storageService.fetchLikedMovies()
+                            let updatedLikedMovies = self.filterLikedMovies(
+                                from: response.results,
+                                persistedLikedMovies: persistedLikedMovies
+                            )
+
+                            await MainActor.run {
+                                self.currentState = self.currentState.copy(
+                                    favoriteMovies: updatedLikedMovies
+                                )
+                            }
+                        } catch {
+                            Logger.shared.domain("Failed to load persisted favorites: \(error)", level: .error)
+                        }
+                    }
                 }
             )
             .store(in: &cancellables)
@@ -332,15 +351,34 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
                 },
                 receiveValue: { [weak self] response in
                     guard let self else { return }
-                    let updatedLikedMovies = filterLikedMovies(from: response.results)
 
+                    // Update state synchronously with search results and empty favorites initially
                     currentState = currentState.copy(
                         movies: response.results,
-                        favoriteMovies: updatedLikedMovies,
+                        favoriteMovies: [],
                         isLoading: false,
                         error: nil,
                         searchQuery: query
                     )
+
+                    // Load persisted favorites asynchronously and update state
+                    Task {
+                        do {
+                            let persistedLikedMovies = try await self.storageService.fetchLikedMovies()
+                            let updatedLikedMovies = self.filterLikedMovies(
+                                from: response.results,
+                                persistedLikedMovies: persistedLikedMovies
+                            )
+
+                            await MainActor.run {
+                                self.currentState = self.currentState.copy(
+                                    favoriteMovies: updatedLikedMovies
+                                )
+                            }
+                        } catch {
+                            Logger.shared.domain("Failed to load persisted favorites: \(error)", level: .error)
+                        }
+                    }
                 }
             )
             .store(in: &cancellables)
