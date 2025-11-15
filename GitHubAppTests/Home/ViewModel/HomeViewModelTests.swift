@@ -53,8 +53,10 @@ struct HomeViewModelTests {
         // When
         sut.searchMovies(query: "barbie")
 
-        // Wait for async operation
-        try await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+        // Wait for search results to populate
+        try await waitForMainActorCondition(timeout: 3.0, description: "search movies to populate") {
+            !sut.movies.isEmpty
+        }
 
         // Then
         #expect(!sut.movies.isEmpty)
