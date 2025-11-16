@@ -548,7 +548,7 @@ struct SearchViewTests {
         await MainActor.run {
             viewModel.searchMovies(query: "NonexistentMovie12345")
         }
-        try await Task.sleep(nanoseconds: 3_500_000_000) // 3.5 seconds for debounce and response
+        try await Task.sleep(nanoseconds: 1_500_000_000) // 1.5 seconds for debounce and response (reduced from 3.5)
 
         // Verify the no-results state
         await MainActor.run {

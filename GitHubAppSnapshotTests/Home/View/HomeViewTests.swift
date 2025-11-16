@@ -215,7 +215,7 @@ struct HomeViewTests {
         _ = view.wrappedViewController
 
         // Wait for auto-load to complete
-        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
+        try await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds (reduced from 10)
 
         // Verify success state with movies
         var firstMovie: Movie?
@@ -234,8 +234,8 @@ struct HomeViewTests {
                 viewModel.toggleFavorite(for: firstMovie)
             }
 
-            // Wait longer for asynchronous persistence to complete
-            try await Task.sleep(nanoseconds: 8_000_000_000) // 8 seconds
+            // Wait for asynchronous persistence to complete
+            try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds (reduced from 8)
 
             // Verify state changed - just check that the toggle action executed
             // The actual persistence depends on the storage layer
