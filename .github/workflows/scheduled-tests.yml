@@ -26,7 +26,7 @@ jobs:
         path: |
           ~/Library/Caches/Homebrew
           /usr/local/Homebrew
-        key: ${{ runner.os }}-brew-${{ hashFiles('.github/workflows/*.yml') }}
+        key: ${{ runner.os }}-brew-v1
         restore-keys: |
           ${{ runner.os }}-brew-
 
@@ -133,7 +133,7 @@ jobs:
         path: |
           ~/Library/Caches/Homebrew
           /usr/local/Homebrew
-        key: ${{ runner.os }}-brew-${{ hashFiles('.github/workflows/*.yml') }}
+        key: ${{ runner.os }}-brew-v1
         restore-keys: |
           ${{ runner.os }}-brew-
 
