@@ -20,6 +20,8 @@ jobs:
       with:
         xcode-version: '26.0.1'
 
+    # Cache Homebrew packages
+    # Note: Static version key (brew-v1) - increment manually when brew dependencies change
     - name: Cache Homebrew packages
       uses: actions/cache@v4
       with:
@@ -30,12 +32,15 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-brew-
 
+    # Cache SPM dependencies
+    # Note: Using static version key (spm-v1) due to hashFiles() limitations in this CI environment
+    # Manually increment version (v1 -> v2) when project.yml package dependencies change
     - name: Cache SPM dependencies
       uses: actions/cache@v4
       with:
         path: |
           GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
-        key: ${{ runner.os }}-spm-${{ hashFiles('project.yml') }}
+        key: ${{ runner.os }}-spm-v1
         restore-keys: |
           ${{ runner.os }}-spm-
 
@@ -127,6 +132,8 @@ jobs:
       with:
         xcode-version: '26.0.1'
 
+    # Cache Homebrew packages
+    # Note: Static version key (brew-v1) - increment manually when brew dependencies change
     - name: Cache Homebrew packages
       uses: actions/cache@v4
       with:
@@ -137,12 +144,15 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-brew-
 
+    # Cache SPM dependencies
+    # Note: Using static version key (spm-v1) due to hashFiles() limitations in this CI environment
+    # Manually increment version (v1 -> v2) when project.yml package dependencies change
     - name: Cache SPM dependencies
       uses: actions/cache@v4
       with:
         path: |
           GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
-        key: ${{ runner.os }}-spm-${{ hashFiles('project.yml') }}
+        key: ${{ runner.os }}-spm-v1
         restore-keys: |
           ${{ runner.os }}-spm-
 
