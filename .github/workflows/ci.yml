@@ -24,7 +24,7 @@ jobs:
         path: |
           ~/Library/Caches/Homebrew
           /usr/local/Homebrew
-        key: ${{ runner.os }}-brew-${{ hashFiles('.github/workflows/*.yml') }}
+        key: ${{ runner.os }}-brew-v1
         restore-keys: |
           ${{ runner.os }}-brew-
 
@@ -32,7 +32,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('.github/workflows/*.yml') }}
+        key: ${{ runner.os }}-mint-v1
         restore-keys: |
           ${{ runner.os }}-mint-
 
@@ -109,7 +109,7 @@ jobs:
         path: |
           ~/Library/Caches/Homebrew
           /usr/local/Homebrew
-        key: ${{ runner.os }}-brew-${{ hashFiles('.github/workflows/*.yml') }}
+        key: ${{ runner.os }}-brew-v1
         restore-keys: |
           ${{ runner.os }}-brew-
 
@@ -216,7 +216,7 @@ jobs:
         path: |
           ~/Library/Caches/Homebrew
           /usr/local/Homebrew
-        key: ${{ runner.os }}-brew-${{ hashFiles('.github/workflows/*.yml') }}
+        key: ${{ runner.os }}-brew-v1
         restore-keys: |
           ${{ runner.os }}-brew-
 
