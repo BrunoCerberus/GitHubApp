@@ -103,13 +103,9 @@ targets:
                 UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).GitHubAppSceneDelegate
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
-          - UIInterfaceOrientationLandscapeLeft
-          - UIInterfaceOrientationLandscapeRight
         UISupportedInterfaceOrientations~ipad:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationPortraitUpsideDown
-          - UIInterfaceOrientationLandscapeLeft
-          - UIInterfaceOrientationLandscapeRight
     dependencies:
       - sdk: Foundation.framework
       - sdk: UIKit.framework
