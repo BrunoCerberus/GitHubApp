@@ -118,7 +118,7 @@ jobs:
       with:
         path: |
           GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
-        key: ${{ runner.os }}-spm-${{ hashFiles('project.yml') }}-v1
+        key: ${{ runner.os }}-spm-v1
         restore-keys: |
           ${{ runner.os }}-spm-
 
@@ -225,7 +225,7 @@ jobs:
       with:
         path: |
           GitHubApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
-        key: ${{ runner.os }}-spm-${{ hashFiles('project.yml') }}-v1
+        key: ${{ runner.os }}-spm-v1
         restore-keys: |
           ${{ runner.os }}-spm-
 
