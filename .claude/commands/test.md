@@ -1,1 +1,1 @@
-Run the full test suite for the GitHubApp project using the `make test` command with an extended timeout since this command take some time, consider at least 300 seconds. This will execute all tests on the iOS 26.0 iPhone Air simulator.
+Run the full test suite for the GitHubApp project using the `make test` command with an extended timeout since this command take some time, consider at least 300 seconds. This will execute all tests on the iOS 26.1 iPhone Air simulator.
