@@ -1,11 +1,13 @@
-.PHONY: install-xcodegen generate clean test test-unit test-ui test-snapshot test-debug clean-packages help init coverage coverage-report coverage-badge deeplink-test
+.PHONY: install-xcodegen generate clean test test-unit test-ui test-snapshot test-debug clean-packages help init coverage coverage-report coverage-badge deeplink-test lint format
 
 # Default target
 help:
 	@echo "Available commands:"
-	@echo "  init              - Setup Mint and SwiftFormat"
+	@echo "  init              - Setup Mint, SwiftFormat, and SwiftLint"
 	@echo "  install-xcodegen  - Install XcodeGen using Homebrew"
 	@echo "  generate          - Generate Xcode project from project.yml"
+	@echo "  lint              - Run SwiftLint and SwiftFormat checks"
+	@echo "  format            - Auto-fix formatting with SwiftFormat"
 	@echo "  test              - Run all unit tests on iOS 26.0 iPhone Air"
 	@echo "  test-unit         - Run only unit tests"
 	@echo "  test-ui           - Run only UI tests"
@@ -19,23 +21,43 @@ help:
 	@echo "  deeplink-test     - Test deeplink functionality specifically"
 	@echo "  help              - Show this help message"
 
-# Setup Mint and SwiftFormat
+# Setup Mint, SwiftFormat, and SwiftLint
 init:
 	@echo "Setting up development environment..."
 	@echo "Checking for Homebrew..."
-	@if ! command -v brew &> /dev/null; then
-		@echo "Installing Homebrew..."
-		@/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-	@else
-		@echo "✅ Homebrew already installed"
-	@fi
+	@if ! command -v brew &> /dev/null; then \
+		echo "Installing Homebrew..."; \
+		/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; \
+	else \
+		echo "✅ Homebrew already installed"; \
+	fi
 	@echo "Installing XcodeGen..."
-	@brew install xcodegen
+	@brew install xcodegen || true
 	@echo "Installing Mint..."
-	@brew install mint
+	@brew install mint || true
+	@echo "Installing SwiftLint..."
+	@brew install swiftlint || true
 	@echo "Installing SwiftFormat via Mint..."
 	@mint install nicklockwood/SwiftFormat
+	@echo "Setting up git hooks..."
+	@sh setup-git-hooks.sh
 	@echo "✅ Development environment setup complete!"
+
+# Run linting checks (SwiftFormat + SwiftLint)
+lint:
+	@echo "🔍 Running SwiftFormat lint check..."
+	@mint run swiftformat . --lint
+	@echo "✅ SwiftFormat check passed"
+	@echo ""
+	@echo "🔍 Running SwiftLint..."
+	@swiftlint
+	@echo "✅ SwiftLint check passed"
+
+# Auto-fix formatting with SwiftFormat
+format:
+	@echo "🔧 Running SwiftFormat..."
+	@mint run swiftformat .
+	@echo "✅ Formatting complete!"
 
 # Install XcodeGen
 install-xcodegen:

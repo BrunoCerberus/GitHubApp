@@ -56,6 +56,10 @@ jobs:
       run: |
         mint install nicklockwood/SwiftFormat
 
+    - name: Install SwiftLint
+      run: |
+        brew install swiftlint
+
     - name: Validate SwiftFormat
       run: |
         echo "🔍 Running SwiftFormat validation..."
@@ -67,12 +71,15 @@ jobs:
           exit 1
         fi
 
-    - name: Run SwiftLint (if configured)
+    - name: Run SwiftLint
       run: |
-        if command -v swiftlint &> /dev/null; then
-          swiftlint lint --reporter github-actions-logging
+        echo "🔍 Running SwiftLint..."
+        if swiftlint lint --reporter github-actions-logging; then
+          echo "✅ SwiftLint validation passed"
         else
-          echo "SwiftLint not installed, skipping..."
+          echo "❌ SwiftLint found issues!"
+          echo "Please run 'swiftlint' locally to see detailed issues."
+          exit 1
         fi
 
     - name: Check for TODO comments
