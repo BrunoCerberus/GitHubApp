@@ -591,8 +591,10 @@ struct HomeViewTests { // swiftlint:disable:this type_body_length
         // Verify data was refreshed
         if case let .success(dataViewState) = viewModel.viewState {
             let refreshedMovieCount = dataViewState.movies.count
-            let msg = "Movie count should remain stable or increase after refresh"
-            #expect(refreshedMovieCount >= initialMovieCount, msg)
+            #expect(
+                refreshedMovieCount >= initialMovieCount,
+                "Movie count should remain stable or increase after refresh"
+            )
         }
     }
 
