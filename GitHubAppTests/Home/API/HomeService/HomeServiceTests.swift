@@ -157,6 +157,7 @@ struct HomeServiceTests {
     }
 
     @Test("All network methods can be called without errors")
+    // swiftlint:disable:next function_body_length
     func allNetworkMethodsCanBeCalledWithoutErrors() {
         // Given
         let (homeService, initialCancellables) = createTestComponents()

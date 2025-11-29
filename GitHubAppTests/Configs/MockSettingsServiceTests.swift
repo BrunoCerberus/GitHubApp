@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  MockSettingsServiceTests.swift
 //  GitHubAppTests
@@ -11,20 +12,18 @@ import Foundation
 import Testing
 import UIKit
 
-/**
- * Comprehensive unit tests for MockSettingsService.
- *
- * Tests cover:
- * - Profile image operations (load, save, clear)
- * - App rating functionality
- * - Favorite movies clearing
- * - App version info retrieval
- * - Error simulation
- * - Call count tracking
- * - Reset functionality
- */
+/// Comprehensive unit tests for MockSettingsService.
+///
+/// Tests cover:
+/// - Profile image operations (load, save, clear)
+/// - App rating functionality
+/// - Favorite movies clearing
+/// - App version info retrieval
+/// - Error simulation
+/// - Call count tracking
+/// - Reset functionality
 @MainActor
-struct MockSettingsServiceTests {
+struct MockSettingsServiceTests { // swiftlint:disable:this type_body_length
     // MARK: - Profile Image Tests
 
     @Test("Load profile image returns nil by default")

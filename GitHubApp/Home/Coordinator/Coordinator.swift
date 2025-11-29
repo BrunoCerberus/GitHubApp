@@ -81,7 +81,11 @@ final class Coordinator: ObservableObject, CoordinatorProtocol {
         case .home:
             HomeView(router: HomeNavigationRouter(coordinator: self), viewModel: homeViewModel)
         case .search:
-            SearchView(router: SearchNavigationRouter(coordinator: self), viewModel: searchViewModel, serviceLocator: serviceLocator)
+            SearchView(
+                router: SearchNavigationRouter(coordinator: self),
+                viewModel: searchViewModel,
+                serviceLocator: serviceLocator
+            )
         case let .detail(movie):
             let viewModel = MovieDetailsViewModel(movie: movie, serviceLocator: serviceLocator)
             MovieDetailsView(router: MovieDetailsNavigationRouter(coordinator: self), viewModel: viewModel)

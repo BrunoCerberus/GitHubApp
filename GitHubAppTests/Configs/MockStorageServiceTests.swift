@@ -256,7 +256,8 @@ struct MockStorageServiceTests {
         // Given
         let service = MockStorageService()
         service.shouldSimulateErrors = true
-        service.isMovieLikedError = NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Simulated error"])
+        let userInfo = [NSLocalizedDescriptionKey: "Simulated error"]
+        service.isMovieLikedError = NSError(domain: "test", code: 1, userInfo: userInfo)
         let movie = Movie(id: 1, title: "Test Movie", overview: "Test", posterPath: nil)
 
         // When/Then
@@ -306,7 +307,8 @@ struct MockStorageServiceTests {
         // Given
         let service = MockStorageService()
         service.shouldSimulateErrors = true
-        service.fetchLikedMoviesError = NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Fetch error"])
+        let userInfo = [NSLocalizedDescriptionKey: "Fetch error"]
+        service.fetchLikedMoviesError = NSError(domain: "test", code: 1, userInfo: userInfo)
 
         // When/Then
         do {

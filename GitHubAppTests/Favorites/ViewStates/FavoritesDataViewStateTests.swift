@@ -263,8 +263,8 @@ struct FavoritesDataViewStateTests {
     @Test("FavoritesDataViewState large movie list")
     func largeMovieList() {
         // Given
-        let largeMovieList = (1 ... 100).map { i in
-            Movie(id: i, title: "Movie \(i)", overview: "Overview \(i)", posterPath: "/path\(i).jpg")
+        let largeMovieList = (1 ... 100).map { idx in
+            Movie(id: idx, title: "Movie \(idx)", overview: "Overview \(idx)", posterPath: "/path\(idx).jpg")
         }
 
         // When

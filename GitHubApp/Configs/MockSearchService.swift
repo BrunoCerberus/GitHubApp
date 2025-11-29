@@ -37,8 +37,7 @@ struct MockSearchService: SearchService {
         Movie(id: 496_450,
               title: "Miraculous: Ladybug & Cat Noir, The Movie",
               overview: "A life of an ordinary Parisian teenager Marinette goes superhuman " +
-                  "when she becomes Ladybug. Bestowed with magical powers of creation, Ladybug " +
-                  "must unite with her opposite, Cat Noir, to save Paris as a new villain unleashes chaos unto the city.",
+                  "when she becomes Ladybug.",
               posterPath: ""),
 
         Movie(id: 550_988,
@@ -84,7 +83,8 @@ struct MockSearchService: SearchService {
 
         Movie(id: 238_215,
               title: "The Godfather",
-              overview: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire.",
+              overview: "The aging patriarch of an organized crime dynasty " +
+                  "transfers control of his clandestine empire.",
               posterPath: ""),
 
         Movie(id: 240_832,
@@ -94,12 +94,14 @@ struct MockSearchService: SearchService {
 
         Movie(id: 280_722,
               title: "Schindler's List",
-              overview: "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned.",
+              overview: "In German-occupied Poland during World War II, " +
+                  "industrialist Oskar Schindler gradually becomes concerned.",
               posterPath: ""),
 
         Movie(id: 329_053,
               title: "The Lord of the Rings: The Fellowship of the Ring",
-              overview: "A meek Hobbit from the Shire and eight companions embark on a journey to destroy the One Ring.",
+              overview: "A meek Hobbit from the Shire and eight companions " +
+                  "embark on a journey to destroy the One Ring.",
               posterPath: ""),
     ]
 

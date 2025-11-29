@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  SearchViewTests.swift
 //  GitHubAppTests
@@ -11,12 +12,14 @@ import Testing
 
 @testable import GitHubApp
 
-/**
- * Snapshot tests for SearchView to ensure visual regressions are detected.
- */
+/// Snapshot tests for SearchView to ensure visual regressions are detected.
 @MainActor
-struct SearchViewTests {
-    private func createTestComponents(mockService: HomeService? = nil) -> (SearchNavigationRouter, SearchViewModel, SearchView) {
+struct SearchViewTests { // swiftlint:disable:this type_body_length
+    // swiftlint:disable large_tuple
+    private func createTestComponents(
+        mockService: HomeService? = nil
+    ) -> (SearchNavigationRouter, SearchViewModel, SearchView) {
+        // swiftlint:enable large_tuple
         let router = SearchNavigationRouter()
         let service = mockService ?? MockHomeService()
         let mockStorageService = MockStorageService()
@@ -206,7 +209,9 @@ struct SearchViewTests {
             }
 
             func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
-                Fail(error: NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Search service unavailable"])).eraseToAnyPublisher()
+                let userInfo = [NSLocalizedDescriptionKey: "Search service unavailable"]
+                return Fail(error: NSError(domain: "test", code: 1, userInfo: userInfo))
+                    .eraseToAnyPublisher()
             }
 
             func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
@@ -311,7 +316,8 @@ struct SearchViewTests {
         await MainActor.run {
             if case let .success(updatedDataViewState) = viewModel.viewState {
                 if let firstMovie = updatedDataViewState.movies.first {
-                    let isFavoritedAfter = updatedDataViewState.favoriteMovies.contains(where: { $0.id == firstMovie.id })
+                    let isFavoritedAfter = updatedDataViewState.favoriteMovies
+                        .contains { $0.id == firstMovie.id }
                     #expect(isFavoritedAfter, "Movie should be in favorites after toggle")
                 }
             }
@@ -587,7 +593,8 @@ struct SearchViewTests {
                 // Verify favorite count changed
                 if case let .success(updatedState) = viewModel.viewState {
                     let newFavoriteCount = updatedState.favoriteMovies.count
-                    #expect(newFavoriteCount > initialFavoriteCount, "Favorite count should increase after toggling favorite")
+                    let msg = "Favorite count should increase after toggling favorite"
+                    #expect(newFavoriteCount > initialFavoriteCount, msg)
                 }
             }
         }
@@ -642,7 +649,8 @@ struct SearchViewTests {
 
             func searchMovies(with _: String, page: Int) -> AnyPublisher<MoviesResponse, Error> {
                 let movies = (1 ... 10).map { id in
-                    Movie(id: id + (page * 10), title: "Movie \(id + (page * 10))", overview: "Overview", posterPath: "/path.jpg")
+                    let movieId = id + (page * 10)
+                    return Movie(id: movieId, title: "Movie \(movieId)", overview: "Overview", posterPath: "/path.jpg")
                 }
                 return Just(MoviesResponse(results: movies, page: page, totalPages: 5, totalResults: 50))
                     .setFailureType(to: Error.self)

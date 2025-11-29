@@ -8,17 +8,15 @@
 @testable import GitHubApp
 import Testing
 
-/**
- * Unit tests for the Localizable wrapper struct.
- *
- * This test class ensures that:
- * - All localized strings are properly defined
- * - Strings are not empty
- * - Parameterized strings work correctly
- * - Localization keys exist in string files
- */
+/// Unit tests for the Localizable wrapper struct.
+///
+/// This test class ensures that:
+/// - All localized strings are properly defined
+/// - Strings are not empty
+/// - Parameterized strings work correctly
+/// - Localization keys exist in string files
 @MainActor
-struct LocalizableTests {
+struct LocalizableTests { // swiftlint:disable:this type_body_length
     // MARK: - Movie Details Tests
 
     @Test("Movie details credits title is properly localized")
@@ -132,7 +130,8 @@ struct LocalizableTests {
     @Test("Convenience access to movie details works correctly")
     func movieDetailsConvenience() {
         #expect(Localizable.movieDetails.creditsTitle.count > 0, "Movie details should be accessible")
-        #expect(Localizable.movieDetails.creditsTitle == Localizable.movieDetails.creditsTitle, "Convenience access should be consistent")
+        let title = Localizable.movieDetails.creditsTitle
+        #expect(title == Localizable.movieDetails.creditsTitle, "Convenience access should be consistent")
     }
 
     @Test("Convenience access to favorite movies works correctly")
@@ -144,19 +143,22 @@ struct LocalizableTests {
     @Test("Convenience access to API errors works correctly")
     func apiErrorsConvenience() {
         #expect(!Localizable.apiErrors.urlConstructionFailed.isEmpty, "API errors should be accessible")
-        #expect(Localizable.apiErrors.urlConstructionFailed == Localizable.apiErrors.urlConstructionFailed, "Convenience access should be consistent")
+        let error = Localizable.apiErrors.urlConstructionFailed
+        #expect(error == Localizable.apiErrors.urlConstructionFailed, "Convenience access should be consistent")
     }
 
     @Test("Convenience access to widget strings works correctly")
     func widgetConvenience() {
         #expect(!Localizable.widget.upcomingMoviesTitle.isEmpty, "Widget strings should be accessible")
-        #expect(Localizable.widget.upcomingMoviesTitle == Localizable.widget.upcomingMoviesTitle, "Convenience access should be consistent")
+        let title = Localizable.widget.upcomingMoviesTitle
+        #expect(title == Localizable.widget.upcomingMoviesTitle, "Convenience access should be consistent")
     }
 
     @Test("Convenience access to home strings works correctly")
     func homeConvenience() {
         #expect(!Localizable.home.loadingMovies.isEmpty, "Home strings should be accessible")
-        #expect(Localizable.home.loadingMovies == Localizable.home.loadingMovies, "Convenience access should be consistent")
+        let loading = Localizable.home.loadingMovies
+        #expect(loading == Localizable.home.loadingMovies, "Convenience access should be consistent")
     }
 
     // MARK: - Edge Cases Tests
@@ -224,7 +226,8 @@ struct LocalizableTests {
         let message = Localizable.settings.clearFavoriteMoviesConfirmation
 
         #expect(!message.isEmpty, "Clear favorites confirmation should not be empty")
-        #expect(message != "settings.clear_favorited_movies_confirmation", "String should be localized, not showing the key")
+        let expectedKey = "settings.clear_favorited_movies_confirmation"
+        #expect(message != expectedKey, "String should be localized, not showing the key")
     }
 
     @Test("Settings clear favorites alert title is properly localized")
@@ -232,7 +235,8 @@ struct LocalizableTests {
         let title = Localizable.settings.clearFavoriteMoviesAlertTitle
 
         #expect(!title.isEmpty, "Clear favorites alert title should not be empty")
-        #expect(title != "settings.clear_favorited_movies_alert_title", "String should be localized, not showing the key")
+        let expectedKey = "settings.clear_favorited_movies_alert_title"
+        #expect(title != expectedKey, "String should be localized, not showing the key")
     }
 
     @Test("Settings clear favorites alert message is properly localized")
@@ -240,7 +244,8 @@ struct LocalizableTests {
         let message = Localizable.settings.clearFavoriteMoviesAlertMessage
 
         #expect(!message.isEmpty, "Clear favorites alert message should not be empty")
-        #expect(message != "settings.clear_favorited_movies_alert_message", "String should be localized, not showing the key")
+        let expectedKey = "settings.clear_favorited_movies_alert_message"
+        #expect(message != expectedKey, "String should be localized, not showing the key")
     }
 
     @Test("Settings clear favorites alert clear button is properly localized")
@@ -248,7 +253,8 @@ struct LocalizableTests {
         let buttonText = Localizable.settings.clearFavoriteMoviesAlertClear
 
         #expect(!buttonText.isEmpty, "Clear button should not be empty")
-        #expect(buttonText != "settings.clear_favorited_movies_alert_clear", "String should be localized, not showing the key")
+        let expectedKey = "settings.clear_favorited_movies_alert_clear"
+        #expect(buttonText != expectedKey, "String should be localized, not showing the key")
     }
 
     @Test("Settings clear favorites alert cancel button is properly localized")
@@ -256,7 +262,8 @@ struct LocalizableTests {
         let buttonText = Localizable.settings.clearFavoriteMoviesAlertCancel
 
         #expect(!buttonText.isEmpty, "Cancel button should not be empty")
-        #expect(buttonText != "settings.clear_favorited_movies_alert_cancel", "String should be localized, not showing the key")
+        let expectedKey = "settings.clear_favorited_movies_alert_cancel"
+        #expect(buttonText != expectedKey, "String should be localized, not showing the key")
     }
 
     @Test("Settings rate app section title is properly localized")
@@ -340,8 +347,13 @@ struct LocalizableTests {
 
         for string in strings {
             #expect(!string.isEmpty, "Localized string should not be empty: \(string)")
-            #expect(!(string.hasPrefix("movie_details.") || string.hasPrefix("favorites.") || string.hasPrefix("settings.") || string.hasPrefix("api_error.") || string.hasPrefix("widget.") || string.hasPrefix("home.")),
-                    "String should be localized, not showing the key: \(string)")
+            let hasKeyPrefix = string.hasPrefix("movie_details.") ||
+                string.hasPrefix("favorites.") ||
+                string.hasPrefix("settings.") ||
+                string.hasPrefix("api_error.") ||
+                string.hasPrefix("widget.") ||
+                string.hasPrefix("home.")
+            #expect(!hasKeyPrefix, "String should be localized, not showing the key: \(string)")
         }
     }
 }

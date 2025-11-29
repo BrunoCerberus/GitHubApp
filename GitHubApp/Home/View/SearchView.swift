@@ -196,7 +196,8 @@ struct SearchView: View {
                            viewModel.toggleFavorite(for: movie)
                        },
                        label: {
-                           Image(systemName: dataViewState.favoriteMovies.contains(where: { $0.id == movie.id }) ? "heart.fill" : "heart")
+                           let isFavorite = dataViewState.favoriteMovies.contains { $0.id == movie.id }
+                           Image(systemName: isFavorite ? "heart.fill" : "heart")
                                .foregroundColor(.red)
                        })
                        .buttonStyle(PlainButtonStyle())

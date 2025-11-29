@@ -12,6 +12,7 @@ import Testing
  * Tests specifically targeting ServiceLocatorExample factory closure with 0% coverage.
  */
 @MainActor
+// swiftlint:disable:next type_name
 struct ServiceLocatorExampleFactoryExecutionTests {
     @Test("Service locator example factory closure execution")
     func serviceLocatorExampleFactoryClosureExecution() {

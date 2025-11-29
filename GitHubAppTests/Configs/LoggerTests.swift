@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  LoggerTests.swift
 //  GitHubAppTests
@@ -8,18 +9,16 @@
 @testable import GitHubApp
 import Testing
 
-/**
- * Unit tests for Logger.
- *
- * Tests cover:
- * - All logging levels (debug, info, warning, error, critical)
- * - Specialized category methods (network, database, ui, domain, viewModel, service)
- * - LogLevel enum conversion to OSLogType
- * - Global convenience functions (DEBUG builds only)
- * - Singleton pattern
- */
+/// Unit tests for Logger.
+///
+/// Tests cover:
+/// - All logging levels (debug, info, warning, error, critical)
+/// - Specialized category methods (network, database, ui, domain, viewModel, service)
+/// - LogLevel enum conversion to OSLogType
+/// - Global convenience functions (DEBUG builds only)
+/// - Singleton pattern
 @MainActor
-struct LoggerTests {
+struct LoggerTests { // swiftlint:disable:this type_body_length
     // MARK: - Basic Logging Tests
 
     @Test("Logger shared instance is singleton")

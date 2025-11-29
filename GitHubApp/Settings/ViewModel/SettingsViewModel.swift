@@ -251,7 +251,7 @@ final class SettingsViewModel: CombineViewModel {
         guard case let .success(dataViewState) = viewState else {
             return false
         }
-        return dataViewState.isClearFavoriteMoviesConfirmationPresented
+        return dataViewState.showClearFavoritesConfirm
     }
 
     /**

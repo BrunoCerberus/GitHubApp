@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  SettingsViewTests.swift
 //  GitHubAppTests
@@ -12,11 +13,9 @@ import Testing
 
 @testable import GitHubApp
 
-/**
- * Snapshot tests for SettingsView to ensure visual regressions are detected.
- */
+/// Snapshot tests for SettingsView to ensure visual regressions are detected.
 @MainActor
-struct SettingsViewTests {
+struct SettingsViewTests { // swiftlint:disable:this type_body_length
     private func createTestComponents() -> (SettingsView, MockSettingsService) {
         // Clear UserDefaults for clean testing
         UserDefaults.standard.removeObject(forKey: "profileImageData")
@@ -197,7 +196,9 @@ struct SettingsViewTests {
             }
 
             func saveProfileImage(_: UIImage) -> AnyPublisher<Void, Error> {
-                Fail(error: NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to save profile image"])).eraseToAnyPublisher()
+                let userInfo = [NSLocalizedDescriptionKey: "Failed to save profile image"]
+                return Fail(error: NSError(domain: "test", code: 1, userInfo: userInfo))
+                    .eraseToAnyPublisher()
             }
 
             func clearProfileImage() -> AnyPublisher<Void, Never> {

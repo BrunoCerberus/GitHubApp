@@ -63,7 +63,10 @@ struct FavoritesViewStateReducer: FavoritesViewStateReducing {
         if favoriteMovies.isEmpty {
             return NSLocalizedString("favorites_no_movies_title", comment: "Title when no movies are favorited")
         } else {
-            let format = NSLocalizedString("favorites_movies_count_title", comment: "Title showing count of favorite movies")
+            let format = NSLocalizedString(
+                "favorites_movies_count_title",
+                comment: "Title showing count of favorite movies"
+            )
             return String.localizedStringWithFormat(format, favoriteMovies.count)
         }
     }

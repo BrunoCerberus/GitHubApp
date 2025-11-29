@@ -43,7 +43,7 @@ struct SettingsDataViewState: Equatable {
     let isPhotoPickerPresented: Bool
 
     /// Clear favorite movies confirmation dialog state
-    let isClearFavoriteMoviesConfirmationPresented: Bool
+    let showClearFavoritesConfirm: Bool
 
     /// Clear favorite movies success alert state
     let showClearFavoriteMoviesAlert: Bool
@@ -60,7 +60,7 @@ struct SettingsDataViewState: Equatable {
             lhs.appVersion == rhs.appVersion &&
             lhs.appBuildNumber == rhs.appBuildNumber &&
             lhs.isPhotoPickerPresented == rhs.isPhotoPickerPresented &&
-            lhs.isClearFavoriteMoviesConfirmationPresented == rhs.isClearFavoriteMoviesConfirmationPresented &&
+            lhs.showClearFavoritesConfirm == rhs.showClearFavoritesConfirm &&
             lhs.showClearFavoriteMoviesAlert == rhs.showClearFavoriteMoviesAlert &&
             lhs.showRateAppThanks == rhs.showRateAppThanks
     }

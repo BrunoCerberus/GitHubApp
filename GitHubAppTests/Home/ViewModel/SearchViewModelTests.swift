@@ -96,7 +96,10 @@ struct SearchViewModelTests {
         // Then - Empty query results in nil search query or keeps previous results
         if case let .success(dataViewState) = sut.viewState {
             // The implementation sets searchQuery to nil when empty string is searched
-            #expect(dataViewState.searchQuery == nil || dataViewState.searchQuery == "" || dataViewState.searchQuery == "test")
+            let isValidQuery = dataViewState.searchQuery == nil ||
+                dataViewState.searchQuery == "" ||
+                dataViewState.searchQuery == "test"
+            #expect(isValidQuery)
         } else {
             Issue.record("Expected success state, got: \(sut.viewState)")
         }

@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  MovieDetailsViewTests.swift
 //  GitHubAppTests
@@ -12,19 +13,17 @@ import Testing
 
 @testable import GitHubApp
 
-/**
- * Snapshot and UI tests for MovieDetailsView covering all states and interactions.
- *
- * Tests cover:
- * - Loading state with progress indicator
- * - Error state with error message
- * - Success state with credits and reviews
- * - Empty credits/reviews states
- * - Partial data states
- * - Full data snapshot matching
- */
+/// Snapshot and UI tests for MovieDetailsView covering all states and interactions.
+///
+/// Tests cover:
+/// - Loading state with progress indicator
+/// - Error state with error message
+/// - Success state with credits and reviews
+/// - Empty credits/reviews states
+/// - Partial data states
+/// - Full data snapshot matching
 @MainActor
-struct MovieDetailsViewTests {
+struct MovieDetailsViewTests { // swiftlint:disable:this type_body_length
     let movie: Movie = .init(id: 346_698,
                              title: "Barbie",
                              overview: "Barbie and Ken are having the time of their lives in the colorful " +
@@ -38,6 +37,7 @@ struct MovieDetailsViewTests {
         traits: UITraitCollection()
     )
 
+    // swiftlint:disable large_tuple
     private func createTestComponents(
         with viewModel: MovieDetailsViewModel? = nil
     ) -> (
@@ -45,6 +45,7 @@ struct MovieDetailsViewTests {
         viewModel: MovieDetailsViewModel,
         view: MovieDetailsView
     ) {
+        // swiftlint:enable large_tuple
         // Ensure API key is available for any fallback scenarios
         try? APIKeysProvider.setMovieAPIKey("test-api-key-for-movie-details")
 
@@ -131,7 +132,9 @@ struct MovieDetailsViewTests {
         // Create a failing service
         struct FailingHomeService: HomeService {
             func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
-                Fail(error: NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Network error"])).eraseToAnyPublisher()
+                let userInfo = [NSLocalizedDescriptionKey: "Network error"]
+                return Fail(error: NSError(domain: "test", code: 1, userInfo: userInfo))
+                    .eraseToAnyPublisher()
             }
 
             func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
@@ -139,11 +142,15 @@ struct MovieDetailsViewTests {
             }
 
             func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
-                Fail(error: NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch credits"])).eraseToAnyPublisher()
+                let userInfo = [NSLocalizedDescriptionKey: "Failed to fetch credits"]
+                return Fail(error: NSError(domain: "test", code: 1, userInfo: userInfo))
+                    .eraseToAnyPublisher()
             }
 
             func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
-                Fail(error: NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch reviews"])).eraseToAnyPublisher()
+                let userInfo = [NSLocalizedDescriptionKey: "Failed to fetch reviews"]
+                return Fail(error: NSError(domain: "test", code: 1, userInfo: userInfo))
+                    .eraseToAnyPublisher()
             }
         }
 
@@ -459,7 +466,9 @@ struct MovieDetailsViewTests {
     func imageLoadingFailureHandling() async throws {
         struct ImageFailureService: HomeService {
             func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
-                Just(MoviesResponse(results: [Movie(id: 1, title: "Test", overview: "Test", posterPath: "/invalid-path.jpg")], page: 1, totalPages: 1, totalResults: 1))
+                let movie = Movie(id: 1, title: "Test", overview: "Test", posterPath: "/invalid-path.jpg")
+                let response = MoviesResponse(results: [movie], page: 1, totalPages: 1, totalResults: 1)
+                return Just(response)
                     .setFailureType(to: Error.self)
                     .eraseToAnyPublisher()
             }

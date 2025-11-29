@@ -9,6 +9,7 @@ import UIKit
 
 @MainActor
 struct DeeplinkRouterExtraTests {
+    // swiftlint:disable:next large_tuple
     private func createTestComponents() -> (DeeplinkManager, DeeplinkRouter, MockCoordinator, UINavigationController) {
         let deeplinkManager = DeeplinkManager()
         let mockCoordinator = MockCoordinator()

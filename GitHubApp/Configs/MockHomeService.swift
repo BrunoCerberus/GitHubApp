@@ -33,8 +33,7 @@ struct MockHomeService: HomeService {
         Movie(id: 496_450,
               title: "Miraculous: Ladybug & Cat Noir, The Movie",
               overview: "A life of an ordinary Parisian teenager Marinette goes superhuman " +
-                  "when she becomes Ladybug. Bestowed with magical powers of creation, Ladybug " +
-                  "must unite with her opposite, Cat Noir, to save Paris as a new villain unleashes chaos unto the city.",
+                  "when she becomes Ladybug.",
               posterPath: ""),
     ]
 

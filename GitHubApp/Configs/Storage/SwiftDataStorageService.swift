@@ -57,7 +57,8 @@ final class SwiftDataStorageService: StorageService {
 
             context = ModelContext(self.container)
         } catch {
-            throw StorageError.saveFailure("Failed to initialize SwiftDataStorageService: \(error.localizedDescription)")
+            let errorMsg = "Failed to initialize SwiftDataStorageService: \(error.localizedDescription)"
+            throw StorageError.saveFailure(errorMsg)
         }
     }
 
@@ -209,6 +210,7 @@ final class SwiftDataStorageService: StorageService {
                         // 1. type == Movie.self verifies the generic type
                         // 2. fetchMovies() returns [Movie]
                         // 3. Swift guarantees [Movie] can be cast to [T] when T == Movie
+                        // swiftlint:disable:next force_cast
                         continuation.resume(returning: movies as! [T])
                     } else {
                         // Generic path: Deserialize from UserSetting storage
@@ -226,7 +228,8 @@ final class SwiftDataStorageService: StorageService {
                         continuation.resume(returning: result)
                     }
                 } catch {
-                    continuation.resume(throwing: StorageError.fetchFailure("Failed to fetch \(type): \(error.localizedDescription)"))
+                    let msg = "Failed to fetch \(type): \(error.localizedDescription)"
+                    continuation.resume(throwing: StorageError.fetchFailure(msg))
                 }
             }
         }
@@ -287,7 +290,8 @@ final class SwiftDataStorageService: StorageService {
                         continuation.resume()
                     }
                 } catch {
-                    continuation.resume(throwing: StorageError.deleteFailure("Failed to delete all \(type): \(error.localizedDescription)"))
+                    let msg = "Failed to delete all \(type): \(error.localizedDescription)"
+                    continuation.resume(throwing: StorageError.deleteFailure(msg))
                 }
             }
         }

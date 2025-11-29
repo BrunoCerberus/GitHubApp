@@ -212,20 +212,22 @@ struct UserSettingTests {
     @Test("UserSetting category predicate is created")
     func categoryPredicateIsCreated() {
         // When
-        let _predicate = UserSetting.categoryPredicate(UserSetting.Category.profile)
+        let predicate = UserSetting.categoryPredicate(UserSetting.Category.profile)
 
         // Then
         // Predicate is created successfully (no nil comparison needed for non-optional)
+        _ = predicate
         #expect(Bool(true))
     }
 
     @Test("UserSetting key predicate is created")
     func keyPredicateIsCreated() {
         // When
-        let _predicate = UserSetting.keyPredicate("test_key")
+        let predicate = UserSetting.keyPredicate("test_key")
 
         // Then
         // Predicate is created successfully (no nil comparison needed for non-optional)
+        _ = predicate
         #expect(Bool(true))
     }
 
@@ -234,6 +236,7 @@ struct UserSettingTests {
     @Test("UserSetting handles complex nested structures")
     func handlesComplexNestedStructures() throws {
         // Given
+        // swiftlint:disable nesting
         struct NestedData: Codable, Equatable {
             struct SubData: Codable, Equatable {
                 let value: String
@@ -243,6 +246,7 @@ struct UserSettingTests {
             let subData: SubData
             let items: [String]
         }
+        // swiftlint:enable nesting
 
         let complexData = NestedData(
             id: 1,

@@ -43,6 +43,7 @@ final class MockStorageService: StorageService {
 
     func fetch<T: Codable & Identifiable>(_ type: T.Type, context _: String?) async throws -> [T] {
         if type == Movie.self {
+            // swiftlint:disable:next force_cast
             return movies as! [T]
         }
         return []

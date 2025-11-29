@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  FavoritesMoviesViewTests.swift
 //  GitHubAppTests
@@ -8,7 +9,7 @@ import SwiftUI
 import Testing
 
 @MainActor
-struct FavoritesMoviesViewTests {
+struct FavoritesMoviesViewTests { // swiftlint:disable:this type_body_length
     private func createTestComponents() -> (ServiceLocator, MockFavoritesService) {
         try? APIKeysProvider.setMovieAPIKey("ui-key")
 
@@ -31,8 +32,8 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        let view = FavoritesMoviesView(viewModel: vm)
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        let view = FavoritesMoviesView(viewModel: viewModel)
         let host = UIHostingController(rootView: view)
         #expect(host.view != nil)
     }
@@ -42,11 +43,11 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        vm.setFavoriteMoviesForTesting([
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        viewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
-        let view = FavoritesMoviesView(viewModel: vm)
+        let view = FavoritesMoviesView(viewModel: viewModel)
         let host = UIHostingController(rootView: view)
         #expect(host.view != nil)
     }
@@ -56,12 +57,12 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        vm.setFavoriteMoviesForTesting([
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        viewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie 1", overview: "Test Overview 1", posterPath: "/test1.jpg"),
             Movie(id: 2, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg"),
         ])
-        let view = FavoritesMoviesView(viewModel: vm)
+        let view = FavoritesMoviesView(viewModel: viewModel)
         let host = UIHostingController(rootView: view)
         #expect(host.view != nil)
     }
@@ -310,15 +311,15 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        let view = FavoritesMoviesView(viewModel: vm)
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        let view = FavoritesMoviesView(viewModel: viewModel)
 
         // Test that empty state text elements are properly configured
         let host = UIHostingController(rootView: view)
         #expect(host.view != nil)
 
         // Verify empty state is shown when no movies
-        #expect(vm.favoriteMovies.isEmpty)
+        #expect(viewModel.favoriteMovies.isEmpty)
     }
 
     @Test("Movie list button configuration")
@@ -326,17 +327,17 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        vm.setFavoriteMoviesForTesting([
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        viewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
 
-        let view = FavoritesMoviesView(viewModel: vm)
+        let view = FavoritesMoviesView(viewModel: viewModel)
         let host = UIHostingController(rootView: view)
 
         // Test that movie list buttons are properly configured
         #expect(host.view != nil)
-        #expect(vm.favoriteMovies.count == 1)
+        #expect(viewModel.favoriteMovies.count == 1)
     }
 
     @Test("Movie details navigation setup")
@@ -344,12 +345,12 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        vm.setFavoriteMoviesForTesting([
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        viewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
 
-        let view = FavoritesMoviesView(viewModel: vm)
+        let view = FavoritesMoviesView(viewModel: viewModel)
 
         // Test that navigation destination is properly configured
         _ = view.wrappedViewController
@@ -361,17 +362,17 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        vm.setFavoriteMoviesForTesting([
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        viewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
 
-        let view = FavoritesMoviesView(viewModel: vm)
+        let view = FavoritesMoviesView(viewModel: viewModel)
 
         // Test that like button is properly configured
         _ = view.wrappedViewController
         #expect(view != nil)
-        #expect(vm.isFavorited(movie: vm.favoriteMovies[0]))
+        #expect(viewModel.isFavorited(movie: viewModel.favoriteMovies[0]))
     }
 
     @Test("Movie title and overview display")
@@ -379,17 +380,17 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         let testMovie = Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
-        vm.setFavoriteMoviesForTesting([testMovie])
+        viewModel.setFavoriteMoviesForTesting([testMovie])
 
-        let view = FavoritesMoviesView(viewModel: vm)
+        let view = FavoritesMoviesView(viewModel: viewModel)
 
         // Test that movie title and overview are properly displayed
         _ = view.wrappedViewController
         #expect(view != nil)
-        #expect(vm.favoriteMovies[0].title == "Test Movie")
-        #expect(vm.favoriteMovies[0].overview == "Test Overview")
+        #expect(viewModel.favoriteMovies[0].title == "Test Movie")
+        #expect(viewModel.favoriteMovies[0].overview == "Test Overview")
     }
 
     @Test("Poster URL configuration")
@@ -397,11 +398,11 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
         let testMovie = Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
-        vm.setFavoriteMoviesForTesting([testMovie])
+        viewModel.setFavoriteMoviesForTesting([testMovie])
 
-        let view = FavoritesMoviesView(viewModel: vm)
+        let view = FavoritesMoviesView(viewModel: viewModel)
 
         // Test that poster URL is properly configured
         _ = view.wrappedViewController
@@ -414,8 +415,8 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        let view = FavoritesMoviesView(viewModel: vm)
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        let view = FavoritesMoviesView(viewModel: viewModel)
 
         // Test that NavigationStack is properly configured
         _ = view.wrappedViewController
@@ -427,19 +428,19 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        vm.setFavoriteMoviesForTesting([
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        viewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie 1", overview: "Test Overview 1", posterPath: "/test1.jpg"),
             Movie(id: 2, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg"),
             Movie(id: 3, title: "Test Movie 3", overview: "Test Overview 3", posterPath: "/test3.jpg"),
         ])
 
-        let view = FavoritesMoviesView(viewModel: vm)
+        let view = FavoritesMoviesView(viewModel: viewModel)
 
         // Test that list handles multiple movies properly
         _ = view.wrappedViewController
         #expect(view != nil)
-        #expect(vm.favoriteMovies.count == 3)
+        #expect(viewModel.favoriteMovies.count == 3)
     }
 
     @Test("Plain button style configuration")
@@ -447,12 +448,12 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        vm.setFavoriteMoviesForTesting([
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        viewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
 
-        let view = FavoritesMoviesView(viewModel: vm)
+        let view = FavoritesMoviesView(viewModel: viewModel)
 
         // Test that PlainButtonStyle is properly configured
         _ = view.wrappedViewController
@@ -464,17 +465,17 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        vm.setFavoriteMoviesForTesting([
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        viewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
 
-        let view = FavoritesMoviesView(viewModel: vm)
+        let view = FavoritesMoviesView(viewModel: viewModel)
 
         // Test that heart icon is properly configured
         _ = view.wrappedViewController
         #expect(view != nil)
-        #expect(vm.isFavorited(movie: vm.favoriteMovies[0]))
+        #expect(viewModel.isFavorited(movie: viewModel.favoriteMovies[0]))
     }
 
     @Test("Progress view placeholder")
@@ -482,12 +483,12 @@ struct FavoritesMoviesViewTests {
         defer { cleanupTest() }
 
         let (serviceLocator, _) = createTestComponents()
-        let vm = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        vm.setFavoriteMoviesForTesting([
+        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
+        viewModel.setFavoriteMoviesForTesting([
             Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
         ])
 
-        let view = FavoritesMoviesView(viewModel: vm)
+        let view = FavoritesMoviesView(viewModel: viewModel)
 
         // Test that ProgressView placeholder is properly configured
         _ = view.wrappedViewController

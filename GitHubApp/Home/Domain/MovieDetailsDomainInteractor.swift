@@ -75,6 +75,7 @@ final class MovieDetailsDomainInteractor: ObservableObject, CombineInteractor {
             storageService = try serviceLocator.retrieve(StorageService.self)
         } catch {
             Logger.shared.service("Failed to retrieve StorageService from ServiceLocator: \(error)", level: .warning)
+            // swiftlint:disable:next force_try
             storageService = try! LiveStorageService() // Fallback to Live implementation
         }
 
@@ -94,7 +95,9 @@ final class MovieDetailsDomainInteractor: ObservableObject, CombineInteractor {
      * - Parameter upstream: Publisher of domain actions
      * - Returns: Publisher of domain states
      */
-    func interact(upstream: AnyPublisher<MovieDetailsDomainAction, Never>) -> AnyPublisher<MovieDetailsDomainState, Never> {
+    func interact(
+        upstream: AnyPublisher<MovieDetailsDomainAction, Never>
+    ) -> AnyPublisher<MovieDetailsDomainState, Never> {
         upstream
             .sink { [weak self] action in
                 self?.handleAction(action)

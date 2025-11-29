@@ -56,7 +56,7 @@ struct SettingsViewStateReducer: SettingsViewStateReducing {
             appVersion: domainState.appVersion,
             appBuildNumber: domainState.appBuildNumber,
             isPhotoPickerPresented: domainState.isPhotoPickerPresented,
-            isClearFavoriteMoviesConfirmationPresented: domainState.isClearFavoriteMoviesConfirmationPresented,
+            showClearFavoritesConfirm: domainState.showClearFavoritesConfirm,
             showClearFavoriteMoviesAlert: domainState.showClearFavoriteMoviesAlert,
             showRateAppThanks: domainState.showRateAppThanks
         )

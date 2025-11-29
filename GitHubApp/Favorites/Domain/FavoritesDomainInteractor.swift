@@ -60,6 +60,7 @@ final class FavoritesDomainInteractor: ObservableObject, CombineInteractor {
             storageService = try serviceLocator.retrieve(StorageService.self)
         } catch {
             Logger.shared.service("Failed to retrieve StorageService from ServiceLocator: \(error)", level: .warning)
+            // swiftlint:disable:next force_try
             storageService = try! LiveStorageService()
         }
 

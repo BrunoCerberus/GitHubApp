@@ -9,6 +9,7 @@ import Testing
 
 @MainActor
 struct SearchDomainInteractorTests {
+    // swiftlint:disable:next large_tuple
     private func createTestComponents() -> (SearchDomainInteractor, MockSearchService, StorageService) {
         let mockSearchService = MockSearchService()
         let mockStorageService = MockStorageService()

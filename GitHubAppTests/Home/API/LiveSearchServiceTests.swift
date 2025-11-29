@@ -126,13 +126,13 @@ struct LiveSearchServiceTests {
         let service3 = LiveSearchService()
 
         // Then - All should be valid SearchService instances
-        let s1: SearchService = service1
-        let s2: SearchService = service2
-        let s3: SearchService = service3
+        let svc1: SearchService = service1
+        let svc2: SearchService = service2
+        let svc3: SearchService = service3
 
-        #expect(s1 != nil)
-        #expect(s2 != nil)
-        #expect(s3 != nil)
+        #expect(svc1 != nil)
+        #expect(svc2 != nil)
+        #expect(svc3 != nil)
     }
 
     @Test("Multiple concurrent searches can be initiated")

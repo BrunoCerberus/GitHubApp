@@ -38,13 +38,19 @@ struct Localizable {
         static let creditsTitle = NSLocalizedString("movie_details.credits.title", comment: "Credits section title")
 
         /// "No credits available" empty state message
-        static let creditsEmpty = NSLocalizedString("movie_details.credits.empty", comment: "No credits available message")
+        static let creditsEmpty = NSLocalizedString(
+            "movie_details.credits.empty",
+            comment: "No credits available message"
+        )
 
         /// "Reviews" section title
         static let reviewsTitle = NSLocalizedString("movie_details.reviews.title", comment: "Reviews section title")
 
         /// "No reviews available" empty state message
-        static let reviewsEmpty = NSLocalizedString("movie_details.reviews.empty", comment: "No reviews available message")
+        static let reviewsEmpty = NSLocalizedString(
+            "movie_details.reviews.empty",
+            comment: "No reviews available message"
+        )
     }
 
     // MARK: - Favorites
@@ -58,7 +64,10 @@ struct Localizable {
         static let title = NSLocalizedString("favorites.title", comment: "Favorites title")
 
         /// "Your favorite movies will appear here." empty state message
-        static let emptyState = NSLocalizedString("favorites.empty_state", comment: "Empty state message for favorite movies")
+        static let emptyState = NSLocalizedString(
+            "favorites.empty_state",
+            comment: "Empty state message for favorite movies"
+        )
     }
 
     // MARK: - Settings
@@ -75,28 +84,49 @@ struct Localizable {
         static let profileImage = NSLocalizedString("settings.profile_image", comment: "Profile Image label")
 
         /// "Tap to change profile image" hint
-        static let profileImageTapToChange = NSLocalizedString("settings.profile_image_tap_to_change", comment: "Tap to change profile image hint")
+        static let profileImageTapToChange = NSLocalizedString(
+            "settings.profile_image_tap_to_change",
+            comment: "Tap to change profile image hint"
+        )
 
         /// "App Version" label
         static let appVersion = NSLocalizedString("settings.app_version", comment: "App Version label")
 
         /// "Clear Favorites" button
-        static let clearFavoriteMovies = NSLocalizedString("settings.clear_favorited_movies", comment: "Clear Favorites button")
+        static let clearFavoriteMovies = NSLocalizedString(
+            "settings.clear_favorited_movies",
+            comment: "Clear Favorites button"
+        )
 
         /// "Clear Favorites" confirmation message
-        static let clearFavoriteMoviesConfirmation = NSLocalizedString("settings.clear_favorited_movies_confirmation", comment: "Clear Favorites confirmation message")
+        static let clearFavoriteMoviesConfirmation = NSLocalizedString(
+            "settings.clear_favorited_movies_confirmation",
+            comment: "Clear Favorites confirmation message"
+        )
 
         /// "Clear Favorites" alert title
-        static let clearFavoriteMoviesAlertTitle = NSLocalizedString("settings.clear_favorited_movies_alert_title", comment: "Clear Favorites alert title")
+        static let clearFavoriteMoviesAlertTitle = NSLocalizedString(
+            "settings.clear_favorited_movies_alert_title",
+            comment: "Clear Favorites alert title"
+        )
 
         /// "Clear Favorites" alert message
-        static let clearFavoriteMoviesAlertMessage = NSLocalizedString("settings.clear_favorited_movies_alert_message", comment: "Clear Favorites alert message")
+        static let clearFavoriteMoviesAlertMessage = NSLocalizedString(
+            "settings.clear_favorited_movies_alert_message",
+            comment: "Clear Favorites alert message"
+        )
 
         /// "Clear All" button
-        static let clearFavoriteMoviesAlertClear = NSLocalizedString("settings.clear_favorited_movies_alert_clear", comment: "Clear All button")
+        static let clearFavoriteMoviesAlertClear = NSLocalizedString(
+            "settings.clear_favorited_movies_alert_clear",
+            comment: "Clear All button"
+        )
 
         /// "Cancel" button
-        static let clearFavoriteMoviesAlertCancel = NSLocalizedString("settings.clear_favorited_movies_alert_cancel", comment: "Cancel button")
+        static let clearFavoriteMoviesAlertCancel = NSLocalizedString(
+            "settings.clear_favorited_movies_alert_cancel",
+            comment: "Cancel button"
+        )
 
         /// "Rate App" section title
         static let rateApp = NSLocalizedString("settings.rate_app", comment: "Rate App section title")
@@ -126,7 +156,10 @@ struct Localizable {
         }
 
         /// "Failed to construct URL from components" error message
-        static let urlConstructionFailed = NSLocalizedString("api_error.url_construction_failed", comment: "URL construction failed error")
+        static let urlConstructionFailed = NSLocalizedString(
+            "api_error.url_construction_failed",
+            comment: "URL construction failed error"
+        )
     }
 
     // MARK: - Widget
@@ -137,10 +170,16 @@ struct Localizable {
         private init() {}
 
         /// "Upcoming Movies" widget title
-        static let upcomingMoviesTitle = NSLocalizedString("widget.upcoming_movies.title", comment: "Upcoming Movies widget title")
+        static let upcomingMoviesTitle = NSLocalizedString(
+            "widget.upcoming_movies.title",
+            comment: "Upcoming Movies widget title"
+        )
 
         /// "Shows upcoming movies from The Movie Database" widget description
-        static let upcomingMoviesDescription = NSLocalizedString("widget.upcoming_movies.description", comment: "Widget description")
+        static let upcomingMoviesDescription = NSLocalizedString(
+            "widget.upcoming_movies.description",
+            comment: "Widget description"
+        )
 
         /// "Loading movies..." loading state message
         static let loadingMovies = NSLocalizedString("widget.loading_movies", comment: "Loading movies message")

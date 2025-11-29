@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  ServiceLocatorTests.swift
 //  GitHubAppTests
@@ -9,12 +10,10 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
-/**
- * Unit tests for `ServiceLocator` covering registration, retrieval,
- * safe retrieval, clearing, and thread-safety behaviors.
- */
+/// Unit tests for `ServiceLocator` covering registration, retrieval,
+/// safe retrieval, clearing, and thread-safety behaviors.
 @MainActor
-struct ServiceLocatorTests {
+struct ServiceLocatorTests { // swiftlint:disable:this type_body_length
     // MARK: - Test Protocols and Classes
 
     private protocol TestServiceProtocol {
@@ -483,12 +482,12 @@ struct ServiceLocatorTests {
         }
 
         // When & Then
-        for i in 1 ... 5 {
+        for attempt in 1 ... 5 {
             do {
                 let service = try serviceLocator.retrieve(TestServiceProtocol.self)
                 #expect(service.id == "multiple")
             } catch {
-                Issue.record("Should not throw error on attempt \(i): \(error)")
+                Issue.record("Should not throw error on attempt \(attempt): \(error)")
             }
         }
     }

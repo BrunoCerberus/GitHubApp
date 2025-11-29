@@ -56,14 +56,14 @@ struct SearchDomainActionTests {
         let action2 = SearchDomainAction.searchMovies(query2)
 
         // Then
-        if case let .searchMovies(q1) = action1 {
-            #expect(q1 == query1)
+        if case let .searchMovies(extractedQuery1) = action1 {
+            #expect(extractedQuery1 == query1)
         } else {
             Issue.record("Expected searchMovies action")
         }
 
-        if case let .searchMovies(q2) = action2 {
-            #expect(q2 == query2)
+        if case let .searchMovies(extractedQuery2) = action2 {
+            #expect(extractedQuery2 == query2)
         } else {
             Issue.record("Expected searchMovies action")
         }
@@ -78,9 +78,9 @@ struct SearchDomainActionTests {
         let action = SearchDomainAction.toggleMovieFavorite(movie)
 
         // Then
-        if case let .toggleMovieFavorite(m) = action {
-            #expect(m.id == movie.id)
-            #expect(m.title == movie.title)
+        if case let .toggleMovieFavorite(extractedMovie) = action {
+            #expect(extractedMovie.id == movie.id)
+            #expect(extractedMovie.title == movie.title)
         } else {
             Issue.record("Expected toggleMovieFavorite action")
         }

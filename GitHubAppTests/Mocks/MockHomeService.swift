@@ -42,8 +42,7 @@ final class MockHomeService: HomeService {
         Movie(id: 496_450,
               title: "Miraculous: Ladybug & Cat Noir, The Movie",
               overview: "A life of an ordinary Parisian teenager Marinette goes superhuman " +
-                  "when she becomes Ladybug. Bestowed with magical powers of creation, Ladybug " +
-                  "must unite with her opposite, Cat Noir, to save Paris as a new villain unleashes chaos unto the city.",
+                  "when she becomes Ladybug.",
               posterPath: ""),
     ]
 
@@ -108,7 +107,8 @@ final class MockHomeService: HomeService {
     /// Returns a pre-baked list of movies
     func fetchMovies(page: Int = 1) -> AnyPublisher<MoviesResponse, Error> {
         if shouldFail {
-            let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock fetch error"])
+            let userInfo = [NSLocalizedDescriptionKey: "Mock fetch error"]
+            let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: userInfo)
             return Fail(error: error)
                 .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
@@ -129,7 +129,8 @@ final class MockHomeService: HomeService {
     /// Ignores the query and returns the same mock list
     func searchMovies(with _: String, page: Int = 1) -> AnyPublisher<MoviesResponse, Error> {
         if shouldFail {
-            let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock search error"])
+            let userInfo = [NSLocalizedDescriptionKey: "Mock search error"]
+            let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: userInfo)
             return Fail(error: error)
                 .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
@@ -150,7 +151,8 @@ final class MockHomeService: HomeService {
     /// Returns a static mock credits payload
     func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
         if shouldFail {
-            let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock credits error"])
+            let userInfo = [NSLocalizedDescriptionKey: "Mock credits error"]
+            let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: userInfo)
             return Fail(error: error)
                 .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
@@ -165,7 +167,8 @@ final class MockHomeService: HomeService {
     /// Returns a static mock reviews payload
     func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
         if shouldFail {
-            let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Mock reviews error"])
+            let userInfo = [NSLocalizedDescriptionKey: "Mock reviews error"]
+            let error = errorToSimulate ?? NSError(domain: "MockError", code: 1, userInfo: userInfo)
             return Fail(error: error)
                 .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
