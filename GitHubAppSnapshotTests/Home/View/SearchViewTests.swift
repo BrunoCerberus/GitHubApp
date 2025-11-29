@@ -593,8 +593,10 @@ struct SearchViewTests { // swiftlint:disable:this type_body_length
                 // Verify favorite count changed
                 if case let .success(updatedState) = viewModel.viewState {
                     let newFavoriteCount = updatedState.favoriteMovies.count
-                    let msg = "Favorite count should increase after toggling favorite"
-                    #expect(newFavoriteCount > initialFavoriteCount, msg)
+                    #expect(
+                        newFavoriteCount > initialFavoriteCount,
+                        "Favorite count should increase after toggling favorite"
+                    )
                 }
             }
         }
