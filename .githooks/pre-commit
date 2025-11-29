@@ -1,13 +1,10 @@
 #!/bin/sh
 
-# Pre-commit hook to check SwiftFormat
-echo "🔍 Running SwiftFormat lint check..."
+# Pre-commit hook to check SwiftFormat and SwiftLint
 
 # Run SwiftFormat in lint mode
-if mint run swiftformat . --lint; then
-  echo "✅ SwiftFormat check passed"
-  exit 0
-else
+echo "🔍 Running SwiftFormat lint check..."
+if ! mint run swiftformat . --lint; then
   echo ""
   echo "❌ SwiftFormat found formatting issues!"
   echo ""
@@ -17,4 +14,25 @@ else
   echo "Then stage the changes and commit again."
   echo ""
   exit 1
-fi 
+fi
+echo "✅ SwiftFormat check passed"
+
+# Run SwiftLint
+echo ""
+echo "🔍 Running SwiftLint..."
+if ! swiftlint lint --quiet; then
+  echo ""
+  echo "❌ SwiftLint found issues!"
+  echo ""
+  echo "To see detailed issues, run:"
+  echo "  swiftlint"
+  echo ""
+  echo "Fix the issues and commit again."
+  echo ""
+  exit 1
+fi
+echo "✅ SwiftLint check passed"
+
+echo ""
+echo "✅ All checks passed!"
+exit 0
