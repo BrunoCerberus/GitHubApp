@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  MockFavoritesServiceTests.swift
 //  GitHubAppTests
@@ -10,20 +11,18 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
-/**
- * Comprehensive unit tests for MockFavoritesService.
- *
- * Tests cover:
- * - Loading favorite movies
- * - Toggling favorite status (add/remove)
- * - Clearing all favorites
- * - Checking if movie is liked
- * - Error simulation
- * - Delay simulation
- * - Helper methods (reset, set, get)
- */
+/// Comprehensive unit tests for MockFavoritesService.
+///
+/// Tests cover:
+/// - Loading favorite movies
+/// - Toggling favorite status (add/remove)
+/// - Clearing all favorites
+/// - Checking if movie is liked
+/// - Error simulation
+/// - Delay simulation
+/// - Helper methods (reset, set, get)
 @MainActor
-struct MockFavoritesServiceTests {
+struct MockFavoritesServiceTests { // swiftlint:disable:this type_body_length
     // MARK: - Load Favorites Tests
 
     @Test("Load favorite movies returns pre-populated movies")

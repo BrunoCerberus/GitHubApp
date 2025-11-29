@@ -14,6 +14,7 @@ import Testing
  */
 @MainActor
 struct HomeViewSearchTests {
+    // swiftlint:disable:next large_tuple
     private func createTestComponents() -> (HomeNavigationRouter, MockHomeService, HomeViewModel) {
         let router = HomeNavigationRouter()
         let mockService = MockHomeService()

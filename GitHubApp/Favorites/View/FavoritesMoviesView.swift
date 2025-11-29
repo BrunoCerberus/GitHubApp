@@ -70,7 +70,8 @@ struct FavoritesMoviesView: View {
                                                    viewModel.toggleFavorite(for: movie)
                                                },
                                                label: {
-                                                   Image(systemName: viewModel.isFavorited(movie: movie) ? "heart.fill" : "heart")
+                                                   let isFavorite = viewModel.isFavorited(movie: movie)
+                                                   Image(systemName: isFavorite ? "heart.fill" : "heart")
                                                        .foregroundColor(.red)
                                                })
                                                .buttonStyle(PlainButtonStyle())

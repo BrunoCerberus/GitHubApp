@@ -39,7 +39,7 @@ import Foundation
  *
  * | Notification | Posted By | Listened By | Payload Type | Purpose |
  * |--------------|-----------|-------------|--------------|---------|
- * | `.coordinatorDidBecomeAvailable` | CoordinatorView | GitHubAppSceneDelegate | Coordinator | Enable deeplink routing |
+ * | `.coordinatorDidBecomeAvailable` | CoordinatorView | SceneDelegate | Coordinator | Enable deeplink routing |
  * | `.favoriteMoviesDidUpdate` | Favorites, Settings | Home, Search | [Movie]? | Sync favorite status across features |
  * | `.moviesDidUpdate` | Home | WidgetDataManager | [Movie] | Update widget with latest movies |
  *

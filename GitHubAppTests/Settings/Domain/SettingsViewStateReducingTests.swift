@@ -28,7 +28,7 @@ struct SettingsViewStateReducingTests {
             appVersion: "1.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false,
             isLoading: true,
@@ -54,7 +54,7 @@ struct SettingsViewStateReducingTests {
             appVersion: "1.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false,
             isLoading: false,
@@ -84,7 +84,7 @@ struct SettingsViewStateReducingTests {
             appVersion: "2.0.0",
             appBuildNumber: "456",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false,
             isLoading: false,
@@ -101,7 +101,7 @@ struct SettingsViewStateReducingTests {
             #expect(dataViewState.appVersion == "2.0.0")
             #expect(dataViewState.appBuildNumber == "456")
             #expect(!dataViewState.isPhotoPickerPresented)
-            #expect(!dataViewState.isClearFavoriteMoviesConfirmationPresented)
+            #expect(!dataViewState.showClearFavoritesConfirm)
             #expect(!dataViewState.showClearFavoriteMoviesAlert)
             #expect(!dataViewState.showRateAppThanks)
         } else {
@@ -118,7 +118,7 @@ struct SettingsViewStateReducingTests {
             appVersion: "1.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: true,
-            isClearFavoriteMoviesConfirmationPresented: true,
+            showClearFavoritesConfirm: true,
             showClearFavoriteMoviesAlert: true,
             showRateAppThanks: true,
             isLoading: false,
@@ -133,7 +133,7 @@ struct SettingsViewStateReducingTests {
             #expect(dataViewState.profileImage == nil)
             #expect(!dataViewState.hasRatedApp)
             #expect(dataViewState.isPhotoPickerPresented)
-            #expect(dataViewState.isClearFavoriteMoviesConfirmationPresented)
+            #expect(dataViewState.showClearFavoritesConfirm)
             #expect(dataViewState.showClearFavoriteMoviesAlert)
             #expect(dataViewState.showRateAppThanks)
         } else {
@@ -152,7 +152,7 @@ struct SettingsViewStateReducingTests {
             appVersion: "1.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false,
             isLoading: true,
@@ -181,7 +181,7 @@ struct SettingsViewStateReducingTests {
             appVersion: "1.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false,
             isLoading: false,
@@ -214,7 +214,7 @@ struct SettingsViewStateReducingTests {
             #expect(dataViewState.appVersion == "1.0")
             #expect(dataViewState.appBuildNumber == "1")
             #expect(!dataViewState.isPhotoPickerPresented)
-            #expect(!dataViewState.isClearFavoriteMoviesConfirmationPresented)
+            #expect(!dataViewState.showClearFavoritesConfirm)
             #expect(!dataViewState.showClearFavoriteMoviesAlert)
             #expect(!dataViewState.showRateAppThanks)
         } else {

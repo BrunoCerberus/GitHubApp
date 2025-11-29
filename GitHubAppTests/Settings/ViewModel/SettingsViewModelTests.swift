@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  SettingsViewModelTests.swift
 //  GitHubAppTests
@@ -11,7 +12,7 @@ import Testing
 import UIKit
 
 @MainActor
-struct SettingsViewModelTests {
+struct SettingsViewModelTests { // swiftlint:disable:this type_body_length
     private func createTestComponents() -> (SettingsViewModel, MockSettingsService) {
         let mockSettingsService = MockSettingsService()
         let mockStorageService = MockStorageService()
@@ -274,7 +275,7 @@ struct SettingsViewModelTests {
         // Then
         await MainActor.run {
             if case let .success(dataViewState) = settingsViewModel.viewState {
-                #expect(dataViewState.isClearFavoriteMoviesConfirmationPresented)
+                #expect(dataViewState.showClearFavoritesConfirm)
             }
         }
     }
@@ -300,7 +301,7 @@ struct SettingsViewModelTests {
         // Then
         await MainActor.run {
             if case let .success(dataViewState) = settingsViewModel.viewState {
-                #expect(!dataViewState.isClearFavoriteMoviesConfirmationPresented)
+                #expect(!dataViewState.showClearFavoritesConfirm)
             }
         }
     }
@@ -336,7 +337,8 @@ struct SettingsViewModelTests {
         let mockSettingsService = MockSettingsService()
         let mockStorageService = MockStorageService()
         mockStorageService.shouldSimulateErrors = true
-        mockStorageService.clearError = NSError(domain: "TestError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to clear favorites"])
+        let userInfo = [NSLocalizedDescriptionKey: "Failed to clear favorites"]
+        mockStorageService.clearError = NSError(domain: "TestError", code: 1, userInfo: userInfo)
 
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)

@@ -21,7 +21,7 @@ final class Logger {
         case general = "General"
         case network = "Network"
         case database = "Database"
-        case ui = "UI"
+        case userInterface = "UI"
         case domain = "Domain"
         case viewModel = "ViewModel"
         case service = "Service"
@@ -32,27 +32,57 @@ final class Logger {
     // MARK: - Public Logging Methods
 
     /// Log debug information (verbose, development only)
-    func debug(_ message: String, category: String = "General", file: String = #file, function: String = #function, line: Int = #line) {
+    func debug(
+        _ message: String,
+        category: String = "General",
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
         log(message, level: .debug, category: category, file: file, function: function, line: line)
     }
 
     /// Log informational messages
-    func info(_ message: String, category: String = "General", file: String = #file, function: String = #function, line: Int = #line) {
+    func info(
+        _ message: String,
+        category: String = "General",
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
         log(message, level: .info, category: category, file: file, function: function, line: line)
     }
 
     /// Log warnings (potential issues)
-    func warning(_ message: String, category: String = "General", file: String = #file, function: String = #function, line: Int = #line) {
+    func warning(
+        _ message: String,
+        category: String = "General",
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
         log(message, level: .default, category: category, file: file, function: function, line: line)
     }
 
     /// Log errors (actual problems)
-    func error(_ message: String, category: String = "General", file: String = #file, function: String = #function, line: Int = #line) {
+    func error(
+        _ message: String,
+        category: String = "General",
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
         log(message, level: .error, category: category, file: file, function: function, line: line)
     }
 
     /// Log critical issues (severe problems requiring immediate attention)
-    func critical(_ message: String, category: String = "General", file: String = #file, function: String = #function, line: Int = #line) {
+    func critical(
+        _ message: String,
+        category: String = "General",
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
         log(message, level: .fault, category: category, file: file, function: function, line: line)
     }
 
@@ -84,7 +114,14 @@ final class Logger {
 
     // MARK: - Private Implementation
 
-    private func log(_ message: String, level: OSLogType, category: String, file: String = #file, function: String = #function, line: Int = #line) {
+    private func log(
+        _ message: String,
+        level: OSLogType,
+        category: String,
+        file: String = #file,
+        function: String = #function,
+        line: Int = #line
+    ) {
         #if DEBUG
             let osLogger = os.Logger(subsystem: subsystem, category: category)
             let fileName = (file as NSString).lastPathComponent

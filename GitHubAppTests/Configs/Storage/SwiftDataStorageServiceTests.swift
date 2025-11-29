@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  SwiftDataStorageServiceTests.swift
 //  GitHubAppTests
@@ -11,7 +12,7 @@ import SwiftData
 import Testing
 
 @MainActor
-struct SwiftDataStorageServiceTests {
+struct SwiftDataStorageServiceTests { // swiftlint:disable:this type_body_length
     private func createTestStorageService() throws -> SwiftDataStorageService {
         // Create test storage service with in-memory storage
         let schema = Schema([StoredMovie.self, UserSetting.self])
@@ -191,11 +192,15 @@ struct SwiftDataStorageServiceTests {
     func updateExistingMovie() async throws {
         // Given
         let sut = try createTestStorageService()
-        let originalMovie = Movie(id: 1, title: "Original Title", overview: "Original Overview", posterPath: "/original.jpg")
+        let originalMovie = Movie(
+            id: 1, title: "Original Title", overview: "Original Overview", posterPath: "/original.jpg"
+        )
         try await sut.save(originalMovie, context: StorageContext.favoriteMovies)
 
         // When - Save movie with same ID but different data
-        let updatedMovie = Movie(id: 1, title: "Updated Title", overview: "Updated Overview", posterPath: "/updated.jpg")
+        let updatedMovie = Movie(
+            id: 1, title: "Updated Title", overview: "Updated Overview", posterPath: "/updated.jpg"
+        )
         try await sut.save(updatedMovie, context: StorageContext.favoriteMovies)
 
         // Then - Should have only one movie with updated data

@@ -31,7 +31,7 @@ struct SettingsDomainState: Equatable {
     var isPhotoPickerPresented: Bool
 
     /// Clear favorite movies confirmation dialog state
-    var isClearFavoriteMoviesConfirmationPresented: Bool
+    var showClearFavoritesConfirm: Bool
 
     /// Clear favorite movies success alert state
     var showClearFavoriteMoviesAlert: Bool
@@ -52,7 +52,7 @@ struct SettingsDomainState: Equatable {
         appVersion: "1.0",
         appBuildNumber: "1",
         isPhotoPickerPresented: false,
-        isClearFavoriteMoviesConfirmationPresented: false,
+        showClearFavoritesConfirm: false,
         showClearFavoriteMoviesAlert: false,
         showRateAppThanks: false,
         isLoading: false,
@@ -68,7 +68,7 @@ struct SettingsDomainState: Equatable {
             lhs.appVersion == rhs.appVersion &&
             lhs.appBuildNumber == rhs.appBuildNumber &&
             lhs.isPhotoPickerPresented == rhs.isPhotoPickerPresented &&
-            lhs.isClearFavoriteMoviesConfirmationPresented == rhs.isClearFavoriteMoviesConfirmationPresented &&
+            lhs.showClearFavoritesConfirm == rhs.showClearFavoritesConfirm &&
             lhs.showClearFavoriteMoviesAlert == rhs.showClearFavoriteMoviesAlert &&
             lhs.showRateAppThanks == rhs.showRateAppThanks &&
             lhs.isLoading == rhs.isLoading &&

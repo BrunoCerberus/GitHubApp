@@ -73,6 +73,7 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
             storageService = try serviceLocator.retrieve(StorageService.self)
         } catch {
             Logger.shared.service("Failed to retrieve StorageService from ServiceLocator: \(error)", level: .warning)
+            // swiftlint:disable:next force_try
             storageService = try! LiveStorageService()
         }
 
@@ -147,10 +148,8 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
 
     // MARK: - Private Action Handlers
 
-    /**
-     * Handle searching for movies with a query.
-     */
-    private func handleSearchMovies(query: String) {
+    /// Handle searching for movies with a query.
+    private func handleSearchMovies(query: String) { // swiftlint:disable:this function_body_length
         guard !query.isEmpty else {
             // Clear search results when query is empty
             currentState = currentState.copy(
@@ -225,7 +224,10 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
                 let updatedLikedMovies = try await storageService.toggleMovieFavorite(movie)
 
                 // Filter to only show favorite movies that are in the current movies list
-                let filteredLikedMovies = filterLikedMovies(from: currentState.movies, persistedLikedMovies: updatedLikedMovies)
+                let filteredLikedMovies = filterLikedMovies(
+                    from: currentState.movies,
+                    persistedLikedMovies: updatedLikedMovies
+                )
 
                 // Update state on main thread
                 await MainActor.run {
@@ -255,7 +257,10 @@ final class SearchDomainInteractor: ObservableObject, CombineInteractor {
     private func handleLoadPersistedFavoriteMoviesAsync() async {
         do {
             let persistedLikedMovies = try await storageService.fetchLikedMovies()
-            let filteredLikedMovies = filterLikedMovies(from: currentState.movies, persistedLikedMovies: persistedLikedMovies)
+            let filteredLikedMovies = filterLikedMovies(
+                from: currentState.movies,
+                persistedLikedMovies: persistedLikedMovies
+            )
 
             await MainActor.run {
                 currentState = currentState.copy(favoriteMovies: filteredLikedMovies)

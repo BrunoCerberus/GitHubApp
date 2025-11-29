@@ -9,6 +9,7 @@ import Testing
 
 @MainActor
 struct SharedMovieMainAppTests {
+    // swiftlint:disable:next large_tuple
     private func createTestMovies() -> (SharedMovie, SharedMovie, SharedMovie, SharedMovie, SharedMovie) {
         let movieWithPoster = SharedMovie(
             id: 1,

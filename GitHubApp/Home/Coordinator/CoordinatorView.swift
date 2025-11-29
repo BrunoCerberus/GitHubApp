@@ -79,7 +79,7 @@ struct CoordinatorView: View {
     private func setupDeeplinkRouter() {
         // Get the scene delegate to setup the deeplink router
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           windowScene.delegate as? GitHubAppSceneDelegate != nil
+           windowScene.delegate is GitHubAppSceneDelegate
         {
             // Set the deeplink router in the scene delegate
             // We need to use a different approach since we can't directly access the scene delegate

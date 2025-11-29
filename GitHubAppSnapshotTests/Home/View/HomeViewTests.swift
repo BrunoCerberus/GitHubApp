@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  HomeViewTests.swift
 //  GitHubAppTests
@@ -14,12 +15,13 @@ import Testing
 
 @testable import GitHubApp
 
-/**
- * Snapshot tests for HomeView to ensure visual regressions are detected.
- */
+/// Snapshot tests for HomeView to ensure visual regressions are detected.
 @MainActor
-struct HomeViewTests {
-    private func createTestComponents() -> (HomeNavigationRouter, MockHomeService, HomeViewModel, HomeView<HomeNavigationRouter>) {
+struct HomeViewTests { // swiftlint:disable:this type_body_length
+    // swiftlint:disable:next large_tuple
+    private func createTestComponents() -> (
+        HomeNavigationRouter, MockHomeService, HomeViewModel, HomeView<HomeNavigationRouter>
+    ) {
         let router = HomeNavigationRouter()
         let mockService = MockHomeService()
         let mockStorageService = MockStorageService()
@@ -86,7 +88,9 @@ struct HomeViewTests {
         // Create a failing service
         struct FailingHomeService: HomeService {
             func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
-                Fail(error: NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Network error occurred"])).eraseToAnyPublisher()
+                let userInfo = [NSLocalizedDescriptionKey: "Network error occurred"]
+                return Fail(error: NSError(domain: "test", code: 1, userInfo: userInfo))
+                    .eraseToAnyPublisher()
             }
 
             func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
@@ -408,7 +412,8 @@ struct HomeViewTests {
         // Create a service that fails with network error
         struct NetworkErrorService: HomeService {
             func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
-                Fail(error: NSError(domain: "NSURLErrorDomain", code: -1001, userInfo: [NSLocalizedDescriptionKey: "The request timed out."]))
+                let userInfo = [NSLocalizedDescriptionKey: "The request timed out."]
+                return Fail(error: NSError(domain: "NSURLErrorDomain", code: -1001, userInfo: userInfo))
                     .eraseToAnyPublisher()
             }
 
@@ -586,7 +591,10 @@ struct HomeViewTests {
         // Verify data was refreshed
         if case let .success(dataViewState) = viewModel.viewState {
             let refreshedMovieCount = dataViewState.movies.count
-            #expect(refreshedMovieCount >= initialMovieCount, "Movie count should remain stable or increase after refresh")
+            #expect(
+                refreshedMovieCount >= initialMovieCount,
+                "Movie count should remain stable or increase after refresh"
+            )
         }
     }
 
@@ -608,6 +616,7 @@ struct HomeViewTests {
     }
 
     @Test("Error state transitions to success on retry")
+    // swiftlint:disable:next function_body_length
     func errorToRetryFlowTest() async throws {
         final class ErrorThenSuccessService: HomeService {
             var requestCount = 0
@@ -616,12 +625,15 @@ struct HomeViewTests {
                 requestCount += 1
                 if requestCount == 1 {
                     // First request fails
-                    return Fail(error: NSError(domain: "Test", code: -1, userInfo: [NSLocalizedDescriptionKey: "Test error"]))
+                    let userInfo = [NSLocalizedDescriptionKey: "Test error"]
+                    return Fail(error: NSError(domain: "Test", code: -1, userInfo: userInfo))
                         .receive(on: DispatchQueue.main)
                         .eraseToAnyPublisher()
                 } else {
                     // Second request succeeds
-                    return Just(MoviesResponse(results: [Movie(id: 1, title: "Test", overview: "Test", posterPath: "/test.jpg")], page: 1, totalPages: 1, totalResults: 1))
+                    let movie = Movie(id: 1, title: "Test", overview: "Test", posterPath: "/test.jpg")
+                    let response = MoviesResponse(results: [movie], page: 1, totalPages: 1, totalResults: 1)
+                    return Just(response)
                         .setFailureType(to: Error.self)
                         .receive(on: DispatchQueue.main)
                         .eraseToAnyPublisher()
@@ -691,7 +703,12 @@ struct HomeViewTests {
             func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
                 // Create 100 movies for large data set test
                 let movies = (1 ... 100).map { id in
-                    Movie(id: id, title: "Movie \(id)", overview: "Overview for movie \(id)", posterPath: "/path\(id).jpg")
+                    Movie(
+                        id: id,
+                        title: "Movie \(id)",
+                        overview: "Overview for movie \(id)",
+                        posterPath: "/path\(id).jpg"
+                    )
                 }
                 return Just(MoviesResponse(results: movies, page: 1, totalPages: 1, totalResults: 100))
                     .setFailureType(to: Error.self)
@@ -810,7 +827,8 @@ struct HomeViewTests {
         struct PaginatedHomeService: HomeService {
             func fetchMovies(page: Int) -> AnyPublisher<MoviesResponse, Error> {
                 let movies = (1 ... 20).map { id in
-                    Movie(id: id + (page * 20), title: "Movie \(id + (page * 20))", overview: "Overview", posterPath: "/path.jpg")
+                    let movieId = id + (page * 20)
+                    return Movie(id: movieId, title: "Movie \(movieId)", overview: "Overview", posterPath: "/path.jpg")
                 }
                 return Just(MoviesResponse(results: movies, page: page, totalPages: 3, totalResults: 60))
                     .setFailureType(to: Error.self)

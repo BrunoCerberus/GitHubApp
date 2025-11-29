@@ -52,7 +52,7 @@ struct SettingsViewStateTests {
             appVersion: "1.0.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false
         )
@@ -118,7 +118,7 @@ struct SettingsViewStateTests {
             appVersion: "1.0.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false
         )
@@ -142,7 +142,7 @@ struct SettingsViewStateTests {
             appVersion: "2.0.0",
             appBuildNumber: "5",
             isPhotoPickerPresented: true,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: true,
             showRateAppThanks: false
         )
@@ -164,7 +164,7 @@ struct SettingsViewStateTests {
             appVersion: "1.0.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false
         )
@@ -175,7 +175,7 @@ struct SettingsViewStateTests {
             appVersion: "1.0.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false
         )
@@ -196,7 +196,7 @@ struct SettingsViewStateTests {
             appVersion: "1.0.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false
         )
@@ -207,7 +207,7 @@ struct SettingsViewStateTests {
             appVersion: "1.0.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false
         )
@@ -225,7 +225,7 @@ struct SettingsViewStateTests {
             appVersion: "1.0.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false
         )
@@ -236,7 +236,7 @@ struct SettingsViewStateTests {
             appVersion: "1.0.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false
         )
@@ -254,7 +254,7 @@ struct SettingsViewStateTests {
             appVersion: "1.0.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false
         )
@@ -265,7 +265,7 @@ struct SettingsViewStateTests {
             appVersion: "2.0.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false
         )
@@ -286,7 +286,7 @@ struct SettingsViewStateTests {
             appVersion: "1.0.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false
         )
@@ -297,7 +297,7 @@ struct SettingsViewStateTests {
             appVersion: "1.0.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: false,
-            isClearFavoriteMoviesConfirmationPresented: false,
+            showClearFavoritesConfirm: false,
             showClearFavoriteMoviesAlert: false,
             showRateAppThanks: false
         )
@@ -315,14 +315,14 @@ struct SettingsViewStateTests {
             appVersion: "1.0.0",
             appBuildNumber: "1",
             isPhotoPickerPresented: true,
-            isClearFavoriteMoviesConfirmationPresented: true,
+            showClearFavoritesConfirm: true,
             showClearFavoriteMoviesAlert: true,
             showRateAppThanks: true
         )
 
         // Then
         #expect(state.isPhotoPickerPresented == true)
-        #expect(state.isClearFavoriteMoviesConfirmationPresented == true)
+        #expect(state.showClearFavoritesConfirm == true)
         #expect(state.showClearFavoriteMoviesAlert == true)
         #expect(state.showRateAppThanks == true)
     }

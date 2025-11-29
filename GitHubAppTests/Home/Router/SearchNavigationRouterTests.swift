@@ -81,7 +81,8 @@ struct SearchNavigationRouterTests {
         router.route(navigationEvent: .detail(movie))
 
         // Then - Navigation controller should push MovieDetailsHostingController
-        #expect(navigationController.topViewController is MovieDetailsHostingController, "Should push MovieDetailsHostingController")
+        let isCorrectType = navigationController.topViewController is MovieDetailsHostingController
+        #expect(isCorrectType, "Should push MovieDetailsHostingController")
         #expect(navigationController.viewControllers.count == 2, "Should have 2 view controllers in stack")
     }
 

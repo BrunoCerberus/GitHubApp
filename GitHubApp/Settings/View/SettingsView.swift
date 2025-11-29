@@ -8,16 +8,14 @@
 import PhotosUI
 import SwiftUI
 
-/**
- * Settings view for managing app preferences and user settings.
- *
- * This view provides:
- * - Profile image management with photo picker
- * - App version display
- * - Clear favorite movies functionality
- * - App rating functionality
- */
-struct SettingsView: View {
+/// Settings view for managing app preferences and user settings.
+///
+/// This view provides:
+/// - Profile image management with photo picker
+/// - App version display
+/// - Clear favorite movies functionality
+/// - App rating functionality
+struct SettingsView: View { // swiftlint:disable:this type_body_length
     /// View model for settings functionality
     @StateObject var viewModel: SettingsViewModel
 
@@ -214,60 +212,61 @@ struct SettingsView: View {
     private var profileHeaderSection: some View {
         VStack(spacing: 16) {
             // Profile Image with fancy design
-            Button(action: {
-                viewModel.showPhotoPicker()
-            }) {
-                ZStack {
-                    // Background circle with gradient
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color.blue.opacity(0.6),
-                                    Color.purple.opacity(0.6),
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
+            Button(
+                action: { viewModel.showPhotoPicker() },
+                label: {
+                    ZStack {
+                        // Background circle with gradient
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.blue.opacity(0.6),
+                                        Color.purple.opacity(0.6),
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
                             )
-                        )
-                        .frame(width: 120, height: 120)
-                        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                            .frame(width: 120, height: 120)
+                            .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
 
-                    if let profileImage = viewModel.profileImage {
-                        Image(uiImage: profileImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 110, height: 110)
-                            .clipShape(Circle())
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.white, lineWidth: 4)
-                                    .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
-                            )
-                    } else {
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 50, weight: .light))
-                            .foregroundColor(.white)
-                    }
-
-                    // Edit icon overlay
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Spacer()
-                            Image(systemName: "camera.fill")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.white)
-                                .padding(8)
-                                .background(Color.blue)
+                        if let profileImage = viewModel.profileImage {
+                            Image(uiImage: profileImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 110, height: 110)
                                 .clipShape(Circle())
-                                .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 2)
-                                .offset(x: -5, y: -5)
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.white, lineWidth: 4)
+                                        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                                )
+                        } else {
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 50, weight: .light))
+                                .foregroundColor(.white)
+                        }
+
+                        // Edit icon overlay
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                Image(systemName: "camera.fill")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.blue)
+                                    .clipShape(Circle())
+                                    .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 2)
+                                    .offset(x: -5, y: -5)
+                            }
                         }
                     }
+                    .frame(width: 120, height: 120)
                 }
-                .frame(width: 120, height: 120)
-            }
+            )
             .buttonStyle(PlainButtonStyle())
 
             VStack(spacing: 4) {
@@ -336,100 +335,102 @@ struct SettingsView: View {
     // MARK: - Clear Liked Movies Card
 
     private var clearFavoriteMoviesCard: some View {
-        Button(action: {
-            viewModel.showClearLikedMoviesConfirmation()
-        }) {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Image(systemName: "heart.slash.fill")
-                        .font(.title2)
-                        .foregroundColor(.red)
+        Button(
+            action: { viewModel.showClearLikedMoviesConfirmation() },
+            label: {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: "heart.slash.fill")
+                            .font(.title2)
+                            .foregroundColor(.red)
 
-                    Text(Localizable.settings.clearFavoriteMovies)
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
+                        Text(Localizable.settings.clearFavoriteMovies)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
 
-                    Spacer()
+                        Spacer()
 
-                    Image(systemName: "chevron.right")
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.red)
+                    }
+
+                    Text("Remove all movies from your favorites list")
                         .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.red)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.leading)
                 }
-
-                Text("Remove all movies from your favorites list")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.leading)
+                .padding(20)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color(.systemBackground))
+                        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.red.opacity(0.2), lineWidth: 1)
+                )
             }
-            .padding(20)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(.systemBackground))
-                    .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.red.opacity(0.2), lineWidth: 1)
-            )
-        }
+        )
         .buttonStyle(PlainButtonStyle())
     }
 
     // MARK: - Rate App Card
 
     private var rateAppCard: some View {
-        Button(action: {
-            viewModel.rateApp()
-        }) {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Image(systemName: "star.fill")
-                        .font(.title2)
-                        .foregroundColor(.yellow)
+        Button(
+            action: { viewModel.rateApp() },
+            label: {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: "star.fill")
+                            .font(.title2)
+                            .foregroundColor(.yellow)
 
-                    Text(Localizable.settings.rateApp)
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
+                        Text(Localizable.settings.rateApp)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
 
-                    Spacer()
+                        Spacer()
 
-                    HStack(spacing: 2) {
-                        ForEach(0 ..< 5) { _ in
-                            Image(systemName: "star.fill")
-                                .font(.caption2)
-                                .foregroundColor(.yellow)
+                        HStack(spacing: 2) {
+                            ForEach(0 ..< 5) { _ in
+                                Image(systemName: "star.fill")
+                                    .font(.caption2)
+                                    .foregroundColor(.yellow)
+                            }
                         }
                     }
-                }
 
-                Text("Help us improve by rating the app")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.leading)
-            }
-            .padding(20)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color.yellow.opacity(0.1),
-                                Color.orange.opacity(0.05),
-                            ]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                    Text("Help us improve by rating the app")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.leading)
+                }
+                .padding(20)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.yellow.opacity(0.1),
+                                    Color.orange.opacity(0.05),
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
-                    )
-                    .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.yellow.opacity(0.3), lineWidth: 1)
-            )
-        }
+                        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.yellow.opacity(0.3), lineWidth: 1)
+                )
+            }
+        )
         .buttonStyle(PlainButtonStyle())
     }
 }

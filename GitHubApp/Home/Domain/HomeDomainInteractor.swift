@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  HomeDomainInteractor.swift
 //  GitHubApp
@@ -181,6 +182,7 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
             storageService = try serviceLocator.retrieve(StorageService.self)
         } catch {
             Logger.shared.service("Failed to retrieve StorageService from ServiceLocator: \(error)", level: .warning)
+            // swiftlint:disable:next force_try
             storageService = try! LiveStorageService() // Fallback to Live implementation
         }
 
@@ -394,7 +396,10 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
                 let updatedLikedMovies = try await storageService.toggleMovieFavorite(movie)
 
                 // Filter to only show favorite movies that are in the current movies list
-                let filteredLikedMovies = filterLikedMovies(from: currentState.movies, persistedLikedMovies: updatedLikedMovies)
+                let filteredLikedMovies = filterLikedMovies(
+                    from: currentState.movies,
+                    persistedLikedMovies: updatedLikedMovies
+                )
 
                 // Update state on main thread
                 await MainActor.run {
@@ -424,7 +429,10 @@ final class HomeDomainInteractor: ObservableObject, CombineInteractor {
     private func handleLoadPersistedFavoriteMoviesAsync() async {
         do {
             let persistedLikedMovies = try await storageService.fetchLikedMovies()
-            let filteredLikedMovies = filterLikedMovies(from: currentState.movies, persistedLikedMovies: persistedLikedMovies)
+            let filteredLikedMovies = filterLikedMovies(
+                from: currentState.movies,
+                persistedLikedMovies: persistedLikedMovies
+            )
 
             await MainActor.run {
                 currentState = currentState.copy(favoriteMovies: filteredLikedMovies)

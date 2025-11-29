@@ -250,7 +250,7 @@ struct SettingsDomainInteractorTests {
 
         // Then
         await MainActor.run {
-            #expect(domainInteractor.currentState.isClearFavoriteMoviesConfirmationPresented)
+            #expect(domainInteractor.currentState.showClearFavoritesConfirm)
         }
     }
 
@@ -261,7 +261,7 @@ struct SettingsDomainInteractorTests {
 
         await MainActor.run {
             domainInteractor.handleAction(.showClearFavoriteMoviesConfirmation)
-            #expect(domainInteractor.currentState.isClearFavoriteMoviesConfirmationPresented)
+            #expect(domainInteractor.currentState.showClearFavoritesConfirm)
         }
 
         // When
@@ -271,7 +271,7 @@ struct SettingsDomainInteractorTests {
 
         // Then
         await MainActor.run {
-            #expect(!domainInteractor.currentState.isClearFavoriteMoviesConfirmationPresented)
+            #expect(!domainInteractor.currentState.showClearFavoritesConfirm)
         }
     }
 
@@ -306,7 +306,8 @@ struct SettingsDomainInteractorTests {
         let mockSettingsService = MockSettingsService()
         let mockStorageService = MockStorageService()
         mockStorageService.shouldSimulateErrors = true
-        mockStorageService.clearError = NSError(domain: "Test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Clear failed"])
+        let userInfo = [NSLocalizedDescriptionKey: "Clear failed"]
+        mockStorageService.clearError = NSError(domain: "Test", code: 1, userInfo: userInfo)
 
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)

@@ -76,6 +76,7 @@ final class SettingsDomainInteractor: ObservableObject, CombineInteractor {
             storageService = try serviceLocator.retrieve(StorageService.self)
         } catch {
             Logger.shared.service("Failed to retrieve StorageService from ServiceLocator: \(error)", level: .warning)
+            // swiftlint:disable:next force_try
             storageService = try! LiveStorageService()
         }
 
@@ -288,14 +289,14 @@ final class SettingsDomainInteractor: ObservableObject, CombineInteractor {
      * Handle showing clear favorite movies confirmation.
      */
     private func handleShowClearFavoriteMoviesConfirmation() {
-        currentState = currentState.copy(isClearFavoriteMoviesConfirmationPresented: true)
+        currentState = currentState.copy(showClearFavoritesConfirm: true)
     }
 
     /**
      * Handle hiding clear favorite movies confirmation.
      */
     private func handleHideClearFavoriteMoviesConfirmation() {
-        currentState = currentState.copy(isClearFavoriteMoviesConfirmationPresented: false)
+        currentState = currentState.copy(showClearFavoritesConfirm: false)
     }
 
     // MARK: - Private Helper Methods
@@ -320,7 +321,7 @@ extension SettingsDomainState {
         appVersion: String? = nil,
         appBuildNumber: String? = nil,
         isPhotoPickerPresented: Bool? = nil,
-        isClearFavoriteMoviesConfirmationPresented: Bool? = nil,
+        showClearFavoritesConfirm: Bool? = nil,
         showClearFavoriteMoviesAlert: Bool? = nil,
         showRateAppThanks: Bool? = nil,
         isLoading: Bool? = nil,
@@ -332,7 +333,8 @@ extension SettingsDomainState {
             appVersion: appVersion ?? self.appVersion,
             appBuildNumber: appBuildNumber ?? self.appBuildNumber,
             isPhotoPickerPresented: isPhotoPickerPresented ?? self.isPhotoPickerPresented,
-            isClearFavoriteMoviesConfirmationPresented: isClearFavoriteMoviesConfirmationPresented ?? self.isClearFavoriteMoviesConfirmationPresented,
+            showClearFavoritesConfirm:
+            showClearFavoritesConfirm ?? self.showClearFavoritesConfirm,
             showClearFavoriteMoviesAlert: showClearFavoriteMoviesAlert ?? self.showClearFavoriteMoviesAlert,
             showRateAppThanks: showRateAppThanks ?? self.showRateAppThanks,
             isLoading: isLoading ?? self.isLoading,
@@ -350,7 +352,7 @@ extension SettingsDomainState {
             appVersion: appVersion,
             appBuildNumber: appBuildNumber,
             isPhotoPickerPresented: isPhotoPickerPresented,
-            isClearFavoriteMoviesConfirmationPresented: isClearFavoriteMoviesConfirmationPresented,
+            showClearFavoritesConfirm: showClearFavoritesConfirm,
             showClearFavoriteMoviesAlert: showClearFavoriteMoviesAlert,
             showRateAppThanks: showRateAppThanks,
             isLoading: isLoading,

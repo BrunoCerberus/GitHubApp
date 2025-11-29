@@ -154,11 +154,8 @@ struct SharedDataManagerMainAppTests {
         sharedDataManager.saveUpcomingMovies(testMovies)
 
         // Simulate old data by directly setting an old timestamp
-        let userDefaults: UserDefaults = if let appGroupDefaults = UserDefaults(suiteName: "group.com.bruno.GitHubApp") {
-            appGroupDefaults
-        } else {
-            UserDefaults.standard
-        }
+        let suiteName = "group.com.bruno.GitHubApp"
+        let userDefaults = UserDefaults(suiteName: suiteName) ?? UserDefaults.standard
 
         let threeHoursAgo = Calendar.current.date(byAdding: .hour, value: -3, to: Date()) ?? Date()
         userDefaults.set(threeHoursAgo, forKey: "shared_last_update")
@@ -196,14 +193,11 @@ struct SharedDataManagerMainAppTests {
         defer { cleanupTest(sharedDataManager) }
 
         // Manually set invalid data in UserDefaults
-        let userDefaults: UserDefaults = if let appGroupDefaults = UserDefaults(suiteName: "group.com.bruno.GitHubApp") {
-            appGroupDefaults
-        } else {
-            UserDefaults.standard
-        }
+        let suiteName = "group.com.bruno.GitHubApp"
+        let userDefaults = UserDefaults(suiteName: suiteName) ?? UserDefaults.standard
 
         // Set invalid JSON data
-        let invalidData = "invalid json data".data(using: .utf8)!
+        let invalidData = Data("invalid json data".utf8)
         userDefaults.set(invalidData, forKey: "shared_upcoming_movies")
 
         // When

@@ -34,7 +34,7 @@ struct LiveSettingsServiceTests {
         defer { cleanup() }
 
         // When
-        var resultImage: UIImage? = nil
+        var resultImage: UIImage?
         var cancelled = false
 
         let cancellable = settingsService.loadProfileImage()
@@ -59,7 +59,7 @@ struct LiveSettingsServiceTests {
         // Create a test image
         let testImage = UIImage(systemName: "star.fill") ?? UIImage()
         var saveCompleted = false
-        var loadedImage: UIImage? = nil
+        var loadedImage: UIImage?
 
         // When - Save image
         let saveCancellable = settingsService.saveProfileImage(testImage)
@@ -104,7 +104,7 @@ struct LiveSettingsServiceTests {
         usleep(100_000)
 
         // Then - Verify cleared
-        var loadedImage: UIImage? = nil
+        var loadedImage: UIImage?
         let loadCancellable = settingsService.loadProfileImage()
             .sink { image in
                 loadedImage = image
@@ -234,7 +234,7 @@ struct LiveSettingsServiceTests {
         )
         usleep(100_000)
 
-        var loadedImage1: UIImage? = nil
+        var loadedImage1: UIImage?
         let load1 = settingsService.loadProfileImage()
             .sink { image in
                 loadedImage1 = image
@@ -250,7 +250,7 @@ struct LiveSettingsServiceTests {
         )
         usleep(100_000)
 
-        var loadedImage2: UIImage? = nil
+        var loadedImage2: UIImage?
         let load2 = settingsService.loadProfileImage()
             .sink { image in
                 loadedImage2 = image
@@ -263,7 +263,7 @@ struct LiveSettingsServiceTests {
         let clear = settingsService.clearProfileImage().sink { _ in }
         usleep(100_000)
 
-        var loadedImage3: UIImage? = nil
+        var loadedImage3: UIImage?
         let load3 = settingsService.loadProfileImage()
             .sink { image in
                 loadedImage3 = image
@@ -308,7 +308,7 @@ struct LiveSettingsServiceTests {
 
         #expect(hasRated == true)
 
-        var profileImage: UIImage? = nil
+        var profileImage: UIImage?
         let getImage = settingsService.loadProfileImage()
             .sink { image in
                 profileImage = image

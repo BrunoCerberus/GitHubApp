@@ -9,6 +9,7 @@ import Testing
 
 @MainActor
 struct HomeDomainInteractorTests {
+    // swiftlint:disable:next large_tuple
     private func createTestComponents() -> (HomeDomainInteractor, MockHomeService, StorageService) {
         let mockHomeService = MockHomeService()
         let mockStorageService = MockStorageService()
