@@ -199,6 +199,77 @@ struct Localizable {
         static let searchMovies = NSLocalizedString("home.search_movies", comment: "Search movies prompt")
     }
 
+    // MARK: - Paywall
+
+    /// Paywall related localized strings
+    struct Paywall {
+        /// Private initializer to prevent instantiation
+        private init() {}
+
+        /// "Loading..." loading state message
+        static let loading = NSLocalizedString("paywall.loading", comment: "Loading paywall message")
+
+        /// "Unlock Premium" title
+        static let title = NSLocalizedString("paywall.title", comment: "Paywall title")
+
+        /// Subtitle describing premium benefits
+        static let subtitle = NSLocalizedString("paywall.subtitle", comment: "Paywall subtitle")
+
+        /// First feature title
+        static let feature1Title = NSLocalizedString("paywall.feature1.title", comment: "Feature 1 title")
+
+        /// First feature description
+        static let feature1Description = NSLocalizedString(
+            "paywall.feature1.description",
+            comment: "Feature 1 description"
+        )
+
+        /// Second feature title
+        static let feature2Title = NSLocalizedString("paywall.feature2.title", comment: "Feature 2 title")
+
+        /// Second feature description
+        static let feature2Description = NSLocalizedString(
+            "paywall.feature2.description",
+            comment: "Feature 2 description"
+        )
+
+        /// Third feature title
+        static let feature3Title = NSLocalizedString("paywall.feature3.title", comment: "Feature 3 title")
+
+        /// Third feature description
+        static let feature3Description = NSLocalizedString(
+            "paywall.feature3.description",
+            comment: "Feature 3 description"
+        )
+
+        /// "Error" title for error state
+        static let errorTitle = NSLocalizedString("paywall.error.title", comment: "Paywall error title")
+
+        /// "Retry" button text
+        static let retry = NSLocalizedString("paywall.retry", comment: "Retry button text")
+
+        /// "Restore Purchases" button text
+        static let restorePurchases = NSLocalizedString(
+            "paywall.restore_purchases",
+            comment: "Restore purchases button"
+        )
+
+        /// "Go Premium" settings entry point title
+        static let goPremium = NSLocalizedString("paywall.go_premium", comment: "Go premium button")
+
+        /// "Unlock all features" settings entry point description
+        static let unlockFeatures = NSLocalizedString(
+            "paywall.unlock_features",
+            comment: "Unlock features description"
+        )
+
+        /// "Premium Active" status for subscribed users
+        static let premiumActive = NSLocalizedString("paywall.premium_active", comment: "Premium active status")
+
+        /// "You have full access" description for subscribed users
+        static let fullAccess = NSLocalizedString("paywall.full_access", comment: "Full access description")
+    }
+
     // MARK: - Convenience Access
 
     /// Convenience access to movie details strings
@@ -218,4 +289,7 @@ struct Localizable {
 
     /// Convenience access to home strings
     static let home = Home.self
+
+    /// Convenience access to paywall strings
+    static let paywall = Paywall.self
 }

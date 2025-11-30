@@ -11,6 +11,7 @@ import SwiftUI
 /// Settings view for managing app preferences and user settings.
 ///
 /// This view provides:
+/// - Premium subscription entry point
 /// - Profile image management with photo picker
 /// - App version display
 /// - Clear favorite movies functionality
@@ -19,13 +20,24 @@ struct SettingsView: View { // swiftlint:disable:this type_body_length
     /// View model for settings functionality
     @StateObject var viewModel: SettingsViewModel
 
+    /// Service locator for creating PaywallViewModel
+    private let serviceLocator: ServiceLocator
+
     /// Photo picker item for profile image selection
     @State private var photoPickerItem: PhotosPickerItem?
 
+    /// Whether the paywall sheet is presented
+    @State private var isPaywallPresented = false
+
+    /// Whether the user has an active premium subscription
+    @State private var isPremium = false
+
     /// Initialize the settings view
     /// - Parameter viewModel: The settings view model
-    init(viewModel: SettingsViewModel) {
+    /// - Parameter serviceLocator: Service locator for dependency injection
+    init(viewModel: SettingsViewModel, serviceLocator: ServiceLocator) {
         _viewModel = StateObject(wrappedValue: viewModel)
+        self.serviceLocator = serviceLocator
     }
 
     var body: some View {
@@ -95,6 +107,22 @@ struct SettingsView: View { // swiftlint:disable:this type_body_length
         }
         .onAppear {
             viewModel.handle(.viewDidAppear)
+            checkPremiumStatus()
+        }
+        .sheet(isPresented: $isPaywallPresented, onDismiss: {
+            checkPremiumStatus()
+        }) {
+            PaywallView(viewModel: PaywallViewModel(serviceLocator: serviceLocator))
+        }
+    }
+
+    /// Check premium subscription status
+    private func checkPremiumStatus() {
+        do {
+            let storeKitService = try serviceLocator.retrieve(StoreKitService.self)
+            isPremium = storeKitService.isPremium
+        } catch {
+            isPremium = false
         }
     }
 
@@ -181,6 +209,7 @@ struct SettingsView: View { // swiftlint:disable:this type_body_length
 
                 // Settings Cards
                 VStack(spacing: 16) {
+                    premiumCard
                     appVersionCard
                     clearFavoriteMoviesCard
                     if !viewModel.hasRatedApp {
@@ -377,6 +406,83 @@ struct SettingsView: View { // swiftlint:disable:this type_body_length
         .buttonStyle(PlainButtonStyle())
     }
 
+    // MARK: - Premium Card
+
+    private var premiumCard: some View {
+        Button(
+            action: {
+                if !isPremium {
+                    isPaywallPresented = true
+                }
+            },
+            label: {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: isPremium ? "crown.fill" : "crown")
+                            .font(.title2)
+                            .foregroundColor(isPremium ? .yellow : .orange)
+
+                        Text(isPremium ? Localizable.paywall.premiumActive : Localizable.paywall.goPremium)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
+
+                        Spacer()
+
+                        if !isPremium {
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.orange)
+                        } else {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.title3)
+                                .foregroundColor(.green)
+                        }
+                    }
+
+                    Text(isPremium ? Localizable.paywall.fullAccess : Localizable.paywall.unlockFeatures)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.leading)
+                }
+                .padding(20)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(
+                            isPremium
+                                ? LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.yellow.opacity(0.15),
+                                        Color.orange.opacity(0.1),
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                                : LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.orange.opacity(0.1),
+                                        Color.yellow.opacity(0.05),
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                        )
+                        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(
+                            isPremium ? Color.yellow.opacity(0.5) : Color.orange.opacity(0.3),
+                            lineWidth: 1
+                        )
+                )
+            }
+        )
+        .buttonStyle(PlainButtonStyle())
+        .disabled(isPremium)
+    }
+
     // MARK: - Rate App Card
 
     private var rateAppCard: some View {
@@ -438,6 +544,7 @@ struct SettingsView: View { // swiftlint:disable:this type_body_length
 #Preview {
     let serviceLocator = ServiceLocator()
     serviceLocator.register(SettingsService.self, instance: MockSettingsService())
+    serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
     let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
-    return SettingsView(viewModel: viewModel)
+    return SettingsView(viewModel: viewModel, serviceLocator: serviceLocator)
 }

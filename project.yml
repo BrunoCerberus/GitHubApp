@@ -267,12 +267,14 @@ schemes:
         INDEX_ENABLE_DATA_STORE: NO
     run:
       config: Debug
+      storeKitConfiguration: GitHubApp/StoreKit.storekit
       environmentVariables: {}
     test:
       config: Debug
       targets:
         - GitHubAppTests
         - GitHubAppUITests
+      storeKitConfiguration: GitHubApp/StoreKit.storekit
       environmentVariables: {}
     profile:
       config: Release

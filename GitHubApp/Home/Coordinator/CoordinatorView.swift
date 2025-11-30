@@ -61,7 +61,10 @@ struct CoordinatorView: View {
             }
 
             Tab("Settings", systemImage: "gear", value: .settings) {
-                SettingsView(viewModel: coordinator.settingsViewModel)
+                SettingsView(
+                    viewModel: coordinator.settingsViewModel,
+                    serviceLocator: coordinator.serviceLocator
+                )
             }
         }
         .tabViewStyle(.sidebarAdaptable)
@@ -98,5 +101,6 @@ struct CoordinatorView: View {
     serviceLocator.register(SearchService.self, instance: MockSearchService())
     serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())
     serviceLocator.register(SettingsService.self, instance: MockSettingsService())
+    serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
     return CoordinatorView(serviceLocator: serviceLocator)
 }
