@@ -15,6 +15,7 @@ This is a SwiftUI iOS application implementing Clean Architecture patterns with 
 - **SwiftUI**: Primary UI framework
 - **Combine**: Reactive programming and state management
 - **SwiftData**: Modern data persistence and storage layer
+- **StoreKit 2**: Native in-app purchases and subscriptions
 - **Swift Testing**: Native testing framework (migrated from XCTest)
 - **XcodeGen**: Project generation from `project.yml`
 - **EntropyCore**: Custom framework dependency
@@ -36,6 +37,11 @@ GitHubApp/
 │   └── ViewModel/  # Search presentation layer
 ├── Favorites/      # Movie favorites feature
 ├── Settings/       # App settings
+├── Paywall/        # Premium subscription feature
+│   ├── API/        # StoreKitService, LiveStoreKitService
+│   ├── Domain/     # Paywall business logic and state
+│   ├── View/       # Native SubscriptionStoreView (iOS 17+)
+│   └── ViewModel/  # Paywall presentation layer
 ├── Configs/        # Shared configuration, utilities, and Mock services
 │   └── MockSettingsService.swift  # Mock service for testing
 └── Widgets/        # iOS widget extension
