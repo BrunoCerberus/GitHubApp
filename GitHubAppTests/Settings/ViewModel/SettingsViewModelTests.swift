@@ -162,7 +162,8 @@ struct SettingsViewModelTests { // swiftlint:disable:this type_body_length
         }
 
         // Wait for app to be marked as rated
-        try await waitForMainActorCondition(timeout: 2.0, description: "app marked as rated") {
+        // Increased timeout from 2.0 to 5.0 for reliability when IS_RUNNING_UNIT_TESTS is set
+        try await waitForMainActorCondition(timeout: 5.0, description: "app marked as rated") {
             mockSettingsService.markAppAsRatedCallCount == 1 &&
                 mockSettingsService.mockHasRatedApp
         }

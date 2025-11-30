@@ -30,8 +30,11 @@ enum APIKeysProvider {
     /// Keychain service identifier for API keys
     private static let keychainService: String = "com.bruno.GitHubApp.APIKeys"
 
-    /// Key identifier for The Movie Database API key
+    /// Key identifier for The Movie Database API key (v3 query parameter auth)
     private static let movieAPIKeyKey: String = "TheMovieAPIKey"
+
+    /// Key identifier for The Movie Database Access Token (v3/v4 Bearer auth)
+    private static let movieAccessTokenKey: String = "TheMovieAccessToken"
 
     // MARK: - Keychain Manager
 
@@ -61,18 +64,71 @@ enum APIKeysProvider {
         do {
             return try getMovieAPIKey()
         } catch {
-            // If keychain also fails, provide a helpful error message
-            Logger.shared.service("""
-            API_KEY not found in Secrets.plist, environment variables, or keychain.
+            // If keychain also fails, crash with a helpful error message
+            // This is a critical configuration error that must be fixed before deployment
+            fatalError("""
+            SECURITY ERROR: API_KEY not found in Secrets.plist, environment variables, or keychain.
 
             To fix this:
             1. Add API_KEY to Secrets.plist file, OR
             2. Set the API_KEY environment variable in your build configuration, OR
             3. Call APIKeysProvider.setMovieAPIKey("your_api_key") before accessing theMovieAPIKey
 
-            Current environment: \(ProcessInfo.processInfo.environment.keys.filter { $0.contains("API") })
-            """, level: .error)
-            return "123456"
+            The app cannot function without a valid API key. Providing a hardcoded fallback
+            would be a security vulnerability.
+            """)
+        }
+    }()
+
+    /**
+     * The Movie Database API Read Access Token.
+     *
+     * This token is used for Bearer authentication in the Authorization header.
+     * It's more secure than query parameter authentication as it:
+     * - Doesn't appear in server access logs
+     * - Isn't cached in URL history
+     * - Follows OWASP security best practices
+     *
+     * Note: This is different from the API Key. Get your Access Token from:
+     * https://www.themoviedb.org/settings/api (under "API Read Access Token")
+     */
+    static let theMovieAccessToken: String = {
+        // Skip token loading during unit tests (mocks are used instead)
+        // Check multiple indicators of test environment
+        if ProcessInfo.processInfo.environment["IS_RUNNING_UNIT_TESTS"] == "YES" ||
+            ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil ||
+            NSClassFromString("XCTestCase") != nil
+        {
+            return "test-token-placeholder"
+        }
+
+        // First try to get from Secrets.plist
+        if let accessToken = loadAccessTokenFromSecretsPlist(), !accessToken.isEmpty {
+            return accessToken
+        }
+
+        // Fallback to environment variable (for CI/CD and debugging)
+        if let accessToken = ProcessInfo.processInfo.environment["TMDB_ACCESS_TOKEN"], !accessToken.isEmpty {
+            return accessToken
+        }
+
+        // Fallback to keychain if environment variable is not set
+        do {
+            return try getMovieAccessToken()
+        } catch {
+            // If keychain also fails, crash with a helpful error message
+            fatalError("""
+            SECURITY ERROR: TMDB_ACCESS_TOKEN not found in Secrets.plist, environment variables, or keychain.
+
+            To fix this:
+            1. Add TMDB_ACCESS_TOKEN to Secrets.plist file, OR
+            2. Set the TMDB_ACCESS_TOKEN environment variable in your build configuration, OR
+            3. Call APIKeysProvider.setMovieAccessToken("your_token") before accessing theMovieAccessToken
+
+            Get your API Read Access Token from: https://www.themoviedb.org/settings/api
+
+            The app uses Bearer token authentication for enhanced security.
+            """)
         }
     }()
 
@@ -124,6 +180,54 @@ enum APIKeysProvider {
         try keychainManager.delete(for: movieAPIKeyKey)
     }
 
+    // MARK: - Access Token Methods
+
+    /**
+     * Set the Movie Access Token in keychain.
+     *
+     * This method allows runtime updates of the access token,
+     * useful for user-provided tokens or token rotation.
+     *
+     * - Parameter accessToken: The access token to store securely
+     * - Throws: KeychainError if the operation fails
+     */
+    static func setMovieAccessToken(_ accessToken: String) throws {
+        try keychainManager.save(accessToken, for: movieAccessTokenKey)
+    }
+
+    /**
+     * Get the Movie Access Token from keychain.
+     *
+     * - Returns: The stored access token
+     * - Throws: KeychainError if the token is not found or operation fails
+     */
+    static func getMovieAccessToken() throws -> String {
+        try keychainManager.retrieve(for: movieAccessTokenKey)
+    }
+
+    /**
+     * Check if Movie Access Token exists in keychain.
+     *
+     * This is a lightweight check that doesn't retrieve the actual token.
+     *
+     * - Returns: True if the token exists, false otherwise
+     */
+    static func hasMovieAccessToken() -> Bool {
+        keychainManager.exists(for: movieAccessTokenKey)
+    }
+
+    /**
+     * Remove the Movie Access Token from keychain.
+     *
+     * This method allows clearing the stored token, useful for
+     * security purposes or token rotation.
+     *
+     * - Throws: KeychainError if the operation fails
+     */
+    static func removeMovieAccessToken() throws {
+        try keychainManager.delete(for: movieAccessTokenKey)
+    }
+
     // MARK: - Private Methods
 
     /**
@@ -139,6 +243,21 @@ enum APIKeysProvider {
             return nil
         }
         return apiKey
+    }
+
+    /**
+     * Load Access Token from Secrets.plist file.
+     *
+     * - Returns: The access token if found, nil otherwise
+     */
+    private static func loadAccessTokenFromSecretsPlist() -> String? {
+        guard let path = Bundle.main.path(forResource: "Secrets", ofType: "plist"),
+              let plist = NSDictionary(contentsOfFile: path),
+              let accessToken = plist["TMDB_ACCESS_TOKEN"] as? String
+        else {
+            return nil
+        }
+        return accessToken
     }
 
     // MARK: - Testing Support
@@ -166,18 +285,19 @@ enum APIKeysProvider {
         do {
             return try getMovieAPIKey()
         } catch {
-            // If keychain also fails, provide a helpful error message
-            Logger.shared.service("""
-            API_KEY not found in Secrets.plist, environment variables, or keychain.
+            // If keychain also fails, crash with a helpful error message
+            // This is a critical configuration error that must be fixed before deployment
+            fatalError("""
+            SECURITY ERROR: API_KEY not found in Secrets.plist, environment variables, or keychain.
 
             To fix this:
             1. Add API_KEY to Secrets.plist file, OR
             2. Set the API_KEY environment variable in your build configuration, OR
             3. Call APIKeysProvider.setMovieAPIKey("your_api_key") before accessing theMovieAPIKey
 
-            Current environment: \(ProcessInfo.processInfo.environment.keys.filter { $0.contains("API") })
-            """, level: .error)
-            return "123456"
+            The app cannot function without a valid API key. Providing a hardcoded fallback
+            would be a security vulnerability.
+            """)
         }
     }
 }

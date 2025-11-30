@@ -273,7 +273,10 @@ schemes:
       targets:
         - GitHubAppTests
         - GitHubAppUITests
-      environmentVariables: {}
+      environmentVariables:
+        IS_RUNNING_UNIT_TESTS:
+          value: "YES"
+          isEnabled: true
     profile:
       config: Release
       environmentVariables: {}
@@ -297,7 +300,10 @@ schemes:
       targets:
         - GitHubAppTests
         - GitHubAppUITests
-      environmentVariables: {}
+      environmentVariables:
+        IS_RUNNING_UNIT_TESTS:
+          value: "YES"
+          isEnabled: true
     profile:
       config: Release
       environmentVariables: {}
@@ -316,7 +322,10 @@ schemes:
       config: Debug
       targets:
         - GitHubAppTests
-      environmentVariables: {}
+      environmentVariables:
+        IS_RUNNING_UNIT_TESTS:
+          value: "YES"
+          isEnabled: true
 
   GitHubAppUITests:
     build:
@@ -326,7 +335,10 @@ schemes:
       config: Debug
       targets:
         - GitHubAppUITests
-      environmentVariables: {}
+      environmentVariables:
+        IS_RUNNING_UNIT_TESTS:
+          value: "YES"
+          isEnabled: true
 
   GitHubAppSnapshotTests:
     build:
@@ -336,4 +348,7 @@ schemes:
       config: Debug
       targets:
         - GitHubAppSnapshotTests
-      environmentVariables: {}
+      environmentVariables:
+        IS_RUNNING_UNIT_TESTS:
+          value: "YES"
+          isEnabled: true

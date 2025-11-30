@@ -58,13 +58,51 @@ class ImageCacheManager {
         }
 
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
+            let (data, response) = try await URLSession.shared.data(from: url)
 
+            // Validate HTTP response
+            guard let httpResponse = response as? HTTPURLResponse else {
+                Logger.shared.network("Invalid response type for movie \(movieId)", level: .error)
+                return
+            }
+
+            // Check for successful status code (200-299)
+            guard (200 ... 299).contains(httpResponse.statusCode) else {
+                Logger.shared.network(
+                    "HTTP error \(httpResponse.statusCode) for movie \(movieId)",
+                    level: .error
+                )
+                return
+            }
+
+            // Validate content type is an image
+            if let contentType = httpResponse.value(forHTTPHeaderField: "Content-Type"),
+               !contentType.hasPrefix("image/")
+            {
+                Logger.shared.network(
+                    "Invalid content type '\(contentType)' for movie \(movieId), expected image/*",
+                    level: .error
+                )
+                return
+            }
+
+            // Validate data is not empty
+            guard !data.isEmpty else {
+                Logger.shared.network("Empty data received for movie \(movieId)", level: .error)
+                return
+            }
+
+            // Validate data can be parsed as an image
             if let image = UIImage(data: data),
                let jpegData = image.jpegData(compressionQuality: 0.8)
             {
                 try jpegData.write(to: fileURL)
                 Logger.shared.network("Cached image for movie \(movieId)", level: .info)
+            } else {
+                Logger.shared.network(
+                    "Data could not be parsed as valid image for movie \(movieId)",
+                    level: .error
+                )
             }
         } catch {
             Logger.shared.network("Failed to cache image for movie \(movieId): \(error)", level: .error)

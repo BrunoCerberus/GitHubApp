@@ -10,10 +10,11 @@ import Testing
 @Suite(.serialized)
 @MainActor
 struct SearchViewModelTests {
-    private func createTestServiceLocator(homeService: HomeService) -> ServiceLocator {
+    private func createTestServiceLocator(searchService: SearchService = MockSearchService()) -> ServiceLocator {
         let mockStorageService = MockStorageService()
         let serviceLocator = ServiceLocator()
-        serviceLocator.register(HomeService.self, instance: homeService)
+        // SearchViewModel uses SearchService, not HomeService
+        serviceLocator.register(SearchService.self, instance: searchService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
         return serviceLocator
     }
@@ -26,8 +27,7 @@ struct SearchViewModelTests {
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // Then - Should start with loading state (will transition to success quickly with empty results)
         // Wait a bit for state observation to set up
@@ -49,8 +49,7 @@ struct SearchViewModelTests {
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // When
         sut.searchMovies(query: "avengers")
@@ -80,8 +79,7 @@ struct SearchViewModelTests {
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // First populate with search results
         sut.searchMovies(query: "test")
@@ -113,8 +111,7 @@ struct SearchViewModelTests {
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // Create a test movie
         let testMovie = Movie(
@@ -140,8 +137,7 @@ struct SearchViewModelTests {
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // When
         sut.sendViewEvent(.searchMovies("test"))
@@ -161,8 +157,7 @@ struct SearchViewModelTests {
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // When - First search
         sut.searchMovies(query: "avengers")
@@ -191,8 +186,7 @@ struct SearchViewModelTests {
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         let movie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
 
@@ -218,8 +212,7 @@ struct SearchViewModelTests {
             try? APIKeysProvider.removeMovieAPIKey()
         }
 
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // Wait for initial state
         try await Task.sleep(nanoseconds: 100_000_000)

@@ -26,6 +26,30 @@ enum APIError: Error, LocalizedError {
 }
 
 /**
+ * Authorization header for API requests.
+ *
+ * Uses Bearer token authentication instead of query parameter API keys
+ * to prevent API key exposure in server logs and URL history.
+ *
+ * Security Benefits:
+ * - API key not logged in server access logs
+ * - API key not visible in browser/app history
+ * - API key not cached in HTTP intermediaries
+ * - Follows OWASP security best practices
+ */
+struct APIAuthorizationHeader: Codable {
+    let authorization: String
+
+    enum CodingKeys: String, CodingKey {
+        case authorization = "Authorization"
+    }
+
+    init(bearerToken: String) {
+        authorization = "Bearer \(bearerToken)"
+    }
+}
+
+/**
  * API endpoints for the Home module.
  *
  * This enum defines all the API endpoints used by the Home module,
@@ -62,12 +86,13 @@ enum HomeAPI: APIFetcher {
     }
 
     /**
-     * API key for The Movie Database API.
+     * API Read Access Token for The Movie Database API.
      *
-     * Automatically retrieves the secure API key from the keychain.
+     * Used for Bearer token authentication in the Authorization header.
+     * This is more secure than passing the API key in query parameters.
      */
-    private var apiKey: String {
-        APIKeysProvider.theMovieAPIKey
+    private var accessToken: String {
+        APIKeysProvider.theMovieAccessToken
     }
 
     /**
@@ -109,9 +134,8 @@ enum HomeAPI: APIFetcher {
             components.path += "/movie/\(id)/reviews"
         }
 
-        // Add API key to all requests for authentication
-        queryItems.append(URLQueryItem(name: "api_key", value: apiKey))
-        components.queryItems = queryItems
+        // Set query items (API key is now passed via Authorization header for security)
+        components.queryItems = queryItems.isEmpty ? nil : queryItems
 
         guard let urlString = components.string else {
             fatalError("Failed to construct URL from components")
@@ -141,10 +165,17 @@ enum HomeAPI: APIFetcher {
     /**
      * Custom headers for API requests.
      *
-     * No custom headers are required for The Movie Database API.
+     * Uses Bearer token authentication via Authorization header
+     * instead of query parameter for enhanced security.
+     *
+     * Security Note: The Movie Database API supports both query parameter
+     * (api_key) and Bearer token authentication. We use Bearer tokens to:
+     * - Prevent API key exposure in server access logs
+     * - Avoid caching of API keys in HTTP intermediaries
+     * - Follow OWASP API security best practices
      */
     var header: Codable? {
-        nil
+        APIAuthorizationHeader(bearerToken: accessToken)
     }
 
     /**

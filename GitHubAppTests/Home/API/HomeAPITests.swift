@@ -13,22 +13,23 @@ struct HomeAPITests {
         try? APIKeysProvider.setMovieAPIKey("api-key-for-tests")
     }
 
-    @Test("API paths contain correct endpoints and API key parameters")
-    func pathsContainApiKeyAndEndpoint() {
+    @Test("API paths contain correct endpoints (API key now in header)")
+    func pathsContainCorrectEndpoints() {
         defer { try? APIKeysProvider.removeMovieAPIKey() }
 
+        // API key is now passed via Authorization header, not in URL
         #expect(HomeAPI.fetchMovies(page: 1).path.contains("/movie/upcoming"))
-        #expect(HomeAPI.fetchMovies(page: 1).path.contains("api_key="))
+        #expect(!HomeAPI.fetchMovies(page: 1).path.contains("api_key="))
 
         #expect(HomeAPI.searchMovies(query: "matrix", page: 1).path.contains("/search/movie"))
         #expect(HomeAPI.searchMovies(query: "matrix", page: 1).path.contains("query=matrix"))
-        #expect(HomeAPI.searchMovies(query: "matrix", page: 1).path.contains("api_key="))
+        #expect(!HomeAPI.searchMovies(query: "matrix", page: 1).path.contains("api_key="))
 
         #expect(HomeAPI.fetchCredits(10).path.contains("/movie/10/credits"))
-        #expect(HomeAPI.fetchCredits(10).path.contains("api_key="))
+        #expect(!HomeAPI.fetchCredits(10).path.contains("api_key="))
 
         #expect(HomeAPI.fetchReviews(10).path.contains("/movie/10/reviews"))
-        #expect(HomeAPI.fetchReviews(10).path.contains("api_key="))
+        #expect(!HomeAPI.fetchReviews(10).path.contains("api_key="))
     }
 
     @Test("API error descriptions contain expected text")
@@ -56,12 +57,24 @@ struct HomeAPITests {
         #expect(HomeAPI.fetchReviews(1).task == nil)
     }
 
-    @Test("No custom headers are required for The Movie Database API")
-    func customHeadersConfiguration() {
-        #expect(HomeAPI.fetchMovies(page: 1).header == nil)
-        #expect(HomeAPI.searchMovies(query: "test", page: 1).header == nil)
-        #expect(HomeAPI.fetchCredits(1).header == nil)
-        #expect(HomeAPI.fetchReviews(1).header == nil)
+    @Test("All endpoints use Bearer token Authorization header for security")
+    func authorizationHeaderConfiguration() {
+        // All endpoints should have Authorization header with Bearer token
+        let fetchHeader = HomeAPI.fetchMovies(page: 1).header as? APIAuthorizationHeader
+        let searchHeader = HomeAPI.searchMovies(query: "test", page: 1).header as? APIAuthorizationHeader
+        let creditsHeader = HomeAPI.fetchCredits(1).header as? APIAuthorizationHeader
+        let reviewsHeader = HomeAPI.fetchReviews(1).header as? APIAuthorizationHeader
+
+        #expect(fetchHeader != nil)
+        #expect(searchHeader != nil)
+        #expect(creditsHeader != nil)
+        #expect(reviewsHeader != nil)
+
+        // All should start with "Bearer "
+        #expect(fetchHeader?.authorization.hasPrefix("Bearer ") == true)
+        #expect(searchHeader?.authorization.hasPrefix("Bearer ") == true)
+        #expect(creditsHeader?.authorization.hasPrefix("Bearer ") == true)
+        #expect(reviewsHeader?.authorization.hasPrefix("Bearer ") == true)
     }
 
     @Test("Debug logging is configured correctly for build type")
@@ -85,7 +98,8 @@ struct HomeAPITests {
         let searchPath = HomeAPI.searchMovies(query: query, page: 1).path
 
         #expect(searchPath.contains("/search/movie"))
-        #expect(searchPath.contains("api_key="))
+        // API key is now in header, not URL
+        #expect(!searchPath.contains("api_key="))
         // The query should be properly URL-encoded
         #expect(searchPath.contains("query="))
     }
@@ -95,7 +109,8 @@ struct HomeAPITests {
         let searchPath = HomeAPI.searchMovies(query: "", page: 1).path
 
         #expect(searchPath.contains("/search/movie"))
-        #expect(searchPath.contains("api_key="))
+        // API key is now in header, not URL
+        #expect(!searchPath.contains("api_key="))
         #expect(searchPath.contains("query="))
     }
 
@@ -106,8 +121,9 @@ struct HomeAPITests {
 
         #expect(creditsPath.contains("/movie/12345/credits"))
         #expect(reviewsPath.contains("/movie/67890/reviews"))
-        #expect(creditsPath.contains("api_key="))
-        #expect(reviewsPath.contains("api_key="))
+        // API key is now in header, not URL
+        #expect(!creditsPath.contains("api_key="))
+        #expect(!reviewsPath.contains("api_key="))
     }
 
     @Test("URL construction handles movie ID zero correctly")
@@ -117,8 +133,9 @@ struct HomeAPITests {
 
         #expect(creditsPath.contains("/movie/0/credits"))
         #expect(reviewsPath.contains("/movie/0/reviews"))
-        #expect(creditsPath.contains("api_key="))
-        #expect(reviewsPath.contains("api_key="))
+        // API key is now in header, not URL
+        #expect(!creditsPath.contains("api_key="))
+        #expect(!reviewsPath.contains("api_key="))
     }
 
     @Test("URL construction handles negative movie IDs correctly")
@@ -128,26 +145,29 @@ struct HomeAPITests {
 
         #expect(creditsPath.contains("/movie/-1/credits"))
         #expect(reviewsPath.contains("/movie/-999/reviews"))
-        #expect(creditsPath.contains("api_key="))
-        #expect(reviewsPath.contains("api_key="))
+        // API key is now in header, not URL
+        #expect(!creditsPath.contains("api_key="))
+        #expect(!reviewsPath.contains("api_key="))
     }
 
-    @Test("API key is injected into all endpoint URLs for authentication")
-    func apiKeyInjectionInAllEndpoints() {
-        // Get the actual API key being used
-        let actualAPIKey = APIKeysProvider.theMovieAPIKey
+    @Test("Access token is used in Authorization header for all endpoints")
+    func accessTokenInAuthorizationHeader() {
+        // Get the actual access token being used
+        let actualAccessToken = APIKeysProvider.theMovieAccessToken
 
-        // Verify that all endpoints contain the API key
-        #expect(HomeAPI.fetchMovies(page: 1).path.contains("api_key="))
-        #expect(HomeAPI.searchMovies(query: "test", page: 1).path.contains("api_key="))
-        #expect(HomeAPI.fetchCredits(1).path.contains("api_key="))
-        #expect(HomeAPI.fetchReviews(1).path.contains("api_key="))
+        // Verify all endpoints have Authorization header with the access token
+        let endpoints = [
+            HomeAPI.fetchMovies(page: 1),
+            HomeAPI.searchMovies(query: "test", page: 1),
+            HomeAPI.fetchCredits(1),
+            HomeAPI.fetchReviews(1),
+        ]
 
-        // Verify that the API key value is actually present in the URL
-        #expect(HomeAPI.fetchMovies(page: 1).path.contains(actualAPIKey))
-        #expect(HomeAPI.searchMovies(query: "test", page: 1).path.contains(actualAPIKey))
-        #expect(HomeAPI.fetchCredits(1).path.contains(actualAPIKey))
-        #expect(HomeAPI.fetchReviews(1).path.contains(actualAPIKey))
+        for endpoint in endpoints {
+            let header = endpoint.header as? APIAuthorizationHeader
+            #expect(header != nil)
+            #expect(header?.authorization == "Bearer \(actualAccessToken)")
+        }
     }
 
     @Test("Base URL is properly configured for all endpoints")

@@ -75,8 +75,8 @@ struct SearchAPITests {
         #expect(path.contains("3"))
     }
 
-    @Test("SearchAPI path includes API key")
-    func pathIncludesAPIKey() {
+    @Test("SearchAPI path does NOT include API key (now in header)")
+    func pathDoesNotIncludeAPIKey() {
         // Given
         setupTestEnvironment()
         defer { cleanupTestEnvironment() }
@@ -85,8 +85,8 @@ struct SearchAPITests {
         // When
         let path = endpoint.path
 
-        // Then
-        #expect(path.contains("api_key="))
+        // Then - API key is now in Authorization header, not URL
+        #expect(!path.contains("api_key="))
     }
 
     @Test("SearchAPI HTTP method is GET")
@@ -113,16 +113,17 @@ struct SearchAPITests {
         #expect(task == nil)
     }
 
-    @Test("SearchAPI header is nil for requests")
-    func headerIsNilForRequests() {
+    @Test("SearchAPI header contains Bearer token for authentication")
+    func headerContainsBearerToken() {
         // Given
         let endpoint = SearchAPI.searchMovies(query: "test", page: 1)
 
         // When
-        let header = endpoint.header
+        let header = endpoint.header as? APIAuthorizationHeader
 
-        // Then
-        #expect(header == nil)
+        // Then - Should have Authorization header with Bearer token
+        #expect(header != nil)
+        #expect(header?.authorization.hasPrefix("Bearer ") == true)
     }
 
     @Test("SearchAPI endpoint instance is not nil")

@@ -34,8 +34,9 @@ struct HomeAPIEdgeCasesTests {
         let path = searchAPI.path
 
         // Then - Should handle long queries without crashing
+        // API key is now in header, not URL
         #expect(path.contains("/search/movie"))
-        #expect(path.contains("api_key="))
+        #expect(!path.contains("api_key="))
         #expect(path.contains("query="))
     }
 
@@ -49,8 +50,9 @@ struct HomeAPIEdgeCasesTests {
         let path = searchAPI.path
 
         // Then - Should properly handle Unicode characters
+        // API key is now in header, not URL
         #expect(path.contains("/search/movie"))
-        #expect(path.contains("api_key="))
+        #expect(!path.contains("api_key="))
         #expect(path.contains("query="))
     }
 
@@ -64,8 +66,9 @@ struct HomeAPIEdgeCasesTests {
         let path = searchAPI.path
 
         // Then - Should handle whitespace-only queries
+        // API key is now in header, not URL
         #expect(path.contains("/search/movie"))
-        #expect(path.contains("api_key="))
+        #expect(!path.contains("api_key="))
         #expect(path.contains("query="))
     }
 
@@ -79,8 +82,9 @@ struct HomeAPIEdgeCasesTests {
         let path = searchAPI.path
 
         // Then - Should properly encode unsafe characters
+        // API key is now in header, not URL
         #expect(path.contains("/search/movie"))
-        #expect(path.contains("api_key="))
+        #expect(!path.contains("api_key="))
         #expect(path.contains("query="))
     }
 
@@ -96,8 +100,9 @@ struct HomeAPIEdgeCasesTests {
         let path = creditsAPI.path
 
         // Then - Should handle large IDs without overflow
+        // API key is now in header, not URL
         #expect(path.contains("/movie/\(largeID)/credits"))
-        #expect(path.contains("api_key="))
+        #expect(!path.contains("api_key="))
     }
 
     @Test("Fetch reviews with very large movie ID")
@@ -110,8 +115,9 @@ struct HomeAPIEdgeCasesTests {
         let path = reviewsAPI.path
 
         // Then - Should handle large IDs without overflow
+        // API key is now in header, not URL
         #expect(path.contains("/movie/\(largeID)/reviews"))
-        #expect(path.contains("api_key="))
+        #expect(!path.contains("api_key="))
     }
 
     @Test("Fetch credits with very small movie ID")
@@ -124,8 +130,9 @@ struct HomeAPIEdgeCasesTests {
         let path = creditsAPI.path
 
         // Then - Should handle small IDs without underflow
+        // API key is now in header, not URL
         #expect(path.contains("/movie/\(smallID)/credits"))
-        #expect(path.contains("api_key="))
+        #expect(!path.contains("api_key="))
     }
 
     @Test("Fetch reviews with very small movie ID")
@@ -138,8 +145,9 @@ struct HomeAPIEdgeCasesTests {
         let path = reviewsAPI.path
 
         // Then - Should handle small IDs without underflow
+        // API key is now in header, not URL
         #expect(path.contains("/movie/\(smallID)/reviews"))
-        #expect(path.contains("api_key="))
+        #expect(!path.contains("api_key="))
     }
 
     // MARK: - API Configuration Edge Cases
@@ -176,8 +184,8 @@ struct HomeAPIEdgeCasesTests {
         }
     }
 
-    @Test("All endpoints have nil header")
-    func allEndpointsHaveNilHeader() {
+    @Test("All endpoints have Authorization header with Bearer token")
+    func allEndpointsHaveAuthorizationHeader() {
         // Given - All possible API endpoints
         let endpoints: [HomeAPI] = [
             .fetchMovies(page: 1),
@@ -186,9 +194,11 @@ struct HomeAPIEdgeCasesTests {
             .fetchReviews(1),
         ]
 
-        // When & Then - All should have nil header (no custom headers)
+        // When & Then - All should have Authorization header with Bearer token
         for endpoint in endpoints {
-            #expect(endpoint.header == nil)
+            let header = endpoint.header as? APIAuthorizationHeader
+            #expect(header != nil, "Endpoint should have Authorization header")
+            #expect(header?.authorization.hasPrefix("Bearer ") == true)
         }
     }
 
@@ -234,7 +244,8 @@ struct HomeAPIEdgeCasesTests {
 
             // Basic URL validity checks
             #expect(!path.isEmpty, "\(name) should not produce empty path")
-            #expect(path.contains("api_key="), "\(name) should contain API key")
+            // API key is now in header, not URL
+            #expect(!path.contains("api_key="), "\(name) should NOT contain API key (now in header)")
             #expect(path.hasPrefix("http"), "\(name) should start with http protocol")
 
             // Verify URL can be constructed
@@ -273,16 +284,17 @@ struct HomeAPIEdgeCasesTests {
         // Then - Should have proper query parameter structure
         #expect(path.contains("?"), "URL should contain query separator")
 
-        // Count query parameters - should have at least query and api_key
+        // Count query parameters - should have query and page (API key is now in header)
         let components = URLComponents(string: path)
         #expect(components != nil)
         #expect(components?.queryItems != nil)
-        #expect((components?.queryItems?.count ?? 0) >= 2)
+        #expect((components?.queryItems?.count ?? 0) == 2, "Should have query and page parameters")
 
         // Verify specific parameters exist
+        // API key is now in header, not URL
         let queryItems = components?.queryItems ?? []
         #expect(queryItems.contains { $0.name == "query" })
-        #expect(queryItems.contains { $0.name == "api_key" })
+        #expect(!queryItems.contains { $0.name == "api_key" }, "API key should be in header, not URL")
     }
 
     // MARK: - Protocol Compliance Tests
