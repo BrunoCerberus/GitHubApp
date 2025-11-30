@@ -45,3 +45,21 @@
 // MARK: - Home View
 "home.loading_movies" = "Carregando filmes...";
 "home.search_movies" = "Buscar filmes...";
+
+// MARK: - Paywall
+"paywall.loading" = "Carregando...";
+"paywall.title" = "Desbloquear Premium";
+"paywall.subtitle" = "Tenha acesso a todos os recursos premium e melhore sua experiência cinematográfica";
+"paywall.feature1.title" = "Conteúdo Exclusivo";
+"paywall.feature1.description" = "Acesse recomendações exclusivas e listas curadas de filmes";
+"paywall.feature2.title" = "Experiência Sem Anúncios";
+"paywall.feature2.description" = "Aproveite o app sem interrupções";
+"paywall.feature3.title" = "Suporte Prioritário";
+"paywall.feature3.description" = "Receba respostas mais rápidas da nossa equipe de suporte";
+"paywall.error.title" = "Algo deu errado";
+"paywall.retry" = "Tentar Novamente";
+"paywall.restore_purchases" = "Restaurar Compras";
+"paywall.go_premium" = "Obter Premium";
+"paywall.unlock_features" = "Desbloqueie todos os recursos premium";
+"paywall.premium_active" = "Premium Ativo";
+"paywall.full_access" = "Você tem acesso completo a todos os recursos";
