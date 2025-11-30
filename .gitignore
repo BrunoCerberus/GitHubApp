@@ -32,6 +32,7 @@ DerivedData/
 # IDE
 .vscode/
 .idea/
+buildServer.json
 *.swp
 *.swo
 *~
