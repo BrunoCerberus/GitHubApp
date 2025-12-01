@@ -223,6 +223,7 @@ final class GitHubAppSettingsUITests: XCTestCase {
         // Rate the app
         rateAppButton.tap()
         let thanksAlert = app.alerts["Rate App"]
+        XCTAssertTrue(thanksAlert.waitForExistence(timeout: 2.0), "Thanks alert should appear")
         thanksAlert.buttons["OK"].tap()
 
         // Navigate away and back to refresh the view
