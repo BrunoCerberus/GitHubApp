@@ -18,10 +18,8 @@ import Testing
 /// Snapshot tests for HomeView to ensure visual regressions are detected.
 @MainActor
 struct HomeViewTests { // swiftlint:disable:this type_body_length
-    init() {
-        // Set to true to record new snapshots, false to compare against existing
-        // isRecording = true
-    }
+    // To record new snapshots, uncomment the following line at the top of a test:
+    // isRecording = true
 
     // swiftlint:disable:next large_tuple
     private func createTestComponents() -> (

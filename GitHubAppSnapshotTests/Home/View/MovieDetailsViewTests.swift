@@ -24,10 +24,8 @@ import Testing
 /// - Full data snapshot matching
 @MainActor
 struct MovieDetailsViewTests { // swiftlint:disable:this type_body_length
-    init() {
-        // Set to true to record new snapshots, false to compare against existing
-        // isRecording = true
-    }
+    // To record new snapshots, uncomment the following line at the top of a test:
+    // isRecording = true
 
     let movie: Movie = .init(id: 346_698,
                              title: "Barbie",

@@ -15,10 +15,8 @@ import Testing
 /// Snapshot tests for PaywallView to ensure visual regressions are detected.
 @MainActor
 struct PaywallViewTests {
-    init() {
-        // Set to true to record new snapshots, false to compare against existing
-        // isRecording = true
-    }
+    // To record new snapshots, uncomment the following line at the top of a test:
+    // isRecording = true
 
     private func createTestComponents(isPremium: Bool = false) -> (PaywallView, MockStoreKitService, ServiceLocator) {
         let mockStoreKitService = MockStoreKitService(isPremium: isPremium)
