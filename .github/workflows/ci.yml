@@ -273,6 +273,7 @@ jobs:
       timeout-minutes: 30
       run: |
         mkdir -p test-results
+        set -o pipefail
         xcodebuild test-without-building \
           -project GitHubApp.xcodeproj \
           -scheme ${{ matrix.scheme }} \
@@ -281,8 +282,10 @@ jobs:
           -derivedDataPath ./DerivedData \
           -resultBundlePath test-results/${{ matrix.artifact-name }}.xcresult \
           -disableAutomaticPackageResolution \
-          | tee /tmp/test_output.log || true
+          | tee /tmp/test_output.log
+        TEST_EXIT_CODE=$?
         grep -E "(Test run.*passed|Test run.*failed)" /tmp/test_output.log | tail -5 || echo "${{ matrix.test-name }} completed"
+        exit $TEST_EXIT_CODE
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
