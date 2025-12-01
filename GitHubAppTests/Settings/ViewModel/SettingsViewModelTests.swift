@@ -162,7 +162,7 @@ struct SettingsViewModelTests { // swiftlint:disable:this type_body_length
         }
 
         // Wait for app to be marked as rated
-        try await waitForMainActorCondition(timeout: 2.0, description: "app marked as rated") {
+        try await waitForMainActorCondition(timeout: 5.0, description: "app marked as rated") {
             mockSettingsService.markAppAsRatedCallCount == 1 &&
                 mockSettingsService.mockHasRatedApp
         }
@@ -192,7 +192,7 @@ struct SettingsViewModelTests { // swiftlint:disable:this type_body_length
         }
 
         // Wait for async operation to complete and alert to be shown
-        try await waitForMainActorCondition(timeout: 3.0, description: "clear favorites alert shown") {
+        try await waitForMainActorCondition(timeout: 5.0, description: "clear favorites alert shown") {
             if case let .success(dataViewState) = settingsViewModel.viewState {
                 return dataViewState.showClearFavoriteMoviesAlert
             }

@@ -10,10 +10,11 @@ import Testing
 @Suite(.serialized)
 @MainActor
 struct SearchViewModelTests {
-    private func createTestServiceLocator(homeService: HomeService) -> ServiceLocator {
+    private func createTestServiceLocator() -> ServiceLocator {
+        let mockSearchService = MockSearchService()
         let mockStorageService = MockStorageService()
         let serviceLocator = ServiceLocator()
-        serviceLocator.register(HomeService.self, instance: homeService)
+        serviceLocator.register(SearchService.self, instance: mockSearchService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
         return serviceLocator
     }
@@ -21,13 +22,7 @@ struct SearchViewModelTests {
     @Test("ViewModel starts with loading state")
     func viewModelStartsWithLoadingState() async throws {
         // Given
-        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
-        defer {
-            try? APIKeysProvider.removeMovieAPIKey()
-        }
-
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // Then - Should start with loading state (will transition to success quickly with empty results)
         // Wait a bit for state observation to set up
@@ -44,13 +39,7 @@ struct SearchViewModelTests {
     @Test("Search movies updates state with results")
     func searchMoviesUpdatesState() async throws {
         // Given
-        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
-        defer {
-            try? APIKeysProvider.removeMovieAPIKey()
-        }
-
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // When
         sut.searchMovies(query: "avengers")
@@ -75,13 +64,7 @@ struct SearchViewModelTests {
     @Test("Search movies with empty query clears results")
     func searchMoviesWithEmptyQueryClearsResults() async throws {
         // Given
-        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
-        defer {
-            try? APIKeysProvider.removeMovieAPIKey()
-        }
-
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // First populate with search results
         sut.searchMovies(query: "test")
@@ -108,13 +91,7 @@ struct SearchViewModelTests {
     @Test("Toggle favorite for movie executes successfully")
     func toggleFavoriteForMovie() async throws {
         // Given
-        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
-        defer {
-            try? APIKeysProvider.removeMovieAPIKey()
-        }
-
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // Create a test movie
         let testMovie = Movie(
@@ -135,13 +112,7 @@ struct SearchViewModelTests {
     @Test("Send view event executes successfully")
     func sendViewEvent() async throws {
         // Given
-        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
-        defer {
-            try? APIKeysProvider.removeMovieAPIKey()
-        }
-
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // When
         sut.sendViewEvent(.searchMovies("test"))
@@ -156,13 +127,7 @@ struct SearchViewModelTests {
     @Test("ViewModel handles different search queries")
     func viewModelHandlesDifferentSearchQueries() async throws {
         // Given
-        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
-        defer {
-            try? APIKeysProvider.removeMovieAPIKey()
-        }
-
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // When - First search
         sut.searchMovies(query: "avengers")
@@ -186,13 +151,7 @@ struct SearchViewModelTests {
     @Test("ViewModel uses SearchViewEvent types")
     func viewModelUsesSearchViewEventTypes() async throws {
         // Given
-        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
-        defer {
-            try? APIKeysProvider.removeMovieAPIKey()
-        }
-
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         let movie = Movie(id: 1, title: "Test", overview: "Test", posterPath: nil)
 
@@ -213,13 +172,7 @@ struct SearchViewModelTests {
     @Test("ViewModel uses SearchViewState types")
     func viewModelUsesSearchViewStateTypes() async throws {
         // Given
-        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
-        defer {
-            try? APIKeysProvider.removeMovieAPIKey()
-        }
-
-        let service = MockHomeService()
-        let sut = SearchViewModel(serviceLocator: createTestServiceLocator(homeService: service))
+        let sut = SearchViewModel(serviceLocator: createTestServiceLocator())
 
         // Wait for initial state
         try await Task.sleep(nanoseconds: 100_000_000)

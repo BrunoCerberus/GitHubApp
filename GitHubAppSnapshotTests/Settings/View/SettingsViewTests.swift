@@ -16,7 +16,10 @@ import Testing
 /// Snapshot tests for SettingsView to ensure visual regressions are detected.
 @MainActor
 struct SettingsViewTests { // swiftlint:disable:this type_body_length
-    private func createTestComponents() -> (SettingsView, MockSettingsService) {
+    // To record new snapshots, uncomment the following line at the top of a test:
+    // isRecording = true
+
+    private func createTestComponents() -> (SettingsView, MockSettingsService, ServiceLocator) {
         // Clear UserDefaults for clean testing
         UserDefaults.standard.removeObject(forKey: "profileImageData")
         UserDefaults.standard.removeObject(forKey: "hasRatedApp")
@@ -24,21 +27,23 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
 
         let mockSettingsService = MockSettingsService()
         let mockStorageService = MockStorageService()
+        let mockStoreKitService = MockStoreKitService()
 
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
+        serviceLocator.register(StoreKitService.self, instance: mockStoreKitService)
 
         let settingsViewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        let view = SettingsView(viewModel: settingsViewModel)
+        let view = SettingsView(viewModel: settingsViewModel, serviceLocator: serviceLocator)
 
-        return (view, mockSettingsService)
+        return (view, mockSettingsService, serviceLocator)
     }
 
     @Test("Snapshot of Settings view with default configuration")
     func settingsView() async {
         // Given
-        let (view, _) = createTestComponents()
+        let (view, _, _) = createTestComponents()
 
         // Wait a moment for the view to load data
         try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
@@ -58,7 +63,7 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
     @Test("Settings view button interactions for coverage")
     func settingsViewButtonInteractions() {
         // Given
-        let (view, _) = createTestComponents()
+        let (view, _, _) = createTestComponents()
         let hostingController = UIHostingController(rootView: view)
 
         // When - Access view to trigger rendering and test closures
@@ -70,7 +75,7 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
     @Test("Settings view clear favorites functionality")
     func clearFavoritesCardRendering() {
         // Given
-        let (view, _) = createTestComponents()
+        let (view, _, _) = createTestComponents()
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering
@@ -83,7 +88,7 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
     @Test("Settings view rate app functionality")
     func rateAppCardRendering() {
         // Given
-        let (view, _) = createTestComponents()
+        let (view, _, _) = createTestComponents()
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering
@@ -96,7 +101,7 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
     @Test("Profile header section rendering")
     func profileHeaderSectionRendering() {
         // Given
-        let (view, _) = createTestComponents()
+        let (view, _, _) = createTestComponents()
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering to exercise private properties
@@ -109,7 +114,7 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
     @Test("App version card rendering")
     func appVersionCardRendering() {
         // Given
-        let (view, _) = createTestComponents()
+        let (view, _, _) = createTestComponents()
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering to exercise private properties
@@ -125,10 +130,11 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         let customMockService = MockSettingsService()
         let customServiceLocator = ServiceLocator()
         customServiceLocator.register(SettingsService.self, instance: customMockService)
+        customServiceLocator.register(StoreKitService.self, instance: MockStoreKitService())
         let customSettingsViewModel = SettingsViewModel(serviceLocator: customServiceLocator)
 
         // When
-        _ = SettingsView(viewModel: customSettingsViewModel)
+        _ = SettingsView(viewModel: customSettingsViewModel, serviceLocator: customServiceLocator)
 
         // Then
         // Test passes if view initializes without crashing
@@ -139,8 +145,9 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         // When - Create view with default service locator setup
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: MockSettingsService())
+        serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
         let defaultViewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        _ = SettingsView(viewModel: defaultViewModel)
+        _ = SettingsView(viewModel: defaultViewModel, serviceLocator: serviceLocator)
 
         // Then
         // Test passes if view initializes without crashing
@@ -159,9 +166,10 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
+        serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
 
         let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        let view = SettingsView(viewModel: viewModel)
+        let view = SettingsView(viewModel: viewModel, serviceLocator: serviceLocator)
         let controller: UIViewController = view.wrappedViewController
 
         // Verify initial loading state is displayed
@@ -224,9 +232,10 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: failingService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
+        serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
 
         let errorViewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        let view = SettingsView(viewModel: errorViewModel)
+        let view = SettingsView(viewModel: errorViewModel, serviceLocator: serviceLocator)
         let controller: UIViewController = view.wrappedViewController
 
         // Wait for initial state to load
@@ -257,9 +266,10 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
+        serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
 
         let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        _ = SettingsView(viewModel: viewModel)
+        _ = SettingsView(viewModel: viewModel, serviceLocator: serviceLocator)
 
         // Wait for initial load
         try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
@@ -310,9 +320,10 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
+        serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
 
         let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        let view = SettingsView(viewModel: viewModel)
+        let view = SettingsView(viewModel: viewModel, serviceLocator: serviceLocator)
         let controller: UIViewController = view.wrappedViewController
 
         // Wait for initial load
@@ -350,9 +361,10 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
+        serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
 
         let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        let view = SettingsView(viewModel: viewModel)
+        let view = SettingsView(viewModel: viewModel, serviceLocator: serviceLocator)
         _ = view.wrappedViewController
 
         // Wait for initial load
@@ -382,9 +394,10 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
+        serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
 
         let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        let view = SettingsView(viewModel: viewModel)
+        let view = SettingsView(viewModel: viewModel, serviceLocator: serviceLocator)
         _ = view.wrappedViewController
 
         // Show photo picker
@@ -413,9 +426,10 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
+        serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
 
         let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        let view = SettingsView(viewModel: viewModel)
+        let view = SettingsView(viewModel: viewModel, serviceLocator: serviceLocator)
         _ = view.wrappedViewController
 
         // Wait for initial load
@@ -443,9 +457,10 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
+        serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
 
         let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        let view = SettingsView(viewModel: viewModel)
+        let view = SettingsView(viewModel: viewModel, serviceLocator: serviceLocator)
         _ = view.wrappedViewController
 
         // Show confirmation alert
@@ -472,9 +487,10 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
+        serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
 
         let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        let view = SettingsView(viewModel: viewModel)
+        let view = SettingsView(viewModel: viewModel, serviceLocator: serviceLocator)
         _ = view.wrappedViewController
 
         // Wait for initial load
@@ -503,9 +519,10 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockSettingsService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
+        serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
 
         let viewModel = SettingsViewModel(serviceLocator: serviceLocator)
-        let view = SettingsView(viewModel: viewModel)
+        let view = SettingsView(viewModel: viewModel, serviceLocator: serviceLocator)
         let controller: UIViewController = view.wrappedViewController
 
         // Wait for initial load
@@ -535,6 +552,7 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         let serviceLocator = ServiceLocator()
         serviceLocator.register(SettingsService.self, instance: mockService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
+        serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
 
         // Create viewModel which should trigger onAppear
         let viewModel = SettingsViewModel(serviceLocator: serviceLocator)

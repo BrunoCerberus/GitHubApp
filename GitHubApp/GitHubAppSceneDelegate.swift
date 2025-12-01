@@ -97,6 +97,7 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
                 serviceLocator.register(SearchService.self, instance: MockSearchService())
                 serviceLocator.register(FavoritesService.self, instance: MockFavoritesService())
                 serviceLocator.register(SettingsService.self, instance: MockSettingsService())
+                serviceLocator.register(StoreKitService.self, instance: MockStoreKitService())
             } else {
                 // Use real services for debug builds
                 // swiftlint:disable:next force_try
@@ -105,6 +106,7 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
                 serviceLocator.register(SearchService.self, instance: LiveSearchService())
                 serviceLocator.register(FavoritesService.self, instance: LiveFavoritesService())
                 serviceLocator.register(SettingsService.self, instance: LiveSettingsService())
+                serviceLocator.register(StoreKitService.self, instance: LiveStoreKitService())
             }
         #else
             // Use real services for release builds
@@ -114,6 +116,7 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
             serviceLocator.register(SearchService.self, instance: LiveSearchService())
             serviceLocator.register(FavoritesService.self, instance: LiveFavoritesService())
             serviceLocator.register(SettingsService.self, instance: LiveSettingsService())
+            serviceLocator.register(StoreKitService.self, instance: LiveStoreKitService())
         #endif
     }
 

@@ -8,6 +8,7 @@ This guide helps contributors work consistently across this iOS Swift project. K
   - `Search/` - Movie search with Liquid Glass UI design
   - `Favorites/` - Movie favorites management
   - `Settings/` - App configuration and preferences
+  - `Paywall/` - Premium subscription with native StoreKit 2
   - Each feature contains: `Domain/`, `View/`, `ViewModel/`, `API/` (if needed)
 - Widget: `GitHubAppWidgetExtension/` with image caching via App Groups.
 - Localization: `en.lproj/`, `es.lproj/`, `pt-BR.lproj/` for multi-language support.

@@ -24,6 +24,9 @@ import Testing
 /// - Full data snapshot matching
 @MainActor
 struct MovieDetailsViewTests { // swiftlint:disable:this type_body_length
+    // To record new snapshots, uncomment the following line at the top of a test:
+    // isRecording = true
+
     let movie: Movie = .init(id: 346_698,
                              title: "Barbie",
                              overview: "Barbie and Ken are having the time of their lives in the colorful " +

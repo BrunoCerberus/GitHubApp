@@ -15,21 +15,21 @@ import Testing
 /// Snapshot tests for SearchView to ensure visual regressions are detected.
 @MainActor
 struct SearchViewTests { // swiftlint:disable:this type_body_length
+    // To record new snapshots, uncomment the following line at the top of a test:
+    // isRecording = true
+
     // swiftlint:disable large_tuple
     private func createTestComponents(
-        mockService: HomeService? = nil
+        mockService: SearchService? = nil
     ) -> (SearchNavigationRouter, SearchViewModel, SearchView) {
         // swiftlint:enable large_tuple
         let router = SearchNavigationRouter()
-        let service = mockService ?? MockHomeService()
+        let service = mockService ?? MockSearchService()
         let mockStorageService = MockStorageService()
 
         let serviceLocator = ServiceLocator()
-        serviceLocator.register(HomeService.self, instance: service)
+        serviceLocator.register(SearchService.self, instance: service)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
-
-        // Configure API key for testing
-        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
 
         let viewModel = SearchViewModel(serviceLocator: serviceLocator)
         let view = SearchView(router: router, viewModel: viewModel, serviceLocator: serviceLocator)
@@ -37,7 +37,7 @@ struct SearchViewTests { // swiftlint:disable:this type_body_length
     }
 
     private func cleanupTest() {
-        try? APIKeysProvider.removeMovieAPIKey()
+        // No cleanup needed - using mock services
     }
 
     private func iPhoneAirConfig() -> ViewImageConfig {
@@ -83,15 +83,14 @@ struct SearchViewTests { // swiftlint:disable:this type_body_length
 
         // Test initialization with provided ViewModel
         let serviceLocator = ServiceLocator()
-        serviceLocator.register(HomeService.self, instance: MockHomeService())
-        try? APIKeysProvider.setMovieAPIKey("unit-test-key")
+        serviceLocator.register(SearchService.self, instance: MockSearchService())
 
         let customViewModel = SearchViewModel(serviceLocator: serviceLocator)
         _ = SearchView(router: router, viewModel: customViewModel, serviceLocator: serviceLocator)
 
         // Test initialization with default ViewModel setup
         let defaultServiceLocator = ServiceLocator()
-        defaultServiceLocator.register(HomeService.self, instance: MockHomeService())
+        defaultServiceLocator.register(SearchService.self, instance: MockSearchService())
         let defaultViewModel = SearchViewModel(serviceLocator: defaultServiceLocator)
         _ = SearchView(router: router, viewModel: defaultViewModel, serviceLocator: defaultServiceLocator)
 
@@ -151,7 +150,7 @@ struct SearchViewTests { // swiftlint:disable:this type_body_length
     func noResultsViewRendering() async throws {
         defer { cleanupTest() }
 
-        let (_, viewModel, view) = createTestComponents(mockService: MockHomeService())
+        let (_, viewModel, view) = createTestComponents()
 
         _ = view.wrappedViewController
 
@@ -181,7 +180,7 @@ struct SearchViewTests { // swiftlint:disable:this type_body_length
     func searchViewDisplaysSearchResultsSnapshot() async throws {
         defer { cleanupTest() }
 
-        let (_, viewModel, view) = createTestComponents(mockService: MockHomeService())
+        let (_, viewModel, view) = createTestComponents()
         let controller: UIViewController = view.wrappedViewController
 
         // Trigger search
@@ -203,30 +202,18 @@ struct SearchViewTests { // swiftlint:disable:this type_body_length
         defer { cleanupTest() }
 
         // Create a failing service
-        struct FailingSearchService: HomeService {
-            func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
-                Fail(error: NSError(domain: "test", code: 1)).eraseToAnyPublisher()
-            }
-
+        struct FailingSearchService: SearchService {
             func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
                 let userInfo = [NSLocalizedDescriptionKey: "Search service unavailable"]
                 return Fail(error: NSError(domain: "test", code: 1, userInfo: userInfo))
                     .eraseToAnyPublisher()
-            }
-
-            func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
-                Fail(error: NSError(domain: "test", code: 1)).eraseToAnyPublisher()
-            }
-
-            func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
-                Fail(error: NSError(domain: "test", code: 1)).eraseToAnyPublisher()
             }
         }
 
         let failingService = FailingSearchService()
         let mockStorageService = MockStorageService()
         let serviceLocator = ServiceLocator()
-        serviceLocator.register(HomeService.self, instance: failingService)
+        serviceLocator.register(SearchService.self, instance: failingService)
         serviceLocator.register(StorageService.self, instance: mockStorageService)
 
         let router = SearchNavigationRouter()
@@ -515,31 +502,10 @@ struct SearchViewTests { // swiftlint:disable:this type_body_length
     func searchNoResultsStateRendering() async throws {
         defer { cleanupTest() }
 
-        struct NoResultsSearchService: HomeService {
-            func fetchMovies(page _: Int) -> AnyPublisher<MoviesResponse, Error> {
-                Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
-                    .setFailureType(to: Error.self)
-                    .receive(on: DispatchQueue.main)
-                    .eraseToAnyPublisher()
-            }
-
+        struct NoResultsSearchService: SearchService {
             func searchMovies(with _: String, page _: Int) -> AnyPublisher<MoviesResponse, Error> {
                 // Return empty results for any search query
                 Just(MoviesResponse(results: [], page: 1, totalPages: 1, totalResults: 0))
-                    .setFailureType(to: Error.self)
-                    .receive(on: DispatchQueue.main)
-                    .eraseToAnyPublisher()
-            }
-
-            func fetchCredits(with _: Int) -> AnyPublisher<MovieCreditsResponse, Error> {
-                Just(MovieCreditsResponse(cast: []))
-                    .setFailureType(to: Error.self)
-                    .receive(on: DispatchQueue.main)
-                    .eraseToAnyPublisher()
-            }
-
-            func fetchReviews(with _: Int) -> AnyPublisher<MovieReviewsResponse, Error> {
-                Just(MovieReviewsResponse(results: []))
                     .setFailureType(to: Error.self)
                     .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()

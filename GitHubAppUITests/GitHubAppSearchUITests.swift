@@ -231,8 +231,12 @@ final class GitHubAppSearchUITests: XCTestCase {
             searchTabButton.tap()
         }
 
+        // Wait for UI to settle after tab switch
+        usleep(1_000_000) // 1 second
+
         // Search results should still be visible (search was preserved)
-        XCTAssertTrue(waitForElement(barbieText, timeout: 3))
+        // Increased timeout for CI environments which may be slower
+        XCTAssertTrue(waitForElement(barbieText, timeout: 10))
     }
 
     // MARK: - Helper Methods

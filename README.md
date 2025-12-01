@@ -172,6 +172,7 @@ GitHubApp/
 ├── Search/         # Movie search with Liquid Glass design UI
 ├── Favorites/      # Saved favorite movies
 ├── Settings/       # App preferences and configuration
+├── Paywall/        # Premium subscription with native StoreKit 2
 ├── Configs/        # Shared utilities, mocks, and configuration
 ├── Widgets/        # iOS widget extension with image caching
 └── Localization/   # Multi-language support (EN, ES, PT-BR)
@@ -226,6 +227,15 @@ Save and manage your favorite movies with persistent storage using SwiftData.
 
 ### Settings
 Configure app preferences including language selection (English, Spanish, Portuguese-BR).
+
+### Paywall (Premium Subscription)
+Native SwiftUI StoreKit 2 paywall for premium subscriptions:
+- **SubscriptionStoreView**: Native iOS 17+ paywall with Apple's design guidelines
+- **Clean Architecture**: Full implementation with API, Domain, View, and ViewModel layers
+- **StoreKit 2**: Modern async/await transaction handling
+- **Subscription Products**: Monthly ($4.99) and Yearly ($39.99) options
+- **Testing Support**: StoreKit configuration file for simulator testing
+- **Multi-language**: Localized in English, Spanish, and Portuguese-BR
 
 ### Localization
 Full multi-language support:
