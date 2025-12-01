@@ -15,6 +15,11 @@ import Testing
 /// Snapshot tests for SearchView to ensure visual regressions are detected.
 @MainActor
 struct SearchViewTests { // swiftlint:disable:this type_body_length
+    init() {
+        // Set to true to record new snapshots, false to compare against existing
+        // isRecording = true
+    }
+
     // swiftlint:disable large_tuple
     private func createTestComponents(
         mockService: HomeService? = nil

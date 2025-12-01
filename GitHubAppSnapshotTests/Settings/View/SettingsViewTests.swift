@@ -16,6 +16,11 @@ import Testing
 /// Snapshot tests for SettingsView to ensure visual regressions are detected.
 @MainActor
 struct SettingsViewTests { // swiftlint:disable:this type_body_length
+    init() {
+        // Set to true to record new snapshots, false to compare against existing
+        // isRecording = true
+    }
+
     private func createTestComponents() -> (SettingsView, MockSettingsService, ServiceLocator) {
         // Clear UserDefaults for clean testing
         UserDefaults.standard.removeObject(forKey: "profileImageData")

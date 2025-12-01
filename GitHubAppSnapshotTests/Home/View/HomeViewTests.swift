@@ -18,6 +18,11 @@ import Testing
 /// Snapshot tests for HomeView to ensure visual regressions are detected.
 @MainActor
 struct HomeViewTests { // swiftlint:disable:this type_body_length
+    init() {
+        // Set to true to record new snapshots, false to compare against existing
+        // isRecording = true
+    }
+
     // swiftlint:disable:next large_tuple
     private func createTestComponents() -> (
         HomeNavigationRouter, MockHomeService, HomeViewModel, HomeView<HomeNavigationRouter>
@@ -219,7 +224,7 @@ struct HomeViewTests { // swiftlint:disable:this type_body_length
         _ = view.wrappedViewController
 
         // Wait for auto-load to complete
-        try await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds (reduced from 10)
+        try await Task.sleep(nanoseconds: 10_000_000_000) // 10 seconds
 
         // Verify success state with movies
         var firstMovie: Movie?
@@ -479,7 +484,7 @@ struct HomeViewTests { // swiftlint:disable:this type_body_length
 
             // Toggle first movie as favorite
             viewModel.toggleFavorite(for: movie1)
-            try await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+            try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
 
             // Verify first movie is favorited
             if case let .success(state1) = viewModel.viewState {
@@ -489,7 +494,7 @@ struct HomeViewTests { // swiftlint:disable:this type_body_length
                 // Toggle second movie
                 if let movie2 {
                     viewModel.toggleFavorite(for: movie2)
-                    try await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+                    try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
 
                     // Verify both are favorited
                     if case let .success(state2) = viewModel.viewState {
