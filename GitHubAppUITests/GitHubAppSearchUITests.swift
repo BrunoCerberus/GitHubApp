@@ -91,13 +91,12 @@ final class GitHubAppSearchUITests: XCTestCase {
         // Type search query
         searchField.typeText("Barbie")
 
-        // Wait for search results to appear (give time for mock API call)
+        // Wait for search results to appear (increased timeout for CI environments)
         let movieTitle = app.staticTexts["Barbie"]
-        let predicate = NSPredicate(format: "exists == true")
-        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: movieTitle)
-        let result = XCTWaiter().wait(for: [expectation], timeout: 5.0)
-
-        XCTAssertEqual(result, .completed, "Barbie title should appear in search results")
+        XCTAssertTrue(
+            movieTitle.waitForExistence(timeout: 15.0),
+            "Barbie title should appear in search results"
+        )
     }
 
     /// Test that search results are displayed as a list

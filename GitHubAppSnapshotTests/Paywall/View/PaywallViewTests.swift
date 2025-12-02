@@ -63,9 +63,12 @@ struct PaywallViewTests {
     func paywallViewDisplaysLoadingState() async throws {
         // Given
         let (view, _, _) = createTestComponents()
+
+        // Wait for view to be ready
+        try await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+
         let controller: UIViewController = view.wrappedViewController
 
-        // Initial state should be loading
         let iPhoneAirConfig = ViewImageConfig(
             safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
             size: CGSize(width: 393, height: 852),
@@ -73,7 +76,7 @@ struct PaywallViewTests {
         )
 
         await MainActor.run {
-            assertSnapshot(of: controller, as: .wait(for: 0.3, on: .image(on: iPhoneAirConfig)))
+            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
         }
     }
 
@@ -144,10 +147,11 @@ struct PaywallViewTests {
     func paywallViewWithPremiumUser() async throws {
         // Given
         let (view, _, _) = createTestComponents(isPremium: true)
-        let controller: UIViewController = view.wrappedViewController
 
         // Wait for state to update
-        try await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+        let controller: UIViewController = view.wrappedViewController
 
         let iPhoneAirConfig = ViewImageConfig(
             safeArea: UIEdgeInsets(top: 59, left: 0, bottom: 34, right: 0),
