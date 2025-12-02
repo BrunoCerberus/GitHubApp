@@ -338,4 +338,5 @@ schemes:
       config: Debug
       targets:
         - GitHubAppSnapshotTests
+      storeKitConfiguration: GitHubApp/StoreKit.storekit
       environmentVariables: {}
