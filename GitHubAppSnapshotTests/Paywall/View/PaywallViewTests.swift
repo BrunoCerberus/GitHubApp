@@ -18,7 +18,13 @@ struct PaywallViewTests {
     // To record new snapshots, uncomment the following line at the top of a test:
     // isRecording = true
 
-    private func createTestComponents(isPremium: Bool = false) -> (PaywallView, MockStoreKitService, ServiceLocator) {
+    private struct TestComponents {
+        let view: PaywallView
+        let mockStoreKitService: MockStoreKitService
+        let serviceLocator: ServiceLocator
+    }
+
+    private func createTestComponents(isPremium: Bool = false) -> TestComponents {
         let mockStoreKitService = MockStoreKitService(isPremium: isPremium)
         let serviceLocator = ServiceLocator()
         serviceLocator.register(StoreKitService.self, instance: mockStoreKitService)
@@ -26,7 +32,7 @@ struct PaywallViewTests {
         let paywallViewModel = PaywallViewModel(serviceLocator: serviceLocator)
         let view = PaywallView(viewModel: paywallViewModel)
 
-        return (view, mockStoreKitService, serviceLocator)
+        return TestComponents(view: view, mockStoreKitService: mockStoreKitService, serviceLocator: serviceLocator)
     }
 
     // MARK: - View Initialization Tests
@@ -62,7 +68,8 @@ struct PaywallViewTests {
     @Test("PaywallView displays loading state")
     func paywallViewDisplaysLoadingState() async throws {
         // Given
-        let (view, _, _) = createTestComponents()
+        let components = createTestComponents()
+        let view = components.view
 
         // Wait for view to be ready
         try await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
@@ -85,7 +92,8 @@ struct PaywallViewTests {
     @Test("PaywallView renders marketing content")
     func paywallViewRendersMarketingContent() {
         // Given
-        let (view, _, _) = createTestComponents()
+        let components = createTestComponents()
+        let view = components.view
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering
@@ -97,7 +105,8 @@ struct PaywallViewTests {
     @Test("PaywallView button interactions for coverage")
     func paywallViewButtonInteractions() {
         // Given
-        let (view, _, _) = createTestComponents()
+        let components = createTestComponents()
+        let view = components.view
         let hostingController = UIHostingController(rootView: view)
 
         // When - Access view to trigger rendering
@@ -132,7 +141,8 @@ struct PaywallViewTests {
     @Test("PaywallView dismiss button exists")
     func paywallViewDismissButtonExists() {
         // Given
-        let (view, _, _) = createTestComponents()
+        let components = createTestComponents()
+        let view = components.view
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering
@@ -146,7 +156,8 @@ struct PaywallViewTests {
     @Test("PaywallView with premium user")
     func paywallViewWithPremiumUser() async throws {
         // Given
-        let (view, _, _) = createTestComponents(isPremium: true)
+        let components = createTestComponents(isPremium: true)
+        let view = components.view
 
         // Wait for state to update
         try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
@@ -210,7 +221,8 @@ struct PaywallViewTests {
     @Test("PaywallView renders feature rows")
     func paywallViewRendersFeatureRows() {
         // Given
-        let (view, _, _) = createTestComponents()
+        let components = createTestComponents()
+        let view = components.view
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering
@@ -224,7 +236,8 @@ struct PaywallViewTests {
     @Test("PaywallView renders background gradient")
     func paywallViewRendersBackgroundGradient() {
         // Given
-        let (view, _, _) = createTestComponents()
+        let components = createTestComponents()
+        let view = components.view
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering
@@ -238,7 +251,8 @@ struct PaywallViewTests {
     @Test("PaywallView navigation bar configuration")
     func paywallViewNavigationBarConfiguration() {
         // Given
-        let (view, _, _) = createTestComponents()
+        let components = createTestComponents()
+        let view = components.view
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering

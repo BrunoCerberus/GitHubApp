@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  SettingsView.swift
 //  GitHubApp
@@ -109,11 +110,11 @@ struct SettingsView: View { // swiftlint:disable:this type_body_length
             viewModel.handle(.viewDidAppear)
             checkPremiumStatus()
         }
-        .sheet(isPresented: $isPaywallPresented, onDismiss: {
-            checkPremiumStatus()
-        }) {
-            PaywallView(viewModel: PaywallViewModel(serviceLocator: serviceLocator))
-        }
+        .sheet(
+            isPresented: $isPaywallPresented,
+            onDismiss: { checkPremiumStatus() },
+            content: { PaywallView(viewModel: PaywallViewModel(serviceLocator: serviceLocator)) }
+        )
     }
 
     /// Check premium subscription status
