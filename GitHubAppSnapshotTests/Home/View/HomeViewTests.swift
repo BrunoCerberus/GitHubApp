@@ -654,6 +654,7 @@ struct HomeViewTests { // swiftlint:disable:this type_body_length
         }
     }
 
+    // swiftlint:disable:next line_length
     @Test("Error state transitions to success on retry", .disabled("Flaky test - error state timing issues. Covered by unit tests."))
     // swiftlint:disable:next function_body_length
     func errorToRetryFlowTest() async throws {

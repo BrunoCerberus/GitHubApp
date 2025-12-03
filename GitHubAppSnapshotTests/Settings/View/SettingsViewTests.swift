@@ -19,7 +19,13 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
     // To record new snapshots, uncomment the following line at the top of a test:
     // isRecording = true
 
-    private func createTestComponents() -> (SettingsView, MockSettingsService, ServiceLocator) {
+    private struct TestComponents {
+        let view: SettingsView
+        let mockSettingsService: MockSettingsService
+        let serviceLocator: ServiceLocator
+    }
+
+    private func createTestComponents() -> TestComponents {
         // Clear UserDefaults for clean testing
         UserDefaults.standard.removeObject(forKey: "profileImageData")
         UserDefaults.standard.removeObject(forKey: "hasRatedApp")
@@ -37,13 +43,14 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
         let settingsViewModel = SettingsViewModel(serviceLocator: serviceLocator)
         let view = SettingsView(viewModel: settingsViewModel, serviceLocator: serviceLocator)
 
-        return (view, mockSettingsService, serviceLocator)
+        return TestComponents(view: view, mockSettingsService: mockSettingsService, serviceLocator: serviceLocator)
     }
 
     @Test("Snapshot of Settings view with default configuration")
     func settingsView() async {
         // Given
-        let (view, _, _) = createTestComponents()
+        let components = createTestComponents()
+        let view = components.view
 
         // Wait a moment for the view to load data
         try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
@@ -63,7 +70,8 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
     @Test("Settings view button interactions for coverage")
     func settingsViewButtonInteractions() {
         // Given
-        let (view, _, _) = createTestComponents()
+        let components = createTestComponents()
+        let view = components.view
         let hostingController = UIHostingController(rootView: view)
 
         // When - Access view to trigger rendering and test closures
@@ -75,7 +83,8 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
     @Test("Settings view clear favorites functionality")
     func clearFavoritesCardRendering() {
         // Given
-        let (view, _, _) = createTestComponents()
+        let components = createTestComponents()
+        let view = components.view
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering
@@ -88,7 +97,8 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
     @Test("Settings view rate app functionality")
     func rateAppCardRendering() {
         // Given
-        let (view, _, _) = createTestComponents()
+        let components = createTestComponents()
+        let view = components.view
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering
@@ -101,7 +111,8 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
     @Test("Profile header section rendering")
     func profileHeaderSectionRendering() {
         // Given
-        let (view, _, _) = createTestComponents()
+        let components = createTestComponents()
+        let view = components.view
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering to exercise private properties
@@ -114,7 +125,8 @@ struct SettingsViewTests { // swiftlint:disable:this type_body_length
     @Test("App version card rendering")
     func appVersionCardRendering() {
         // Given
-        let (view, _, _) = createTestComponents()
+        let components = createTestComponents()
+        let view = components.view
         let hostingController = UIHostingController(rootView: view)
 
         // When - Trigger view rendering to exercise private properties

@@ -29,11 +29,14 @@ struct PaywallView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button(action: { dismiss() }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.title2)
-                                .foregroundStyle(.secondary)
-                        }
+                        Button(
+                            action: { dismiss() },
+                            label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.title2)
+                                    .foregroundStyle(.secondary)
+                            }
+                        )
                     }
                 }
         }
@@ -215,11 +218,14 @@ struct PaywallView: View {
                 .padding(.horizontal, 20)
 
                 // Restore Purchases Button
-                Button(action: { viewModel.restorePurchases() }) {
-                    Text(Localizable.paywall.restorePurchases)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+                Button(
+                    action: { viewModel.restorePurchases() },
+                    label: {
+                        Text(Localizable.paywall.restorePurchases)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                )
                 .padding(.bottom, 20)
             }
         }
