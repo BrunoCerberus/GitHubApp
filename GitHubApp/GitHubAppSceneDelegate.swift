@@ -156,11 +156,14 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            if let coordinator = notification.object as? Coordinator {
-                self?.deeplinkRouter = DeeplinkRouter(
-                    deeplinkManager: self?.deeplinkManager ?? DeeplinkManager(),
-                    coordinator: coordinator
-                )
+            // We're on the main queue (specified above), so we can safely assume MainActor isolation
+            MainActor.assumeIsolated {
+                if let coordinator = notification.object as? Coordinator {
+                    self?.deeplinkRouter = DeeplinkRouter(
+                        deeplinkManager: self?.deeplinkManager ?? DeeplinkManager(),
+                        coordinator: coordinator
+                    )
+                }
             }
         }
     }

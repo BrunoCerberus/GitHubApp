@@ -13,7 +13,10 @@ import UIKit
  *
  * This class takes parsed deeplinks and converts them to navigation
  * events that can be processed by the app's existing routing system.
+ *
+ * @MainActor ensures all navigation operations happen on the main thread.
  */
+@MainActor
 final class DeeplinkRouter {
     /// The deeplink manager for parsing URLs
     private let deeplinkManager: DeeplinkManager
