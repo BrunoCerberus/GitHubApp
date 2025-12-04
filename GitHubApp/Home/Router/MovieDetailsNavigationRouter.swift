@@ -5,7 +5,7 @@
 //  Created by Claude Code
 //
 
-@preconcurrency import EntropyCore
+import EntropyCore
 import SwiftUI
 import UIKit
 
@@ -19,9 +19,11 @@ import UIKit
 @MainActor
 final class MovieDetailsNavigationRouter: NavigationRouter, Equatable {
     /// Optional UIKit navigation controller for fallback navigation
-    weak var navigation: UINavigationController?
+    /// nonisolated(unsafe) allows identity comparison in Equatable conformance
+    nonisolated(unsafe) weak var navigation: UINavigationController?
     /// Optional SwiftUI coordinator for declarative navigation
-    private weak var coordinator: Coordinator?
+    /// nonisolated(unsafe) allows identity comparison in Equatable conformance
+    private nonisolated(unsafe) weak var coordinator: Coordinator?
     /// Service locator for dependency injection
     private let serviceLocator: ServiceLocator?
 
@@ -50,7 +52,7 @@ final class MovieDetailsNavigationRouter: NavigationRouter, Equatable {
 
 extension MovieDetailsNavigationRouter {
     /// Compare routers by their underlying navigation/coordinator references
-    static func == (lhs: MovieDetailsNavigationRouter, rhs: MovieDetailsNavigationRouter) -> Bool {
+    nonisolated static func == (lhs: MovieDetailsNavigationRouter, rhs: MovieDetailsNavigationRouter) -> Bool {
         lhs.navigation === rhs.navigation && lhs.coordinator === rhs.coordinator
     }
 }
