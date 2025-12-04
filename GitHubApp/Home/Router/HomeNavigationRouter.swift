@@ -5,7 +5,7 @@
 //  Created by bruno on 29/05/23.
 //
 
-import EntropyCore
+@preconcurrency import EntropyCore
 import SwiftUI
 import UIKit
 

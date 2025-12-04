@@ -7,7 +7,7 @@
 //
 
 import Combine
-import EntropyCore
+@preconcurrency import EntropyCore
 import Foundation
 import SwiftData
 

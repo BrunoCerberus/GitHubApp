@@ -9,7 +9,10 @@ import SwiftUI
 
 /**
  * Protocol for coordinator-like objects that can handle navigation.
+ *
+ * @MainActor ensures all navigation operations happen on the main thread.
  */
+@MainActor
 protocol CoordinatorProtocol: AnyObject {
     func push(page: Page)
 }

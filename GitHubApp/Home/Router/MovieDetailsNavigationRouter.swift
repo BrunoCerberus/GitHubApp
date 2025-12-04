@@ -5,7 +5,7 @@
 //  Created by Claude Code
 //
 
-import EntropyCore
+@preconcurrency import EntropyCore
 import SwiftUI
 import UIKit
 
@@ -13,7 +13,10 @@ import UIKit
  * Router for MovieDetails module navigation.
  *
  * Supports both SwiftUI navigation via Coordinator and UIKit fallback.
+ *
+ * @MainActor ensures all navigation operations happen on the main thread.
  */
+@MainActor
 final class MovieDetailsNavigationRouter: NavigationRouter, Equatable {
     /// Optional UIKit navigation controller for fallback navigation
     weak var navigation: UINavigationController?

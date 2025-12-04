@@ -5,7 +5,7 @@
 //  Created by Claude Code
 //
 
-import EntropyCore
+@preconcurrency import EntropyCore
 import SwiftUI
 import UIKit
 
