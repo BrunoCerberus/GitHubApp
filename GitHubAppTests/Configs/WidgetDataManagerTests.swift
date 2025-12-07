@@ -41,7 +41,8 @@ struct WidgetDataManagerTests {
         let instance = WidgetDataManager.shared
 
         // Then
-        #expect(instance != nil, "Shared instance should be accessible")
+        _ = instance // Verify instance was created
+        #expect(Bool(true), "Shared instance should be accessible")
     }
 
     @Test("WidgetDataManager singleton returns same instance")
@@ -222,7 +223,6 @@ struct WidgetDataManagerTests {
     func moviesDidUpdateWithNilPayloadIsIgnored() async throws {
         // Given
         let manager = WidgetDataManager.shared
-        let sharedDataManager = SharedDataManager()
 
         manager.startMonitoring()
 

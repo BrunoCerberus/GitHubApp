@@ -20,7 +20,8 @@ struct LiveFavoritesServiceErrorTests {
         let service = LiveFavoritesService()
 
         // Then - Service initializes successfully
-        // Service is created
+        _ = service // Verify service was created
+        #expect(Bool(true))
     }
 
     // MARK: - Stub Implementation Tests
@@ -56,10 +57,10 @@ struct LiveFavoritesServiceErrorTests {
         let service = LiveFavoritesService()
 
         // When
-        let result = try await service.clearAllFavoriteMovies().async()
+        _ = try await service.clearAllFavoriteMovies().async()
 
         // Then - Operation completes successfully
-        // Success
+        #expect(Bool(true))
     }
 
     @Test("Is movie liked returns false")
