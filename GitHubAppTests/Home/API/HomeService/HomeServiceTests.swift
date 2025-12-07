@@ -41,10 +41,9 @@ struct HomeServiceTests {
         // When
         let publisher = homeService.searchMovies(with: query)
 
-        // Then
-        #expect(publisher != nil)
-        // Verify it's the correct type (this will be caught at compile time)
+        // Then - Verify it's the correct type (this will be caught at compile time)
         let _: AnyPublisher<MoviesResponse, Error> = publisher
+        #expect(Bool(true))
     }
 
     @Test("Fetch credits returns correct publisher type")
@@ -57,10 +56,9 @@ struct HomeServiceTests {
         // When
         let publisher = homeService.fetchCredits(with: movieId)
 
-        // Then
-        #expect(publisher != nil)
-        // Verify it's the correct type (this will be caught at compile time)
+        // Then - Verify it's the correct type (this will be caught at compile time)
         let _: AnyPublisher<MovieCreditsResponse, Error> = publisher
+        #expect(Bool(true))
     }
 
     @Test("Fetch reviews returns correct publisher type")
@@ -73,10 +71,9 @@ struct HomeServiceTests {
         // When
         let publisher = homeService.fetchReviews(with: movieId)
 
-        // Then
-        #expect(publisher != nil)
-        // Verify it's the correct type (this will be caught at compile time)
+        // Then - Verify it's the correct type (this will be caught at compile time)
         let _: AnyPublisher<MovieReviewsResponse, Error> = publisher
+        #expect(Bool(true))
     }
 
     @Test("All methods return subscribable publishers")
@@ -123,9 +120,9 @@ struct HomeServiceTests {
         // When
         let publisher = homeService.fetchMovies()
 
-        // Then
-        #expect(publisher != nil)
+        // Then - Verify type
         let _: AnyPublisher<MoviesResponse, Error> = publisher
+        #expect(Bool(true))
     }
 
     @Test("Fetch movies returns correct publisher type with custom page")
@@ -137,9 +134,9 @@ struct HomeServiceTests {
         // When
         let publisher = homeService.fetchMovies(page: 2)
 
-        // Then
-        #expect(publisher != nil)
+        // Then - Verify type
         let _: AnyPublisher<MoviesResponse, Error> = publisher
+        #expect(Bool(true))
     }
 
     @Test("Search movies with pagination returns correct publisher type")
@@ -151,9 +148,9 @@ struct HomeServiceTests {
         // When
         let publisher = homeService.searchMovies(with: "test query", page: 3)
 
-        // Then
-        #expect(publisher != nil)
+        // Then - Verify type
         let _: AnyPublisher<MoviesResponse, Error> = publisher
+        #expect(Bool(true))
     }
 
     @Test("All network methods can be called without errors")
