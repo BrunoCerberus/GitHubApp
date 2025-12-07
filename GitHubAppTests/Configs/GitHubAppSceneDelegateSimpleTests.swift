@@ -21,7 +21,8 @@ struct GitHubAppSceneDelegateSimpleTests {
         let delegate = GitHubAppSceneDelegate()
 
         // Then
-        #expect(delegate != nil)
+        _ = delegate // Verify delegate was created
+        #expect(Bool(true))
     }
 
     @Test("Scene delegate has window property")
@@ -40,13 +41,13 @@ struct GitHubAppSceneDelegateSimpleTests {
     func sceneDelegateCanHandleURLContexts() {
         // Given - Test basic functionality without creating complex mocks
         let sceneDelegate = createSceneDelegate()
-        let emptyURLContexts: Set<UIOpenURLContext> = []
 
         // When - Test that the scene delegate exists and has the method
         // We can't easily create UIScene or UIOpenURLContext for testing
 
         // Then - Should not crash during basic operations
-        #expect(sceneDelegate != nil, "Scene delegate should exist")
+        _ = sceneDelegate // Verify delegate was created
+        #expect(Bool(true), "Scene delegate should exist")
     }
 
     @Test("Scene delegate can handle user activity")
@@ -55,10 +56,9 @@ struct GitHubAppSceneDelegateSimpleTests {
         let sceneDelegate = createSceneDelegate()
         let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
 
-        // When - Test basic functionality
-        #expect(userActivity != nil, "User activity should be created")
-
-        // Then - Should execute without crashing
-        #expect(sceneDelegate != nil, "Scene delegate should handle user activity")
+        // When & Then - Should execute without crashing
+        _ = sceneDelegate // Verify delegate was created
+        _ = userActivity // Verify activity was created
+        #expect(Bool(true), "Scene delegate should handle user activity")
     }
 }

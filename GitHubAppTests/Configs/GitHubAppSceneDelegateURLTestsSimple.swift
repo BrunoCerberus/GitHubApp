@@ -55,8 +55,8 @@ final class GitHubAppSceneDelegateURLTestsSimple: XCTestCase {
         // When - Access window property
         XCTAssertNil(window) // Initially nil
 
-        // Set a test window
-        sceneDelegate.window = UIWindow()
+        // Set a test window (using frame-based init to avoid deprecation warning)
+        sceneDelegate.window = UIWindow(frame: .zero)
 
         // Then - Window should be settable
         XCTAssertNotNil(sceneDelegate.window)

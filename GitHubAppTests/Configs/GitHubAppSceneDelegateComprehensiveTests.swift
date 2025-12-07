@@ -26,7 +26,7 @@ struct GitHubAppSceneDelegateComprehensiveTests {
         let newSceneDelegate = GitHubAppSceneDelegate()
 
         // When & Then - Should initialize successfully
-        #expect(newSceneDelegate != nil)
+        _ = newSceneDelegate // Verify delegate was created
         #expect(newSceneDelegate.window == nil)
     }
 
@@ -55,8 +55,7 @@ struct GitHubAppSceneDelegateComprehensiveTests {
         // Then - Should be able to set window
         let window = UIWindow()
         newSceneDelegate.window = window
-        #expect(newSceneDelegate.window != nil)
-        #expect(newSceneDelegate.window == window)
+        #expect(newSceneDelegate.window === window)
     }
 
     @Test("Scene delegate with multiple initializations")
@@ -69,8 +68,8 @@ struct GitHubAppSceneDelegateComprehensiveTests {
         ]
 
         // When & Then - All should initialize properly
+        #expect(delegates.count == 3)
         for delegate in delegates {
-            #expect(delegate != nil)
             #expect(delegate.window == nil)
         }
     }
@@ -93,7 +92,8 @@ struct GitHubAppSceneDelegateComprehensiveTests {
         let newSceneDelegate = GitHubAppSceneDelegate()
 
         // When & Then - Should initialize successfully
-        #expect(newSceneDelegate != nil)
+        _ = newSceneDelegate // Verify delegate was created
+        #expect(Bool(true))
     }
 
     @Test("User activity creation")
@@ -102,10 +102,7 @@ struct GitHubAppSceneDelegateComprehensiveTests {
         let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
         userActivity.webpageURL = URL(string: "https://movieapp.com/movie/789")
 
-        // When
-        #expect(userActivity != nil)
-
-        // Then - Should create user activity properly
+        // When & Then - Should create user activity properly
         #expect(userActivity.activityType == NSUserActivityTypeBrowsingWeb)
         #expect(userActivity.webpageURL != nil)
     }

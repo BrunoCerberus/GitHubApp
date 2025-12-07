@@ -6,7 +6,7 @@
 //
 
 import Foundation
-@testable import GitHubApp
+@preconcurrency @testable import GitHubApp
 
 /**
  * Mock implementation of StorageService for testing.
