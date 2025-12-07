@@ -29,11 +29,12 @@ struct GitHubAppDelegateTests {
         #expect(result == true)
     }
 
+    @available(iOS, deprecated: 26.0, message: "Testing backward compatibility with userActivityDictionary")
     @Test("Application did finish launching with launch options")
     func applicationDidFinishLaunchingWithLaunchOptions() {
         // Given
         let (appDelegate, application) = createTestComponents()
-        // Note: .url is deprecated in iOS 26.0 but we test backward compatibility
+        // Note: .userActivityDictionary is deprecated in iOS 26.0 but we test backward compatibility
         let launchOptions: [UIApplication.LaunchOptionsKey: Any] = [
             .userActivityDictionary: ["test": "value"],
         ]

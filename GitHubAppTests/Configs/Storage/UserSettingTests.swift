@@ -143,13 +143,12 @@ struct UserSettingTests {
         let originalUpdatedAt = setting.updatedAt
 
         // When
-        var mutableSetting = setting
-        try mutableSetting.updateValue(42)
+        try setting.updateValue(42)
 
         // Then
-        let newValue: Int = try mutableSetting.getValue(as: Int.self)
+        let newValue: Int = try setting.getValue(as: Int.self)
         #expect(newValue == 42)
-        #expect(mutableSetting.updatedAt > originalUpdatedAt)
+        #expect(setting.updatedAt > originalUpdatedAt)
     }
 
     @Test("UserSetting updates value multiple times")
@@ -162,12 +161,11 @@ struct UserSettingTests {
         )
 
         // When
-        var mutableSetting = setting
-        try mutableSetting.updateValue("second")
-        try mutableSetting.updateValue("third")
+        try setting.updateValue("second")
+        try setting.updateValue("third")
 
         // Then
-        let finalValue: String = try mutableSetting.getValue(as: String.self)
+        let finalValue: String = try setting.getValue(as: String.self)
         #expect(finalValue == "third")
     }
 
@@ -182,12 +180,11 @@ struct UserSettingTests {
         let initialTimestamp = setting.updatedAt
 
         // When
-        var mutableSetting = setting
         usleep(10000) // Small delay to ensure time difference (10ms)
-        try mutableSetting.updateValue("updated")
+        try setting.updateValue("updated")
 
         // Then
-        #expect(mutableSetting.updatedAt > initialTimestamp)
+        #expect(setting.updatedAt > initialTimestamp)
     }
 
     // MARK: - Category Tests

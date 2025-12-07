@@ -223,7 +223,7 @@ struct WidgetDataManagerTests {
     func moviesDidUpdateWithNilPayloadIsIgnored() async throws {
         // Given
         let manager = WidgetDataManager.shared
-        let sharedDataManager = SharedDataManager()
+        _ = SharedDataManager()
 
         manager.startMonitoring()
 
