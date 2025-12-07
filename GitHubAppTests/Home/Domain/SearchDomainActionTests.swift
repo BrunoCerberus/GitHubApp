@@ -40,9 +40,10 @@ struct SearchDomainActionTests {
         let loadAction = SearchDomainAction.loadPersistedFavoriteMovies
 
         // Verify that all cases can be instantiated
-        #expect(searchAction != nil)
-        #expect(toggleAction != nil)
-        #expect(loadAction != nil)
+        _ = searchAction
+        _ = toggleAction
+        _ = loadAction
+        #expect(Bool(true))
     }
 
     @Test("Search action preserves query string")

@@ -56,7 +56,7 @@ struct SearchDomainInteractorTests {
     @Test("Search movies succeeds and updates state with query")
     func searchMoviesSuccess() async throws {
         // Given
-        let (sut, mockSearchService, _) = createTestComponents()
+        let (sut, _, _) = createTestComponents()
         let query = "test query"
         defer {
             try? APIKeysProvider.removeMovieAPIKey()

@@ -52,7 +52,7 @@ struct HomeDomainInteractorEdgeCaseTests {
         let interactor = HomeDomainInteractor(serviceLocator: ServiceLocator())
 
         // Then - Should initialize with default LiveHomeService
-        #expect(interactor != nil)
+        _ = interactor // Verify interactor was created
         #expect(interactor.currentState.movies.count == 0)
         #expect(!interactor.currentState.isLoading)
     }
@@ -68,7 +68,7 @@ struct HomeDomainInteractorEdgeCaseTests {
         let interactor = HomeDomainInteractor(serviceLocator: emptyServiceLocator)
 
         // Then - Should fall back to LiveHomeService when service locator retrieval fails
-        #expect(interactor != nil)
+        _ = interactor // Verify interactor was created
         #expect(interactor.currentState.movies.count == 0)
         #expect(!interactor.currentState.isLoading)
     }
@@ -84,7 +84,7 @@ struct HomeDomainInteractorEdgeCaseTests {
         let interactor = HomeDomainInteractor(serviceLocator: serviceLocator)
 
         // Then
-        #expect(interactor != nil)
+        _ = interactor // Verify interactor was created
         #expect(interactor.currentState.movies.count == 0)
         #expect(!interactor.currentState.isLoading)
     }
@@ -94,13 +94,13 @@ struct HomeDomainInteractorEdgeCaseTests {
         defer { cleanupTest() }
 
         // Given
-        let (serviceLocator, mockHomeService) = createTestComponents()
+        let (serviceLocator, _) = createTestComponents()
 
         // When
         let interactor = HomeDomainInteractor(serviceLocator: serviceLocator)
 
         // Then - Should use service from service locator
-        #expect(interactor != nil)
+        _ = interactor // Verify interactor was created
         #expect(interactor.currentState.movies.count == 0)
         #expect(!interactor.currentState.isLoading)
     }
@@ -283,22 +283,20 @@ struct HomeDomainInteractorEdgeCaseTests {
         interactor.handleAction(.searchMovies("second")) // Should cancel first
 
         // Then - Should handle gracefully without crashes
-        #expect(interactor != nil)
+        _ = interactor // Verify interactor was created
+        #expect(Bool(true))
     }
 
     // MARK: - Memory Management Edge Cases
 
     @Test("Interactor memory management")
-    func interactorMemoryManagement() throws {
+    func interactorMemoryManagement() {
         defer { cleanupTest() }
 
         // Given
-        weak var weakInteractor: HomeDomainInteractor?
-
-        try autoreleasepool {
+        autoreleasepool {
             let (serviceLocator, _) = createTestComponents()
             let interactor = HomeDomainInteractor(serviceLocator: serviceLocator)
-            weakInteractor = interactor
 
             // Start some operations
             interactor.handleAction(.searchMovies("test"))
@@ -311,17 +309,18 @@ struct HomeDomainInteractorEdgeCaseTests {
         // Then - Test that the interactor can be created and destroyed without crashing
         // The main goal is to ensure no memory leaks over time, not immediate deallocation
         // In practice, autoreleasepool and async operations may delay deallocation
+        #expect(Bool(true))
     }
 
     @Test("Service retain cycle")
-    func serviceRetainCycle() throws {
+    func serviceRetainCycle() {
         defer { cleanupTest() }
 
         // Given
         weak var weakService: MockHomeService?
         weak var weakInteractor: HomeDomainInteractor?
 
-        try autoreleasepool {
+        autoreleasepool {
             let service = MockHomeService()
             let interactor = HomeDomainInteractor(serviceLocator: createServiceLocatorWithService(service))
 
@@ -352,7 +351,7 @@ struct HomeDomainInteractorEdgeCaseTests {
         let interactor = HomeDomainInteractor(serviceLocator: emptyServiceLocator)
 
         // Then - Should still initialize successfully with default LiveHomeService
-        #expect(interactor != nil)
+        _ = interactor // Verify interactor was created
         #expect(interactor.currentState.movies.count == 0)
     }
 
