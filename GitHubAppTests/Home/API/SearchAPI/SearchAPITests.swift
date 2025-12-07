@@ -27,7 +27,8 @@ struct SearchAPITests {
         let endpoint = SearchAPI.searchMovies(query: query, page: page)
 
         // Then
-        #expect(endpoint != nil)
+        _ = endpoint
+        #expect(Bool(true))
     }
 
     @Test("SearchAPI path includes search movie endpoint")
@@ -135,7 +136,8 @@ struct SearchAPITests {
         let endpoint = SearchAPI.searchMovies(query: query, page: page)
 
         // Then
-        #expect(endpoint != nil)
+        _ = endpoint
+        #expect(Bool(true))
     }
 
     @Test("SearchAPI path with special characters in query")
@@ -203,7 +205,8 @@ struct SearchAPITests {
         let path = endpoint.path
 
         // Then - Should be valid URL
-        #expect(URL(string: path) != nil)
+        let url = URL(string: path)
+        #expect(url != nil)
     }
 
     @Test("SearchAPI includes base URL from configuration")

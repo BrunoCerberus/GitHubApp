@@ -42,7 +42,7 @@ struct HomeServiceTests {
         let publisher = homeService.searchMovies(with: query)
 
         // Then
-        #expect(publisher != nil)
+        _ = publisher
         // Verify it's the correct type (this will be caught at compile time)
         let _: AnyPublisher<MoviesResponse, Error> = publisher
     }
@@ -58,7 +58,7 @@ struct HomeServiceTests {
         let publisher = homeService.fetchCredits(with: movieId)
 
         // Then
-        #expect(publisher != nil)
+        _ = publisher
         // Verify it's the correct type (this will be caught at compile time)
         let _: AnyPublisher<MovieCreditsResponse, Error> = publisher
     }
@@ -74,7 +74,7 @@ struct HomeServiceTests {
         let publisher = homeService.fetchReviews(with: movieId)
 
         // Then
-        #expect(publisher != nil)
+        _ = publisher
         // Verify it's the correct type (this will be caught at compile time)
         let _: AnyPublisher<MovieReviewsResponse, Error> = publisher
     }
@@ -124,7 +124,7 @@ struct HomeServiceTests {
         let publisher = homeService.fetchMovies()
 
         // Then
-        #expect(publisher != nil)
+        _ = publisher
         let _: AnyPublisher<MoviesResponse, Error> = publisher
     }
 
@@ -138,7 +138,7 @@ struct HomeServiceTests {
         let publisher = homeService.fetchMovies(page: 2)
 
         // Then
-        #expect(publisher != nil)
+        _ = publisher
         let _: AnyPublisher<MoviesResponse, Error> = publisher
     }
 
@@ -152,7 +152,7 @@ struct HomeServiceTests {
         let publisher = homeService.searchMovies(with: "test query", page: 3)
 
         // Then
-        #expect(publisher != nil)
+        _ = publisher
         let _: AnyPublisher<MoviesResponse, Error> = publisher
     }
 

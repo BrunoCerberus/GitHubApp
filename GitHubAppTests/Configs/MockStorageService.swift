@@ -6,7 +6,7 @@
 //
 
 import Foundation
-@testable import GitHubApp
+@preconcurrency @testable import GitHubApp
 
 /**
  * Mock implementation of StorageService for testing.
@@ -46,15 +46,18 @@ final class MockStorageService: StorageService {
         }
     }
 
-    func fetch<T: Codable & Identifiable>(_ type: T.Type, context _: String?) async throws -> [T] {
-        if type == Movie.self {
-            // swiftlint:disable:next force_cast
-            return movies as! [T]
+    nonisolated func fetch<T: Codable & Identifiable>(_: T.Type, context _: String?) async throws -> [T] {
+        // Use assumeIsolated since we're @MainActor and these are called from test code
+        await MainActor.run { @Sendable [movies] in
+            if T.self == Movie.self {
+                // swiftlint:disable:next force_cast
+                return movies as! [T]
+            }
+            return []
         }
-        return []
     }
 
-    func fetch<T: Codable & Identifiable>(_ type: T.Type, id: T.ID, context: String?) async throws -> T? {
+    nonisolated func fetch<T: Codable & Identifiable>(_ type: T.Type, id: T.ID, context: String?) async throws -> T? {
         let objects = try await fetch(type, context: context)
         return objects.first { $0.id == id }
     }
@@ -71,9 +74,11 @@ final class MockStorageService: StorageService {
         }
     }
 
-    func deleteAll(_ type: (some Codable & Identifiable).Type, context _: String?) async throws {
-        if type == Movie.self {
-            movies.removeAll()
+    nonisolated func deleteAll<T: Codable & Identifiable>(_: T.Type, context _: String?) async throws {
+        await MainActor.run { @Sendable in
+            if T.self == Movie.self {
+                movies.removeAll()
+            }
         }
     }
 

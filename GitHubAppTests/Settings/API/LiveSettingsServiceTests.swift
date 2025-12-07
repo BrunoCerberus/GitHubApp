@@ -35,7 +35,6 @@ struct LiveSettingsServiceTests {
 
         // When
         var resultImage: UIImage?
-        var cancelled = false
 
         let cancellable = settingsService.loadProfileImage()
             .sink { image in

@@ -285,6 +285,8 @@ struct KeychainManagerTests {
         // Note: We can't directly test the private accessGroup property,
         // but we can verify the instance is created successfully
         // Test passes if no exception is thrown during initialization
+        _ = manager
+        #expect(Bool(true))
     }
 
     @Test("KeychainManager initialization without access group")
@@ -294,6 +296,8 @@ struct KeychainManagerTests {
         // Note: We can't directly test the private accessGroup property,
         // but we can verify the instance is created successfully
         // Test passes if no exception is thrown during initialization
+        _ = manager
+        #expect(Bool(true))
     }
 
     @Test("Saving and retrieving very long strings")

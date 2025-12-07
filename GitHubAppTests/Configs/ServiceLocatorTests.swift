@@ -7,7 +7,7 @@
 //
 
 import Foundation
-@testable import GitHubApp
+@preconcurrency @testable import GitHubApp
 import Testing
 
 /// Unit tests for `ServiceLocator` covering registration, retrieval,
@@ -51,8 +51,8 @@ struct ServiceLocatorTests { // swiftlint:disable:this type_body_length
         // Given & When
         let serviceLocator = ServiceLocator()
 
-        // Then
-        #expect(serviceLocator != nil)
+        // Then - Non-optional type, verify it's not registered
+        _ = serviceLocator
         #expect(!serviceLocator.isRegistered(TestServiceProtocol.self))
     }
 
@@ -453,7 +453,7 @@ struct ServiceLocatorTests { // swiftlint:disable:this type_body_length
 
         // When & Then
         #expect(error.errorDescription != nil)
-        #expect(error is LocalizedError)
+        #expect((error as Any) is LocalizedError)
     }
 
     // MARK: - Edge Cases

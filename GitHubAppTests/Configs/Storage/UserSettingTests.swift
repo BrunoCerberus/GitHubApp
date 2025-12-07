@@ -135,7 +135,7 @@ struct UserSettingTests {
     @Test("UserSetting updates value")
     func updateValue() throws {
         // Given
-        var setting = try UserSetting(
+        let setting = try UserSetting(
             key: "counter",
             value: 0,
             category: UserSetting.Category.app
@@ -154,7 +154,7 @@ struct UserSettingTests {
     @Test("UserSetting updates value multiple times")
     func updateValueMultipleTimes() throws {
         // Given
-        var setting = try UserSetting(
+        let setting = try UserSetting(
             key: "changing_value",
             value: "initial",
             category: UserSetting.Category.preferences
@@ -172,7 +172,7 @@ struct UserSettingTests {
     @Test("UserSetting update changes timestamp")
     func updateChangesTimestamp() throws {
         // Given
-        var setting = try UserSetting(
+        let setting = try UserSetting(
             key: "timestamp_test",
             value: "initial",
             category: UserSetting.Category.preferences

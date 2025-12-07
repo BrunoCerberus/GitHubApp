@@ -52,7 +52,8 @@ struct HomeViewSearchExecutionTests {
         // This will exercise the search handling logic
 
         // Then - The method should execute without error
-        #expect(view != nil)
+        _ = view
+        #expect(Bool(true))
     }
 
     @Test("Home view search query change with non-empty string")
@@ -71,7 +72,8 @@ struct HomeViewSearchExecutionTests {
         // The actual search change happens through SwiftUI's onChange modifier
 
         // Then - The method should execute without error
-        #expect(view != nil)
+        _ = view
+        #expect(Bool(true))
     }
 
     @Test("Home view onChange modifier")
@@ -91,7 +93,8 @@ struct HomeViewSearchExecutionTests {
         try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
 
         // Then - View should be properly configured
-        #expect(view != nil)
+        _ = view
+        #expect(Bool(true))
     }
 
     @Test("Home view search debouncing")
@@ -113,7 +116,8 @@ struct HomeViewSearchExecutionTests {
         try await Task.sleep(nanoseconds: 400_000_000) // 0.4 seconds (longer than 0.3s debounce)
 
         // Then - Search should be handled properly
-        #expect(view != nil)
+        _ = view
+        #expect(Bool(true))
     }
 
     @Test("Home view search work item cancellation")
@@ -132,6 +136,7 @@ struct HomeViewSearchExecutionTests {
         // This exercises the searchWorkItem?.cancel() logic
 
         // Then - Should handle cancellation properly
-        #expect(view != nil)
+        _ = view
+        #expect(Bool(true))
     }
 }

@@ -71,9 +71,9 @@ struct MovieDetailsViewModelTests {
 
         // Then - Initial state should be loading
         if case .loading = sut.viewState {
-            #expect(true)
+            #expect(Bool(true))
         } else {
-            #expect(false, "Expected loading state but got \(sut.viewState)")
+            Issue.record("Expected loading state but got \(sut.viewState)")
         }
     }
 
@@ -312,9 +312,9 @@ struct MovieDetailsViewModelTests {
 
         // Then - Should process event and update state
         if case .success = sut.viewState {
-            #expect(true)
+            #expect(Bool(true))
         } else {
-            #expect(false, "Expected success state after sending fetchData event")
+            Issue.record("Expected success state after sending fetchData event")
         }
     }
 
