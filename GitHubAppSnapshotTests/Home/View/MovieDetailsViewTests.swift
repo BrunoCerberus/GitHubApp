@@ -82,7 +82,7 @@ struct MovieDetailsViewTests { // swiftlint:disable:this type_body_length
 
     @Test("Movie details view snapshot matches stored reference with full data")
     func movieDetailsViewSnapshotWithFullData() async throws {
-        let (_, viewModel, view) = createTestComponents()
+        let (_, _, view) = createTestComponents()
         let controller: UIViewController = view.wrappedViewController
 
         // Wait for auto-load to complete
@@ -192,7 +192,7 @@ struct MovieDetailsViewTests { // swiftlint:disable:this type_body_length
     @Test("Movie details view displays empty state message for no credits")
     func movieDetailsViewDisplaysEmptyStateMessageForNoCredits() async throws {
         // This test verifies the behavior when credits are empty
-        let (_, viewModel, view) = createTestComponents()
+        let (_, _, view) = createTestComponents()
         let controller: UIViewController = view.wrappedViewController
 
         // Wait for auto-load to complete

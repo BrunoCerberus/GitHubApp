@@ -85,7 +85,7 @@ struct HomeViewTests { // swiftlint:disable:this type_body_length
     func homeView() async throws {
         defer { cleanupTest() }
 
-        let (_, _, viewModel, view) = createTestComponents()
+        let (_, _, _, view) = createTestComponents()
         _ = view.wrappedViewController
 
         // Wait for auto-load to complete (ViewModel calls loadInitialData in init)

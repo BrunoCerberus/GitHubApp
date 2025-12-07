@@ -123,13 +123,13 @@ final class GitHubAppSearchUITests: XCTestCase {
     /// Test tapping on a search result navigates to movie details
     func testTappingSearchResultNavigatesToMovieDetails() throws {
         // SKIP: Navigation behavior varies based on UI configuration and system state
-        try XCTSkip("Navigation test is environment-dependent")
+        throw XCTSkip("Navigation test is environment-dependent")
     }
 
     /// Test clearing search text returns to empty state
     func testClearingSearchTextReturnsToEmptyState() throws {
         // SKIP: Text clearing behavior varies with different keyboard/input methods
-        try XCTSkip("Text clearing test is input-method dependent")
+        throw XCTSkip("Text clearing test is input-method dependent")
     }
 
     /// Test that search is debounced (only performs final search, not every keystroke)
@@ -191,7 +191,7 @@ final class GitHubAppSearchUITests: XCTestCase {
     /// Test navigating back from movie details to search results
     func testNavigatingBackFromMovieDetails() throws {
         // SKIP: Complex navigation flow is brittle across different simulator/device configurations
-        try XCTSkip("Complex navigation test requires stable device configuration")
+        throw XCTSkip("Complex navigation test requires stable device configuration")
     }
 
     /// Test that tab persistence maintains search state
