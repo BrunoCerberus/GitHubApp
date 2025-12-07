@@ -40,8 +40,9 @@ struct DeeplinkRouterExtraTests {
             navigationController: navController
         )
 
-        // Then
-        #expect(router != nil)
+        // Then - Router should be created successfully
+        _ = router
+        #expect(Bool(true))
     }
 
     @Test("Deeplink router initialization with minimal parameters")
@@ -52,8 +53,9 @@ struct DeeplinkRouterExtraTests {
         // When
         let router = DeeplinkRouter(deeplinkManager: manager)
 
-        // Then
-        #expect(router != nil)
+        // Then - Router should be created successfully
+        _ = router
+        #expect(Bool(true))
     }
 
     // MARK: - Process URL Tests
@@ -213,9 +215,8 @@ struct DeeplinkRouterExtraTests {
         // When
         deeplinkRouter.updateNavigationController(newNavController)
 
-        // Then
-        // No assertion needed - just testing that the method doesn't crash
-        #expect(deeplinkRouter != nil)
+        // Then - No assertion needed - just testing that the method doesn't crash
+        #expect(Bool(true))
     }
 
     // MARK: - Edge Cases

@@ -90,7 +90,7 @@ struct FavoritesDomainInteractorTests {
     @Test("Load favorite movies with service error updates state with error")
     func loadFavoriteMoviesWithError() async throws {
         // Given
-        let (sut, _) = createTestComponents()
+        _ = createTestComponents()
 
         // Create a mock service that fails
         let failingService = MockStorageService()
@@ -353,7 +353,6 @@ struct FavoritesDomainInteractorTests {
         sut.process(.loadFavoriteMovies)
 
         // Check loading state immediately
-        let loadingState = sut.currentState
         // Note: With minimal delay, loading might be set, but might have cleared already
         // This test verifies the loading logic exists
 
@@ -379,7 +378,7 @@ struct FavoritesDomainInteractorTests {
         sut.process(.loadFavoriteMovies)
         try await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
 
-        var stateWithError = sut.currentState
+        let stateWithError = sut.currentState
         #expect(stateWithError.error != nil)
 
         // When - Toggle without failure - use a normal service now

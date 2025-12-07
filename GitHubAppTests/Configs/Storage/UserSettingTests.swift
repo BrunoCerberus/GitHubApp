@@ -135,7 +135,7 @@ struct UserSettingTests {
     @Test("UserSetting updates value")
     func updateValue() throws {
         // Given
-        var setting = try UserSetting(
+        let setting = try UserSetting(
             key: "counter",
             value: 0,
             category: UserSetting.Category.app
@@ -143,36 +143,38 @@ struct UserSettingTests {
         let originalUpdatedAt = setting.updatedAt
 
         // When
-        try setting.updateValue(42)
+        var mutableSetting = setting
+        try mutableSetting.updateValue(42)
 
         // Then
-        let newValue: Int = try setting.getValue(as: Int.self)
+        let newValue: Int = try mutableSetting.getValue(as: Int.self)
         #expect(newValue == 42)
-        #expect(setting.updatedAt > originalUpdatedAt)
+        #expect(mutableSetting.updatedAt > originalUpdatedAt)
     }
 
     @Test("UserSetting updates value multiple times")
     func updateValueMultipleTimes() throws {
         // Given
-        var setting = try UserSetting(
+        let setting = try UserSetting(
             key: "changing_value",
             value: "initial",
             category: UserSetting.Category.preferences
         )
 
         // When
-        try setting.updateValue("second")
-        try setting.updateValue("third")
+        var mutableSetting = setting
+        try mutableSetting.updateValue("second")
+        try mutableSetting.updateValue("third")
 
         // Then
-        let finalValue: String = try setting.getValue(as: String.self)
+        let finalValue: String = try mutableSetting.getValue(as: String.self)
         #expect(finalValue == "third")
     }
 
     @Test("UserSetting update changes timestamp")
     func updateChangesTimestamp() throws {
         // Given
-        var setting = try UserSetting(
+        let setting = try UserSetting(
             key: "timestamp_test",
             value: "initial",
             category: UserSetting.Category.preferences
@@ -180,11 +182,12 @@ struct UserSettingTests {
         let initialTimestamp = setting.updatedAt
 
         // When
+        var mutableSetting = setting
         usleep(10000) // Small delay to ensure time difference (10ms)
-        try setting.updateValue("updated")
+        try mutableSetting.updateValue("updated")
 
         // Then
-        #expect(setting.updatedAt > initialTimestamp)
+        #expect(mutableSetting.updatedAt > initialTimestamp)
     }
 
     // MARK: - Category Tests

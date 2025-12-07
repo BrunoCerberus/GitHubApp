@@ -57,6 +57,7 @@ struct SearchDomainInteractorTests {
     func searchMoviesSuccess() async throws {
         // Given
         let (sut, mockSearchService, _) = createTestComponents()
+        _ = mockSearchService // Silence unused variable warning
         let query = "test query"
         defer {
             try? APIKeysProvider.removeMovieAPIKey()

@@ -17,7 +17,9 @@ struct DeeplinkRouterTests {
     func initializationWithoutCoordinator() {
         let deeplinkManager = DeeplinkManager()
         let router = DeeplinkRouter(deeplinkManager: deeplinkManager)
-        #expect(router != nil)
+        // Router is non-optional - just verify it was created
+        _ = router
+        #expect(Bool(true))
     }
 
     // MARK: - URL Processing Tests

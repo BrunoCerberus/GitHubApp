@@ -48,6 +48,7 @@ final class GitHubAppSceneDelegateURLTestsSimple: XCTestCase {
         XCTAssertNil(newSceneDelegate.window) // Window is initially nil by default
     }
 
+    @available(iOS, deprecated: 26.0, message: "Use init(windowScene:) instead")
     func testSceneDelegateWindowProperty() {
         // Given
         let window = sceneDelegate.window

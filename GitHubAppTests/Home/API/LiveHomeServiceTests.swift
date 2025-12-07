@@ -286,14 +286,13 @@ struct LiveHomeServiceTests {
         // Given
         let service = LiveHomeService()
         var cancellables = Set<AnyCancellable>()
-        var receivedOnMainThread = false
 
         // When
         service.fetchMovies()
             .sink(
                 receiveCompletion: { _ in },
                 receiveValue: { _ in
-                    receivedOnMainThread = Thread.isMainThread
+                    _ = Thread.isMainThread
                 }
             )
             .store(in: &cancellables)

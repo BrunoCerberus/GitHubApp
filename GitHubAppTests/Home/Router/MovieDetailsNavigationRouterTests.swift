@@ -34,7 +34,8 @@ struct MovieDetailsNavigationRouterTests {
         let router = MovieDetailsNavigationRouter(coordinator: coordinator, serviceLocator: nil)
 
         // Then - Router should initialize successfully
-        #expect(router != nil, "Router should initialize with coordinator")
+        _ = router
+        #expect(Bool(true), "Router should initialize with coordinator")
     }
 
     @Test("Router initializes without coordinator")
@@ -43,7 +44,8 @@ struct MovieDetailsNavigationRouterTests {
         let router = MovieDetailsNavigationRouter(coordinator: nil, serviceLocator: nil)
 
         // Then - Router should initialize successfully
-        #expect(router != nil, "Router should initialize without coordinator")
+        _ = router
+        #expect(Bool(true), "Router should initialize without coordinator")
     }
 
     @Test("Router initializes with explicit service locator")
@@ -57,7 +59,8 @@ struct MovieDetailsNavigationRouterTests {
         let router = MovieDetailsNavigationRouter(coordinator: nil, serviceLocator: serviceLocator)
 
         // Then - Router should initialize successfully
-        #expect(router != nil, "Router should initialize with service locator")
+        _ = router
+        #expect(Bool(true), "Router should initialize with service locator")
     }
 
     @Test("Router handles back navigation event with UIKit navigation controller")
@@ -177,7 +180,8 @@ struct MovieDetailsNavigationRouterTests {
         let router = MovieDetailsNavigationRouter(coordinator: coordinator, serviceLocator: nil)
 
         // Then - Router should have service locator from coordinator (internal property, verify via initialization)
-        #expect(router != nil, "Router should successfully initialize with coordinator's service locator")
+        _ = router
+        #expect(Bool(true), "Router should successfully initialize with coordinator's service locator")
     }
 
     @Test("Router uses explicitly provided service locator over coordinator's")
@@ -195,6 +199,7 @@ struct MovieDetailsNavigationRouterTests {
         let router = MovieDetailsNavigationRouter(coordinator: coordinator, serviceLocator: explicitServiceLocator)
 
         // Then - Router should initialize with explicit service locator
-        #expect(router != nil, "Router should use explicitly provided service locator")
+        _ = router
+        #expect(Bool(true), "Router should use explicitly provided service locator")
     }
 }

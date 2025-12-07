@@ -25,8 +25,8 @@ struct GitHubAppSceneDelegateComprehensiveTests {
         // Given
         let newSceneDelegate = GitHubAppSceneDelegate()
 
-        // When & Then - Should initialize successfully
-        #expect(newSceneDelegate != nil)
+        // When & Then - Should initialize successfully (non-optional type)
+        _ = newSceneDelegate
         #expect(newSceneDelegate.window == nil)
     }
 
@@ -44,6 +44,7 @@ struct GitHubAppSceneDelegateComprehensiveTests {
         #expect(respondsToContinue == true)
     }
 
+    @available(iOS, deprecated: 26.0, message: "Use init(windowScene:) instead")
     @Test("Window property management")
     func windowPropertyManagement() {
         // Given
@@ -68,9 +69,9 @@ struct GitHubAppSceneDelegateComprehensiveTests {
             GitHubAppSceneDelegate(),
         ]
 
-        // When & Then - All should initialize properly
+        // When & Then - All should initialize properly (non-optional types)
+        #expect(delegates.count == 3)
         for delegate in delegates {
-            #expect(delegate != nil)
             #expect(delegate.window == nil)
         }
     }
@@ -92,8 +93,9 @@ struct GitHubAppSceneDelegateComprehensiveTests {
         // Given - SceneDelegate should initialize with a service locator
         let newSceneDelegate = GitHubAppSceneDelegate()
 
-        // When & Then - Should initialize successfully
-        #expect(newSceneDelegate != nil)
+        // When & Then - Should initialize successfully (non-optional type)
+        _ = newSceneDelegate
+        #expect(Bool(true))
     }
 
     @Test("User activity creation")
@@ -102,10 +104,7 @@ struct GitHubAppSceneDelegateComprehensiveTests {
         let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
         userActivity.webpageURL = URL(string: "https://movieapp.com/movie/789")
 
-        // When
-        #expect(userActivity != nil)
-
-        // Then - Should create user activity properly
+        // When & Then - NSUserActivity is non-optional, verify properties
         #expect(userActivity.activityType == NSUserActivityTypeBrowsingWeb)
         #expect(userActivity.webpageURL != nil)
     }

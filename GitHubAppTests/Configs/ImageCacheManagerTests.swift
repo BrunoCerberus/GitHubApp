@@ -31,8 +31,9 @@ struct ImageCacheManagerTests {
         // When
         let instance = ImageCacheManager.shared
 
-        // Then
-        #expect(instance != nil, "Shared instance should be accessible")
+        // Then - Non-optional type, verify creation
+        _ = instance
+        #expect(Bool(true), "Shared instance should be accessible")
     }
 
     @Test("ImageCacheManager singleton returns same instance")

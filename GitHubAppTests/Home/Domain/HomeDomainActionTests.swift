@@ -45,10 +45,11 @@ struct HomeDomainActionTests {
         let loadAction = HomeDomainAction.loadPersistedFavoriteMovies
 
         // Verify that all cases can be instantiated
-        #expect(fetchAction != nil)
-        #expect(searchAction != nil)
-        #expect(toggleAction != nil)
-        #expect(loadAction != nil)
+        _ = fetchAction
+        _ = searchAction
+        _ = toggleAction
+        _ = loadAction
+        #expect(Bool(true))
     }
 
     // MARK: - Helper Methods

@@ -40,10 +40,8 @@ struct GitHubAppSceneDelegateURLHandlingTests {
         // Given
         let newSceneDelegate = GitHubAppSceneDelegate()
 
-        // When - Initialize
-        #expect(newSceneDelegate != nil)
-
-        // Then - Should have proper initial state
+        // When & Then - Non-optional type, verify initial state
+        _ = newSceneDelegate
         #expect(newSceneDelegate.window == nil)
     }
 
@@ -55,10 +53,7 @@ struct GitHubAppSceneDelegateURLHandlingTests {
         let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
         userActivity.webpageURL = URL(string: "https://movieapp.com/movie/789")
 
-        // When
-        #expect(userActivity != nil)
-
-        // Then - Should create user activity properly
+        // When & Then - Non-optional type, verify properties
         #expect(userActivity.activityType == NSUserActivityTypeBrowsingWeb)
         #expect(userActivity.webpageURL != nil)
     }
@@ -104,7 +99,8 @@ struct GitHubAppSceneDelegateURLHandlingTests {
         // Given
         let newSceneDelegate = GitHubAppSceneDelegate()
 
-        // When & Then - Should initialize without crashing
-        #expect(newSceneDelegate != nil)
+        // When & Then - Non-optional type, verify initialization
+        _ = newSceneDelegate
+        #expect(Bool(true))
     }
 }

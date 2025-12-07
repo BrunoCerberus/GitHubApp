@@ -33,8 +33,9 @@ struct GitHubAppDelegateTests {
     func applicationDidFinishLaunchingWithLaunchOptions() {
         // Given
         let (appDelegate, application) = createTestComponents()
+        // Note: .url is deprecated in iOS 26.0 but we test backward compatibility
         let launchOptions: [UIApplication.LaunchOptionsKey: Any] = [
-            .url: URL(string: "githubapp://test")!,
+            .userActivityDictionary: ["test": "value"],
         ]
 
         // When

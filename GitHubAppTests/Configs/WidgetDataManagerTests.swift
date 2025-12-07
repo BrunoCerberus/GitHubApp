@@ -40,8 +40,9 @@ struct WidgetDataManagerTests {
         // When
         let instance = WidgetDataManager.shared
 
-        // Then
-        #expect(instance != nil, "Shared instance should be accessible")
+        // Then - Non-optional type, verify creation
+        _ = instance
+        #expect(Bool(true), "Shared instance should be accessible")
     }
 
     @Test("WidgetDataManager singleton returns same instance")
