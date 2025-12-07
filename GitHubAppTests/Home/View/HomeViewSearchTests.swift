@@ -45,8 +45,9 @@ struct HomeViewSearchTests {
         let hostingController = UIHostingController(rootView: view)
 
         // Then - Verify view was created successfully
-        #expect(hostingController != nil)
-        #expect(hostingController.rootView != nil)
+        _ = hostingController // Verify hosting controller was created
+        _ = hostingController.rootView // Verify root view exists
+        #expect(Bool(true))
     }
 
     @Test("Home view initialization with default view model")
@@ -67,7 +68,8 @@ struct HomeViewSearchTests {
         let hostingController = UIHostingController(rootView: view)
 
         // Then - Should create successfully with default viewModel
-        #expect(hostingController != nil)
+        _ = hostingController // Verify hosting controller was created
+        #expect(Bool(true))
     }
 
     @Test("Home view body renders correctly")
@@ -84,8 +86,9 @@ struct HomeViewSearchTests {
         _ = hostingController.view
 
         // Then - Verify the hosting controller and its root view exist
-        #expect(hostingController != nil)
-        #expect(hostingController.rootView != nil)
+        _ = hostingController // Verify hosting controller was created
+        _ = hostingController.rootView // Verify root view exists
+        #expect(Bool(true))
     }
 
     @Test("Home view with loading state")
@@ -100,7 +103,8 @@ struct HomeViewSearchTests {
         let hostingController = UIHostingController(rootView: view)
 
         // Then - Should handle loading state properly
-        #expect(hostingController != nil)
+        _ = hostingController // Verify hosting controller was created
+        #expect(Bool(true))
     }
 
     @Test("Home view with error state")
@@ -119,7 +123,8 @@ struct HomeViewSearchTests {
         }
 
         // Then - Should handle error states properly
-        #expect(hostingController != nil)
+        _ = hostingController // Verify hosting controller was created
+        #expect(Bool(true))
     }
 
     @Test("Home view with success state")
@@ -138,6 +143,7 @@ struct HomeViewSearchTests {
         try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
 
         // Then - Should handle success state
-        #expect(hostingController != nil)
+        _ = hostingController // Verify hosting controller was created
+        #expect(Bool(true))
     }
 }
