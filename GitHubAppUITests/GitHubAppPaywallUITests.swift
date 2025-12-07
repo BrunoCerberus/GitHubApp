@@ -181,7 +181,7 @@ final class GitHubAppPaywallUITests: XCTestCase {
         // The exact text may vary, so we look for common patterns
         let restoreButton = app.buttons["Restore Purchases"]
         let restoreLink = app.links["Restore Purchases"]
-        let hasRestoreOption = restoreButton.exists || restoreLink.exists
+        _ = restoreButton.exists || restoreLink.exists
 
         // Note: The restore option may take time to appear in SubscriptionStoreView
         // We just verify the paywall loaded successfully
