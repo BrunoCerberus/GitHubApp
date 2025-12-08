@@ -65,11 +65,43 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
         self.window = window
 
-        // Show splash screen first, then transition to main app
-        showSplashScreen(in: window, windowScene: windowScene)
+        // Skip splash screen during UI tests for faster test execution
+        if isRunningUITests() {
+            showMainApp(in: window)
+        } else {
+            // Show splash screen first, then transition to main app
+            showSplashScreen(in: window, windowScene: windowScene)
+        }
 
         // Make the window visible and set it as the key window
         window.makeKeyAndVisible()
+    }
+
+    /**
+     * Checks if the app is running in UI test mode.
+     *
+     * - Returns: `true` if running UI tests, `false` otherwise
+     */
+    private func isRunningUITests() -> Bool {
+        ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == "UI"
+    }
+
+    /**
+     * Shows the main app directly without splash screen.
+     *
+     * Used during UI tests to skip the splash animation.
+     *
+     * - Parameter window: The main window to display content in
+     */
+    private func showMainApp(in window: UIWindow) {
+        let rootView = UIHostingController(
+            rootView: CoordinatorView(serviceLocator: serviceLocator)
+        )
+        rootView.overrideUserInterfaceStyle = .dark
+        window.rootViewController = rootView
+
+        setupDeeplinkRouter(with: rootView)
+        setupCoordinatorObserver()
     }
 
     /**
