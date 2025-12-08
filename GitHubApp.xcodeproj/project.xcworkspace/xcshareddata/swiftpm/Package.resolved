@@ -1,5 +1,5 @@
 {
-  "originHash" : "adc43d27672c130c1cb6e7298c8c08907bed2b9d96d7c224923249237eab74c3",
+  "originHash" : "939fdbf64c1dcef248b5c3e75591bb4e855a66d694ed6c8099108805400cb4a1",
   "pins" : [
     {
       "identity" : "entropycore",
@@ -7,6 +7,15 @@
       "location" : "https://github.com/BrunoCerberus/EntropyCore.git",
       "state" : {
         "revision" : "7603844047743446715de4069799b086fa90204c"
+      }
+    },
+    {
+      "identity" : "lottie-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/airbnb/lottie-ios.git",
+      "state" : {
+        "revision" : "a004050748dc197c56256a14dca49a035d74726c",
+        "version" : "4.5.2"
       }
     },
     {
