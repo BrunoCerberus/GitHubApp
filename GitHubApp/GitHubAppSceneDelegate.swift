@@ -34,6 +34,9 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
     /// Deeplink router for handling navigation
     private var deeplinkRouter: DeeplinkRouter?
 
+    /// Tracks whether splash screen has been shown
+    private var hasSplashBeenShown = false
+
     /**
      * Called when a scene is being created and connected to the app.
      *
@@ -58,27 +61,98 @@ final class GitHubAppSceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Ensure we have a valid window scene
         guard let windowScene: UIWindowScene = scene as? UIWindowScene else { return }
 
-        // Create the root view controller with SwiftUI integration and pass the configured ServiceLocator
-        let rootView: UIHostingController<CoordinatorView> = UIHostingController(
+        // Create and configure the main window
+        let window = UIWindow(windowScene: windowScene)
+        self.window = window
+
+        // Skip splash screen during UI tests for faster test execution
+        if isRunningUITests() {
+            showMainApp(in: window)
+        } else {
+            // Show splash screen first, then transition to main app
+            showSplashScreen(in: window, windowScene: windowScene)
+        }
+
+        // Make the window visible and set it as the key window
+        window.makeKeyAndVisible()
+    }
+
+    /**
+     * Checks if the app is running in UI test mode.
+     *
+     * - Returns: `true` if running UI tests, `false` otherwise
+     */
+    private func isRunningUITests() -> Bool {
+        ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == "UI"
+    }
+
+    /**
+     * Shows the main app directly without splash screen.
+     *
+     * Used during UI tests to skip the splash animation.
+     *
+     * - Parameter window: The main window to display content in
+     */
+    private func showMainApp(in window: UIWindow) {
+        let rootView = UIHostingController(
+            rootView: CoordinatorView(serviceLocator: serviceLocator)
+        )
+        rootView.overrideUserInterfaceStyle = .dark
+        window.rootViewController = rootView
+
+        setupDeeplinkRouter(with: rootView)
+        setupCoordinatorObserver()
+    }
+
+    /**
+     * Shows the splash screen with Lottie animation.
+     *
+     * After the animation completes, transitions to the main coordinator view.
+     *
+     * - Parameter window: The main window to display content in
+     * - Parameter windowScene: The window scene for configuration
+     */
+    private func showSplashScreen(in window: UIWindow, windowScene _: UIWindowScene) {
+        let splashView = SplashScreenView { [weak self] in
+            self?.transitionToMainApp(in: window)
+        }
+
+        let splashViewController = UIHostingController(rootView: splashView)
+        splashViewController.overrideUserInterfaceStyle = .dark
+        window.rootViewController = splashViewController
+    }
+
+    /**
+     * Transitions from splash screen to the main app coordinator.
+     *
+     * - Parameter window: The main window to update
+     */
+    private func transitionToMainApp(in window: UIWindow) {
+        let rootView = UIHostingController(
             rootView: CoordinatorView(serviceLocator: serviceLocator)
         )
 
         // Force dark mode for consistent UI appearance
         rootView.overrideUserInterfaceStyle = .dark
 
-        // Create and configure the main window
-        let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = rootView
-        self.window = window
+        // Animate transition from splash to main app
+        UIView.transition(
+            with: window,
+            duration: 0.3,
+            options: .transitionCrossDissolve,
+            animations: {
+                window.rootViewController = rootView
+            },
+            completion: { [weak self] _ in
+                // Initialize deeplink router with the coordinator
+                self?.setupDeeplinkRouter(with: rootView)
 
-        // Initialize deeplink router with the coordinator
-        setupDeeplinkRouter(with: rootView)
+                // Setup notification observer for coordinator availability
+                self?.setupCoordinatorObserver()
 
-        // Setup notification observer for coordinator availability
-        setupCoordinatorObserver()
-
-        // Make the window visible and set it as the key window
-        window.makeKeyAndVisible()
+                self?.hasSplashBeenShown = true
+            }
+        )
     }
 
     /**

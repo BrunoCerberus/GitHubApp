@@ -114,9 +114,12 @@ struct HomeViewTests { // swiftlint:disable:this type_body_length
             #expect(Bool(false), "Expected loading state initially")
         }
 
-        // Snapshot the loading state
+        // Snapshot the loading state with precision tolerance for CI environment differences
         await MainActor.run {
-            assertSnapshot(of: controller, as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig)))
+            assertSnapshot(
+                of: controller,
+                as: .wait(for: 0.5, on: .image(on: iPhoneAirConfig, precision: 0.99))
+            )
         }
     }
 

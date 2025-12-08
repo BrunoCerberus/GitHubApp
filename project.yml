@@ -18,6 +18,9 @@ packages:
   SnapshotTesting:
     url: https://github.com/pointfreeco/swift-snapshot-testing.git
     from: 1.16.0
+  Lottie:
+    url: https://github.com/airbnb/lottie-ios.git
+    from: 4.4.0
 
 settings:
   base:
@@ -111,6 +114,7 @@ targets:
       - sdk: UIKit.framework
       - sdk: Combine.framework
       - package: EntropyCore
+      - package: Lottie
       - target: GitHubAppWidgetExtension
         embed: true
     preBuildScripts:
