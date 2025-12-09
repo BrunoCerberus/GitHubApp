@@ -11,8 +11,8 @@ import SwiftUI
 /**
  * A splash screen view that displays a Lottie animation during app launch.
  *
- * This view shows a movie clapperboard animation that plays once and then
- * transitions to the main app content via the provided completion handler.
+ * This view shows a glamorous confetti celebration animation with colorful
+ * stars and streamers, then transitions to the main app content.
  */
 struct SplashScreenView: View {
     /// Callback invoked when the splash animation completes
@@ -26,24 +26,25 @@ struct SplashScreenView: View {
             Color.black
                 .ignoresSafeArea()
 
-            VStack(spacing: 20) {
-                LottieView(animation: .named("splash_animation"))
-                    .playing(loopMode: .playOnce)
-                    .animationDidFinish { _ in
-                        withAnimation(.easeOut(duration: 0.3)) {
-                            isAnimationComplete = true
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            onAnimationComplete()
-                        }
+            LottieView(animation: .named("splash_animation"))
+                .playing(loopMode: .playOnce)
+                .animationSpeed(2.0)
+                .animationDidFinish { _ in
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        isAnimationComplete = true
                     }
-                    .frame(width: 250, height: 250)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        onAnimationComplete()
+                    }
+                }
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
 
-                Text("GitHubApp")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.white)
-            }
+            Text("GitHubApp")
+                .font(.title)
+                .fontWeight(.bold)
+                .foregroundStyle(.white)
         }
         .opacity(isAnimationComplete ? 0 : 1)
     }
