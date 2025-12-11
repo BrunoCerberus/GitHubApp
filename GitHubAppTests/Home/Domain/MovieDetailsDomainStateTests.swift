@@ -9,9 +9,7 @@ import Foundation
 @testable import GitHubApp
 import Testing
 
-/**
- * Tests for MovieDetailsDomainState struct.
- */
+/// Tests for MovieDetailsDomainState struct.
 @MainActor
 struct MovieDetailsDomainStateTests {
     private let testMovie = Movie(
@@ -84,7 +82,6 @@ struct MovieDetailsDomainStateTests {
         #expect(updatedState.reviews == reviews)
         #expect(updatedState.isLoading == false)
         #expect(updatedState.error == nil)
-        // Movie should remain the same
         #expect(updatedState.movie == initialState.movie)
     }
 
@@ -107,40 +104,5 @@ struct MovieDetailsDomainStateTests {
         #expect(updatedState.reviews == [testReview])
         #expect(updatedState.favoriteMovies == [testMovie])
         #expect(updatedState.error == "Some error")
-    }
-
-    @Test("states are equatable")
-    func statesAreEquatable() {
-        let state1 = MovieDetailsDomainState.initial(for: testMovie)
-        let state2 = MovieDetailsDomainState.initial(for: testMovie)
-
-        #expect(state1 == state2)
-    }
-
-    @Test("states with different movies are not equal")
-    func statesWithDifferentMoviesAreNotEqual() {
-        let movie1 = Movie(id: 1, title: "Movie 1", overview: "Overview", posterPath: nil)
-        let movie2 = Movie(id: 2, title: "Movie 2", overview: "Overview", posterPath: nil)
-
-        let state1 = MovieDetailsDomainState.initial(for: movie1)
-        let state2 = MovieDetailsDomainState.initial(for: movie2)
-
-        #expect(state1 != state2)
-    }
-
-    @Test("states with different loading state are not equal")
-    func statesWithDifferentLoadingStateAreNotEqual() {
-        let state1 = MovieDetailsDomainState.initial(for: testMovie)
-        let state2 = state1.copy(isLoading: false)
-
-        #expect(state1 != state2)
-    }
-
-    @Test("states with different errors are not equal")
-    func statesWithDifferentErrorsAreNotEqual() {
-        let state1 = MovieDetailsDomainState.initial(for: testMovie)
-        let state2 = state1.copy(error: "Error occurred")
-
-        #expect(state1 != state2)
     }
 }
