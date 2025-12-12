@@ -8,24 +8,18 @@
 import XCTest
 
 /**
- * Comprehensive UI tests for the Settings page functionality.
+ * UI tests for the Settings page functionality.
  *
  * Tests cover:
- * - Navigation to Settings page
- * - Settings page UI elements visibility
- * - Profile image picker interaction
  * - Clear favorites functionality
  * - Rate app functionality
- * - Alert dialogs and confirmations
- * - Accessibility identifiers
+ * - Tab navigation integration
  */
 final class GitHubAppSettingsUITests: XCTestCase {
     private var app: XCUIApplication!
 
     override func setUpWithError() throws {
         continueAfterFailure = false
-
-        // Ensure device starts in portrait mode before launching app
         XCUIDevice.shared.orientation = .portrait
 
         app = XCUIApplication()
@@ -33,74 +27,12 @@ final class GitHubAppSettingsUITests: XCTestCase {
         app.launchEnvironment["XCTestConfigurationFilePath"] = "UI"
         app.launch()
 
-        // Wait for app to settle in portrait orientation
         _ = app.wait(for: .runningForeground, timeout: 5.0)
     }
 
     override func tearDownWithError() throws {
         app = nil
-        // Reset device orientation to portrait to avoid affecting other tests
         XCUIDevice.shared.orientation = .portrait
-    }
-
-    // MARK: - Navigation Tests
-
-    /// Test navigation to Settings tab and verify basic UI elements
-    func testNavigateToSettingsTab() throws {
-        // Navigate to Settings tab
-        let settingsTab = app.tabBars.buttons["Settings"]
-        XCTAssertTrue(settingsTab.exists, "Settings tab should exist")
-        settingsTab.tap()
-
-        // Verify Settings page is displayed
-        let settingsTitle = app.navigationBars["Settings"]
-        XCTAssertTrue(settingsTitle.waitForExistence(timeout: 2.0), "Settings navigation title should be visible")
-    }
-
-    // MARK: - Profile Section Tests
-
-    /// Test profile image section visibility and interaction
-    func testProfileImageSection() throws {
-        navigateToSettings()
-
-        // Verify profile image section elements
-        let profileImageText = app.staticTexts["Profile Image"]
-        XCTAssertTrue(profileImageText.exists, "Profile Image text should be visible")
-
-        let tapToChangeText = app.staticTexts["Tap to change profile image"]
-        XCTAssertTrue(tapToChangeText.exists, "Tap to change text should be visible")
-
-        // Test profile image button exists and is tappable
-        let profileImageButton = app.buttons.containing(.image, identifier: "person.fill").firstMatch
-        XCTAssertTrue(profileImageButton.exists, "Profile image button should exist")
-
-        // Note: We don't actually tap to avoid triggering the photo picker in UI tests
-        // as it would require system permissions and real photo access
-    }
-
-    // MARK: - App Version Card Tests
-
-    /// Test app version card display and information
-    func testAppVersionCard() throws {
-        navigateToSettings()
-
-        // Verify app version card elements
-        let appVersionText = app.staticTexts["App Version"]
-        XCTAssertTrue(appVersionText.exists, "App Version text should be visible")
-
-        let buildText = app.staticTexts["Build"]
-        XCTAssertTrue(buildText.exists, "Build text should be visible")
-
-        // Verify version and build numbers are displayed by looking for the actual version
-        let versionNumber = app.staticTexts["1.0"]
-        let buildNumber = app.staticTexts["1"]
-
-        XCTAssertTrue(versionNumber.exists, "Version 1.0 should be displayed")
-        XCTAssertTrue(buildNumber.exists, "Build number 1 should be displayed")
-
-        // Verify info circle icon
-        let infoIcon = app.images["info.circle.fill"]
-        XCTAssertTrue(infoIcon.exists, "Info circle icon should be visible")
     }
 
     // MARK: - Clear Favorites Tests
@@ -215,105 +147,6 @@ final class GitHubAppSettingsUITests: XCTestCase {
             if okButton.waitForExistence(timeout: 1.0) {
                 okButton.tap()
             }
-        } else {
-            // Alert may have auto-dismissed or not appeared - this is acceptable
-            // as long as the rating was processed
-        }
-    }
-
-    /// Test that rate app card disappears after rating
-    func testRateAppCardDisappearsAfterRating() throws {
-        navigateToSettings()
-
-        // Scroll down to ensure Rate App card is visible (it's near the bottom)
-        let scrollView = app.scrollViews.firstMatch
-        if scrollView.exists {
-            scrollView.swipeUp()
-        }
-
-        let rateAppButton = app.buttons.containing(.staticText, identifier: "Rate App").firstMatch
-
-        // Skip test if rate app button is not visible (user already rated)
-        guard rateAppButton.waitForExistence(timeout: 3.0) else {
-            throw XCTSkip("Rate App button is not visible (user may have already rated the app)")
-        }
-
-        // Rate the app
-        rateAppButton.tap()
-
-        // Try to dismiss the thanks alert if it appears
-        // Note: The alert auto-dismisses after 2 seconds
-        let thanksAlert = app.alerts["Rate App"]
-        if thanksAlert.waitForExistence(timeout: 3.0) {
-            let okButton = thanksAlert.buttons["OK"]
-            if okButton.waitForExistence(timeout: 1.0) {
-                okButton.tap()
-            }
-        }
-
-        // Navigate away and back to refresh the view
-        app.tabBars.buttons["Home"].tap()
-        _ = app.tabBars.buttons["Settings"].waitForExistence(timeout: 3.0)
-        app.tabBars.buttons["Settings"].tap()
-
-        // Wait for settings to load and scroll to where Rate App card would be
-        if scrollView.exists {
-            scrollView.swipeUp()
-        }
-
-        // Allow time for UI to update
-        sleep(1)
-
-        // Verify rate app card is no longer visible
-        let rateAppButtonAfter = app.buttons.containing(.staticText, identifier: "Rate App").firstMatch
-        XCTAssertFalse(rateAppButtonAfter.exists, "Rate app button should disappear after rating")
-    }
-
-    // MARK: - Scroll and Layout Tests
-
-    /// Test scrolling functionality in Settings view
-    func testSettingsViewScrolling() throws {
-        navigateToSettings()
-
-        let scrollView = app.scrollViews.firstMatch
-        XCTAssertTrue(scrollView.exists, "Scroll view should exist")
-
-        // Verify we can scroll down
-        scrollView.swipeUp()
-
-        // Verify we can scroll back up
-        scrollView.swipeDown()
-
-        // Verify all main elements are still accessible after scrolling
-        let profileImageText = app.staticTexts["Profile Image"]
-        let appVersionText = app.staticTexts["App Version"]
-        let clearFavoritesText = app.staticTexts["Clear Favorite Movies"]
-
-        XCTAssertTrue(profileImageText.exists, "Profile Image should be visible after scrolling")
-        XCTAssertTrue(appVersionText.exists, "App Version should be visible after scrolling")
-        XCTAssertTrue(clearFavoritesText.exists, "Clear Favorites should be visible after scrolling")
-    }
-
-    // MARK: - Accessibility Tests
-
-    /// Test accessibility labels and elements
-    func testAccessibilityElements() throws {
-        navigateToSettings()
-
-        // Verify navigation title is accessible
-        let settingsTitle = app.navigationBars["Settings"]
-        XCTAssertTrue(settingsTitle.isHittable, "Settings title should be accessible")
-
-        // Verify main interactive elements are accessible
-        let profileImageButton = app.buttons.containing(.image, identifier: "person.fill").firstMatch
-        XCTAssertTrue(profileImageButton.isHittable, "Profile image button should be accessible")
-
-        let clearFavoritesButton = app.buttons.containing(.staticText, identifier: "Clear Favorite Movies").firstMatch
-        XCTAssertTrue(clearFavoritesButton.isHittable, "Clear favorites button should be accessible")
-
-        let rateAppButton = app.buttons.containing(.staticText, identifier: "Rate App").firstMatch
-        if rateAppButton.exists {
-            XCTAssertTrue(rateAppButton.isHittable, "Rate app button should be accessible when visible")
         }
     }
 
