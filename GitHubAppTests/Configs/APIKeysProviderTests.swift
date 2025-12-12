@@ -92,13 +92,8 @@ struct APIKeysProviderTests {
         // Clear any existing key first
         try? APIKeysProvider.removeMovieAPIKey()
 
-        // When attempting to get a key that doesn't exist
-        do {
+        #expect(throws: KeychainManager.KeychainError.self) {
             _ = try APIKeysProvider.getMovieAPIKey()
-            Issue.record("Expected getMovieAPIKey to throw an error")
-        } catch {
-            // Then - Should throw an error
-            #expect(true)
         }
     }
 
@@ -110,7 +105,6 @@ struct APIKeysProviderTests {
         // When attempting to remove a key that doesn't exist
         // Then - Should succeed without throwing an error (idempotent behavior)
         try APIKeysProvider.removeMovieAPIKey()
-        #expect(true)
     }
 
     @Test("API key can be updated with new value")

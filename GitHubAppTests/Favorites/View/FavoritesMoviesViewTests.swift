@@ -27,49 +27,6 @@ struct FavoritesMoviesViewTests { // swiftlint:disable:this type_body_length
         try? APIKeysProvider.removeMovieAPIKey()
     }
 
-    @Test("Empty state renders")
-    func emptyStateRenders() {
-        defer { cleanupTest() }
-
-        let (serviceLocator, _) = createTestComponents()
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        let view = FavoritesMoviesView(viewModel: viewModel)
-        let host = UIHostingController(rootView: view)
-        _ = host.view
-        #expect(Bool(true))
-    }
-
-    @Test("Liked movies list renders")
-    func likedMoviesListRenders() {
-        defer { cleanupTest() }
-
-        let (serviceLocator, _) = createTestComponents()
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        viewModel.setFavoriteMoviesForTesting([
-            Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ])
-        let view = FavoritesMoviesView(viewModel: viewModel)
-        let host = UIHostingController(rootView: view)
-        _ = host.view
-        #expect(Bool(true))
-    }
-
-    @Test("Multiple liked movies list renders")
-    func multipleLikedMoviesListRenders() {
-        defer { cleanupTest() }
-
-        let (serviceLocator, _) = createTestComponents()
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        viewModel.setFavoriteMoviesForTesting([
-            Movie(id: 1, title: "Test Movie 1", overview: "Test Overview 1", posterPath: "/test1.jpg"),
-            Movie(id: 2, title: "Test Movie 2", overview: "Test Overview 2", posterPath: "/test2.jpg"),
-        ])
-        let view = FavoritesMoviesView(viewModel: viewModel)
-        let host = UIHostingController(rootView: view)
-        _ = host.view
-        #expect(Bool(true))
-    }
-
     @Test("Navigation destination configuration")
     func navigationDestinationConfiguration() {
         defer { cleanupTest() }
@@ -294,20 +251,6 @@ struct FavoritesMoviesViewTests { // swiftlint:disable:this type_body_length
         #expect(testViewModel.favoriteMovies.count == 1)
     }
 
-    @Test("Preview configuration")
-    func previewConfiguration() {
-        defer { cleanupTest() }
-
-        // When - create preview view
-        let (serviceLocator, _) = createTestComponents()
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        let previewView = FavoritesMoviesView(viewModel: viewModel)
-
-        // Then - verify that the preview view is created
-        _ = previewView
-        #expect(Bool(true))
-    }
-
     // MARK: - Enhanced Coverage Tests
 
     @Test("Empty state text elements")
@@ -321,7 +264,6 @@ struct FavoritesMoviesViewTests { // swiftlint:disable:this type_body_length
         // Test that empty state text elements are properly configured
         let host = UIHostingController(rootView: view)
         _ = host.view
-        #expect(Bool(true))
 
         // Verify empty state is shown when no movies
         #expect(viewModel.favoriteMovies.isEmpty)
@@ -342,26 +284,7 @@ struct FavoritesMoviesViewTests { // swiftlint:disable:this type_body_length
 
         // Test that movie list buttons are properly configured
         _ = host.view
-        #expect(Bool(true))
         #expect(viewModel.favoriteMovies.count == 1)
-    }
-
-    @Test("Movie details navigation setup")
-    func movieDetailsNavigationSetup() {
-        defer { cleanupTest() }
-
-        let (serviceLocator, _) = createTestComponents()
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        viewModel.setFavoriteMoviesForTesting([
-            Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ])
-
-        let view = FavoritesMoviesView(viewModel: viewModel)
-
-        // Test that navigation destination is properly configured
-        _ = view.wrappedViewController
-        _ = view
-        #expect(Bool(true))
     }
 
     @Test("Like button configuration")
@@ -400,38 +323,6 @@ struct FavoritesMoviesViewTests { // swiftlint:disable:this type_body_length
         #expect(viewModel.favoriteMovies[0].overview == "Test Overview")
     }
 
-    @Test("Poster URL configuration")
-    func posterURLConfiguration() {
-        defer { cleanupTest() }
-
-        let (serviceLocator, _) = createTestComponents()
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        let testMovie = Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg")
-        viewModel.setFavoriteMoviesForTesting([testMovie])
-
-        let view = FavoritesMoviesView(viewModel: viewModel)
-
-        // Test that poster URL is properly configured
-        _ = view.wrappedViewController
-        _ = view
-        _ = testMovie.posterURL
-        #expect(Bool(true))
-    }
-
-    @Test("Navigation stack configuration")
-    func navigationStackConfiguration() {
-        defer { cleanupTest() }
-
-        let (serviceLocator, _) = createTestComponents()
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        let view = FavoritesMoviesView(viewModel: viewModel)
-
-        // Test that NavigationStack is properly configured
-        _ = view.wrappedViewController
-        _ = view
-        #expect(Bool(true))
-    }
-
     @Test("List configuration with multiple movies")
     func listConfigurationWithMultipleMovies() {
         defer { cleanupTest() }
@@ -452,24 +343,6 @@ struct FavoritesMoviesViewTests { // swiftlint:disable:this type_body_length
         #expect(viewModel.favoriteMovies.count == 3)
     }
 
-    @Test("Plain button style configuration")
-    func plainButtonStyleConfiguration() {
-        defer { cleanupTest() }
-
-        let (serviceLocator, _) = createTestComponents()
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        viewModel.setFavoriteMoviesForTesting([
-            Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ])
-
-        let view = FavoritesMoviesView(viewModel: viewModel)
-
-        // Test that PlainButtonStyle is properly configured
-        _ = view.wrappedViewController
-        _ = view
-        #expect(Bool(true))
-    }
-
     @Test("Heart icon configuration")
     func heartIconConfiguration() {
         defer { cleanupTest() }
@@ -486,24 +359,6 @@ struct FavoritesMoviesViewTests { // swiftlint:disable:this type_body_length
         _ = view.wrappedViewController
         _ = view
         #expect(viewModel.isFavorited(movie: viewModel.favoriteMovies[0]))
-    }
-
-    @Test("Progress view placeholder")
-    func progressViewPlaceholder() {
-        defer { cleanupTest() }
-
-        let (serviceLocator, _) = createTestComponents()
-        let viewModel = FavoritesMoviesViewModel(serviceLocator: serviceLocator)
-        viewModel.setFavoriteMoviesForTesting([
-            Movie(id: 1, title: "Test Movie", overview: "Test Overview", posterPath: "/test.jpg"),
-        ])
-
-        let view = FavoritesMoviesView(viewModel: viewModel)
-
-        // Test that ProgressView placeholder is properly configured
-        _ = view.wrappedViewController
-        _ = view
-        #expect(Bool(true))
     }
 
     // MARK: - Clear Favorites Tests

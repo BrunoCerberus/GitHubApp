@@ -11,17 +11,6 @@ import Testing
 
 @MainActor
 struct DeeplinkRouterTests {
-    // MARK: - Initialization Tests
-
-    @Test("Router can be initialized without coordinator")
-    func initializationWithoutCoordinator() {
-        let deeplinkManager = DeeplinkManager()
-        let router = DeeplinkRouter(deeplinkManager: deeplinkManager)
-        // Router is non-optional - just verify it was created
-        _ = router
-        #expect(Bool(true))
-    }
-
     // MARK: - URL Processing Tests
 
     @Test("Processing invalid URL returns false")

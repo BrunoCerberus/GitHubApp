@@ -17,20 +17,6 @@ struct SearchAPITests {
         try? APIKeysProvider.removeMovieAPIKey()
     }
 
-    @Test("SearchAPI searchMovies case has associated values")
-    func searchMoviesCaseHasAssociatedValues() {
-        // Given
-        let query = "Inception"
-        let page = 2
-
-        // When
-        let endpoint = SearchAPI.searchMovies(query: query, page: page)
-
-        // Then
-        _ = endpoint
-        #expect(Bool(true))
-    }
-
     @Test("SearchAPI path includes search movie endpoint")
     func pathIncludesSearchMovieEndpoint() {
         // Given
@@ -124,20 +110,6 @@ struct SearchAPITests {
 
         // Then
         #expect(header == nil)
-    }
-
-    @Test("SearchAPI endpoint instance is not nil")
-    func endpointInstanceIsValid() {
-        // Given
-        let query = "test"
-        let page = 1
-
-        // When
-        let endpoint = SearchAPI.searchMovies(query: query, page: page)
-
-        // Then
-        _ = endpoint
-        #expect(Bool(true))
     }
 
     @Test("SearchAPI path with special characters in query")

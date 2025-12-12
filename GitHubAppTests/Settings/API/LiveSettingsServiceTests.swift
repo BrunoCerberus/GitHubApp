@@ -206,17 +206,6 @@ struct LiveSettingsServiceTests {
         cancellable.cancel()
     }
 
-    @Test("Settings service conforms to SettingsService protocol")
-    func serviceConformsToSettingsServiceProtocol() {
-        // Given
-        let (settingsService, _) = createTestComponents()
-        defer { cleanup() }
-
-        // When & Then
-        let _: any SettingsService = settingsService
-        #expect(true)
-    }
-
     @Test("Multiple save operations work sequentially")
     func multipleProfileImagesSequentialOperations() throws {
         // Given

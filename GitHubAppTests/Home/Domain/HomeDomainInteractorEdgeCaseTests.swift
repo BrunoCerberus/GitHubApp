@@ -269,23 +269,6 @@ struct HomeDomainInteractorEdgeCaseTests {
         _ = interactor.currentState
     }
 
-    @Test("Operation cancellation")
-    func operationCancellation() {
-        defer { cleanupTest() }
-
-        // Given
-        let (serviceLocator, _) = createTestComponents()
-        let interactor = HomeDomainInteractor(serviceLocator: serviceLocator)
-
-        // When - Start an operation then immediately cancel by starting another
-        interactor.handleAction(.searchMovies("first"))
-        interactor.handleAction(.searchMovies("second")) // Should cancel first
-
-        // Then - Should handle gracefully without crashes
-        _ = interactor
-        #expect(Bool(true))
-    }
-
     // MARK: - Memory Management Edge Cases
 
     @Test("Interactor memory management")

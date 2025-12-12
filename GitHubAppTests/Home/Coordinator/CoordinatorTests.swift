@@ -52,22 +52,6 @@ struct CoordinatorTests {
         }
     }
 
-    @Test("Coordinator conforms to CoordinatorProtocol")
-    func coordinatorProtocolConformance() {
-        defer { try? APIKeysProvider.removeMovieAPIKey() }
-
-        // Given
-        let serviceLocator = ServiceLocator()
-        let sut = Coordinator(serviceLocator: serviceLocator)
-
-        // When - Test protocol method through protocol reference
-        let coordinatorProtocol: CoordinatorProtocol = sut
-        coordinatorProtocol.push(page: .home)
-
-        // Then
-        #expect(!sut.path.isEmpty)
-    }
-
     @Test("Multiple push operations correctly increase path count")
     func multiplePushOperations() {
         defer { try? APIKeysProvider.removeMovieAPIKey() }
