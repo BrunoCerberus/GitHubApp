@@ -88,16 +88,6 @@ struct GitHubAppSceneDelegateComprehensiveTests {
         #expect(deeplinkManager.isValidDeeplink(url: invalidURL) == false)
     }
 
-    @Test("Service locator initialization")
-    func serviceLocatorInitialization() {
-        // Given - SceneDelegate should initialize with a service locator
-        let newSceneDelegate = GitHubAppSceneDelegate()
-
-        // When & Then - Should initialize successfully (non-optional type)
-        _ = newSceneDelegate
-        #expect(Bool(true))
-    }
-
     @Test("User activity creation")
     func userActivityCreation() {
         // Given

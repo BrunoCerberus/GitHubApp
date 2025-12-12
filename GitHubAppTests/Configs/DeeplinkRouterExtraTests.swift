@@ -24,40 +24,6 @@ struct DeeplinkRouterExtraTests {
         return (deeplinkManager, deeplinkRouter, mockCoordinator, navigationController)
     }
 
-    // MARK: - Initialization Tests
-
-    @Test("Deeplink router initialization with all parameters")
-    func deeplinkRouterInitializationWithAllParameters() {
-        // Given
-        let manager = DeeplinkManager()
-        let coordinator = MockCoordinator()
-        let navController = UINavigationController()
-
-        // When
-        let router = DeeplinkRouter(
-            deeplinkManager: manager,
-            coordinator: coordinator,
-            navigationController: navController
-        )
-
-        // Then - Router should be created successfully
-        _ = router
-        #expect(Bool(true))
-    }
-
-    @Test("Deeplink router initialization with minimal parameters")
-    func deeplinkRouterInitializationWithMinimalParameters() {
-        // Given
-        let manager = DeeplinkManager()
-
-        // When
-        let router = DeeplinkRouter(deeplinkManager: manager)
-
-        // Then - Router should be created successfully
-        _ = router
-        #expect(Bool(true))
-    }
-
     // MARK: - Process URL Tests
 
     @Test("Process valid movie details URL")
@@ -204,19 +170,6 @@ struct DeeplinkRouterExtraTests {
         #expect(result == true)
         #expect(mockCoordinator.pushedPages.isEmpty) // Old coordinator not used
         #expect(newCoordinator.pushedPages.count == 1) // New coordinator used
-    }
-
-    @Test("Update navigation controller")
-    func updateNavigationController() {
-        // Given
-        let (_, deeplinkRouter, _, _) = createTestComponents()
-        let newNavController = UINavigationController()
-
-        // When
-        deeplinkRouter.updateNavigationController(newNavController)
-
-        // Then - No assertion needed - just testing that the method doesn't crash
-        #expect(Bool(true))
     }
 
     // MARK: - Edge Cases

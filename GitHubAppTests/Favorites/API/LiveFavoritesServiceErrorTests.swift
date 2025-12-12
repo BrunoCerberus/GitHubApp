@@ -12,18 +12,6 @@ import Testing
 
 @MainActor
 struct LiveFavoritesServiceErrorTests {
-    // MARK: - Service Initialization Tests
-
-    @Test("Service initializes successfully")
-    func initializationWorks() {
-        // When
-        let service = LiveFavoritesService()
-
-        // Then - Service initializes successfully (non-optional type)
-        _ = service
-        #expect(Bool(true))
-    }
-
     // MARK: - Stub Implementation Tests
 
     @Test("Load favorite movies returns empty array")
@@ -49,18 +37,6 @@ struct LiveFavoritesServiceErrorTests {
 
         // Then - Returns empty array (stub implementation)
         #expect(result.isEmpty)
-    }
-
-    @Test("Clear all favorite movies succeeds")
-    func clearAllFavoriteMoviesSucceeds() async throws {
-        // Given
-        let service = LiveFavoritesService()
-
-        // When
-        _ = try await service.clearAllFavoriteMovies().async()
-
-        // Then - Operation completes successfully
-        #expect(Bool(true))
     }
 
     @Test("Is movie liked returns false")

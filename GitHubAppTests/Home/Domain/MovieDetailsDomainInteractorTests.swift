@@ -88,21 +88,6 @@ struct MovieDetailsDomainInteractorTests {
         #expect(interactor.currentState.isLoading == true)
     }
 
-    @Test("handles toggleMovieFavorite action")
-    func handlesToggleMovieFavoriteAction() async throws {
-        defer { cleanupTest() }
-
-        let (interactor, _) = createTestComponents()
-
-        interactor.handleAction(.toggleMovieFavorite(testMovie))
-
-        // Wait for async operation
-        try await Task.sleep(nanoseconds: 100_000_000)
-
-        // The state should be updated after the toggle
-        #expect(true) // Basic check that action was handled
-    }
-
     @Test("interact method returns publisher of current state")
     func interactMethodReturnsPublisherOfCurrentState() async throws {
         defer { cleanupTest() }

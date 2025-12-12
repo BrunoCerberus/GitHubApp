@@ -240,22 +240,4 @@ struct PaywallViewStateReducerTests {
             Issue.record("Expected success state for initial domain state")
         }
     }
-
-    // MARK: - Protocol Conformance Tests
-
-    @Test("PaywallViewStateReducer conforms to PaywallViewStateReducing")
-    func protocolConformance() {
-        // Given
-        let reducer: PaywallViewStateReducing = PaywallViewStateReducer()
-
-        // When
-        let viewState = reducer.reduce(.initial)
-
-        // Then
-        if case .success = viewState {
-            // Expected success state
-        } else {
-            Issue.record("Expected success state")
-        }
-    }
 }

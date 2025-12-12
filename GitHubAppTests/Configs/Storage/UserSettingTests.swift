@@ -207,30 +207,6 @@ struct UserSettingTests {
         #expect(UserSetting.Keys.hasRatedApp == "hasRatedApp")
     }
 
-    // MARK: - Predicate Tests
-
-    @Test("UserSetting category predicate is created")
-    func categoryPredicateIsCreated() {
-        // When
-        let predicate = UserSetting.categoryPredicate(UserSetting.Category.profile)
-
-        // Then
-        // Predicate is created successfully (no nil comparison needed for non-optional)
-        _ = predicate
-        #expect(Bool(true))
-    }
-
-    @Test("UserSetting key predicate is created")
-    func keyPredicateIsCreated() {
-        // When
-        let predicate = UserSetting.keyPredicate("test_key")
-
-        // Then
-        // Predicate is created successfully (no nil comparison needed for non-optional)
-        _ = predicate
-        #expect(Bool(true))
-    }
-
     // MARK: - Complex Codable Tests
 
     @Test("UserSetting handles complex nested structures")
