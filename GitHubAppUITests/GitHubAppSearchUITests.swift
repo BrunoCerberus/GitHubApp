@@ -28,7 +28,12 @@ final class GitHubAppSearchUITests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
+        // Explicitly terminate app to prevent "Failed to terminate" flakiness on CI
+        if app.state != .notRunning {
+            app.terminate()
+        }
         XCUIDevice.shared.orientation = .portrait
+        app = nil
     }
 
     /// Test that search tab shows empty state initially

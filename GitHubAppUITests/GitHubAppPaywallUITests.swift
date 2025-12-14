@@ -32,8 +32,12 @@ final class GitHubAppPaywallUITests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-        app = nil
+        // Explicitly terminate app to prevent "Failed to terminate" flakiness on CI
+        if app.state != .notRunning {
+            app.terminate()
+        }
         XCUIDevice.shared.orientation = .portrait
+        app = nil
     }
 
     // MARK: - Navigation Tests
