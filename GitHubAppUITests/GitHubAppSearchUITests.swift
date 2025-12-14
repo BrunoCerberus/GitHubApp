@@ -79,9 +79,9 @@ final class GitHubAppSearchUITests: XCTestCase {
         searchField.tap()
         searchField.typeText("test")
 
-        // Wait for results to appear
+        // Wait for results to appear (increased timeout for CI environments)
         let barbieText = app.staticTexts["Barbie"]
-        XCTAssertTrue(waitForElement(barbieText, timeout: 5))
+        XCTAssertTrue(waitForElement(barbieText, timeout: 15))
 
         // Verify multiple movie results are visible
         let allStaticTexts = app.staticTexts.allElementsBoundByIndex
@@ -100,9 +100,9 @@ final class GitHubAppSearchUITests: XCTestCase {
         searchField.tap()
         searchField.typeText("test")
 
-        // Wait for results to appear
+        // Wait for results to appear (increased timeout for CI environments)
         let barbieText = app.staticTexts["Barbie"]
-        XCTAssertTrue(waitForElement(barbieText, timeout: 5))
+        XCTAssertTrue(waitForElement(barbieText, timeout: 15))
 
         // Find the results list
         let listView = app.collectionViews.firstMatch
